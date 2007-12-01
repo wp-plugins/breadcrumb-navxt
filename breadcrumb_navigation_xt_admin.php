@@ -599,7 +599,7 @@ function bcn_options_style()
 //WordPress hooks
 if(function_exists('add_action')){
 	//Installation Script hook
-	add_action('activate_breadcrumb-navigation-xt-2/breadcrumb_navigation_xt_admin.php','bcn_install');
+	add_action('activate_breadcrumb-navxt/breadcrumb_navigation_xt_admin.php','bcn_install');
 	//WordPress Admin interface hook
 	add_action('admin_menu', 'bcn_add_page');
 	add_action('admin_head', 'bcn_options_style');
