@@ -3,21 +3,27 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.0.0
+Version: 2.0.1
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
-/*
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+/*  Copyright 2007-2008  John Havlik  (email : mtekkmonkey@gmail.com)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$bcn_admin_version = "2.0.0";
+$bcn_admin_version = "2.0.1";
 $bcn_admin_req = 8;
 //Include the breadcrumb class if needed
 if(!class_exists('bcn_breadcrumb'))
@@ -29,9 +35,33 @@ include(dirname(__FILE__)."/breadcrumb_navxt_api.php");
 //Security function
 function bcn_security()
 {
-	global $user_level, $bcn_admin_req;
+	global $userdata, $bcn_admin_req, $bcn_version, $wp_version;
 	get_currentuserinfo();
-	if ($user_level <  $bcn_admin_req) { die('Bad User, No Cookie For You'); }
+	if ($userdata->user_level < $bcn_admin_req)
+	{
+		if($userdata->user_level == NULL)
+		{
+			_e("<strong>Aborting: WordPress API Malfunction</strong><br /> For some reason the 
+				function get_currentuserinfo() did not behave as expected. Please report this bug
+				to the plug-in author. In your report please specify your WordPress version, PHP version,
+				Apache (or whatever HTTP server you are using) verion, and the version of the plug-in you 
+				are using.<br />");
+			_e("WordPress version: ");
+			echo $wp_version . "<br />";
+			_e("PHP version: ");
+			echo phpversion() . "<br />";
+			_e("Plug-in version: ");
+			echo $bcn_version . "<br />";
+		}
+		else
+		{
+			_e("<strong>Aborting: Insufficient Privleges</strong><br /> Your User Level: ");
+			echo $userdata->user_level;
+			_e("<br /> Required User Level: ");
+			echo $bcn_admin_req . "<br />";
+		}
+		die(); 
+	}
 }
 //Install script
 function bcn_install()
