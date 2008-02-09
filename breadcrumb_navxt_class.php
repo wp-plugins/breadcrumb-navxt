@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.0.1
+Version: 2.0.2
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -23,7 +23,7 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$bcn_version = "2.0.1";
+$bcn_version = "2.0.2";
 //The main class
 class bcn_breadcrumb
 {
@@ -142,12 +142,6 @@ class bcn_breadcrumb
 									'suffix' => NULL
 									)
 					);
-					
-		//////////////
-		//Note: everything still needs to be changed for localization
-		//////////////
-		
-		
 		//Figure out the title link
 		//For home page
 		if(is_home())
@@ -407,8 +401,6 @@ class bcn_breadcrumb
 		//For tag based archives
 		else if(is_archive() && is_tag())
 		{
-			//Simmilar to using $post, but for things $post doesn't cover
-			//$bcn_object = $wp_query->get_query_name();
 			$breadcrumb['last']['prefix'] = $this->opt['archive_tag_prefix'];
 			//Use the WordPress API for the page title, should hook better than the other method
 			$breadcrumb['last']['item'] = trim(wp_title('', false));
