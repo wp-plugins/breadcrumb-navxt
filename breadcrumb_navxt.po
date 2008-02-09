@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Breadcrumb NavXT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-25 16:19-0600\n"
-"PO-Revision-Date: 2008-01-25 16:19-0600\n"
+"POT-Creation-Date: 2008-02-09 13:07-0600\n"
+"PO-Revision-Date: 2008-02-09 13:08-0600\n"
 "Last-Translator: John Havlik <mtekkmonkey@gmail.com>\n"
 "Language-Team: John Havlik <mtekkmonkey@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -57,312 +57,307 @@ msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:240
+#: NavXT/breadcrumb_navxt_admin.php:230
 msgid "Warning, your version of Breadcrumb NavXT does not match the version supported by this administrative interface. As a result things may not work as intened."
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:241
+#: NavXT/breadcrumb_navxt_admin.php:231
 msgid "Your Breadcrumb NavXT Administration interface version is "
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:242
+#: NavXT/breadcrumb_navxt_admin.php:232
 msgid "Your Breadcrumb NavXT version is "
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:247
+#: NavXT/breadcrumb_navxt_admin.php:237
+#, php-format
 msgid ""
 "This administration interface allows the full customization of the breadcrumb output with no loss\n"
 "\tof functionality when compared to manual configuration. Each setting is the same as the corresponding\n"
 "\tclass option, please refer to the \n"
-"\t<a title=\"Go to the Breadcrumb NavXT documentation\" href=\"http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/\">documentation</a> \n"
+"\t%sdocumentation%s \n"
 "\tfor more detailed explanation of each setting."
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:254
+#: NavXT/breadcrumb_navxt_admin.php:246
 msgid "General Settings:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:258
-msgid "Preserve spaces at the end and begining of the options, if not checked these spaces will not be saved."
-msgstr ""
-
-#: C:\Documents
-#: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:261
+#: NavXT/breadcrumb_navxt_admin.php:248
 msgid "Blog Title:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:265
+#: NavXT/breadcrumb_navxt_admin.php:252
 msgid "Breadcrumb Separator:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:269
+#: NavXT/breadcrumb_navxt_admin.php:256
 msgid "Search Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:273
+#: NavXT/breadcrumb_navxt_admin.php:260
 msgid "Search Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:277
+#: NavXT/breadcrumb_navxt_admin.php:264
 msgid "404 Title:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:282
+#: NavXT/breadcrumb_navxt_admin.php:269
 msgid "Static Frontpage Settings:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:283
+#: NavXT/breadcrumb_navxt_admin.php:270
 msgid "Static Frontpage:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:297
+#: NavXT/breadcrumb_navxt_admin.php:284
 msgid "Relative Blog URL:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:300
+#: NavXT/breadcrumb_navxt_admin.php:287
 msgid "Display Home:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:313
+#: NavXT/breadcrumb_navxt_admin.php:300
 msgid "Display Home Link:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:327
+#: NavXT/breadcrumb_navxt_admin.php:314
 msgid "Home Title:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:332
+#: NavXT/breadcrumb_navxt_admin.php:319
 msgid "Author Page Settings:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:334
+#: NavXT/breadcrumb_navxt_admin.php:321
 msgid "Author Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:338
+#: NavXT/breadcrumb_navxt_admin.php:325
 msgid "Author Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:341
+#: NavXT/breadcrumb_navxt_admin.php:328
 msgid "Author Display Format:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:356
+#: NavXT/breadcrumb_navxt_admin.php:343
 msgid "Archive Display Settings:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:358
+#: NavXT/breadcrumb_navxt_admin.php:345
 msgid "URL Title Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:362
+#: NavXT/breadcrumb_navxt_admin.php:349
 msgid "URL Title Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:366
+#: NavXT/breadcrumb_navxt_admin.php:353
 msgid "Archive by Category Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:370
+#: NavXT/breadcrumb_navxt_admin.php:357
 msgid "Archive by Category Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:374
+#: NavXT/breadcrumb_navxt_admin.php:361
 msgid "Archive by Date Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:378
+#: NavXT/breadcrumb_navxt_admin.php:365
 msgid "Archive by Date Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:381
+#: NavXT/breadcrumb_navxt_admin.php:368
 msgid "Archive by Date Format:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:395
+#: NavXT/breadcrumb_navxt_admin.php:382
 msgid "Archive by Tag Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:399
+#: NavXT/breadcrumb_navxt_admin.php:386
 msgid "Archive by Tag Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:404
+#: NavXT/breadcrumb_navxt_admin.php:391
 msgid "Current Item Settings:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:405
+#: NavXT/breadcrumb_navxt_admin.php:392
 msgid "Link Current Item:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:419
+#: NavXT/breadcrumb_navxt_admin.php:406
 msgid "Current Item URL Title:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:423
+#: NavXT/breadcrumb_navxt_admin.php:410
 msgid "Current Item Style Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:427
+#: NavXT/breadcrumb_navxt_admin.php:414
 msgid "Current Item Style Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:430
+#: NavXT/breadcrumb_navxt_admin.php:417
 msgid "Display Paged Text:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:444
+#: NavXT/breadcrumb_navxt_admin.php:431
 msgid "Paged Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:448
+#: NavXT/breadcrumb_navxt_admin.php:435
 msgid "Paged Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:453
+#: NavXT/breadcrumb_navxt_admin.php:440
 msgid "Single Post Settings:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:455
+#: NavXT/breadcrumb_navxt_admin.php:442
 msgid "Single Blogpost Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:459
+#: NavXT/breadcrumb_navxt_admin.php:446
 msgid "Single Blogpost Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:463
+#: NavXT/breadcrumb_navxt_admin.php:450
 msgid "Page Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:467
+#: NavXT/breadcrumb_navxt_admin.php:454
 msgid "Page Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:471
+#: NavXT/breadcrumb_navxt_admin.php:458
 msgid "Post Attachment Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:475
+#: NavXT/breadcrumb_navxt_admin.php:462
 msgid "Post Attachment Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:479
+#: NavXT/breadcrumb_navxt_admin.php:466
 msgid "Post Title Maxlen:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:483
+#: NavXT/breadcrumb_navxt_admin.php:470
 msgid "Single Blog Post Category Display:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:497
+#: NavXT/breadcrumb_navxt_admin.php:484
 msgid "Single Blog Post Category Prefix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:501
+#: NavXT/breadcrumb_navxt_admin.php:488
 msgid "Single Blog Post Category Suffix:"
 msgstr ""
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
-#: NavXT/breadcrumb_navxt_admin.php:505
+#: NavXT/breadcrumb_navxt_admin.php:492
 msgid "Save"
 msgstr ""
 
