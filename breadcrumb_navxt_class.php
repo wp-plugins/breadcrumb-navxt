@@ -149,7 +149,6 @@ class bcn_breadcrumb
 			//Static front page
 			if(($this->opt['static_frontpage'] === 'true' || get_option('page_on_front')) && $this->opt['home_display'] === 'true')
 			{
-				echo "moo";
 				//Should we display the home link or not
 				if($this->opt['home_link'])
 				{
