@@ -242,7 +242,8 @@ function bcn_admin()
 	</p>
 
 	<form action="options-general.php?page=breadcrumb-nav-xt" method="post" id="bcn_admin_options">
-		<fieldset id="general">
+		<p class="submit"><input type="submit" name="bcn_admin_options" value="<?php _e('Update Options &raquo;') ?>" /></p>
+		<fieldset id="general" class="options">
 			<legend><?php _e('General Settings:', 'breadcrumb_navxt'); ?></legend>
 			<p>
 				<label for="title_blog"><?php _e('Blog Title:', 'breadcrumb_navxt'); ?></label>
@@ -265,7 +266,7 @@ function bcn_admin()
 				<input type="text" name="title_404" id="title_404" value="<?php echo bcn_get_option_inputvalue('bcn_title_404'); ?>" size="32" />
 			</p>
 		</fieldset>
-		<fieldset id="static_front_page">
+		<fieldset id="static_front_page" class="options">
 			<legend><?php _e('Static Frontpage Settings:', 'breadcrumb_navxt'); ?></legend>
 			<p><?php _e('Static Frontpage:', 'breadcrumb_navxt'); ?> 
 				<select name="static_frontpage">
@@ -315,7 +316,7 @@ function bcn_admin()
 				<input type="text" name="title_home" id="title_home" value="<?php echo bcn_get_option_inputvalue('bcn_title_home'); ?>" size="32" />
 			</p>
 		</fieldset>
-		<fieldset id="author">
+		<fieldset id="author" class="options">
 			<legend><?php _e('Author Page Settings:', 'breadcrumb_navxt'); ?></legend>
 			<p>
 				<label for="author_prefix"><?php _e('Author Prefix:', 'breadcrumb_navxt'); ?></label>
@@ -339,7 +340,7 @@ function bcn_admin()
 				</select>
 			</p>
 		</fieldset>
-		<fieldset id="category">
+		<fieldset id="category" class="options">
 			<legend><?php _e('Archive Display Settings:', 'breadcrumb_navxt'); ?></legend>
 			<p>
 				<label for="urltitle_prefix"><?php _e('URL Title Prefix:', 'breadcrumb_navxt'); ?></label>
@@ -387,7 +388,7 @@ function bcn_admin()
 				<input type="text" name="archive_tag_suffix" id="archive_tag_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_tag_suffix'); ?>" size="32" />
 			</p>
 		</fieldset>
-		<fieldset id="current">
+		<fieldset id="current" class="options">
 			<legend><?php _e('Current Item Settings:', 'breadcrumb_navxt'); ?></legend>
 			<p><?php _e('Link Current Item:', 'breadcrumb_navxt'); ?> 
 				<select name="link_current_item">
@@ -436,7 +437,7 @@ function bcn_admin()
 				<input type="text" name="paged_suffix" id="paged_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_paged_suffix'); ?>" size="32" />
 			</p>
 		</fieldset>
-		<fieldset id="single">
+		<fieldset id="single" class="options">
 			<legend><?php _e('Single Post Settings:', 'breadcrumb_navxt'); ?></legend>
 			<p>
 				<label for="singleblogpost_prefix"><?php _e('Single Blogpost Prefix:', 'breadcrumb_navxt'); ?></label>
@@ -489,7 +490,7 @@ function bcn_admin()
 				<input type="text" name="singleblogpost_category_suffix" id="singleblogpost_category_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_category_suffix'); ?>" size="32" />
 			</p>
 		</fieldset>
-		<input type="submit" name="bcn_admin_options" value="<?php _e('Save', 'breadcrumb_navxt');?> &raquo;" />
+		<p class="submit"><input type="submit" name="bcn_admin_options" value="<?php _e('Update Options &raquo;') ?>" /></p>
 	</form>
 	</div>
 	<?php
