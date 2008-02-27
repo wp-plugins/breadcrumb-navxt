@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.0.2
+Version: 2.0.3
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -23,7 +23,7 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$bcn_version = "2.0.2";
+$bcn_version = "2.0.3";
 //The main class
 class bcn_breadcrumb
 {
@@ -56,7 +56,7 @@ class bcn_breadcrumb
 			//Separator that is placed between each item in the breadcrumb navigation, but not placed before
 			//the first and not after the last element. You also can use images here,
 			//e.g. '<img src="separator.gif" title="separator" width="10" height="8" />'
-				'separator' => ' > ',
+				'separator' => ' &gt; ',
 			//Prefix for a search page
 				'search_prefix' => 'Search results for &#39;',
 			//Suffix for a search page
@@ -288,7 +288,13 @@ class bcn_breadcrumb
 			//Trim post title if needed
 			if($this->opt['posttitle_maxlen'] > 0 && (strlen($bcn_post_title) + 3) > $this->opt['posttitle_maxlen'])
 			{
-				$bcn_post_title = substr($bcn_post_title, 0, $this->opt['posttitle_maxlen']-1) . '&hellip;';
+				$bcn_post_title = substr($bcn_post_title, 0, $this->opt['posttitle_maxlen']-1);
+				//We'll make sure we don't stop mid word
+				while(substr($bcn_post_title,-1) != " ")
+				{
+					$bcn_post_title = substr($bcn_post_title, 0, -1);
+				}
+				$bcn_post_title .= '&hellip;';
 			}
 			//Place it all in the array
 			$breadcrumb['middle'] = $bcn_middle;
