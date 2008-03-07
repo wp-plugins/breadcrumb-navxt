@@ -1,5 +1,5 @@
 === Breadcrumb NavXT ===
-Contributors: mtekk
+Contributors: mtekk, hakre
 Tags: breadcrumb, navigation
 Requires at least: 2.3.0
 Tested up to: 2.3.3
