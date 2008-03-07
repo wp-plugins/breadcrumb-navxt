@@ -7,13 +7,15 @@
  * @author John Havlik
  * @author Tom Klingenberg
  *
- *
+ * 2008-03-06:
+ * FIX: bcn_get						-	Reworked the conditions for when spaces
+ * 										will be preserved.
  * 2008-02-07:
- * ADD: bcn_get_option_inputvalue - Escape Option Values to be used inside 
- *                                  (X)HTML Element Attribute Values.
- * FIX: bcn_get                   - fixed issue solved inside wordpress main 
- *                                  codebase in 2007-09.
- *                                  see http://trac.wordpress.org/ticket/4781
+ * ADD: bcn_get_option_inputvalue	-	Escape Option Values to be used inside 
+ *                                  	(X)HTML Element Attribute Values.
+ * FIX: bcn_get                   	- 	fixed issue solved inside wordpress main 
+ *                                  	codebase in 2007-09.
+ *                                  	see http://trac.wordpress.org/ticket/4781
  */
 
 /**
@@ -44,7 +46,7 @@ function bcn_get_option_inputvalue($optionname)
  * Administration input complex, replaces the broken WordPress one
  * Based off of the suggestions and code of Tom Klingenberg
  *
- * Removes Faulty Adding Slashes
+ * Removes Faulty Adding Slashes and Preserves leading and trailing spaces
  *
  * Wordpress adds slashes to Request Variables by Default (before
  * removing those added by PHP) - This re-invents the wheel
@@ -67,16 +69,20 @@ function bcn_get($varname)
 	{
 		return "";
 	}
-	//Preserving the front space if exists
-	if(strpos($bcn_value, " ") === 0)
+	//Only if we have a string should we check for spaces
+	if(is_string($bcn_value))
 	{
-		$bcn_value = "&nbsp;" . ltrim($bcn_value);
-	}
-	//Preserv the end space if exists
-	$bcn_length = strlen($bcn_value) - 1;
-	if(strpos($bcn_value, " ", $bcn_length - 1) === $bcn_length)
-	{
-		$bcn_value = rtrim($bcn_value) . "&nbsp;";
+		//Preserving the front space if exists
+		if(strpos($bcn_value, " ") === 0)
+		{
+			$bcn_value = "&nbsp;" . ltrim($bcn_value);
+		}
+		//Preserv the end space if exists
+		$bcn_length = strlen($bcn_value) - 1;
+		if(strpos($bcn_value, " ", $bcn_length - 1) === $bcn_length)
+		{
+			$bcn_value = rtrim($bcn_value) . "&nbsp;";
+		}
 	}
 	//Remove by faulty-wordpress-code added slashes
 	$bcn_value = stripslashes($bcn_value);
