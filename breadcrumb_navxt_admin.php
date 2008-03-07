@@ -52,6 +52,9 @@ function bcn_security()
 			echo phpversion() . '<br />';
 			_e('Plug-in version: ', 'breadcrumb_navxt');
 			echo $bcn_version . "<br />";
+			_e('$userdata Object Dump:', 'breadcrumb_navxt');
+			echo "<br />";
+			var_dump($userdata);
 		}
 		else
 		{
@@ -71,7 +74,6 @@ function bcn_install()
 	if(get_option('bcn_version') != $bcn_version)
 	{
 		update_option('bcn_version' , $bcn_version);
-		update_option('bcn_preserve', 0);
 		update_option('bcn_static_frontpage', 'false');
 		update_option('bcn_url_blog', '');
 		update_option('bcn_home_display', 'true');
