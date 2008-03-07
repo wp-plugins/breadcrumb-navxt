@@ -495,34 +495,12 @@ function bcn_admin()
 	</div>
 	<?php
 }
-//Additional styles for admin interface
-function bcn_options_style()
-{
-?>
-<style>
-	fieldset {
-	margin-bottom: 5px;
-	padding: 10px;
-	border: #ccc solid 1px;
-	}
-	.halfl {
-	width: 46.25%;
-	float: left;
-	}
-	.halfr {
-	width: 46.25%;
-	float: right;
-	}
-</style>
-<?php
-}
 //WordPress hooks
 if(function_exists('add_action')){
 	//Installation Script hook
 	add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php','bcn_install');
 	//WordPress Admin interface hook
 	add_action('admin_menu', 'bcn_add_page');
-	add_action('admin_head', 'bcn_options_style');
 	//Admin Options hook
 	if(isset($_POST['bcn_admin_options']))
 	{
