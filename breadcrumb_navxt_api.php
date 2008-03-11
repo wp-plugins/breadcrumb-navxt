@@ -17,7 +17,6 @@
  *                                  	codebase in 2007-09.
  *                                  	see http://trac.wordpress.org/ticket/4781
  */
-
 /**
  * bcn_get_option_inputvalue
  *
