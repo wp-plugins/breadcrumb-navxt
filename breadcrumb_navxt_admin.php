@@ -53,9 +53,9 @@ function bcn_install()
 {
 	global $bcn_admin_req, $bcn_version;
 	//bcn_security();
-	if(get_option('bcn_version') != $bcn_version)
+	if(get_option('bcn_version') != $bcn_admin_version)
 	{
-		update_option('bcn_version' , $bcn_version);
+		update_option('bcn_version' , $bcn_admin_version);
 		update_option('bcn_preserve', 0);
 		update_option('bcn_static_frontpage', 'false');
 		update_option('bcn_url_blog', '');
@@ -231,8 +231,8 @@ function bcn_admin()
 	</p>
 
 	<form action="options-general.php?page=breadcrumb-nav-xt" method="post" id="bcn_admin_options">
-		<fieldset id="general" class="options">
-			<legend><?php _e('General Settings:', 'breadcrumb_navxt'); ?></legend>
+		<fieldset id="general" class="bcn_options">
+			<legend><h3><?php _e('General Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
 				<tr valign="top">
 					<th width="33%" scope="row">
@@ -277,8 +277,8 @@ function bcn_admin()
 			</table>
 		</fieldset>
 
-		<fieldset id="static_front_page" class="options">
-			<legend><?php _e('Static Frontpage Settings:', 'breadcrumb_navxt'); ?></legend>
+		<fieldset id="static_front_page" class="bcn_options">
+			<legend><h3><?php _e('Static Frontpage Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
 				<tr valign="top">
 					<th width="33%" scope="row">
@@ -329,8 +329,8 @@ function bcn_admin()
 			</table>
 		</fieldset>
 
-		<fieldset id="author" class="options">
-			<legend><?php _e('Author Page Settings:', 'breadcrumb_navxt'); ?></legend>
+		<fieldset id="author" class="bcn_options">
+			<legend><h3><?php _e('Author Page Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
 				<tr valign="top">
 					<th width="33%" scope="row">
@@ -362,8 +362,8 @@ function bcn_admin()
 			</table>
 		</fieldset>
 
-		<fieldset id="category" class="options">
-			<legend><?php _e('Archive Display Settings:', 'breadcrumb_navxt'); ?></legend>
+		<fieldset id="category" class="bcn_options">
+			<legend><h3><?php _e('Archive Display Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
 				<tr valign="top">
 					<th width="33%" scope="row">
@@ -442,8 +442,8 @@ function bcn_admin()
 			</table>
 		</fieldset>
 
-		<fieldset id="current" class="options">
-			<legend><?php _e('Current Item Settings:', 'breadcrumb_navxt'); ?></legend>
+		<fieldset id="current" class="bcn_options">
+			<legend><h3><?php _e('Current Item Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
 				<tr valign="top">
 					<th width="33%" scope="row">
@@ -508,8 +508,8 @@ function bcn_admin()
 			</table>
 		</fieldset>
 
-		<fieldset id="single" class="options">
-			<legend><?php _e('Single Post Settings:', 'breadcrumb_navxt'); ?></legend>
+		<fieldset id="single" class="bcn_options">
+			<legend><h3><?php _e('Single Post Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
 				<tr valign="top">
 					<th width="33%" scope="row">
@@ -638,14 +638,22 @@ function bcn_select_options_truefalse($optionname)
 {
 	 bcn_select_options($optionname, array('true', 'false'));
 }
-
-
+//Additional styles for admin interface
+function bcn_options_style()
+{
+?>
+<style>
+	.bcn_options{border: none;}
+</style>
+<?php
+}
 //WordPress hooks
 if(function_exists('add_action')){
 	//Installation Script hook
 	add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php','bcn_install');
 	//WordPress Admin interface hook
 	add_action('admin_menu', 'bcn_add_page');
+	add_action('admin_head', 'bcn_options_style');
 	//Admin Options hook
 	if(isset($_POST['bcn_admin_options']))
 	{
