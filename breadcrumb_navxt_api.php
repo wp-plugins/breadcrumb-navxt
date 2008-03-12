@@ -78,9 +78,12 @@ function bcn_get($varname)
 		}
 		//Preserv the end space if exists
 		$bcn_length = strlen($bcn_value) - 1;
-		if(strpos($bcn_value, " ", $bcn_length - 1) === $bcn_length)
+		if($bcn_length > 0)
 		{
-			$bcn_value = rtrim($bcn_value) . "&nbsp;";
+			if(strpos($bcn_value, " ", $bcn_length - 1) === $bcn_length)
+			{
+				$bcn_value = rtrim($bcn_value) . "&nbsp;";
+			}
 		}
 	}
 	//Remove by faulty-wordpress-code added slashes
