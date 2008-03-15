@@ -3,11 +3,11 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.0.7
+Version: 2.0.9
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
-$bcn_admin_version = "2.0.7";
+$bcn_admin_version = "2.0.9";
 $bcn_admin_req = 8;
 //Include the breadcrumb class if needed
 if(!class_exists('bcn_breadcrumb'))
@@ -93,9 +93,12 @@ function bcn_install()
 		update_option('bcn_paged_display', 'false');
 		update_option('bcn_paged_prefix', ', Page&nbsp;');
 		update_option('bcn_paged_suffix', '');
-		update_option('bcn_singleblogpost_category_display', 'true');
+		update_option('bcn_singleblogpost_taxonomy', 'category');
+		update_option('bcn_singleblogpost_taxonomy_display', 'true');
 		update_option('bcn_singleblogpost_category_prefix', '');
 		update_option('bcn_singleblogpost_category_suffix', '');
+		update_option('bcn_singleblogpost_tag_prefix', '');
+		update_option('bcn_singleblogpost_tag_suffix', '');
 	}
 }
 //Display a breadcrumb, only used if admin interface is used
@@ -143,9 +146,12 @@ function breadcrumb_nav_xt_display()
 		$breadcrumb->opt['paged_display'] = get_option('bcn_paged_display');
 		$breadcrumb->opt['paged_prefix'] = get_option('bcn_paged_prefix');
 		$breadcrumb->opt['paged_suffix'] = get_option('bcn_paged_suffix');
-		$breadcrumb->opt['singleblogpost_category_display'] = get_option('bcn_singleblogpost_category_display');
+		$breadcrumb->opt['singleblogpost_taxonomy'] = get_option('bcn_singleblogpost_taxonomy');
+		$breadcrumb->opt['singleblogpost_taxonomy_display'] = get_option('bcn_singleblogpost_taxonomy_display');
 		$breadcrumb->opt['singleblogpost_category_prefix'] = get_option('bcn_singleblogpost_category_prefix');
 		$breadcrumb->opt['singleblogpost_category_suffix'] = get_option('bcn_singleblogpost_category_suffix');
+		$breadcrumb->opt['singleblogpost_tag_prefix'] = get_option('bcn_singleblogpost_tag_prefix');
+		$breadcrumb->opt['singleblogpost_tag_suffix'] = get_option('bcn_singleblogpost_tag_suffix');
 		//Generate the breadcrumb
 		$breadcrumb->assemble();
 		//Display the breadcrumb
@@ -193,9 +199,12 @@ function bcn_admin_options()
 	update_option('bcn_paged_display', bcn_get('paged_display'));
 	update_option('bcn_paged_prefix', bcn_get('paged_prefix'));
 	update_option('bcn_paged_suffix', bcn_get('paged_suffix'));
-	update_option('bcn_singleblogpost_category_display', bcn_get('singleblogpost_category_display'));
+	update_option('bcn_singleblogpost_taxonomy', bcn_get('singleblogpost_taxonomy'));
+	update_option('bcn_singleblogpost_taxonomy_display', bcn_get('singleblogpost_taxonomy_display'));
 	update_option('bcn_singleblogpost_category_prefix', bcn_get('singleblogpost_category_prefix'));
 	update_option('bcn_singleblogpost_category_suffix', bcn_get('singleblogpost_category_suffix'));
+	update_option('bcn_singleblogpost_tag_prefix', bcn_get('singleblogpost_tag_prefix'));
+	update_option('bcn_singleblogpost_tag_suffix', bcn_get('singleblogpost_tag_suffix'));
 }
 /**
  * bcn_add_page
@@ -571,11 +580,21 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="singleblogpost_category_display"><?php _e('Single Blog Post Category Display:', 'breadcrumb_navxt'); ?></label>
+						<label for="singleblogpost_taxonomy_display"><?php _e('Single Blog Post Taxonomy Display:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="singleblogpost_category_display">
-							<?php bcn_select_options_truefalse('bcn_singleblogpost_category_display'); ?>
+						<select name="singleblogpost_taxonomy_display">
+							<?php bcn_select_options_truefalse('bcn_singleblogpost_taxonomy_display'); ?>
+						</select>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="singleblogpost_taxonomy"><?php _e('Single Blog Post Taxonomy:', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<select name="singleblogpost_taxonomy">
+							<?php bcn_select_options('bcn_singleblogpost_taxonomy', array("category", "tag")); ?>
 						</select>
 					</td>
 				</tr>
@@ -593,6 +612,22 @@ function bcn_admin()
 					</th>
 					<td>
 						<input type="text" name="singleblogpost_category_suffix" id="singleblogpost_category_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_category_suffix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="singleblogpost_tag_prefix"><?php _e('Single Blog Post Tag Prefix:', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="singleblogpost_tag_prefix" id="singleblogpost_tag_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_tag_prefix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="singleblogpost_tag_suffix"><?php _e('Single Blog Post Tag Suffix:', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="singleblogpost_tag_suffix" id="singleblogpost_tag_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_tag_suffix'); ?>" size="32" />
 					</td>
 				</tr>
 			</table>

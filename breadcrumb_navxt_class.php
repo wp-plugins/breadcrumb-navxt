@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.0.8
+Version: 2.0.9
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -23,7 +23,7 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$bcn_version = "2.0.8";
+$bcn_version = "2.0.9";
 //The main class
 class bcn_breadcrumb
 {
@@ -116,12 +116,18 @@ class bcn_breadcrumb
 				'current_item_style_suffix' => '',
 			//Maximum number of characters of post title to be displayed? 0 means no limit.
 				'posttitle_maxlen' => 0,
-			//Display category when displaying single blog post
-				'singleblogpost_category_display' => 'true',
-			//Prefix for single blog post category, only being used if 'singleblogpost_category_display' => true
+			//Display category or tag when displaying single blog post (e.g., tag or category)
+				'singleblogpost_taxonomy' => 'category',
+			//Display category/tag when displaying single blog post
+				'singleblogpost_taxonomy_display' => 'true',
+			//Prefix for single blog post category, only being used if 'singleblogpost_taxonomy_display' => true
 				'singleblogpost_category_prefix' => '',
-			//Suffix for single blog post category, only being used if 'singleblogpost_category_display' => true
+			//Suffix for single blog post category, only being used if 'singleblogpost_taxonomy_display' => true
 				'singleblogpost_category_suffix' => '',
+			//Prefix for single blog post category, only being used if 'singleblogpost_taxonomy_display' => true
+				'singleblogpost_tag_prefix' => '',
+			//Suffix for single blog post tag, only being used if 'singleblogpost_taxonomy_display' => true
+				'singleblogpost_tag_suffix' => '',
 		);
 		//Initilize breadcrumb stream
 		$this->breadcrumb = array
@@ -235,6 +241,63 @@ class bcn_breadcrumb
 			$this->breadcrumb['last']['suffix'] = $this->opt['page_suffix'];
 		}		
 	}
+	//Figure out the categories leading up to the post
+	function single_categories()
+	{
+		global $post;
+		$this->breadcrumb['middle'] = array();
+		//Fills the object to get 
+		$bcn_object = get_the_category();
+		//Now find which one has a parrent, pick the first one that does
+		$i = 0;
+		$bcn_use_category = 0;
+		foreach($bcn_object as $object)
+		{
+			if(is_numeric($object->category_parent) && $bcn_use_category == 0)
+			{
+				$bcn_use_category = $i;
+			}
+			$i++;
+		}
+		//Get parents of current category
+		$bcn_category = $bcn_object[$bcn_use_category];
+		//Fill the initial category
+		$this->breadcrumb['middle'][] = $this->opt['singleblogpost_category_prefix'] . '<a href="' . get_category_link($bcn_category->cat_ID) . '" title="' . $this->opt['urltitle_prefix'] . $bcn_category->cat_name . $this->opt['urltitle_suffix'] . '">' . $bcn_category->cat_name . '</a>'. $this->opt['singleblogpost_category_suffix'];
+		$bcn_parent_id  = $bcn_category->category_parent;
+		while($bcn_parent_id)
+		{
+			$bcn_category = get_category($bcn_parent_id);
+			//Pushback a category into the array
+			$this->breadcrumb['middle'][] = $this->opt['singleblogpost_category_prefix'] . '<a href="' . get_category_link($bcn_category->cat_ID) . '" title="' . $this->opt['urltitle_prefix'] . $bcn_category->cat_name . $this->opt['urltitle_suffix'] . '">' . $bcn_category->cat_name . '</a>' . $this->opt['singleblogpost_category_suffix'];
+			$bcn_parent_id = $bcn_category->category_parent;
+		}
+		//We need to reverse the order (by key) to get the proper output
+		krsort($this->breadcrumb['middle']);
+	}
+	//Figure out the tags leading up to the post
+	function single_tags()
+	{
+		global $post;
+		//Fills the object with the tags for the post
+		$bcn_object = get_the_tags($post->ID);
+		$i = 0;
+		foreach($bcn_object as $tag)
+		{
+			//On the first run we don't need a separator
+			if($i == 0)
+			{
+				$bcn_tags = $this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
+				//$bcn_tags = '<a href="' . get_tag_link($tag->ID) . '" >' . $tag->name . '</a>';
+				$i = 2;
+			}
+			else
+			{
+				$bcn_tags .= ', ' .$this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
+
+			}
+		}
+		$this->breadcrumb['middle'] = $bcn_tags;
+	}
 	//Handle single posts
 	function do_post()
 	{
@@ -242,36 +305,17 @@ class bcn_breadcrumb
 		//Get the post title, this is a more robust method than using $post
 		$bcn_post_title = trim(wp_title('', false));
 		//Add categories if told to
-		if($this->opt['singleblogpost_category_display'] === 'true') {
-			//Figure out the categories leading up to the post
-			$bcn_middle = array();
-			//Fills the object to get 
-			$bcn_object = get_the_category();
-			//Now find which one has a parrent, pick the first one that does
-			$i = 0;
-			$bcn_use_category = 0;
-			foreach($bcn_object as $object)
+		if($this->opt['singleblogpost_taxonomy_display'] === 'true')
+		{		
+			//If we're supposed to do tag hiearchy do that instead of category
+			if($this->opt['singleblogpost_taxonomy'] == 'tag')
 			{
-				if(is_numeric($object->category_parent) && $bcn_use_category == 0)
-				{
-					$bcn_use_category = $i;
-				}
-				$i++;
+				$this->single_tags();
 			}
-			//Get parents of current category
-			$bcn_category = $bcn_object[$bcn_use_category];
-			//Fill the initial category
-			$bcn_middle[] = $this->opt['singleblogpost_category_prefix'] . '<a href="' . get_category_link($bcn_category->cat_ID) . '" title="' . $this->opt['urltitle_prefix'] . $bcn_category->cat_name . $this->opt['urltitle_suffix'] . '">' . $bcn_category->cat_name . '</a>'. $this->opt['singleblogpost_category_suffix'];
-			$bcn_parent_id  = $bcn_category->category_parent;
-			while($bcn_parent_id)
+			else
 			{
-				$bcn_category = get_category($bcn_parent_id);
-				//Pushback a category into the array
-				$bcn_middle[] = $this->opt['singleblogpost_category_prefix'] . '<a href="' . get_category_link($bcn_category->cat_ID) . '" title="' . $this->opt['urltitle_prefix'] . $bcn_category->cat_name . $this->opt['urltitle_suffix'] . '">' . $bcn_category->cat_name . '</a>' . $this->opt['singleblogpost_category_suffix'];
-				$bcn_parent_id = $bcn_category->category_parent;
+				$this->single_categories();
 			}
-			//We need to reverse the order (by key) to get the proper output
-			krsort($bcn_middle);
 		}
 		//Trim post title if needed
 		if($this->opt['posttitle_maxlen'] > 0 && (strlen($bcn_post_title) + 3) > $this->opt['posttitle_maxlen'])
@@ -285,7 +329,6 @@ class bcn_breadcrumb
 			$bcn_post_title .= '&hellip;';
 		}
 		//Place it all in the array
-		$this->breadcrumb['middle'] = $bcn_middle;
 		$this->breadcrumb['last']['prefix'] = $this->opt['singleblogpost_prefix'];
 		$this->breadcrumb['last']['item'] = $bcn_post_title;
 		$this->breadcrumb['last']['suffix'] = $this->opt['singleblogpost_suffix'];		
@@ -514,7 +557,7 @@ class bcn_breadcrumb
 	//Breadcrumb Creation Function
 	function display($bcn_return = false)
 	{
-		//global $wpdb, $post, $wp_query, $bcn_version, $paged;
+		global $bcn_version;
 		////////////////////////////////////
 		//Assemble the breadcrumb
 		$bcn_output = '';
