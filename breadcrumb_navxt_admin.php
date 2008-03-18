@@ -101,8 +101,13 @@ function bcn_install()
 		update_option('bcn_singleblogpost_tag_suffix', '');
 	}
 }
-//Display a breadcrumb, only used if admin interface is used
+//An alias of bcn_display()
 function breadcrumb_nav_xt_display()
+{
+	bcn_display();
+}
+//Display a breadcrumb, only used if admin interface is used
+function bcn_display()
 {
 	//Playing things really safe here
 	if(class_exists('bcn_breadcrumb'))
