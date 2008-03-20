@@ -281,20 +281,27 @@ class bcn_breadcrumb
 		//Fills the object with the tags for the post
 		$bcn_object = get_the_tags($post->ID);
 		$i = 0;
-		foreach($bcn_object as $tag)
+		//Only process if we have tags
+		if(is_array($bcn_object))
 		{
-			//On the first run we don't need a separator
-			if($i == 0)
+			foreach($bcn_object as $tag)
 			{
-				$bcn_tags = $this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
-				//$bcn_tags = '<a href="' . get_tag_link($tag->ID) . '" >' . $tag->name . '</a>';
-				$i = 2;
+				//On the first run we don't need a separator
+				if($i == 0)
+				{
+					$bcn_tags = $this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
+					$i = 2;
+				}
+				else
+				{
+					$bcn_tags .= ', ' .$this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
+	
+				}
 			}
-			else
-			{
-				$bcn_tags .= ', ' .$this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
-
-			}
+		}
+		else
+		{
+			$bcn_tags = "Untaged";	
 		}
 		$this->breadcrumb['middle'] = $bcn_tags;
 	}
