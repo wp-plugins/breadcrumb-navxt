@@ -2,8 +2,8 @@
 /*
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
-Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.0.9
+Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
+Version: 2.1.0
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -23,7 +23,7 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$bcn_version = "2.0.9";
+$bcn_version = "2.1.0";
 //The main class
 class bcn_breadcrumb
 {
@@ -189,25 +189,6 @@ class bcn_breadcrumb
 		//Get the search suffix
 		$this->breadcrumb['last']['suffix'] = $this->opt['search_suffix'];
 	}
-	//Handle attachment pages
-	function do_attachment()
-	{
-		global $post;
-		//Blog link and parent page
-		$bcn_parent_id = $post->post_parent;
-		//Get the parent title
-		$bcn_parent_title = get_post($bcn_parent_id);
-		//Setup the attachment's parent link
-		$bcn_parent = '<a title="' . $this->opt['urltitle_prefix'] .
-		$bcn_parent_title->post_title . $this->opt['urltitle_suffix'] . '" href="' . get_permalink($bcn_parent_id) . '">' . $bcn_parent_title->post_title . '</a>';
-		$this->breadcrumb['middle'] = $bcn_parent;
-		//Attachment prefix text
-		$this->breadcrumb['last']['prefix'] = $this->opt['attachment_prefix'];
-		//Get attachment name
-		$this->breadcrumb['last']['item'] = trim(wp_title('', false));
-		//Attachment suffix text
-		$this->breadcrumb['last']['suffix'] = $this->opt['attachment_suffix'];		
-	}
 	//Handle "static" pages
 	function do_page()
 	{
@@ -240,6 +221,34 @@ class bcn_breadcrumb
 			$this->breadcrumb['last']['item'] = $bcn_page_title;
 			$this->breadcrumb['last']['suffix'] = $this->opt['page_suffix'];
 		}		
+	}
+	//Handle attachment pages
+	function do_attachment()
+	{
+		global $post;
+		//Blog link and parent page
+		$bcn_parent_id = $post->post_parent;
+		//Get the parent information
+		$bcn_parent = get_post($bcn_parent_id);
+		//If the parent is a page we treat attachments like pages
+		if($bcn_parent->post_type == "page")
+		{
+			$this->do_page();
+		}
+		//Otherwise we treat them like attachments
+		else
+		{
+			//Setup the attachment's parent link
+			$bcn_parents = '<a title="' . $this->opt['urltitle_prefix'] .
+			$bcn_parent->post_title . $this->opt['urltitle_suffix'] . '" href="' . get_permalink($bcn_parent_id) . '">' . $bcn_parent->post_title . '</a>';
+			$this->breadcrumb['middle'] = $bcn_parents;
+			//Attachment prefix text
+			$this->breadcrumb['last']['prefix'] = $this->opt['attachment_prefix'];
+			//Get attachment name
+			$this->breadcrumb['last']['item'] = trim(wp_title('', false));
+			//Attachment suffix text
+			$this->breadcrumb['last']['suffix'] = $this->opt['attachment_suffix'];
+		}	
 	}
 	//Figure out the categories leading up to the post
 	function single_categories()
@@ -327,13 +336,19 @@ class bcn_breadcrumb
 		//Trim post title if needed
 		if($this->opt['posttitle_maxlen'] > 0 && (strlen($bcn_post_title) + 3) > $this->opt['posttitle_maxlen'])
 		{
-			$bcn_post_title = substr($bcn_post_title, 0, $this->opt['posttitle_maxlen']-1);
-			//We'll make sure we don't stop mid word
-			while(substr($bcn_post_title,-1) != " ")
+			$bcn_post_title2 = substr($bcn_post_title, 0, $this->opt['posttitle_maxlen']-1);
+			$bcn_count = $this->opt['posttitle_maxlen'];
+			//Make sure we can split at a space
+			if(strpos($bcn_post_title, " ") > $this->opt['posttitle_maxlen'] / 4)
 			{
-				$bcn_post_title = substr($bcn_post_title, 0, -1);
+				//Don't split mid word
+				while(substr($bcn_post_title,-1) != " ")
+				{
+					$bcn_post_title = substr($bcn_post_title, 0, -1);
+				}
 			}
-			$bcn_post_title .= '&hellip;';
+			//remove the whitespace at the end and add the hellip
+			$bcn_post_title = rtrim($bcn_post_title) . '&hellip;';
 		}
 		//Place it all in the array
 		$this->breadcrumb['last']['prefix'] = $this->opt['singleblogpost_prefix'];
@@ -507,16 +522,16 @@ class bcn_breadcrumb
 			$this->do_search();
 		}
 		////////////////////////////////////
-		//For post/page attachments
-		else if(is_attachment())
-		{
-			$this->do_attachment();
-		}
-		////////////////////////////////////
 		//For pages
 		else if(is_page())
 		{
 			$this->do_page();
+		}
+		////////////////////////////////////
+		//For post/page attachments
+		else if(is_attachment())
+		{
+			$this->do_attachment();
 		}
 		////////////////////////////////////
 		//For blog posts

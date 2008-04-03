@@ -2,12 +2,12 @@
 /*
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
-Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.0.9
+Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
+Version: 2.1.0
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
-$bcn_admin_version = "2.0.9";
+$bcn_admin_version = "2.1.0";
 $bcn_admin_req = 8;
 //Include the breadcrumb class if needed
 if(!class_exists('bcn_breadcrumb'))
@@ -16,21 +16,26 @@ if(!class_exists('bcn_breadcrumb'))
 }
 //Include the supplemental functions
 require(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
-
 //Security function
 function bcn_security()
 {
 	global $userdata, $bcn_admin_req, $bcn_version, $wp_version;
+	//Make sure $userdata is filled
 	get_currentuserinfo();
-	if ($userdata->user_level < $bcn_admin_req)
+	//If the user_levels aren't proper and the user is not an administrator via capabilities
+	if($userdata->user_level < $bcn_admin_req && $userdata->wp_capabilities['administrator'] != true)
 	{
+		//If user_level is null which tends to cause problems for everyone
 		if($userdata->user_level == NULL)
 		{
 			_e('<strong>Aborting: WordPress API Malfunction</strong><br /> For some reason the 
-				function get_currentuserinfo() did not behave as expected. Please report this bug
-				to the plug-in author. In your report please specify your WordPress version, PHP version,
-				Apache (or whatever HTTP server you are using) verion, and the version of the plug-in you 
-				are using.<br />', 'breadcrumb_navxt');
+				function get_currentuserinfo() did not behave as expected. Your user_level seems to be null.
+				This can be resolved by navigationg to the Users section of the WordPress administrative interface.
+				In this section check the user that you use for administrative purposes. Then under the drop down
+				labled "change role to..." select administrator. Now click the change button. Should you still 
+				recieve this error please report this bug to the plug-in author. In your report please specify 
+				your WordPress version, PHP version, Apache (or whatever HTTP server you are using) verion, and 
+				the version of the plug-in you are using.<br />', 'breadcrumb_navxt');
 			_e('WordPress version: ', 'breadcrumb_navxt');
 			echo $wp_version . '<br />';
 			_e('PHP version: ', 'breadcrumb_navxt');
@@ -38,6 +43,7 @@ function bcn_security()
 			_e('Plug-in version: ', 'breadcrumb_navxt');
 			echo $bcn_version . "<br />";
 		}
+		//Otherwise we have an anauthorized acess attempt
 		else
 		{
 			_e('<strong>Aborting: Insufficient Privleges</strong><br /> Your User Level: ', 'breadcrumb_navxt');
@@ -52,7 +58,7 @@ function bcn_security()
 function bcn_install()
 {
 	global $bcn_admin_req, $bcn_version;
-	//bcn_security();
+	bcn_security();
 	if(get_option('bcn_version') != $bcn_admin_version)
 	{
 		update_option('bcn_version' , $bcn_admin_version);
@@ -221,7 +227,7 @@ function bcn_add_page()
 	global $bcn_admin_req;
     add_options_page('Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');
 }
-//The actual interface
+//The actual administrative interface
 function bcn_admin()
 {
 	global $bcn_admin_req, $bcn_admin_version, $bcn_version;
@@ -245,7 +251,6 @@ function bcn_admin()
 	%sdocumentation%s 
 	for more detailed explanation of each setting.', 'breadcrumb_navxt'), '<a title="Go to the Breadcrumb NavXT online documentation" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>'); ?>
 	</p>
-
 	<form action="options-general.php?page=breadcrumb-nav-xt" method="post" id="bcn_admin_options">
 		<fieldset id="general" class="bcn_options">
 			<legend><h3><?php _e('General Settings:', 'breadcrumb_navxt'); ?></h3></legend>
@@ -292,7 +297,6 @@ function bcn_admin()
 				</tr>
 			</table>
 		</fieldset>
-
 		<fieldset id="static_front_page" class="bcn_options">
 			<legend><h3><?php _e('Static Frontpage Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
@@ -344,7 +348,6 @@ function bcn_admin()
 				</tr>
 			</table>
 		</fieldset>
-
 		<fieldset id="author" class="bcn_options">
 			<legend><h3><?php _e('Author Page Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
@@ -377,7 +380,6 @@ function bcn_admin()
 
 			</table>
 		</fieldset>
-
 		<fieldset id="category" class="bcn_options">
 			<legend><h3><?php _e('Archive Display Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
@@ -457,7 +459,6 @@ function bcn_admin()
 				</tr>
 			</table>
 		</fieldset>
-
 		<fieldset id="current" class="bcn_options">
 			<legend><h3><?php _e('Current Item Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
@@ -523,7 +524,6 @@ function bcn_admin()
 				</tr>
 			</table>
 		</fieldset>
-
 		<fieldset id="single" class="bcn_options">
 			<legend><h3><?php _e('Single Post Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
@@ -637,14 +637,11 @@ function bcn_admin()
 				</tr>
 			</table>
 		</fieldset>
-
 		<p class="submit"><input type="submit" name="bcn_admin_options" value="<?php _e('Save Changes') ?>" /></p>
-
 	</form>
 	</div>
 	<?php
 }
-
 /**
  * bcn_select_options
  *
@@ -668,7 +665,6 @@ function bcn_select_options($optionname, array $options)
 	}
 
 }
-
 /**
  * bcn_select_options_truefalse
  *
