@@ -3,11 +3,11 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.1.0
+Version: 2.1.1
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
-$bcn_admin_version = "2.1.0";
+$bcn_admin_version = "2.1.1";
 $bcn_admin_req = 8;
 //Include the breadcrumb class if needed
 if(!class_exists('bcn_breadcrumb'))
@@ -16,7 +16,11 @@ if(!class_exists('bcn_breadcrumb'))
 }
 //Include the supplemental functions
 require(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
-//Security function
+/**
+ * bcn_security
+ *
+ * Makes sure the user has the proper permissions. Dies on failure.
+ */
 function bcn_security()
 {
 	global $userdata, $bcn_admin_req, $bcn_version, $wp_version;
@@ -54,7 +58,11 @@ function bcn_security()
 		die(); 
 	}
 }
-//Install script
+/**
+ * bcn_install
+ *
+ * Initilizes the administrative interface options if it is a new install, or an upgrade from an incompatible version
+ */
 function bcn_install()
 {
 	global $bcn_admin_req, $bcn_version;
@@ -107,12 +115,21 @@ function bcn_install()
 		update_option('bcn_singleblogpost_tag_suffix', '');
 	}
 }
-//An alias of bcn_display()
+/**
+ * breadcrumb_nav_xt_display
+ *
+ * An alias of bcn_display, exists for legacy compatibility. Use bcn_display instead of this.
+ */
 function breadcrumb_nav_xt_display()
 {
 	bcn_display();
 }
-//Display a breadcrumb, only used if admin interface is used
+/**
+ * bcn_display
+ *
+ * Creates a bcn_breadcrumb object, sets the options per user specification in the 
+ * administration interface and outputs the breadcrumb
+ */
 function bcn_display()
 {
 	//Playing things really safe here
@@ -169,7 +186,11 @@ function bcn_display()
 		$breadcrumb->display();
 	}
 }
-//Sets the settings
+/**
+ * bcn_admin_options
+ *
+ * Grabs and cleans updates to the settings from the administrative interface
+ */
 function bcn_admin_options()
 {
 	global $wpdb, $bcn_admin_req;
@@ -227,7 +248,11 @@ function bcn_add_page()
 	global $bcn_admin_req;
     add_options_page('Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');
 }
-//The actual administrative interface
+/**
+ * bcn_admin
+ *
+ * The actual administration interface
+ */
 function bcn_admin()
 {
 	global $bcn_admin_req, $bcn_admin_version, $bcn_version;
@@ -650,7 +675,7 @@ function bcn_admin()
  * @param (string) optionname name of wordpress options store
  * @param (array) options array of options
  */
-function bcn_select_options($optionname, array $options)
+function bcn_select_options($optionname, $options)
 {
 	$value = get_option($optionname);
 
@@ -663,7 +688,6 @@ function bcn_select_options($optionname, array $options)
 			printf('<option>%s</option>', $option);
 		}
 	}
-
 }
 /**
  * bcn_select_options_truefalse

@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.1.0
+Version: 2.1.8
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -23,7 +23,7 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$bcn_version = "2.1.0";
+$bcn_version = "2.1.8";
 //The main class
 class bcn_breadcrumb
 {
@@ -176,6 +176,34 @@ class bcn_breadcrumb
 		else
 		{
 			$this->breadcrumb['title'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . get_option('home') . '" >' . $this->opt['title_blog'] . '</a>';
+		}
+	}
+	function do_title()
+	{
+		if($this->opt['static_frontpage'] === 'true')
+		{
+			//Single posts, archives of all types, and the author pages are descendents of "blog"
+			if(is_single() || is_archive() || is_author() || (is_home() && $this->opt['link_current_item'] === 'true'))
+			{
+				$this->breadcrumb['title'] = array();
+				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
+				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . $this->opt['url_blog'] . '" >' . $this->opt['title_blog'] . '</a>';
+			}
+			//If its on the blog page but we don't link current
+			else if(is_home())
+			{
+				$this->breadcrumb['title'] = array();
+				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
+				$this->breadcrumb['title'][] = $this->opt['title_blog'];
+			}
+			else
+			{
+				$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
+			}
+		}
+		else
+		{
+			$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . get_option('home') . '" >' . $this->opt['title_blog'] . '</a>';
 		}
 	}
 	//Handle search pages
@@ -402,48 +430,48 @@ class bcn_breadcrumb
 			//If the date format is US style
 			if($this->opt['archive_date_format'] == 'US')
 			{
-				$this->breadcrumb['last']['prefix'] = $this->opt['archive_date_prefix'];
-				$this->breadcrumb['last']['item'] = '<a title="Browse to the ' .
-					get_the_time('F') . ' ' . get_the_time('Y') . ' archive" href="' .
-					get_year_link(get_the_time('Y')) . get_the_time('m') . '">' .
-					get_the_time('F') . '</a>' . ' ' . get_the_time('jS') . ', ' .
-					' <a title="Browse to the ' . get_the_time('Y') . ' archive" href="' .
-					get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a>';
-				$this->breadcrumb['last']['suffix'] = $this->opt['archive_date_suffix'];
+				$this->breadcrumb['last']['prefix'] = $this->opt['archive_date_prefix'] . 
+					'<a title="Browse to the ' . get_the_time('F') . ' ' . get_the_time('Y') . 
+					' archive" href="' . get_year_link(get_the_time('Y')) . get_the_time('m') . 
+					'">' . get_the_time('F') . '</a>' . ' ';
+				$this->breadcrumb['last']['item'] = get_the_time('jS');
+				$this->breadcrumb['last']['suffix'] = ', ' . ' <a title="Browse to the ' . 
+					get_the_time('Y') . ' archive" href="' . get_year_link(get_the_time('Y')) . 
+					'">' . get_the_time('Y') . '</a>' . $this->opt['archive_date_suffix'];
 			}
 			//If the date format is ISO style
 			else if($this->opt['archive_date_format'] == 'ISO')
 			{
-				$this->breadcrumb['last']['prefix'] = $this->opt['archive_date_prefix'];
-				$this->breadcrumb['last']['item'] = ' <a title="Browse to the ' .
-					get_the_time('Y') . ' archive" href="' . get_year_link(get_the_time('Y')) .
-					'">' . get_the_time('Y') . '</a> <a title="Browse to the ' .
-					get_the_time('F') . ' ' . get_the_time('Y') . ' archive" href="' .
-					get_year_link(get_the_time('Y')) . get_the_time('m') . '">' .
-					get_the_time('F') . '</a>' . ' ' . get_the_time('d');
+				$this->breadcrumb['last']['prefix'] = $this->opt['archive_date_prefix'] .
+					' <a title="Browse to the ' . get_the_time('Y') . ' archive" href="' . 
+					get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . 
+					'</a> <a title="Browse to the ' . get_the_time('F') . ' ' . get_the_time('Y') . 
+					' archive" href="' . get_year_link(get_the_time('Y')) . get_the_time('m') . 
+					'">' . get_the_time('F') . '</a>' . ' ';
+				$this->breadcrumb['last']['item'] = get_the_time('d');
 				$this->breadcrumb['last']['suffix'] = $this->opt['archive_date_suffix'];
 			}
 			//If the date format is European style
 			else
 			{
 				$this->breadcrumb['last']['prefix'] = $this->opt['archive_date_prefix'];
-				$this->breadcrumb['last']['item'] = get_the_time('d') . ' ' .
-					'<a title="Browse to the ' . get_the_time('F') . ' ' . get_the_time('Y') .
-					' archive" href="' . get_year_link(get_the_time('Y')) . get_the_time('m') .
-					'">' . get_the_time('F') . '</a>' . ' <a title="Browse to the ' . 
-					get_the_time('Y') . ' archive" href="' . get_year_link(get_the_time('Y')) .
-					'">' . get_the_time('Y') . '</a>';
-				$this->breadcrumb['last']['suffix'] = $this->opt['archive_date_suffix'];
+				$this->breadcrumb['last']['item'] = get_the_time('d');
+				$this->breadcrumb['last']['suffix'] = ' ' .'<a title="Browse to the ' . 
+					get_the_time('F') . ' ' . get_the_time('Y') . ' archive" href="' . 
+					get_year_link(get_the_time('Y')) . get_the_time('m') . '">' . 
+					get_the_time('F') . '</a>' . ' <a title="Browse to the ' . get_the_time('Y') . 
+					' archive" href="' . get_year_link(get_the_time('Y')) . '">' . 
+					get_the_time('Y') . '</a>' . $this->opt['archive_date_suffix'];
 			}
 		}
 		//If it's archives by month
 		else if(is_month())
 		{
 			$this->breadcrumb['last']['prefix'] = $this->opt['archive_date_prefix'];
-			$this->breadcrumb['last']['item'] = get_the_time('F') . ' ' . '<a title="Browse to the ' . 
+			$this->breadcrumb['last']['item'] = get_the_time('F');
+			$this->breadcrumb['last']['suffix'] = ' ' . '<a title="Browse to the ' . 
 				get_the_time('Y') . ' archive" href="' . get_year_link(get_the_time('Y')) . '">' . 
-				get_the_time('Y') . '</a>';
-			$this->breadcrumb['last']['suffix'] = $this->opt['archive_date_suffix'];
+				get_the_time('Y') . '</a>' . $this->opt['archive_date_suffix'];
 		}
 		//If it's archives by year
 		else if(is_year())
@@ -490,31 +518,7 @@ class bcn_breadcrumb
 		//Otherwise we dosomething slightly different
 		else
 		{
-			if($this->opt['static_frontpage'] === 'true')
-			{
-				//Single posts, archives of all types, and the author pages are descendents of "blog"
-				if(is_single() || is_archive() || is_author() || (is_home() && $this->opt['link_current_item'] === 'true'))
-				{
-					$this->breadcrumb['title'] = array();
-					$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
-					$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . $this->opt['url_blog'] . '" >' . $this->opt['title_blog'] . '</a>';
-				}
-				//If its on the blog page but we don't link current
-				else if(is_home())
-				{
-					$this->breadcrumb['title'] = array();
-					$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
-					$this->breadcrumb['title'][] = $this->opt['title_blog'];
-				}
-				else
-				{
-					$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
-				}
-			}
-			else
-			{
-				$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . get_option('home') . '" >' . $this->opt['title_blog'] . '</a>';
-			}
+			$this->do_title();
 		}
 		//For searches
 		if(is_search())
@@ -612,7 +616,7 @@ class bcn_breadcrumb
 			{
 				if($this->opt['link_current_item'] === 'true')
 				{
-					$this->breadcrumb['last']['item'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . $_SERVER['REQUEST_URI'] . '">' . $this->breadcrumb['last']['item'] . '</a>';
+					$this->breadcrumb['last']['item'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . get_option('home') . $_SERVER['REQUEST_URI'] . '">' . $this->breadcrumb['last']['item'] . '</a>';
 				}
 				$bcn_output .= $this->opt['separator'] . $this->opt['current_item_style_prefix'] . $this->breadcrumb['last']['prefix'] . $this->breadcrumb['last']['item'] . $this->breadcrumb['last']['suffix'] . $this->opt['current_item_style_suffix'];
 			}

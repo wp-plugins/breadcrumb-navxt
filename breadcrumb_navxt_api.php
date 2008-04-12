@@ -91,7 +91,11 @@ function bcn_get($varname)
 	//Return unslashed value
 	return $bcn_value;
 }
-//WordPress localization stuff
+/**
+ * bcn_local
+ *
+ * Initilizes localization domain
+ */
 function bcn_local()
 {
 	//Load breadcrumb-navxt translation
