@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.1.8
+Version: 2.1.1
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -23,7 +23,7 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$bcn_version = "2.1.8";
+$bcn_version = "2.1.1";
 //The main class
 class bcn_breadcrumb
 {
@@ -166,7 +166,7 @@ class bcn_breadcrumb
 		//If it's paged, we'll want to link it to the first page
 		else if(is_paged() && $this->opt['paged_display'] === 'true')
 		{
-			$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . get_option('home') . '" >' . $this->opt['title_blog'] . '</a>';
+			$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . get_option('home') . '">' . $this->opt['title_blog'] . '</a>';
 		}
 		//Non-static front page, if link current item is off
 		else if($this->opt['link_current_item'] === 'false') 
@@ -175,7 +175,7 @@ class bcn_breadcrumb
 		}
 		else
 		{
-			$this->breadcrumb['title'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . get_option('home') . '" >' . $this->opt['title_blog'] . '</a>';
+			$this->breadcrumb['title'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . get_option('home') . '">' . $this->opt['title_blog'] . '</a>';
 		}
 	}
 	function do_title()
@@ -187,7 +187,7 @@ class bcn_breadcrumb
 			{
 				$this->breadcrumb['title'] = array();
 				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
-				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . $this->opt['url_blog'] . '" >' . $this->opt['title_blog'] . '</a>';
+				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . $this->opt['url_blog'] . '">' . $this->opt['title_blog'] . '</a>';
 			}
 			//If its on the blog page but we don't link current
 			else if(is_home())
@@ -203,7 +203,7 @@ class bcn_breadcrumb
 		}
 		else
 		{
-			$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . get_option('home') . '" >' . $this->opt['title_blog'] . '</a>';
+			$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . get_option('home') . '">' . $this->opt['title_blog'] . '</a>';
 		}
 	}
 	//Handle search pages
