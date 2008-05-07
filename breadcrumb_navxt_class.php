@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.1.1
+Version: 2.1.2
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -23,7 +23,7 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$bcn_version = "2.1.1";
+$bcn_version = "2.1.2";
 //The main class
 class bcn_breadcrumb
 {
@@ -616,7 +616,7 @@ class bcn_breadcrumb
 			{
 				if($this->opt['link_current_item'] === 'true')
 				{
-					$this->breadcrumb['last']['item'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . get_option('home') . $_SERVER['REQUEST_URI'] . '">' . $this->breadcrumb['last']['item'] . '</a>';
+					$this->breadcrumb['last']['item'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . $this->opt['url_home'] . $_SERVER['REQUEST_URI'] . '">' . $this->breadcrumb['last']['item'] . '</a>';
 				}
 				$bcn_output .= $this->opt['separator'] . $this->opt['current_item_style_prefix'] . $this->breadcrumb['last']['prefix'] . $this->breadcrumb['last']['item'] . $this->breadcrumb['last']['suffix'] . $this->opt['current_item_style_suffix'];
 			}
