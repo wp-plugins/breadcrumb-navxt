@@ -40,7 +40,7 @@ class bcn_breadcrumb
 			//Use it if your blog is available at http://www.site.com/myweblog/, 
 			//and at http://www.site.com/ a Wordpress page is being displayed:
 			//In this case apply '/myweblog/'.
-				'url_blog' => '',//
+				'url_blog' => '',
 			//Display HOME? If set to false, HOME is not being displayed. 
 				'home_display' => 'true',
 			//URL for the home link
