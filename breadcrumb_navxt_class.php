@@ -149,18 +149,22 @@ class bcn_breadcrumb
 	function do_home()
 	{
 		//Static front page
-		if(!is_home() && ($this->opt['static_frontpage'] === 'true' || get_option('page_on_front')) && $this->opt['home_display'] === 'true')
+		if($this->opt['static_frontpage'] === 'true' || get_option('page_on_front'))
 		{
-			//Should we display the home link or not
-			if($this->opt['home_link'])
+			//If we're displaying the home
+			if($this->opt['home_display'] === 'true')
 			{
-				//If so, let's set it up
-				$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
-			}
-			else
-			{
-				//Otherwise just the specified 'title_home' will do
-				$this->breadcrumb['title'] = $this->opt['title_home'];
+				//Should we display the home link or not
+				if($this->opt['home_link'] === 'true')
+				{
+					//If so, let's set it up
+					$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_home'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
+				}
+				else
+				{
+					//Otherwise just the specified 'title_home' will do
+					$this->breadcrumb['title'] = $this->opt['title_home'];
+				}
 			}
 		}
 		//If it's paged, we'll want to link it to the first page
@@ -180,7 +184,7 @@ class bcn_breadcrumb
 	}
 	function do_title()
 	{
-		if($this->opt['static_frontpage'] === 'true')
+		if($this->opt['static_frontpage'] === 'true' || get_option('page_on_front'))
 		{
 			//Single posts, archives of all types, and the author pages are descendents of "blog"
 			if(is_single() || is_archive() || is_author() || (is_home() && $this->opt['link_current_item'] === 'true'))
@@ -519,65 +523,65 @@ class bcn_breadcrumb
 		else
 		{
 			$this->do_title();
-		}
-		//For searches
-		if(is_search())
-		{
-			$this->do_search();
-		}
-		////////////////////////////////////
-		//For pages
-		else if(is_page())
-		{
-			$this->do_page();
-		}
-		////////////////////////////////////
-		//For post/page attachments
-		else if(is_attachment())
-		{
-			$this->do_attachment();
-		}
-		////////////////////////////////////
-		//For blog posts
-		else if(is_single())
-		{
-			$this->do_post();
-		}
-		////////////////////////////////////
-		//For author pages
-		else if(is_author())
-		{
-			$this->do_author();
-		}
-		////////////////////////////////////
-		//For category based archives
-		else if(is_archive() && is_category())
-		{
-			$this->do_archive_by_category();
-		}
-		////////////////////////////////////
-		//For date based archives
-		else if(is_archive() && is_date())
-		{
-			$this->do_archive_by_date();
-		}
-		////////////////////////////////////
-		//For tag based archives
-		else if(is_archive() && is_tag())
-		{
-			$this->do_archive_by_tag();
-		}
-		////////////////////////////////////
-		//For 404 pages
-		else if(is_404())
-		{
-			$this->breadcrumb['last']['item'] = $this->opt['title_404'];
-		}
-		////////////////////////////////////
-		//For paged items
-		if(is_paged() && $this->opt['paged_display'] === 'true')
-		{
-			$this->do_paged();
+			//For searches
+			if(is_search())
+			{
+				$this->do_search();
+			}
+			////////////////////////////////////
+			//For pages
+			else if(is_page())
+			{
+				$this->do_page();
+			}
+			////////////////////////////////////
+			//For post/page attachments
+			else if(is_attachment())
+			{
+				$this->do_attachment();
+			}
+			////////////////////////////////////
+			//For blog posts
+			else if(is_single())
+			{
+				$this->do_post();
+			}
+			////////////////////////////////////
+			//For author pages
+			else if(is_author())
+			{
+				$this->do_author();
+			}
+			////////////////////////////////////
+			//For category based archives
+			else if(is_archive() && is_category())
+			{
+				$this->do_archive_by_category();
+			}
+			////////////////////////////////////
+			//For date based archives
+			else if(is_archive() && is_date())
+			{
+				$this->do_archive_by_date();
+			}
+			////////////////////////////////////
+			//For tag based archives
+			else if(is_archive() && is_tag())
+			{
+				$this->do_archive_by_tag();
+			}
+			////////////////////////////////////
+			//For 404 pages
+			else if(is_404())
+			{
+				$this->breadcrumb['last']['item'] = $this->opt['title_404'];
+			}
+			////////////////////////////////////
+			//For paged items
+			if(is_paged() && $this->opt['paged_display'] === 'true')
+			{
+				$this->do_paged();
+			}
 		}
 	}
 	//Breadcrumb Creation Function
@@ -616,9 +620,13 @@ class bcn_breadcrumb
 			{
 				if($this->opt['link_current_item'] === 'true')
 				{
-					$this->breadcrumb['last']['item'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . $this->opt['url_home'] . $_SERVER['REQUEST_URI'] . '">' . $this->breadcrumb['last']['item'] . '</a>';
+					$this->breadcrumb['last']['item'] = '<a title="' . $this->opt['current_item_urltitle'] . 
+					'" href="' . '">' . 
+					$this->breadcrumb['last']['item'] . '</a>';
 				}
-				$bcn_output .= $this->opt['separator'] . $this->opt['current_item_style_prefix'] . $this->breadcrumb['last']['prefix'] . $this->breadcrumb['last']['item'] . $this->breadcrumb['last']['suffix'] . $this->opt['current_item_style_suffix'];
+				$bcn_output .= $this->opt['separator'] . $this->opt['current_item_style_prefix'] . 
+				$this->breadcrumb['last']['prefix'] . $this->breadcrumb['last']['item'] . 
+				$this->breadcrumb['last']['suffix'] . $this->opt['current_item_style_suffix'];
 			}
 		}
 		//Polyglot compatibility filter
