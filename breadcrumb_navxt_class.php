@@ -496,6 +496,7 @@ class bcn_breadcrumb
 	//Handled paged items
 	function do_paged()
 	{
+		global $paged;
 		//For home pages
 		if(is_home())
 		{
