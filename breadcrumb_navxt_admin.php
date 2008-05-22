@@ -3,11 +3,11 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.1.1
+Version: 2.1.2
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
-$bcn_admin_version = "2.1.1";
+$bcn_admin_version = "2.1.2";
 $bcn_admin_req = 8;
 //Include the breadcrumb class if needed
 if(!class_exists('bcn_breadcrumb'))
