@@ -23,7 +23,7 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$bcn_version = "2.1.2";
+$bcn_version = "2.1.3";
 //The main class
 class bcn_breadcrumb
 {
@@ -294,7 +294,8 @@ class bcn_breadcrumb
 		$bcn_use_category = 0;
 		foreach($bcn_object as $object)
 		{
-			if(is_numeric($object->category_parent) && $bcn_use_category == 0)
+			//We want the first category hiearchy
+			if($object->category_parent > 0 && $bcn_use_category == 0)
 			{
 				$bcn_use_category = $i;
 			}
