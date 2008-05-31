@@ -7,7 +7,7 @@ Version: 2.1.2
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
-$bcn_admin_version = "2.1.2";
+$bcn_admin_version = "2.1.3";
 $bcn_admin_req = 8;
 //Include the breadcrumb class if needed
 if(!class_exists('bcn_breadcrumb'))
@@ -195,6 +195,8 @@ function bcn_admin_options()
 {
 	global $wpdb, $bcn_admin_req;
 	bcn_security();
+	//Do a nonce check, prevent malicious link/form problems
+	check_admin_referer('bcn_admin_options');
 	update_option('bcn_static_frontpage', bcn_get('static_frontpage'));
 	update_option('bcn_url_blog', bcn_get('url_blog'));
 	update_option('bcn_home_display', bcn_get('home_display'));
@@ -269,7 +271,7 @@ function bcn_admin()
 		</div>
 	<?php }
 	?>	
-	<div class="wrap"><h2>Breadcrumb NavXT Settings:</h2>
+	<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>
 	<p><?php printf(__(	'This administration interface allows the full customization of the breadcrumb output with no loss
 	of functionality when compared to manual configuration. Each setting is the same as the corresponding
 	class option, please refer to the 
@@ -277,6 +279,7 @@ function bcn_admin()
 	for more detailed explanation of each setting.', 'breadcrumb_navxt'), '<a title="Go to the Breadcrumb NavXT online documentation" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>'); ?>
 	</p>
 	<form action="options-general.php?page=breadcrumb-nav-xt" method="post" id="bcn_admin_options">
+		<?php wp_nonce_field('bcn_admin_options');?>
 		<fieldset id="general" class="bcn_options">
 			<legend><h3><?php _e('General Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
