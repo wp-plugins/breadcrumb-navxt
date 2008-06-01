@@ -288,7 +288,8 @@ function bcn_admin()
 						<label for="title_blog"><?php _e('Blog Title:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="title_blog" id="title_blog" value="<?php echo bcn_get_option_inputvalue('bcn_title_blog'); ?>" size="32" />
+						<input type="text" name="title_blog" id="title_blog" value="<?php echo bcn_get_option_inputvalue('bcn_title_blog'); ?>" size="32" /><br />
+						<?php _e('Will be displayed on the home page (when not using a static front page), always links to the main post page.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -296,7 +297,8 @@ function bcn_admin()
 						<label for="separator"><?php _e('Breadcrumb Separator:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="separator" id="separator" value="<?php echo bcn_get_option_inputvalue('bcn_separator'); ?>" size="32" />
+						<input type="text" name="separator" id="separator" value="<?php echo bcn_get_option_inputvalue('bcn_separator'); ?>" size="32" /><br />
+						<?php _e('Placed inbetween each part of the breadcrumb.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -326,11 +328,11 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="static_front_page" class="bcn_options">
-			<legend><h3><?php _e('Static Frontpage Settings:', 'breadcrumb_navxt'); ?></h3></legend>
+			<legend><h3><?php _e('Static Front Page Settings:', 'breadcrumb_navxt'); ?></h3></legend>
 			<table class="form-table">
 				<tr valign="top">
 					<th width="33%" scope="row">
-						<label for="static_frontpage"><?php _e('Static Frontpage:', 'breadcrumb_navxt'); ?></label>
+						<label for="static_frontpage"><?php _e('Static Front Page:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<select name="static_frontpage">
@@ -343,7 +345,8 @@ function bcn_admin()
 						<label for="url_blog"><?php _e('Relative Blog URL:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="url_blog" id="url_blog" value="<?php echo bcn_get_option_inputvalue('bcn_url_blog'); ?>" size="32" />
+						<input type="text" name="url_blog" id="url_blog" value="<?php echo bcn_get_option_inputvalue('bcn_url_blog'); ?>" size="32" /><br />
+						<?php _e('The location of the page contains posts compaired to the WordPress Blog address.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -371,7 +374,8 @@ function bcn_admin()
 						<label for="title_home"><?php _e('Home Title:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="title_home" id="title_home" value="<?php echo bcn_get_option_inputvalue('bcn_title_home'); ?>" size="32" />
+						<input type="text" name="title_home" id="title_home" value="<?php echo bcn_get_option_inputvalue('bcn_title_home'); ?>" size="32" /><br />
+						<?php _e('The title applided to the link to the static home page.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 			</table>
@@ -466,7 +470,8 @@ function bcn_admin()
 					<td>
 						<select name="archive_date_format">
 							<?php bcn_select_options('bcn_archive_date_format', array("EU", "US", "ISO")); ?>
-						</select>
+						</select><br />
+						<?php _e('e.g. EU: 14 May 2008, US: May 14, 2008, ISO: 2008 May 14', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -531,7 +536,8 @@ function bcn_admin()
 					<td>
 						<select name="paged_display">
 							<?php bcn_select_options_truefalse('bcn_paged_display'); ?>
-						</select>
+						</select><br />
+						<?php _e('Display an indication that the user is on a page other than the first on items such as multi paged posts.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -605,7 +611,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="title_home"><?php _e('Post Title Maxlen:', 'breadcrumb_navxt'); ?></label>
+						<label for="title_home"><?php _e('Post Title Max Length:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="posttitle_maxlen" id="posttitle_maxlen" value="<?php echo bcn_get_option_inputvalue('bcn_posttitle_maxlen'); ?>" size="10" />
@@ -618,7 +624,8 @@ function bcn_admin()
 					<td>
 						<select name="singleblogpost_taxonomy_display">
 							<?php bcn_select_options_truefalse('bcn_singleblogpost_taxonomy_display'); ?>
-						</select>
+						</select><br />
+						<?php _e('Show the taxonomy leading to a post in the breadcrumb.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -628,7 +635,8 @@ function bcn_admin()
 					<td>
 						<select name="singleblogpost_taxonomy">
 							<?php bcn_select_options('bcn_singleblogpost_taxonomy', array("category", "tag")); ?>
-						</select>
+						</select><br />
+						<?php _e('The taxonomy which the breadcrumb will show.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
