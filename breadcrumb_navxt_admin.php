@@ -336,7 +336,7 @@ function bcn_admin()
 					</th>
 					<td>
 						<select name="static_frontpage">
-							<?php echo bcn_select_options_truefalse('bcn_static_frontpage') ?>
+							<?php echo bcn_select_options('bcn_static_frontpage'); ?>
 						</select>
 					</td>
 				</tr>
@@ -355,7 +355,7 @@ function bcn_admin()
 					</th>
 					<td>
 						<select name="home_display">
-							<?php bcn_select_options_truefalse('bcn_home_display') ?>
+							<?php bcn_select_options('bcn_home_display'); ?>
 						</select>
 					</td>
 				</tr>
@@ -365,7 +365,7 @@ function bcn_admin()
 					</th>
 					<td>
 						<select name="home_link">
-							<?php bcn_select_options_truefalse('bcn_home_link'); ?>
+							<?php bcn_select_options('bcn_home_link'); ?>
 						</select>
 					</td>
 				</tr>
@@ -501,7 +501,7 @@ function bcn_admin()
 					</th>
 					<td>
 						<select name="link_current_item">					
-							<?php bcn_select_options_truefalse('bcn_link_current_item'); ?>
+							<?php bcn_select_options('bcn_link_current_item'); ?>
 						</select>
 					</td>
 				</tr>
@@ -535,7 +535,7 @@ function bcn_admin()
 					</th>
 					<td>
 						<select name="paged_display">
-							<?php bcn_select_options_truefalse('bcn_paged_display'); ?>
+							<?php bcn_select_options('bcn_paged_display'); ?>
 						</select><br />
 						<?php _e('Display an indication that the user is on a page other than the first on items such as multi paged posts.', 'breadcrumb_navxt'); ?>
 					</td>
@@ -623,7 +623,7 @@ function bcn_admin()
 					</th>
 					<td>
 						<select name="singleblogpost_taxonomy_display">
-							<?php bcn_select_options_truefalse('bcn_singleblogpost_taxonomy_display'); ?>
+							<?php bcn_select_options('bcn_singleblogpost_taxonomy_display'); ?>
 						</select><br />
 						<?php _e('Show the taxonomy leading to a post in the breadcrumb.', 'breadcrumb_navxt'); ?>
 					</td>
@@ -681,35 +681,25 @@ function bcn_admin()
 /**
  * bcn_select_options
  *
- * displays wordpress options as <seclect> options
+ * displays wordpress options as <seclect> options defaults to true/false
  *
  * @param (string) optionname name of wordpress options store
- * @param (array) options array of options
+ * @param (array) options array of options defaults to array('true','false')
  */
-function bcn_select_options($optionname, $options)
+function bcn_select_options($optionname, $options = array('true','false'))
 {
 	$value = get_option($optionname);
-
+	//First output the current value
 	printf('<option>%s</option>', $value);
-
+	//Now do the rest
 	foreach($options as $option)
 	{
+		//Don't want multiple occurance of the current value
 		if($option != $value)
 		{
 			printf('<option>%s</option>', $option);
 		}
 	}
-}
-/**
- * bcn_select_options_truefalse
- *
- * displays wordpress options as true/fals <seclect> options
- *
- * @param (string) optionname of wordpress options store
- */
-function bcn_select_options_truefalse($optionname)
-{
-	 bcn_select_options($optionname, array('true', 'false'));
 }
 //Additional styles for admin interface
 function bcn_options_style()
