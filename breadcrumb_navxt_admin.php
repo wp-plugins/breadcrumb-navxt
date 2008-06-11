@@ -375,7 +375,7 @@ function bcn_admin()
 					</th>
 					<td>
 						<input type="text" name="title_home" id="title_home" value="<?php echo bcn_get_option_inputvalue('bcn_title_home'); ?>" size="32" /><br />
-						<?php _e('The title applided to the link to the static home page.', 'breadcrumb_navxt'); ?>
+						<?php _e('The title applied to the link to the static home page.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 			</table>
