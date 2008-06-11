@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Breadcrumb NavXT\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-01-25 16:19-0600\n"
-"PO-Revision-Date: 2008-02-09 17:26+0100\n"
+"PO-Revision-Date: 2008-06-11 13:05+0100\n"
 "Last-Translator: mot <artnorm@gmail.com>\n"
 "Language-Team: Tom Klingenberg <artnorm@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -167,7 +167,7 @@ msgstr "Statische Startseite:"
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
 #: NavXT/breadcrumb_navxt_admin.php:297
 msgid "Relative Blog URL:"
-msgstr "Relatvie Blog URL:"
+msgstr "Relative Blog URL:"
 
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
