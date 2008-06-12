@@ -265,7 +265,7 @@ function bcn_admin()
 	if($breadcrumb_major != $major || $breadcrumb_minor != $minor)
 	{ ?>
 		<div id="message" class="updated fade">
-			<p><?php _e('Warning, your version of Breadcrumb NavXT does not match the version supported by this administrative interface. As a result things may not work as intened.', 'breadcrumb_navxt'); ?></p>
+			<p><?php _e('Warning, your version of Breadcrumb NavXT does not match the version supported by this administrative interface. As a result, settings may not work as expected.', 'breadcrumb_navxt'); ?></p>
 			<p><?php _e('Your Breadcrumb NavXT Administration interface version is ', 'breadcrumb_navxt'); echo $bcn_version; ?>.</p>
 			<p><?php _e('Your Breadcrumb NavXT version is ', 'breadcrumb_navxt'); echo $bcn_admin_version; ?>.</p>
 		</div>
@@ -298,7 +298,7 @@ function bcn_admin()
 					</th>
 					<td>
 						<input type="text" name="separator" id="separator" value="<?php echo bcn_get_option_inputvalue('bcn_separator'); ?>" size="32" /><br />
-						<?php _e('Placed inbetween each part of the breadcrumb.', 'breadcrumb_navxt'); ?>
+						<?php _e('Placed inbetween each breadcrumb.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -346,7 +346,7 @@ function bcn_admin()
 					</th>
 					<td>
 						<input type="text" name="url_blog" id="url_blog" value="<?php echo bcn_get_option_inputvalue('bcn_url_blog'); ?>" size="32" /><br />
-						<?php _e('The location of the page contains posts compaired to the WordPress Blog address.', 'breadcrumb_navxt'); ?>
+						<?php _e('The location of the page that contains posts relative to the WordPress Blog address.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -357,6 +357,7 @@ function bcn_admin()
 						<select name="home_display">
 							<?php bcn_select_options('bcn_home_display'); ?>
 						</select>
+						<?php _e('Should the "Home" crumb be placed in the breadcrumb trail?', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -367,6 +368,7 @@ function bcn_admin()
 						<select name="home_link">
 							<?php bcn_select_options('bcn_home_link'); ?>
 						</select>
+						<?php _e('Should the Home crumb link to the home page?', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
