@@ -24,6 +24,7 @@ Author URI: http://mtekk.weblogs.us/
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 $bcn_version = "2.1.3";
+
 //The main class
 class bcn_breadcrumb
 {
@@ -145,7 +146,14 @@ class bcn_breadcrumb
 			)
 		);
 	}
-	//Handle the home page or the first link part
+
+	/**
+	 * do_home
+	 * 
+	 * Handle the home page or the first link part
+	 *
+	 * @note I suggest to sperate "home" or "the first link part" from each other (TK)
+	 */
 	function do_home()
 	{
 		//Static front page
@@ -179,37 +187,112 @@ class bcn_breadcrumb
 		}
 		else
 		{
-			$this->breadcrumb['title'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . get_option('home') . '">' . $this->opt['title_blog'] . '</a>';
+			//Should we display the home link or not
+			if($this->opt['home_link'] === 'true')
+			{
+				$this->breadcrumb['title'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . get_option('home') . '">' . $this->opt['title_blog'] . '</a>';
+			}
 		}
 	}
+	
+	/**
+	 * do_title
+	 *
+	 * @todo add a description what this function does / is for
+	 */
 	function do_title()
 	{
-		if($this->opt['static_frontpage'] === 'true' || get_option('page_on_front'))
+		/*
+		 * ERROR: two different concepts are mixed. 
+		 * 
+		 * it should be made clear wether the plugin-option an admin set is trusted
+		 *  - or -
+		 * the option is taken directly from wordpress configuraion 
+		 * 
+		 * plugin option: $this->opt['static_frontpage']
+		 * wp option: get_option('show_on_front')
+		 * 
+		 * @see http://codex.wordpress.org/Option_Reference
+		 * 
+		 * 		page_on_front
+		 *  
+		 * 		The ID of the page that should be displayed on the front page. 
+		 * 		Requires show_on_front's value to be page.
+		 * 		Data type: Integer
+		 * 
+		 * 		show_on_front 
+		 * 
+		 * 		What to show on the front page
+		 * 		'posts' : Your latest posts 
+		 *		'page' : A static page (see page_on_front) 
+		 *		Data type: String
+		 * 
+		 * @todo fix logic error, make decision
+		 */
+		
+		/* old and bogus */
+		$blog_has_static_frontpage = (bool) ($this->opt['static_frontpage'] === 'true' || get_option('page_on_front'));
+
+		/* new */
+		$blog_has_static_frontpage = (bool) (get_option('show_on_front') == 'page');
+
+		/* empty title section in breadcrumb array */		
+		$this->breadcrumb['title'] = array();
+		
+		/* set title for all <a> elements */		
+		$title = $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'];
+		
+		
+		/*
+		 * decide wether to do <i>this</i> or <i>that</i>.
+		 * 
+		 * this is done when the blog is using a static frontpage
+		 * that is done when the blog has a standard frontpage		 
+		 */						
+		if($blog_has_static_frontpage)
 		{
-			//Single posts, archives of all types, and the author pages are descendents of "blog"
+			/*
+			 * the blog has a static frontpage, deal with it.
+			 */
 			if(is_single() || is_archive() || is_author() || (is_home() && $this->opt['link_current_item'] === 'true'))
 			{
-				$this->breadcrumb['title'] = array();
-				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
-				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . $this->opt['url_blog'] . '">' . $this->opt['title_blog'] . '</a>';
+				//Single posts, archives of all types, and the author pages are descendents of "blog"
+				$this->breadcrumb['title'][] = sprintf('<a title="%s" href="%s">%s</a>', $title, $this->opt['url_home'], $this->opt['title_home']);
+				$this->breadcrumb['title'][] = sprintf('<a title="%s" href="%s">%s</a>', $title, $this->opt['url_home'] . $this->opt['url_blog'], $this->opt['title_blog']);	
 			}
-			//If its on the blog page but we don't link current
 			else if(is_home())
 			{
-				$this->breadcrumb['title'] = array();
-				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
+				//If its on the blog page but we don't link current ????	
+				$this->breadcrumb['title'][] = sprintf('<a title="%s" href="%s">%s</a>', $title, $this->opt['url_home'], $this->opt['title_home']);
 				$this->breadcrumb['title'][] = $this->opt['title_blog'];
 			}
 			else
-			{
-				$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
+			{	
+				//well, the rest. whatever it takes.
+				//If there is no home displayed, well, then display none
+				if($this->opt['home_display'] === 'true')
+				{		
+					$this->breadcrumb['title'][] = sprintf('<a title="%s" href="%s">%s</a>', $title, $this->opt['url_home'], $this->opt['title_home']);
+				}
 			}
 		}
 		else
 		{
-			$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . get_option('home') . '">' . $this->opt['title_blog'] . '</a>';
+			/*
+			 * the blog has a standard frontpage, deal with it.
+			 */
+			$this->breadcrumb['title'][] = '<a title="' . $title . '" href="' . get_option('home') . '">' . $this->opt['title_blog'] . '</a>';
+		}
+		
+		/*
+		 * this programm has a bug if $this->breadcrumb['title'] is an empty array. 
+		 */
+		if (sizeof($this->breadcrumb['title']) == 0)
+		{
+			$this->breadcrumb['title'][] = '';
 		}
 	}
+	
 	//Handle search pages
 	function do_search()
 	{
@@ -586,13 +669,29 @@ class bcn_breadcrumb
 			}
 		}
 	}
-	//Breadcrumb Creation Function
+	
+	
+	/**
+	 * display
+	 * 
+	 * Breadcrumb Creation Function
+	 * 
+	 * This functions outputs or returns the breadcrumb trail.
+	 *
+	 * @param  (bool)   $bcn_return Wether to return data or to echo it
+	 *	 
+	 * @return (void)   Void if Option to print out breadcrumb trail was chosen.
+	 * @return (string) String-Data of breadcrumb trail. 
+	 */
 	function display($bcn_return = false)
 	{
 		global $bcn_version;
-		////////////////////////////////////
-		//Assemble the breadcrumb
+		
+		/*
+		 * Assemble the breadcrumb 
+		 */
 		$bcn_output = '';
+		
 		if($this->breadcrumb['title'])
 		{
 			if(is_array($this->breadcrumb['title']))
@@ -607,13 +706,14 @@ class bcn_breadcrumb
 			{
 				$bcn_output .= $this->breadcrumb['title'];
 			}
+			
 			if(is_array($this->breadcrumb['middle']))
 			{
 				foreach($this->breadcrumb['middle'] as $bcn_mitem)
 				{
 					$bcn_output .= $this->opt['separator'] . $bcn_mitem;
 				}
-			}
+			}			
 			else if($this->breadcrumb['middle'])
 			{
 				$bcn_output .= $this->opt['separator'] . $this->breadcrumb['middle'];
@@ -631,22 +731,31 @@ class bcn_breadcrumb
 				$this->breadcrumb['last']['suffix'] . $this->opt['current_item_style_suffix'];
 			}
 		}
-		//Polyglot compatibility filter
+		
+		/*
+		 * Polyglot compatibility filter (if it exists)
+		 */
 		if (function_exists('polyglot_filter'))
 		{
 			$bcn_output = polyglot_filter($bcn_output);
-		}
-		//Return it or echo it?
-		if($bcn_return)
+		}		
+		
+		/*
+		 * create version string
+		 * 
+		 * Giving credit where credit is due, please don't remove it
+		 */
+		$version = sprintf('<!-- Breadcrumb, generated by Breadcrumb NavXT %s - http://mtekk.weblogs.us/code -->', $bcn_version );		
+				
+		/*
+		 * Return it or echo it, depending on function parameter $bcn_return
+		 */
+		if($bcn_return) 
 		{
 			return $bcn_output;
 		}
-		else
-		{
-			//Giving credit where credit is due, please don't remove it
-			$bcn_tag = "\n" . "<!-- Breadcrumb, generated by Breadcrumb NavXT " . $bcn_version . " - http://mtekk.weblogs.us/code -->" . "\n";
-			echo $bcn_tag . $bcn_output;
-		}
+		
+		echo $version . $bcn_output;		
 	}
 }
 ?>
