@@ -281,10 +281,10 @@ function bcn_admin()
 	<form action="options-general.php?page=breadcrumb-nav-xt" method="post" id="bcn_admin_options">
 		<?php wp_nonce_field('bcn_admin_options');?>
 		<fieldset id="general" class="bcn_options">
-			<legend><h3><?php _e('General Settings:', 'breadcrumb_navxt'); ?></h3></legend>
+			<h3><?php _e('General Settings:', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
-					<th width="33%" scope="row">
+					<th scope="row">
 						<label for="title_blog"><?php _e('Blog Title:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
@@ -328,14 +328,14 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="static_front_page" class="bcn_options">
-			<legend><h3><?php _e('Static Front Page Settings:', 'breadcrumb_navxt'); ?></h3></legend>
+			<h3><?php _e('Static Front Page Settings:', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
-					<th width="33%" scope="row">
+					<th scope="row">
 						<label for="static_frontpage"><?php _e('Static Front Page:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="static_frontpage">
+						<select name="static_frontpage" id="static_frontpage">
 							<?php echo bcn_select_options('bcn_static_frontpage'); ?>
 						</select>
 					</td>
@@ -354,7 +354,7 @@ function bcn_admin()
 						<label for="home_display"><?php _e('Display Home:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="home_display">
+						<select name="home_display" id="home_display">
 							<?php bcn_select_options('bcn_home_display'); ?>
 						</select>
 						<?php _e('Should the "Home" crumb be placed in the breadcrumb trail?', 'breadcrumb_navxt'); ?>
@@ -365,7 +365,7 @@ function bcn_admin()
 						<label for="home_link"><?php _e('Display Home Link:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="home_link">
+						<select name="home_link" id="home_link">
 							<?php bcn_select_options('bcn_home_link'); ?>
 						</select>
 						<?php _e('Should the Home crumb link to the home page?', 'breadcrumb_navxt'); ?>
@@ -383,10 +383,10 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="author" class="bcn_options">
-			<legend><h3><?php _e('Author Page Settings:', 'breadcrumb_navxt'); ?></h3></legend>
+			<h3><?php _e('Author Page Settings:', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
-					<th width="33%" scope="row">
+					<th scope="row">
 						<label for="author_prefix"><?php _e('Author Prefix:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
@@ -406,7 +406,7 @@ function bcn_admin()
 						<label for="author_display"><?php _e('Author Display Format:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="author_display">
+						<select name="author_display" id="author_display">
 							<?php bcn_select_options('bcn_author_display', array("display_name", "nickname", "first_name", "last_name")); ?>
 						</select>
 					</td>
@@ -415,10 +415,10 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="category" class="bcn_options">
-			<legend><h3><?php _e('Archive Display Settings:', 'breadcrumb_navxt'); ?></h3></legend>
+			<h3><?php _e('Archive Display Settings:', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
-					<th width="33%" scope="row">
+					<th scope="row">
 						<label for="urltitle_prefix"><?php _e('URL Title Prefix:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>					
@@ -470,7 +470,7 @@ function bcn_admin()
 						<label for="archive_date_format"><?php _e('Archive by Date Format:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="archive_date_format">
+						<select name="archive_date_format" id="archive_date_format">
 							<?php bcn_select_options('bcn_archive_date_format', array("EU", "US", "ISO")); ?>
 						</select><br />
 						<?php _e('e.g. EU: 14 May 2008, US: May 14, 2008, ISO: 2008 May 14', 'breadcrumb_navxt'); ?>
@@ -495,14 +495,14 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="current" class="bcn_options">
-			<legend><h3><?php _e('Current Item Settings:', 'breadcrumb_navxt'); ?></h3></legend>
+			<h3><?php _e('Current Item Settings:', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
-					<th width="33%" scope="row">
+					<th scope="row">
 						<label for="link_current_item"><?php _e('Link Current Item:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="link_current_item">					
+						<select name="link_current_item" id="link_current_item">					
 							<?php bcn_select_options('bcn_link_current_item'); ?>
 						</select>
 					</td>
@@ -536,7 +536,7 @@ function bcn_admin()
 						<label for="paged_display"><?php _e('Display Paged Text:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="paged_display">
+						<select name="paged_display" id="paged_display">
 							<?php bcn_select_options('bcn_paged_display'); ?>
 						</select><br />
 						<?php _e('Display an indication that the user is on a page other than the first on items such as multi paged posts.', 'breadcrumb_navxt'); ?>
@@ -561,10 +561,10 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="single" class="bcn_options">
-			<legend><h3><?php _e('Single Post Settings:', 'breadcrumb_navxt'); ?></h3></legend>
+			<h3><?php _e('Single Post Settings:', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
-					<th width="33%" scope="row">
+					<th scope="row">
 						<label for="singleblogpost_prefix"><?php _e('Single Blogpost Prefix:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
@@ -624,7 +624,7 @@ function bcn_admin()
 						<label for="singleblogpost_taxonomy_display"><?php _e('Single Blog Post Taxonomy Display:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="singleblogpost_taxonomy_display">
+						<select name="singleblogpost_taxonomy_display" id="singleblogpost_taxonomy_display">
 							<?php bcn_select_options('bcn_singleblogpost_taxonomy_display'); ?>
 						</select><br />
 						<?php _e('Show the taxonomy leading to a post in the breadcrumb.', 'breadcrumb_navxt'); ?>
@@ -635,7 +635,7 @@ function bcn_admin()
 						<label for="singleblogpost_taxonomy"><?php _e('Single Blog Post Taxonomy:', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="singleblogpost_taxonomy">
+						<select name="singleblogpost_taxonomy" id="singleblogpost_taxonomy">
 							<?php bcn_select_options('bcn_singleblogpost_taxonomy', array("category", "tag")); ?>
 						</select><br />
 						<?php _e('The taxonomy which the breadcrumb will show.', 'breadcrumb_navxt'); ?>
@@ -691,8 +691,13 @@ function bcn_admin()
 function bcn_select_options($optionname, $options = array('true','false'))
 {
 	$value = get_option($optionname);
+	
 	//First output the current value
-	printf('<option>%s</option>', $value);
+	if ($value)
+	{
+		printf('<option>%s</option>', $value);
+	}
+	
 	//Now do the rest
 	foreach($options as $option)
 	{
@@ -707,7 +712,7 @@ function bcn_select_options($optionname, $options = array('true','false'))
 function bcn_options_style()
 {
 ?>
-<style>
+<style type="text/css">
 	.bcn_options{border: none;}
 </style>
 <?php
