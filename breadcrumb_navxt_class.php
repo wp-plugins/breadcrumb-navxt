@@ -289,7 +289,7 @@ class bcn_breadcrumb
 		 */
 		if (sizeof($this->breadcrumb['title']) == 0)
 		{
-			$this->breadcrumb['title'][] = '';
+			// $this->breadcrumb['title'][] = '';
 		}
 	}
 	
@@ -690,47 +690,28 @@ class bcn_breadcrumb
 		/*
 		 * Assemble the breadcrumb 
 		 */
-		$bcn_output = '';
 		
-		if($this->breadcrumb['title'])
+		/* title and middle breadcrumb part */
+		$bcn_breadcrumbs_array = array_merge((array) $this->breadcrumb['title'], (array) $this->breadcrumb['middle']);
+		
+		/* last breadcrumb part */			
+		if($this->breadcrumb['last']['item'] != NULL)
 		{
-			if(is_array($this->breadcrumb['title']))
+			if($this->opt['link_current_item'] === 'true')
 			{
-				//If the title is an array we only allow two entries, so manually unrolling the loop is ok here
-				//Should end up containing 'home'
-				$bcn_output .= $this->breadcrumb['title'][0];
-				//Should end up displaying 'blog'
-				$bcn_output .= $this->opt['separator'] . $this->breadcrumb['title'][1];
+				$this->breadcrumb['last']['item'] = '<a title="' . $this->opt['current_item_urltitle'] . 
+				'" href="' . '">' . 
+				$this->breadcrumb['last']['item'] . '</a>';
 			}
-			else
-			{
-				$bcn_output .= $this->breadcrumb['title'];
-			}
+			$bcn_item = $this->opt['current_item_style_prefix'] . 
+			$this->breadcrumb['last']['prefix'] . $this->breadcrumb['last']['item'] . 
+			$this->breadcrumb['last']['suffix'] . $this->opt['current_item_style_suffix'];
 			
-			if(is_array($this->breadcrumb['middle']))
-			{
-				foreach($this->breadcrumb['middle'] as $bcn_mitem)
-				{
-					$bcn_output .= $this->opt['separator'] . $bcn_mitem;
-				}
-			}			
-			else if($this->breadcrumb['middle'])
-			{
-				$bcn_output .= $this->opt['separator'] . $this->breadcrumb['middle'];
-			}
-			if($this->breadcrumb['last']['item'] != NULL)
-			{
-				if($this->opt['link_current_item'] === 'true')
-				{
-					$this->breadcrumb['last']['item'] = '<a title="' . $this->opt['current_item_urltitle'] . 
-					'" href="' . '">' . 
-					$this->breadcrumb['last']['item'] . '</a>';
-				}
-				$bcn_output .= $this->opt['separator'] . $this->opt['current_item_style_prefix'] . 
-				$this->breadcrumb['last']['prefix'] . $this->breadcrumb['last']['item'] . 
-				$this->breadcrumb['last']['suffix'] . $this->opt['current_item_style_suffix'];
-			}
+			array_push($bcn_breadcrumbs_array, $bcn_item);
 		}
+
+		/* compile */					
+		$bcn_output .= implode($this->opt['separator'], $bcn_breadcrumbs_array);		
 		
 		/*
 		 * Polyglot compatibility filter (if it exists)
