@@ -260,6 +260,8 @@ function bcn_admin()
 	global $bcn_admin_req, $bcn_admin_version, $bcn_version;
 	bcn_security();
 	bcn_local();
+?>
+<?php
 	list($breadcrumb_major, $breadcrumb_minor, $breadcrumb_bugfix) = explode('.', $bcn_version);
 	list($major, $minor, $bugfix) = explode('.', $bcn_admin_version);
 	if($breadcrumb_major != $major || $breadcrumb_minor != $minor)
@@ -280,6 +282,7 @@ function bcn_admin()
 	</p>
 	<form action="options-general.php?page=breadcrumb-nav-xt" method="post" id="bcn_admin_options">
 		<?php wp_nonce_field('bcn_admin_options');?>
+		<div id="hasadmintabs" class="flora">
 		<fieldset id="general" class="bcn_options">
 			<h3><?php _e('General Settings:', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
@@ -675,6 +678,7 @@ function bcn_admin()
 				</tr>
 			</table>
 		</fieldset>
+		</div>
 		<p class="submit"><input type="submit" name="bcn_admin_options" value="<?php _e('Save Changes') ?>" /></p>
 	</form>
 	</div>
@@ -714,7 +718,40 @@ function bcn_options_style()
 ?>
 <style type="text/css">
 	.bcn_options{border: none;}
+	
+	/*
+	 * @colordef #c6d9e9 grey-blue 1 (line below menu)
+	 * @colordef #e4f2fd light-blue "a touch of grey" (background)
+	 */
+	ul.ui-tabs-nav {background:#fff; border-bottom:1px solid #c6d9e9; font-size:12px; height:29px; margin:0; padding:0; padding-left:8px; list-style:none;}	
+	ul.ui-tabs-nav li {display:inline; line-height: 200%; list-style:none; margin: 0; padding:0; position:relative; top:1px; text-align:center; white-space:nowrap;}
+	ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0%; border:1px transparent #fff; border-bottom:1px solid #c6d9e9; float:left; display:block; line-height:28px; padding:1px 7px 0 7px; position:relative; text-decoration:none;}
+	ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px; -moz-border-radius-topright:4px; background:#fff; border:1px solid #c6d9e9; border-bottom-color:#fff;  color:#d54e21; font-weight:normal; padding:0 6px;}
+	ul.ui-tabs-nav a:focus, a:active {outline: none;}
+	#hasadmintabs fieldset {clear:both;}
 </style>
+<!--
+<script type="text/javascript" src="<?php bloginfo( 'wpurl' ); ?>/wp-includes/js/jquery/ui.core.js?ver=2008-06-12"></script>
+<script type="text/javascript" src="<?php bloginfo( 'wpurl' ); ?>/wp-includes/js/jquery/ui.tabs.js?ver=2008-06-12"></script>
+-->
+<script type="text/javascript" src="<?php bloginfo( 'wpurl' ); ?>/wp-includes/js/jquery/ui.tabs.js?ver=2008-01-10"></script>
+<script language="javascript">
+  jQuery(document).ready(function() {
+  	bcn_admin_init_tabs();
+  });
+  function bcn_admin_init_tabs()
+  {
+  	jQuery('#hasadmintabs').prepend('<ul></ul>');
+    jQuery('#hasadmintabs > fieldset').each(function(i){
+    	id      = jQuery(this).attr('id');
+    	caption = jQuery(this).find('h3').text();
+    	// alert(id + ' - ' + caption);
+    	jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+'</span></a></li>');
+    	jQuery(this).find('h3').remove();
+    });    
+    jQuery("#hasadmintabs > ul").tabs();
+  }
+</script>
 <?php
 }
 //WordPress hooks
