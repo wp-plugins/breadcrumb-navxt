@@ -284,11 +284,11 @@ function bcn_admin()
 		<?php wp_nonce_field('bcn_admin_options');?>
 		<div id="hasadmintabs" class="flora">
 		<fieldset id="general" class="bcn_options">
-			<h3><?php _e('General Settings:', 'breadcrumb_navxt'); ?></h3>
+			<h3><?php _e('General Settings', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="title_blog"><?php _e('Blog Title:', 'breadcrumb_navxt'); ?></label>
+						<label for="title_blog"><?php _e('Blog Title', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="title_blog" id="title_blog" value="<?php echo bcn_get_option_inputvalue('bcn_title_blog'); ?>" size="32" /><br />
@@ -297,7 +297,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="separator"><?php _e('Breadcrumb Separator:', 'breadcrumb_navxt'); ?></label>
+						<label for="separator"><?php _e('Breadcrumb Separator', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="separator" id="separator" value="<?php echo bcn_get_option_inputvalue('bcn_separator'); ?>" size="32" /><br />
@@ -306,7 +306,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="search_prefix"><?php _e('Search Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="search_prefix"><?php _e('Search Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="search_prefix" id="search_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_search_prefix'); ?>" size="32" />
@@ -314,7 +314,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="search_suffix"><?php _e('Search Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="search_suffix"><?php _e('Search Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="search_suffix" id="search_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_search_suffix'); ?>" size="32" />
@@ -322,7 +322,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="title_404"><?php _e('404 Title:', 'breadcrumb_navxt'); ?></label>
+						<label for="title_404"><?php _e('404 Title', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="title_404" id="title_404" value="<?php echo bcn_get_option_inputvalue('bcn_title_404'); ?>" size="32" />
@@ -331,11 +331,11 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="static_front_page" class="bcn_options">
-			<h3><?php _e('Static Front Page Settings:', 'breadcrumb_navxt'); ?></h3>
+			<h3><?php _e('Static Front Page Settings', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="static_frontpage"><?php _e('Static Front Page:', 'breadcrumb_navxt'); ?></label>
+						<label for="static_frontpage"><?php _e('Static Front Page', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<select name="static_frontpage" id="static_frontpage">
@@ -345,7 +345,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="url_blog"><?php _e('Relative Blog URL:', 'breadcrumb_navxt'); ?></label>
+						<label for="url_blog"><?php _e('Relative Blog URL', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="url_blog" id="url_blog" value="<?php echo bcn_get_option_inputvalue('bcn_url_blog'); ?>" size="32" /><br />
@@ -354,7 +354,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="home_display"><?php _e('Display Home:', 'breadcrumb_navxt'); ?></label>
+						<label for="home_display"><?php _e('Display Home', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<select name="home_display" id="home_display">
@@ -365,7 +365,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="home_link"><?php _e('Display Home Link:', 'breadcrumb_navxt'); ?></label>
+						<label for="home_link"><?php _e('Display Home Link', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<select name="home_link" id="home_link">
@@ -376,7 +376,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="title_home"><?php _e('Home Title:', 'breadcrumb_navxt'); ?></label>
+						<label for="title_home"><?php _e('Home Title', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="title_home" id="title_home" value="<?php echo bcn_get_option_inputvalue('bcn_title_home'); ?>" size="32" /><br />
@@ -386,11 +386,11 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="author" class="bcn_options">
-			<h3><?php _e('Author Page Settings:', 'breadcrumb_navxt'); ?></h3>
+			<h3><?php _e('Author Page Settings', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="author_prefix"><?php _e('Author Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="author_prefix"><?php _e('Author Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="author_prefix" id="author_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_author_prefix'); ?>" size="32" />
@@ -398,7 +398,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="author_suffix"><?php _e('Author Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="author_suffix"><?php _e('Author Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="author_suffix" id="author_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_author_suffix'); ?>" size="32" />
@@ -406,7 +406,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="author_display"><?php _e('Author Display Format:', 'breadcrumb_navxt'); ?></label>
+						<label for="author_display"><?php _e('Author Display Format', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<select name="author_display" id="author_display">
@@ -418,11 +418,11 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="category" class="bcn_options">
-			<h3><?php _e('Archive Display Settings:', 'breadcrumb_navxt'); ?></h3>
+			<h3><?php _e('Archive Display Settings', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="urltitle_prefix"><?php _e('URL Title Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="urltitle_prefix"><?php _e('URL Title Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>					
 						<input type="text" name="urltitle_prefix" id="urltitle_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_urltitle_prefix'); ?>" size="32" />
@@ -430,7 +430,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="urltitle_suffix"><?php _e('URL Title Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="urltitle_suffix"><?php _e('URL Title Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="urltitle_suffix" id="urltitle_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_urltitle_suffix'); ?>" size="32" />
@@ -438,7 +438,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="archive_category_prefix"><?php _e('Archive by Category Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="archive_category_prefix"><?php _e('Archive by Category Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="archive_category_prefix" id="archive_category_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_category_prefix'); ?>" size="32" />
@@ -446,7 +446,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="archive_category_suffix"><?php _e('Archive by Category Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="archive_category_suffix"><?php _e('Archive by Category Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="archive_category_suffix" id="archive_category_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_category_suffix'); ?>" size="32" />
@@ -454,7 +454,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="archive_date_prefix"><?php _e('Archive by Date Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="archive_date_prefix"><?php _e('Archive by Date Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="archive_date_prefix" id="archive_date_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_date_prefix'); ?>" size="32" />
@@ -462,7 +462,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="archive_date_suffix"><?php _e('Archive by Date Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="archive_date_suffix"><?php _e('Archive by Date Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="archive_date_suffix" id="archive_date_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_date_suffix'); ?>" size="32" />
@@ -470,7 +470,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="archive_date_format"><?php _e('Archive by Date Format:', 'breadcrumb_navxt'); ?></label>
+						<label for="archive_date_format"><?php _e('Archive by Date Format', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<select name="archive_date_format" id="archive_date_format">
@@ -481,7 +481,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="archive_tag_prefix"><?php _e('Archive by Tag Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="archive_tag_prefix"><?php _e('Archive by Tag Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="archive_tag_prefix" id="archive_tag_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_tag_prefix'); ?>" size="32" />
@@ -489,7 +489,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="archive_tag_suffix"><?php _e('Archive by Tag Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="archive_tag_suffix"><?php _e('Archive by Tag Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="archive_tag_suffix" id="archive_tag_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_tag_suffix'); ?>" size="32" />
@@ -498,11 +498,11 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="current" class="bcn_options">
-			<h3><?php _e('Current Item Settings:', 'breadcrumb_navxt'); ?></h3>
+			<h3><?php _e('Current Item Settings', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="link_current_item"><?php _e('Link Current Item:', 'breadcrumb_navxt'); ?></label>
+						<label for="link_current_item"><?php _e('Link Current Item', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<select name="link_current_item" id="link_current_item">					
@@ -512,15 +512,15 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="current_item_urltitle"><?php _e('Current Item URL Title:', 'breadcrumb_navxt'); ?></label>
+						<label for="current_item_urltitle"><?php _e('Current Item URL Title', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="current_item_urltitle" id="current_item_urltitle" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_urltitle'); ?>" size="32" />
+						<input type="text" name="current_item_urltitle" id="current_item_urltitle" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_urltitle'); ?>" size="48" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="current_item_style_prefix"><?php _e('Current Item Style Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="current_item_style_prefix"><?php _e('Current Item Style Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="current_item_style_prefix" id="current_item_style_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_style_prefix'); ?>" size="32" />
@@ -528,7 +528,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="current_item_style_suffix"><?php _e('Current Item Style Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="current_item_style_suffix"><?php _e('Current Item Style Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="current_item_style_suffix" id="current_item_style_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_style_suffix'); ?>" size="32" />
@@ -536,7 +536,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="paged_display"><?php _e('Display Paged Text:', 'breadcrumb_navxt'); ?></label>
+						<label for="paged_display"><?php _e('Display Paged Text', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<select name="paged_display" id="paged_display">
@@ -547,7 +547,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="paged_prefix"><?php _e('Paged Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="paged_prefix"><?php _e('Paged Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="paged_prefix" id="paged_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_paged_prefix'); ?>" size="32" />
@@ -555,7 +555,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="paged_suffix"><?php _e('Paged Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="paged_suffix"><?php _e('Paged Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="paged_suffix" id="paged_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_paged_suffix'); ?>" size="32" />
@@ -568,7 +568,7 @@ function bcn_admin()
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="singleblogpost_prefix"><?php _e('Single Blogpost Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="singleblogpost_prefix"><?php _e('Single Blogpost Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="singleblogpost_prefix" id="singleblogpost_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_prefix'); ?>" size="32" />
@@ -576,7 +576,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="singleblogpost_suffix"><?php _e('Single Blogpost Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="singleblogpost_suffix"><?php _e('Single Blogpost Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="singleblogpost_suffix" id="singleblogpost_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_suffix'); ?>" size="32" />
@@ -584,7 +584,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="page_prefix"><?php _e('Page Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="page_prefix"><?php _e('Page Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="page_prefix" id="page_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_page_prefix'); ?>" size="32" />
@@ -592,7 +592,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="page_suffix"><?php _e('Page Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="page_suffix"><?php _e('Page Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="page_suffix" id="page_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_page_suffix'); ?>" size="32" />
@@ -600,7 +600,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="attachment_prefix"><?php _e('Post Attachment Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="attachment_prefix"><?php _e('Post Attachment Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="attachment_prefix" id="attachment_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_attachment_prefix'); ?>" size="32" />
@@ -608,7 +608,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="attachment_suffix"><?php _e('Post Attachment Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="attachment_suffix"><?php _e('Post Attachment Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="attachment_suffix" id="attachment_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_attachment_suffix'); ?>" size="32" />
@@ -616,7 +616,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="title_home"><?php _e('Post Title Max Length:', 'breadcrumb_navxt'); ?></label>
+						<label for="title_home"><?php _e('Post Title Max Length', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="posttitle_maxlen" id="posttitle_maxlen" value="<?php echo bcn_get_option_inputvalue('bcn_posttitle_maxlen'); ?>" size="10" />
@@ -624,7 +624,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="singleblogpost_taxonomy_display"><?php _e('Single Blog Post Taxonomy Display:', 'breadcrumb_navxt'); ?></label>
+						<label for="singleblogpost_taxonomy_display"><?php _e('Single Blog Post Taxonomy Display', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<select name="singleblogpost_taxonomy_display" id="singleblogpost_taxonomy_display">
@@ -635,7 +635,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="singleblogpost_taxonomy"><?php _e('Single Blog Post Taxonomy:', 'breadcrumb_navxt'); ?></label>
+						<label for="singleblogpost_taxonomy"><?php _e('Single Blog Post Taxonomy', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<select name="singleblogpost_taxonomy" id="singleblogpost_taxonomy">
@@ -646,7 +646,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="singleblogpost_category_prefix"><?php _e('Single Blog Post Category Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="singleblogpost_category_prefix"><?php _e('Single Blog Post Category Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="singleblogpost_category_prefix" id="singleblogpost_category_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_category_prefix'); ?>" size="32" />
@@ -654,7 +654,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="singleblogpost_category_suffix"><?php _e('Single Blog Post Category Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="singleblogpost_category_suffix"><?php _e('Single Blog Post Category Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="singleblogpost_category_suffix" id="singleblogpost_category_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_category_suffix'); ?>" size="32" />
@@ -662,7 +662,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="singleblogpost_tag_prefix"><?php _e('Single Blog Post Tag Prefix:', 'breadcrumb_navxt'); ?></label>
+						<label for="singleblogpost_tag_prefix"><?php _e('Single Blog Post Tag Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="singleblogpost_tag_prefix" id="singleblogpost_tag_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_tag_prefix'); ?>" size="32" />
@@ -670,7 +670,7 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="singleblogpost_tag_suffix"><?php _e('Single Blog Post Tag Suffix:', 'breadcrumb_navxt'); ?></label>
+						<label for="singleblogpost_tag_suffix"><?php _e('Single Blog Post Tag Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<input type="text" name="singleblogpost_tag_suffix" id="singleblogpost_tag_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_tag_suffix'); ?>" size="32" />
@@ -718,7 +718,6 @@ function bcn_options_style()
 ?>
 <style type="text/css">
 	.bcn_options{border: none;}
-	
 	/*
 	 * @colordef #c6d9e9 grey-blue 1 (line below menu)
 	 * @colordef #e4f2fd light-blue "a touch of grey" (background)
@@ -730,10 +729,9 @@ function bcn_options_style()
 	ul.ui-tabs-nav a:focus, a:active {outline: none;}
 	#hasadmintabs fieldset {clear:both;}
 </style>
-<!--
-<script type="text/javascript" src="<?php bloginfo( 'wpurl' ); ?>/wp-includes/js/jquery/ui.core.js?ver=2008-06-12"></script>
-<script type="text/javascript" src="<?php bloginfo( 'wpurl' ); ?>/wp-includes/js/jquery/ui.tabs.js?ver=2008-06-12"></script>
--->
+
+<!--<script type="text/javascript" src="<?php bloginfo( 'wpurl' ); ?>/wp-includes/js/jquery/ui.core.js?ver=2008-06-12"></script>
+<script type="text/javascript" src="<?php bloginfo( 'wpurl' ); ?>/wp-includes/js/jquery/ui.tabs.js?ver=2008-06-12"></script>-->
 <script type="text/javascript" src="<?php bloginfo( 'wpurl' ); ?>/wp-includes/js/jquery/ui.tabs.js?ver=2008-01-10"></script>
 <script language="javascript">
   jQuery(document).ready(function() {
