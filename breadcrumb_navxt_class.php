@@ -25,27 +25,44 @@ Author URI: http://mtekk.weblogs.us/
 */
 $bcn_version = "2.1.3";
 
-//The main class
+/**
+ * bcn_breadcrumb Breadcrumb Plugin Class 
+ *
+ * The main class
+ * 
+ * @todo remove static frontpage options ('static_frontpage')
+ * 
+ * @author John Havlik
+ * @author Tom Klingenberg
+ * @since 2.0.0
+ * @-php-compability 4
+ */
+
 class bcn_breadcrumb
 {
 	var $opt;
 	var $breadcrumb;
-	//Class Constructor
+	/*
+	 * Class Constructor 
+	 */
 	function bcn_breadcrumb()
 	{
 		//Setting array
 		$this->opt = array(
-				'static_frontpage' => 'false',
-			//*** only used if 'static_frontpage' => true
+				
+			// @todo clean removed in 2.1.3 'static_frontpage' => 'false',
+		
+			//*** only used if 'static_frontpage' => true			
 			//Relative URL for your blog's address that is used for the Weblog link. 
 			//Use it if your blog is available at http://www.site.com/myweblog/, 
 			//and at http://www.site.com/ a Wordpress page is being displayed:
 			//In this case apply '/myweblog/'.
-				'url_blog' => '',
+			'url_blog' => '',
+		
 			//Display HOME? If set to false, HOME is not being displayed. 
 				'home_display' => 'true',
-			//URL for the home link
-				'url_home' => get_option('home') . "/",
+			//URL for the home link (Defaults to wordpress standard homepage)
+				'url_home' => bcn_wp_url_home(),
 			//Apply a link to HOME? If set to false, only plain text is being displayed.
 				'home_link' => 'true',
 			//Text displayed for the home link, if you don't want to call it home then just change this.
@@ -151,13 +168,12 @@ class bcn_breadcrumb
 	 * do_home
 	 * 
 	 * Handle the home page or the first link part
-	 *
-	 * @note I suggest to sperate "home" or "the first link part" from each other (TK)
+	 * 	 
 	 */
 	function do_home()
 	{
 		//Static front page
-		if($this->opt['static_frontpage'] === 'true' || get_option('page_on_front'))
+		if(bcn_wp_has_static_frontpage())
 		{
 			//If we're displaying the home
 			if($this->opt['home_display'] === 'true')
@@ -198,50 +214,17 @@ class bcn_breadcrumb
 	/**
 	 * do_title
 	 *
-	 * @todo add a description what this function does / is for
+	 * builds the title part of the breadcrumb
+	 * 	 
+	 * @todo remove link_current_item logic from here.
 	 */
 	function do_title()
 	{
-		/*
-		 * ERROR: two different concepts are mixed. 
-		 * 
-		 * it should be made clear wether the plugin-option an admin set is trusted
-		 *  - or -
-		 * the option is taken directly from wordpress configuraion 
-		 * 
-		 * plugin option: $this->opt['static_frontpage']
-		 * wp option: get_option('show_on_front')
-		 * 
-		 * @see http://codex.wordpress.org/Option_Reference
-		 * 
-		 * 		page_on_front
-		 *  
-		 * 		The ID of the page that should be displayed on the front page. 
-		 * 		Requires show_on_front's value to be page.
-		 * 		Data type: Integer
-		 * 
-		 * 		show_on_front 
-		 * 
-		 * 		What to show on the front page
-		 * 		'posts' : Your latest posts 
-		 *		'page' : A static page (see page_on_front) 
-		 *		Data type: String
-		 * 
-		 * @todo fix logic error, make decision
-		 */
-		
-		/* old and bogus */
-		$blog_has_static_frontpage = (bool) ($this->opt['static_frontpage'] === 'true' || get_option('page_on_front'));
-
-		/* new */
-		$blog_has_static_frontpage = (bool) (get_option('show_on_front') == 'page');
-
 		/* empty title section in breadcrumb array */		
 		$this->breadcrumb['title'] = array();
 		
-		/* set title for all <a> elements */		
+		/* set title for all <a> elements, all time same */		
 		$title = $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'];
-		
 		
 		/*
 		 * decide wether to do <i>this</i> or <i>that</i>.
@@ -249,7 +232,7 @@ class bcn_breadcrumb
 		 * this is done when the blog is using a static frontpage
 		 * that is done when the blog has a standard frontpage		 
 		 */						
-		if($blog_has_static_frontpage)
+		if(bcn_wp_has_static_frontpage())
 		{
 			/*
 			 * the blog has a static frontpage, deal with it.
@@ -262,7 +245,10 @@ class bcn_breadcrumb
 			}
 			else if(is_home())
 			{
-				//If its on the blog page but we don't link current ????	
+				/*
+				 * Current Item should not been linked according to
+				 * $this->opt['link_current_item']
+				 */				
 				$this->breadcrumb['title'][] = sprintf('<a title="%s" href="%s">%s</a>', $title, $this->opt['url_home'], $this->opt['title_home']);
 				$this->breadcrumb['title'][] = $this->opt['title_blog'];
 			}
@@ -321,7 +307,7 @@ class bcn_breadcrumb
 			krsort($bcn_middle);
 		}
 		//Check to advoid Home > Home condition, has quick fallout for non-static conditions
-		if(get_option('page_on_front') == 0 || !$this->opt['static_frontpage'] || (strtolower($bcn_page_title) != strtolower($this->opt['title_home'])))
+		if(get_option('page_on_front') == 0 || !bcn_wp_has_static_frontpage() || (strtolower($bcn_page_title) != strtolower($this->opt['title_home'])))
 		{
 			$this->breadcrumb['middle'] = $bcn_middle;
 			$this->breadcrumb['last']['prefix'] = $this->opt['page_prefix'];
