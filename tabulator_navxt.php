@@ -4,7 +4,7 @@
  * 
  * Add Tabs to the Breadcrumb NavXT Admin Page (and the rest of the admin pages in wp)
  *
- * @version   0.1.0  
+ * @version   0.1.1
  * @author    Tom Klingenberg
  * @copyright by the author, some rights reserved
  * @see http://www.artnorm.de/this-morning-in-bleeding,105,2008-06.html
