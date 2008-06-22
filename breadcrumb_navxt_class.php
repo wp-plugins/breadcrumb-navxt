@@ -189,36 +189,7 @@ class bcn_breadcrumb
 	}
 	function do_title()
 	{
-		/*
-		 * ERROR: two different concepts are mixed. 
-		 * 
-		 * it should be made clear wether the plugin-option an admin set is trusted
-		 *  - or -
-		 * the option is taken directly from wordpress configuraion 
-		 * 
-		 * plugin option: $this->opt['static_frontpage']
-		 * wp option: get_option('show_on_front')
-		 * 
-		 * @see http://codex.wordpress.org/Option_Reference
-		 * 
-		 * 		page_on_front
-		 *  
-		 * 		The ID of the page that should be displayed on the front page. 
-		 * 		Requires show_on_front's value to be page.
-		 * 		Data type: Integer
-		 * 
-		 * 		show_on_front 
-		 * 
-		 * 		What to show on the front page
-		 * 		'posts' : Your latest posts 
-		 *		'page' : A static page (see page_on_front) 
-		 *		Data type: String
-		 * 
-		 * @todo fix logic error, make decision
-		 */
-		// empty title section in breadcrumb array
-		$this->breadcrumb['title'] = array();
-		//set title for all <a> elements				
+		//If there are static front pages we need to make sure that link shows up	
 		if(get_option('show_on_front') == 'page')
 		{
 			//Single posts, archives of all types, and the author pages are descendents of "blog"
@@ -228,16 +199,12 @@ class bcn_breadcrumb
 				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
 				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . $this->opt['url_blog'] . '">' . $this->opt['title_blog'] . '</a>';
 			}
-			//If its on the blog page but we don't link current
+			//If it's on the blog page but we don't link current
 			else if(is_home())
 			{
 				$this->breadcrumb['title'] = array();
 				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
 				$this->breadcrumb['title'][] = $this->opt['title_blog'];
-			}
-			else
-			{
-				$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
 			}
 		}
 		else
