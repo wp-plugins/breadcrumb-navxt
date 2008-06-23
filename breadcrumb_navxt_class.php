@@ -149,7 +149,7 @@ class bcn_breadcrumb
 	function do_home()
 	{
 		//Static front page
-		if($this->opt['static_frontpage'] === 'true' || get_option('show_on_front') == 'page')
+		if(get_option('show_on_front') == 'page')
 		{
 			//If we're displaying the home
 			if($this->opt['home_display'] === 'true')
@@ -189,11 +189,11 @@ class bcn_breadcrumb
 	}
 	function do_title()
 	{
-		//If there are static front pages we need to make sure that link shows up	
+		//If there are static front pages we need to make sure that link shows up as well as the blog title.	
 		if(get_option('show_on_front') == 'page')
 		{
 			//Single posts, archives of all types, and the author pages are descendents of "blog"
-			if(is_single() || is_archive() || is_author() || (is_home() && $this->opt['link_current_item'] === 'true'))
+			if(is_page() || is_single() || is_archive() || is_author() || (is_home() && $this->opt['link_current_item'] === 'true'))
 			{
 				$this->breadcrumb['title'] = array();
 				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';

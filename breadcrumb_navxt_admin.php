@@ -424,7 +424,7 @@ function bcn_admin()
 						</label><br />
 						<label for="home_link">
 							<input name="home_link" type="checkbox" id="home_link" value="true" <?php checked('true', get_option('bcn_home_link')); ?> />
-							<?php _e('Links to Homepage', 'breadcrumb_navxt') ?> - <?php _e('Should the Home crumb link to the home page?', 'breadcrumb_navxt'); ?>																							
+							<?php _e('Links to Homepage', 'breadcrumb_navxt') ?> - <?php _e('Should the "Home" crumb link to the home page?', 'breadcrumb_navxt'); ?>																							
 						</label><br />						
 						<?php printf(__('URL of the Homepage is %s', 'breadcrumb_navxt'), sprintf('<em>%s</em>',  bcn_wp_url_home())) ?>
 					</td>
