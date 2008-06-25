@@ -177,11 +177,7 @@ class bcn_breadcrumb
 		{
 			$this->breadcrumb['title'] = $this->opt['title_blog'];
 		}
-		//Should we display the home link or not
-		else if($this->opt['home_link'] === 'true')
-		{
-			$this->breadcrumb['title'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . get_option('home') . '">' . $this->opt['title_blog'] . '</a>';
-		}
+		//Default to linking this is kinda hackish as we usually don't build links for the current item outside of the assembler
 		else
 		{
 			$this->breadcrumb['title'] = '<a title="' . $this->opt['current_item_urltitle'] . '" href="' . get_option('home') . '">' . $this->opt['title_blog'] . '</a>';
