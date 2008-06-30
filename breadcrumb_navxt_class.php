@@ -641,9 +641,14 @@ class bcn_breadcrumb
 			}
 		}
 		//Polyglot compatibility filter
-		if (function_exists('polyglot_filter'))
+		if(function_exists('polyglot_filter'))
 		{
 			$bcn_output = polyglot_filter($bcn_output);
+		}
+		//qTranslate compatibility filter
+		if(function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage'))
+		{
+			$bcn_output = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($bcn_output);	
 		}
 		//Return it or echo it?
 		if($bcn_return)
