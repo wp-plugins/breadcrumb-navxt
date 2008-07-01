@@ -107,7 +107,7 @@ function bcn_install()
 		add_option('bcn_home_link', 'true');
 		add_option('bcn_title_home', 'Home');
 		add_option('bcn_title_blog', 'Blog');
-		add_option('bcn_separator', '&nbsp;>&nbsp;');
+		add_option('bcn_separator', '&nbsp;&gt;&nbsp;');
 		add_option('bcn_search_prefix', 'Search results for &#39;');
 		add_option('bcn_search_suffix', '&#39;');
 		add_option('bcn_author_prefix', 'Posts by ');
