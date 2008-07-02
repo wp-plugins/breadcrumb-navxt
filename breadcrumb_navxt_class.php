@@ -101,7 +101,7 @@ class bcn_breadcrumb_trail
 			//Place in the breadcrumb's elements
 			$bcn_trail_str .= $breadcrumb->prefix;
 			//If we are linked we'll need to do up the link
-			if($breadcrumb->linked)
+			if($breadcrumb->linked && $bcn_linked)
 			{
 				$bcn_trail_str .= $breadcrumb->anchor . $breadcrumb->title . "</a>";
 			}
