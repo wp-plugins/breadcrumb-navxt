@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.1.2
+Version: 2.1.3
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -189,10 +189,14 @@ class bcn_breadcrumb
 		if(get_option('show_on_front') == 'page')
 		{
 			//Single posts, archives of all types, and the author pages are descendents of "blog"
-			if(is_page() || is_single() || is_archive() || is_author() || (is_home() && $this->opt['link_current_item'] === 'true'))
+			if(is_page())
+			{
+				$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_home'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
+			}
+			else if(is_single() || is_archive() || is_author() || (is_home() && $this->opt['link_current_item'] === 'true'))
 			{
 				$this->breadcrumb['title'] = array();
-				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
+				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_home'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . '">' . $this->opt['title_home'] . '</a>';
 				$this->breadcrumb['title'][] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . $this->opt['url_home'] . $this->opt['url_blog'] . '">' . $this->opt['title_blog'] . '</a>';
 			}
 			//If it's on the blog page but we don't link current
