@@ -39,6 +39,14 @@ class breadcrumb
 	var $prefix;
 	//Global suffix, outside of link tags
 	var $suffix;
+	//Default constructor
+	function breadcrumb()
+	{
+		//Default state of unlinked
+		$this->linked = false;
+		//Always NULL if unlinked
+		$this->anchor = NULL;
+	}
 }
 
 //The trail class
@@ -61,16 +69,207 @@ class bcn_breadcrumb_trail
 			//Separator that is placed between each item in the breadcrumb navigation, but not placed before
 			//the first and not after the last element. You also can use images here,
 			//e.g. '<img src="separator.gif" title="separator" width="10" height="8" />'
-			'separator' => ' &gt; '
+			'separator' => ' &gt; ',
+			//Current item options
+			'current_item_linked' => false,
+			'current_item_anchor' => '<a title="" href="%link%">',
+			'current_item_prefix' => '',
+			'current_item_suffix' => ''
 		);
 	}
 	//The do filling functions
-	
-	//The fill function
+	/**
+	 * do_search
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for a search page.
+	 */
+	function do_search()
+	{
+		Global $s;
+		//Add new breadcrumb to the trail
+		$this->trail[] = new breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['search_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['search_suffix'];
+		//Assign the title
+		$bcn_breadcrumb->title = wp_specialchars($s, 1);
+	}
+	/**
+	 * do_author
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for an author page.
+	 */
+	function do_author()
+	{
+		//Add new breadcrumb to the trail
+		$this->trail[] = new breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['author_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['author_suffix'];
+		//Get the Author name, note it is an array
+		$bcn_curauth = (get_query_var('author_name')) ? get_userdatabylogin(get_query_var('author_name')) : get_userdata(get_query_var('author'));
+		//Get the Author display type
+		$bcn_authdisp = $this->opt['author_display'];
+		//Make sure user picks only safe values
+		if($bcn_authdisp == 'nickname' || $bcn_authdisp == 'nickname' || $bcn_authdisp == 'first_name' || $bcn_authdisp == 'last_name' || $bcn_authdisp == 'display_name')
+		{
+			//Assign the title
+			$bcn_breadcrumb->title = $bcn_curauth->$bcn_authdisp;
+		}
+	}
+	/**
+	 * page_parents
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This recursive functions fills the trail with breadcrumbs for parent pages.
+	 * @param  (int)   $id The id of the parent page.
+	 */
+	function page_parents($id)
+	{
+		//Add new breadcrumb to the trail
+		$this->trail[] = new breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['page_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['page_suffix'];
+		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
+		$bcn_parent = get_post($id);
+		//Assign the title
+		$bcn_breadcrumb->title = $bcn_parent->post_title;
+		//Assign the anchor properties
+		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_parent->post_title, str_replace("%link%", get_permalink($id), $this->opt['page_suffix']));
+		//We want this to be linked
+		$bcn_breadcrumb->title = true;
+		//Figure out the next parent id
+		$bcn_parent_id  = $bcn_parent->post_parent;
+		//Make sure the id is valid
+		if(is_numeric($bcn_parent_id) && $bcn_parent_id != 0)
+		{
+			//If valid, recursivly call this function
+			page_parents($bcn_parent_id);
+		}
+	}
+	/**
+	 * do_page
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for a atatic page.
+	 */
+	function do_page()
+	{
+		global $post;
+		//Add new breadcrumb to the trail
+		$this->trail[] = new breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['current_item_suffix'];
+		//Assign the title, using our older method to replace in the future
+		$bcn_breadcrumb->title = trim(wp_title('', false));
+		//Done with the current item, now on to the parents
+		$bcn_parent_id = $post->post_parent;
+		//If there is a parent page let's find it
+		if(is_numeric($bcn_parent_id) && $bcn_parent_id != 0)
+		{
+			page_parents($bcn_parent_id);
+		}	
+	}
+	/**
+	 * fill
+	 * 
+	 * Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills the breadcrumb trail.
+	 */
 	function fill()
 	{
+		global $wpdb, $post, $wp_query, $bcn_version, $paged;
+		////////////////////////////////////
+		//Do specific opperations for the various page types
+		////////////////////////////////////
+		//Check if this isn't the first of a multi paged item
+		if(is_paged() && $this->opt['paged_display'] === 'true')
+		{
+			$this->do_paged();
+		}
+		//For the home/front page
+		if(is_front_page())
+		{
+			$this->do_home();
+		}
+		//For searches
+		else if(is_search())
+		{
+			$this->do_search();
+		}
+		////////////////////////////////////
+		//For pages
+		else if(is_page())
+		{
+			$this->do_page();
+		}
+		////////////////////////////////////
+		//For post/page attachments
+		else if(is_attachment())
+		{
+			$this->do_attachment();
+		}
+		////////////////////////////////////
+		//For blog posts
+		else if(is_single())
+		{
+			$this->do_post();
+		}
+		////////////////////////////////////
+		//For author pages
+		else if(is_author())
+		{
+			$this->do_author();
+		}
+		////////////////////////////////////
+		//For category based archives
+		else if(is_archive() && is_category())
+		{
+			$this->do_archive_by_category();
+		}
+		////////////////////////////////////
+		//For date based archives
+		else if(is_archive() && is_date())
+		{
+			$this->do_archive_by_date();
+		}
+		////////////////////////////////////
+		//For tag based archives
+		else if(is_archive() && is_tag())
+		{
+			$this->do_archive_by_tag();
+		}
+		////////////////////////////////////
+		//For 404 pages
+		else if(is_404())
+		{
+			$this->breadcrumb['last']['item'] = $this->opt['title_404'];
+		}
+		//We always do the home link last
+		$this->do_home();
 		//We build the trail backwards the last thing to do is to get it back to normal order
-		rsort($this->trail);
+		krsort($this->trail);
 	}
 	/**
 	 * display
@@ -254,7 +453,6 @@ class bcn_breadcrumb
 			)
 		);
 	}
-	//Handle the home page or the first link part
 	//Handle the home page or the first link part
 	function do_home()
 	{
