@@ -186,7 +186,7 @@ class bcn_breadcrumb
 	function do_title()
 	{
 		//If there are static front pages we need to make sure that link shows up as well as the blog title.	
-		if(get_option('show_on_front') == 'page')
+		if(get_option('show_on_front') == 'page' && $this->opt['home_display'] === 'true')
 		{
 			//Single posts, archives of all types, and the author pages are descendents of "blog"
 			if(is_page())
