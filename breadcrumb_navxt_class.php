@@ -371,10 +371,10 @@ class bcn_breadcrumb
 		//Trim post title if needed
 		if($this->opt['posttitle_maxlen'] > 0 && (strlen($bcn_post_title) + 3) > $this->opt['posttitle_maxlen'])
 		{
-			$bcn_post_title2 = substr($bcn_post_title, 0, $this->opt['posttitle_maxlen']-1);
+			$bcn_post_title = substr($bcn_post_title, 0, $this->opt['posttitle_maxlen'] - 1);
 			$bcn_count = $this->opt['posttitle_maxlen'];
-			//Make sure we can split at a space
-			if(strpos($bcn_post_title, " ") > $this->opt['posttitle_maxlen'] / 4)
+			//Make sure we can split at a space, but we want to limmit to cutting at max an additional 25%
+			if(strpos($bcn_post_title, " ", 3 * $this->opt['posttitle_maxlen'] / 4) > 0)
 			{
 				//Don't split mid word
 				while(substr($bcn_post_title,-1) != " ")
