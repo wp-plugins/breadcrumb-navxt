@@ -26,7 +26,7 @@ Author URI: http://mtekk.weblogs.us/
 //Internal version number, may differ from above
 $bcn_version = "2.2.0";
 //The breadcrumb class
-class breadcrumb
+class bcn_breadcrumb
 {
 	//Our member variables
 	//The main text that will be shown
@@ -46,6 +46,31 @@ class breadcrumb
 		$this->linked = false;
 		//Always NULL if unlinked
 		$this->anchor = NULL;
+	}
+	/**
+	 * title_trim
+	 * 
+	 * This function will intelligently trim the title to the value passed in through $max_length.
+	 * 
+	 * @param (int) max_length of the title.
+	 */
+	function title_trim($max_length)
+	{
+		if((strlen($this->title) + 3) > $max_length)
+		{
+			$this->title = substr($this->title, $max_length - 1);
+			//Make sure we can split at a space, but we want to limmit to cutting at max an additional 25%
+			if(strpos($this->title, " ", 3 * $max_length / 4) > 0)
+			{
+				//Don't split mid word
+				while(substr($this->title,-1) != " ")
+				{
+					$this->title = substr($this->title, 0, -1);
+				}
+			}
+			//remove the whitespace at the end and add the hellip
+			$this->title = rtrim($this->title) . '&hellip;';
+		}
 	}
 }
 
@@ -70,11 +95,28 @@ class bcn_breadcrumb_trail
 			//the first and not after the last element. You also can use images here,
 			//e.g. '<img src="separator.gif" title="separator" width="10" height="8" />'
 			'separator' => ' &gt; ',
-			//Current item options
+			//The maximum title lenght
+			'max_title_length' => 0,
+			//Current item options, really only applies to static pages and posts unless other current items are linked
 			'current_item_linked' => false,
-			'current_item_anchor' => '<a title="" href="%link%">',
+			//The anchor template for current items, this is global, two keywords are available %link% and %title%
+			'current_item_anchor' => '<a title="Reload the current page." href="%link%">',
+			//The prefix for current items allows separate styling of the current location breadcrumb
 			'current_item_prefix' => '',
-			'current_item_suffix' => ''
+			//The suffix for current items allows separate styling of the current location breadcrumb
+			'current_item_suffix' => '',
+			//Static page options
+			//The prefix for page breadcrumbs, place on all page elements and outside of current_item prefix
+			'page_prefix' => '',
+			//The suffix for page breadcrumbs, place on all page elements and outside of current_item suffix
+			'page_suffix' => '',
+			//The anchor template for page breadcrumbs, two keywords are available %link% and %title%
+			'page_anchor' => '<a title="Go to %title%." href="%link%">',
+			//The post options previously singleblogpost
+			//Should the trail include the taxonomy of the post
+			'post_taxonomy_display' => true,
+			//What taxonomy should be shown leading to the post, tag or category
+			'post_taxonomy_type' => 'category'
 		);
 	}
 	//The do filling functions
@@ -87,9 +129,9 @@ class bcn_breadcrumb_trail
 	 */
 	function do_search()
 	{
-		Global $s;
+		global $s;
 		//Add new breadcrumb to the trail
-		$this->trail[] = new breadcrumb();
+		$this->trail[] = new bcn_breadcrumb();
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
 		//Assign the prefix
@@ -98,6 +140,56 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->suffix = $this->opt['search_suffix'];
 		//Assign the title
 		$bcn_breadcrumb->title = wp_specialchars($s, 1);
+	}
+	/**
+	 * do_attachment
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for an attachment page.
+	 */
+	function do_attachment()
+	{
+		global $post;
+		//Add new breadcrumb to the trail
+		$this->trail[] = new bcn_breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['attachment_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['attachment_suffix'];
+		//Addign the title, still using old method
+		$bcn_breadcrumb->title = trim(wp_title('', false));
+		//Get the parent page/post of the attachment
+		$bcn_parent_id = $post->post_parent;
+		//Get the parent's information
+		$bcn_parent = get_post($bcn_parent_id);
+		//We need to treat post and page attachment hierachy differently
+		if($bcn_parent->post_type == "page")
+		{
+			//Place the rest of the page hierachy
+			$this->page_parents($bcn_parent_id);
+		}
+		else
+		{
+			//Add new breadcrumb to the trail
+			$this->trail[] = new bcn_breadcrumb();
+			//Figure out where we placed the crumb, make a nice pointer to it
+			$bcn_breadcrumb = &$this->trail[count($this->trail)--];
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['attachment_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['attachment_suffix'];
+			//Get the parent's information
+			$bcn_parent = get_post($bcn_parent_id);
+			//Adding the title, still using old method
+			$bcn_breadcrumb->title = $bcn_parent->post_title;
+			//Assign the anchor properties
+			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_parent->post_title, str_replace("%link%", get_permalink($id), $this->opt['post_anchor']));
+			//We want this to be linked
+			$bcn_breadcrumb->linked = true;
+		}
 	}
 	/**
 	 * do_author
@@ -109,7 +201,7 @@ class bcn_breadcrumb_trail
 	function do_author()
 	{
 		//Add new breadcrumb to the trail
-		$this->trail[] = new breadcrumb();
+		$this->trail[] = new bcn_breadcrumb();
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
 		//Assign the prefix
@@ -121,7 +213,7 @@ class bcn_breadcrumb_trail
 		//Get the Author display type
 		$bcn_authdisp = $this->opt['author_display'];
 		//Make sure user picks only safe values
-		if($bcn_authdisp == 'nickname' || $bcn_authdisp == 'nickname' || $bcn_authdisp == 'first_name' || $bcn_authdisp == 'last_name' || $bcn_authdisp == 'display_name')
+		if($bcn_authdisp == 'nickname' || $bcn_authdisp == 'first_name' || $bcn_authdisp == 'last_name' || $bcn_authdisp == 'display_name')
 		{
 			//Assign the title
 			$bcn_breadcrumb->title = $bcn_curauth->$bcn_authdisp;
@@ -138,7 +230,7 @@ class bcn_breadcrumb_trail
 	function page_parents($id)
 	{
 		//Add new breadcrumb to the trail
-		$this->trail[] = new breadcrumb();
+		$this->trail[] = new bcn_breadcrumb();
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
 		//Assign the prefix
@@ -150,9 +242,9 @@ class bcn_breadcrumb_trail
 		//Assign the title
 		$bcn_breadcrumb->title = $bcn_parent->post_title;
 		//Assign the anchor properties
-		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_parent->post_title, str_replace("%link%", get_permalink($id), $this->opt['page_suffix']));
+		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_parent->post_title, str_replace("%link%", get_permalink($id), $this->opt['page_anchor']));
 		//We want this to be linked
-		$bcn_breadcrumb->title = true;
+		$bcn_breadcrumb->linked = true;
 		//Figure out the next parent id
 		$bcn_parent_id  = $bcn_parent->post_parent;
 		//Make sure the id is valid
@@ -173,13 +265,13 @@ class bcn_breadcrumb_trail
 	{
 		global $post;
 		//Add new breadcrumb to the trail
-		$this->trail[] = new breadcrumb();
+		$this->trail[] = new bcn_breadcrumb();
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
 		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'];
+		$bcn_breadcrumb->prefix = $this->opt['page_prefix'] . $this->opt['current_item_prefix'];
 		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['current_item_suffix'];
+		$bcn_breadcrumb->suffix = $this->opt['current_item_suffix'] . $this->opt['page_suffix'];
 		//Assign the title, using our older method to replace in the future
 		$bcn_breadcrumb->title = trim(wp_title('', false));
 		//Done with the current item, now on to the parents
@@ -188,7 +280,134 @@ class bcn_breadcrumb_trail
 		if(is_numeric($bcn_parent_id) && $bcn_parent_id != 0)
 		{
 			page_parents($bcn_parent_id);
-		}	
+		}
+	}
+	/**
+	 * post_tag
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for the tags of a post
+	 * 
+	 * @TODO	Need to implement this cleaner, possibly a recursive object
+	 */
+	function post_tags()
+	{
+		global $post;
+		//Add new breadcrumb to the trail
+		$this->trail[] = new bcn_breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
+		//Fills a temporary object with the tags for the post
+		$bcn_object = get_the_tags($post->ID);
+		//Only process if we have tags
+		if(is_array($bcn_object))
+		{
+			$i = true;
+			foreach($bcn_object as $tag)
+			{
+				//On the first run we don't need a separator
+				if($i)
+				{
+					$bcn_breadcrumb->title = $this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
+					$i = false;
+				}
+				else
+				{
+					$bcn_breadcrumb->title .= ', ' .$this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
+				}
+			}
+		}
+		else
+		{
+			$bcn_breadcrumb->title = "Untaged";	
+		}
+	}
+	/**
+	 * category_parents
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This recursive functions fills the trail with breadcrumbs for parent categories.
+	 * @param  (int)   $id The id of the parent category.
+	 */
+	function category_parents($id)
+	{
+		global $post;
+		//We kick out of the recursive loop when the id is not valid
+		if($id)
+		{
+			//Add new breadcrumb to the trail
+			$this->trail[] = new bcn_breadcrumb();
+			//Figure out where we placed the crumb, make a nice pointer to it
+			$bcn_breadcrumb = &$this->trail[count($this->trail)--];
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['category_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['category_suffix'];
+			//Get the current category object
+			$bcn_category = get_category($id);
+			//Figure out the anchor for the first category
+			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_category->cat_name, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
+			//We want this to be linked
+			$bcn_breadcrumb->linked = true;
+			//Figure out the rest of the category hiearchy via recursion
+			$this->category_parents($bcn_category->category_parent);
+		}
+	}
+	/**
+	 * do_post
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for a posts.
+	 */
+	function do_post()
+	{
+		global $post;
+		//Add new breadcrumb to the trail
+		$this->trail[] = new bcn_breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['page_prefix'] . $this->opt['current_item_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['current_item_suffix'] . $this->opt['page_suffix'];
+		//Assign the title, using our older method to replace in the future
+		$bcn_breadcrumb->title = trim(wp_title('', false));
+		//Check to see if breadcrumbs for the taxonomy of the post needs to be generated
+		if($this->opt['post_taxonomy_display'])
+		{
+			//Figure out which taxonomy is desired
+			if($this->opt['post_taxonomy'] == 'tag')
+			{
+				$this->post_tags();
+			}
+			else
+			{
+				//Fills the temp object to get the categories 
+				$bcn_object = get_the_category();
+				//Now find which one has a parent, pick the first one that does
+				$i = 0;
+				$bcn_use_category = 0;
+				foreach($bcn_object as $object)
+				{
+					//We want the first category hiearchy
+					if($object->category_parent > 0 && $bcn_use_category == 0)
+					{
+						$bcn_use_category = $i;
+					}
+					$i++;
+				}
+				//Fill out the category hiearchy
+				$this->category_parents($bcn_use_category);
+			}
+		}
+		//If our max title length is greater than 0 we should do something
+		if($this->opt['max_title_length'] > 0)
+		{
+			$bcn_breadcrumb->title_trim($this->opt['max_title_length']);
+		}
 	}
 	/**
 	 * fill
@@ -333,7 +552,7 @@ class bcn_breadcrumb_trail
 
 
 //The main class
-class bcn_breadcrumb
+class bcn_breadcrumb_old
 {
 	var $opt;
 	var $breadcrumb;
@@ -516,200 +735,6 @@ class bcn_breadcrumb
 			$this->breadcrumb['title'] = '<a title="' . $this->opt['urltitle_prefix'] . $this->opt['title_blog'] . $this->opt['urltitle_suffix'] . '" href="' . get_option('home') . '">' . $this->opt['title_blog'] . '</a>';
 		}
 	}
-	//Handle search pages
-	function do_search()
-	{
-		Global $s;
-		//Get the search prefix
-		$this->breadcrumb['last']['prefix'] = $this->opt['search_prefix'];
-		//Get the searched text
-		$this->breadcrumb['last']['item'] = wp_specialchars($s, 1);
-		//Get the search suffix
-		$this->breadcrumb['last']['suffix'] = $this->opt['search_suffix'];
-	}
-	//Handle "static" pages
-	function do_page()
-	{
-		global $post;
-		//Get the post title, this is a more robust method than using $post
-		$bcn_page_title = trim(wp_title('', false));
-		$bcn_parent_id = $post->post_parent;
-		$bcn_middle = array();
-		if($bcn_parent_id != 0)
-		{
-			//Fill the initial page
-			//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
-			$bcn_parent = get_post($bcn_parent_id);
-			$bcn_middle[] = '<a href="' . get_permalink($bcn_parent_id) . '" title="' . $this->opt['urltitle_prefix'] . $bcn_parent->post_title . $this->opt['urltitle_suffix'] . '">' . $bcn_parent->post_title . '</a>';
-			$bcn_parent_id  = $bcn_parent->post_parent;
-			while(is_numeric($bcn_parent_id) && $bcn_parent_id != 0)
-			{
-				$bcn_parent = get_post($bcn_parent_id);
-				//Pushback a page into the array
-				$bcn_middle[] = '<a href="' . get_permalink($bcn_parent_id) . '" title="' . $this->opt['urltitle_prefix'] . $bcn_parent->post_title . $this->opt['urltitle_suffix'] . '">' . $bcn_parent->post_title . '</a>';
-				$bcn_parent_id = $bcn_parent->post_parent;
-			}
-			krsort($bcn_middle);
-		}
-		//Check to advoid Home > Home condition, has quick fallout for non-static conditions
-		if(get_option('page_on_front') == 0 || !$this->opt['static_frontpage'] || (strtolower($bcn_page_title) != strtolower($this->opt['title_home'])))
-		{
-			$this->breadcrumb['middle'] = $bcn_middle;
-			$this->breadcrumb['last']['prefix'] = $this->opt['page_prefix'];
-			$this->breadcrumb['last']['item'] = $bcn_page_title;
-			$this->breadcrumb['last']['suffix'] = $this->opt['page_suffix'];
-		}		
-	}
-	//Handle attachment pages
-	function do_attachment()
-	{
-		global $post;
-		//Blog link and parent page
-		$bcn_parent_id = $post->post_parent;
-		//Get the parent information
-		$bcn_parent = get_post($bcn_parent_id);
-		//If the parent is a page we treat attachments like pages
-		if($bcn_parent->post_type == "page")
-		{
-			$this->do_page();
-		}
-		//Otherwise we treat them like attachments
-		else
-		{
-			//Setup the attachment's parent link
-			$bcn_parents = '<a title="' . $this->opt['urltitle_prefix'] .
-			$bcn_parent->post_title . $this->opt['urltitle_suffix'] . '" href="' . get_permalink($bcn_parent_id) . '">' . $bcn_parent->post_title . '</a>';
-			$this->breadcrumb['middle'] = $bcn_parents;
-			//Attachment prefix text
-			$this->breadcrumb['last']['prefix'] = $this->opt['attachment_prefix'];
-			//Get attachment name
-			$this->breadcrumb['last']['item'] = trim(wp_title('', false));
-			//Attachment suffix text
-			$this->breadcrumb['last']['suffix'] = $this->opt['attachment_suffix'];
-		}	
-	}
-	//Figure out the categories leading up to the post
-	function single_categories()
-	{
-		global $post;
-		$this->breadcrumb['middle'] = array();
-		//Fills the object to get 
-		$bcn_object = get_the_category();
-		//Now find which one has a parrent, pick the first one that does
-		$i = 0;
-		$bcn_use_category = 0;
-		foreach($bcn_object as $object)
-		{
-			//We want the first category hiearchy
-			if($object->category_parent > 0 && $bcn_use_category == 0)
-			{
-				$bcn_use_category = $i;
-			}
-			$i++;
-		}
-		//Get parents of current category
-		$bcn_category = $bcn_object[$bcn_use_category];
-		//Fill the initial category
-		$this->breadcrumb['middle'][] = $this->opt['singleblogpost_category_prefix'] . '<a href="' . get_category_link($bcn_category->cat_ID) . '" title="' . $this->opt['urltitle_prefix'] . $bcn_category->cat_name . $this->opt['urltitle_suffix'] . '">' . $bcn_category->cat_name . '</a>'. $this->opt['singleblogpost_category_suffix'];
-		$bcn_parent_id  = $bcn_category->category_parent;
-		while($bcn_parent_id)
-		{
-			$bcn_category = get_category($bcn_parent_id);
-			//Pushback a category into the array
-			$this->breadcrumb['middle'][] = $this->opt['singleblogpost_category_prefix'] . '<a href="' . get_category_link($bcn_category->cat_ID) . '" title="' . $this->opt['urltitle_prefix'] . $bcn_category->cat_name . $this->opt['urltitle_suffix'] . '">' . $bcn_category->cat_name . '</a>' . $this->opt['singleblogpost_category_suffix'];
-			$bcn_parent_id = $bcn_category->category_parent;
-		}
-		//We need to reverse the order (by key) to get the proper output
-		krsort($this->breadcrumb['middle']);
-	}
-	//Figure out the tags leading up to the post
-	function single_tags()
-	{
-		global $post;
-		//Fills the object with the tags for the post
-		$bcn_object = get_the_tags($post->ID);
-		$i = 0;
-		//Only process if we have tags
-		if(is_array($bcn_object))
-		{
-			foreach($bcn_object as $tag)
-			{
-				//On the first run we don't need a separator
-				if($i == 0)
-				{
-					$bcn_tags = $this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
-					$i = 2;
-				}
-				else
-				{
-					$bcn_tags .= ', ' .$this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
-	
-				}
-			}
-		}
-		else
-		{
-			$bcn_tags = "Untaged";	
-		}
-		$this->breadcrumb['middle'] = $bcn_tags;
-	}
-	//Handle single posts
-	function do_post()
-	{
-		global $post;
-		//Get the post title, this is a more robust method than using $post
-		$bcn_post_title = trim(wp_title('', false));
-		//Add categories if told to
-		if($this->opt['singleblogpost_taxonomy_display'] === 'true')
-		{		
-			//If we're supposed to do tag hiearchy do that instead of category
-			if($this->opt['singleblogpost_taxonomy'] == 'tag')
-			{
-				$this->single_tags();
-			}
-			else
-			{
-				$this->single_categories();
-			}
-		}
-		//Trim post title if needed
-		if($this->opt['posttitle_maxlen'] > 0 && (strlen($bcn_post_title) + 3) > $this->opt['posttitle_maxlen'])
-		{
-			$bcn_post_title2 = substr($bcn_post_title, 0, $this->opt['posttitle_maxlen']-1);
-			$bcn_count = $this->opt['posttitle_maxlen'];
-			//Make sure we can split at a space
-			if(strpos($bcn_post_title, " ") > $this->opt['posttitle_maxlen'] / 4)
-			{
-				//Don't split mid word
-				while(substr($bcn_post_title,-1) != " ")
-				{
-					$bcn_post_title = substr($bcn_post_title, 0, -1);
-				}
-			}
-			//remove the whitespace at the end and add the hellip
-			$bcn_post_title = rtrim($bcn_post_title) . '&hellip;';
-		}
-		//Place it all in the array
-		$this->breadcrumb['last']['prefix'] = $this->opt['singleblogpost_prefix'];
-		$this->breadcrumb['last']['item'] = $bcn_post_title;
-		$this->breadcrumb['last']['suffix'] = $this->opt['singleblogpost_suffix'];		
-	}
-	//Handle author pages
-	function do_author()
-	{
-		//Author prefix text
-		$this->breadcrumb['last']['prefix'] = $this->opt['author_prefix'];
-		//Get the Author name, note it is an array
-		$bcn_curauth = (get_query_var('author_name')) ? get_userdatabylogin(get_query_var('author_name')) : get_userdata(get_query_var('author'));
-		//Get the Author display type
-		$bcn_authdisp = $this->opt['author_display'];
-		//Make sure user picks only safe values
-		if($bcn_authdisp == 'nickname' || $bcn_authdisp == 'nickname' || $bcn_authdisp == 'first_name' || $bcn_authdisp == 'last_name' || $bcn_authdisp == 'display_name')
-		{
-			$this->breadcrumb['last']['item'] = $bcn_curauth->$bcn_authdisp;
-		}
-		$this->breadcrumb['last']['suffix'] = $this->opt['author_suffix'];
-	}
 	//Handle category based archives
 	function do_archive_by_category()
 	{
@@ -813,156 +838,6 @@ class bcn_breadcrumb
 		else
 		{
 			$this->breadcrumb['last']['suffix'] .= $this->opt['paged_prefix'] . $paged . $this->opt['paged_suffix'];
-		}
-	}
-	//This function assembles the breadcrumb for the current page
-	function assemble()
-	{
-		global $wpdb, $post, $wp_query, $bcn_version, $paged;
-		////////////////////////////////////
-		//Do specific opperations for the various page types
-		////////////////////////////////////
-		//For the home/front page
-		if(is_front_page())
-		{
-			$this->do_home();
-		}
-		//Otherwise we dosomething slightly different
-		else
-		{
-			$this->do_title();
-			//For searches
-			if(is_search())
-			{
-				$this->do_search();
-			}
-			////////////////////////////////////
-			//For pages
-			else if(is_page())
-			{
-				$this->do_page();
-			}
-			////////////////////////////////////
-			//For post/page attachments
-			else if(is_attachment())
-			{
-				$this->do_attachment();
-			}
-			////////////////////////////////////
-			//For blog posts
-			else if(is_single())
-			{
-				$this->do_post();
-			}
-			////////////////////////////////////
-			//For author pages
-			else if(is_author())
-			{
-				$this->do_author();
-			}
-			////////////////////////////////////
-			//For category based archives
-			else if(is_archive() && is_category())
-			{
-				$this->do_archive_by_category();
-			}
-			////////////////////////////////////
-			//For date based archives
-			else if(is_archive() && is_date())
-			{
-				$this->do_archive_by_date();
-			}
-			////////////////////////////////////
-			//For tag based archives
-			else if(is_archive() && is_tag())
-			{
-				$this->do_archive_by_tag();
-			}
-			////////////////////////////////////
-			//For 404 pages
-			else if(is_404())
-			{
-				$this->breadcrumb['last']['item'] = $this->opt['title_404'];
-			}
-			////////////////////////////////////
-			//For paged items
-			if(is_paged() && $this->opt['paged_display'] === 'true')
-			{
-				$this->do_paged();
-			}
-		}
-	}
-	/**
-	 * display
-	 * 
-	 * Breadcrumb Creation Function
-	 * 
-	 * This functions outputs or returns the breadcrumb trail.
-	 *
-	 * @param  (bool)   $bcn_return Wether to return data or to echo it
-	 *	 
-	 * @return (void)   Void if Option to print out breadcrumb trail was chosen.
-	 * @return (string) String-Data of breadcrumb trail. 
-	 */
-	function display($bcn_return = false)
-	{
-		global $bcn_version;
-		////////////////////////////////////
-		//Assemble the breadcrumb
-		$bcn_output = '';
-		if($this->breadcrumb['title'])
-		{
-			if(is_array($this->breadcrumb['title']))
-			{
-				//If the title is an array we only allow two entries, so manually unrolling the loop is ok here
-				//Should end up containing 'home'
-				$bcn_output .= $this->breadcrumb['title'][0];
-				//Should end up displaying 'blog'
-				$bcn_output .= $this->opt['separator'] . $this->breadcrumb['title'][1];
-			}
-			else
-			{
-				$bcn_output .= $this->breadcrumb['title'];
-			}
-			if(is_array($this->breadcrumb['middle']))
-			{
-				foreach($this->breadcrumb['middle'] as $bcn_mitem)
-				{
-					$bcn_output .= $this->opt['separator'] . $bcn_mitem;
-				}
-			}
-			else if($this->breadcrumb['middle'])
-			{
-				$bcn_output .= $this->opt['separator'] . $this->breadcrumb['middle'];
-			}
-			if($this->breadcrumb['last']['item'] != NULL)
-			{
-				if($this->opt['link_current_item'] === 'true')
-				{
-					$this->breadcrumb['last']['item'] = '<a title="' . $this->opt['current_item_urltitle'] . 
-					'" href="' . '">' . 
-					$this->breadcrumb['last']['item'] . '</a>';
-				}
-				$bcn_output .= $this->opt['separator'] . $this->opt['current_item_style_prefix'] . 
-				$this->breadcrumb['last']['prefix'] . $this->breadcrumb['last']['item'] . 
-				$this->breadcrumb['last']['suffix'] . $this->opt['current_item_style_suffix'];
-			}
-		}
-		//Polyglot compatibility filter
-		if (function_exists('polyglot_filter'))
-		{
-			$bcn_output = polyglot_filter($bcn_output);
-		}
-		//Return it or echo it?
-		if($bcn_return)
-		{
-			return $bcn_output;
-		}
-		else
-		{
-			//Giving credit where credit is due, please don't remove it
-			$bcn_tag = "<!-- \nBreadcrumb, generated by Breadcrumb NavXT " . $bcn_version . " - http://mtekk.weblogs.us/code \n-->";
-			echo $bcn_tag . $bcn_output;
 		}
 	}
 }
