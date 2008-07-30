@@ -159,8 +159,8 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->prefix = $this->opt['attachment_prefix'];
 		//Assign the suffix
 		$bcn_breadcrumb->suffix = $this->opt['attachment_suffix'];
-		//Addign the title, still using old method
-		$bcn_breadcrumb->title = trim(wp_title('', false));
+		//Addign the title, using a better method
+		$bcn_breadcrumb->title = get_the_title();
 		//Get the parent page/post of the attachment
 		$bcn_parent_id = $post->post_parent;
 		//Get the parent's information
@@ -183,8 +183,8 @@ class bcn_breadcrumb_trail
 			$bcn_breadcrumb->suffix = $this->opt['attachment_suffix'];
 			//Get the parent's information
 			$bcn_parent = get_post($bcn_parent_id);
-			//Adding the title, still using old method
-			$bcn_breadcrumb->title = $bcn_parent->post_title;
+			//Adding the title, throw it through the filters
+			$bcn_breadcrumb->title = apply_filters("the_title", $bcn_parent->post_title);
 			//Assign the anchor properties
 			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_parent->post_title, str_replace("%link%", get_permalink($id), $this->opt['post_anchor']));
 			//We want this to be linked
@@ -216,7 +216,7 @@ class bcn_breadcrumb_trail
 		if($bcn_authdisp == 'nickname' || $bcn_authdisp == 'first_name' || $bcn_authdisp == 'last_name' || $bcn_authdisp == 'display_name')
 		{
 			//Assign the title
-			$bcn_breadcrumb->title = $bcn_curauth->$bcn_authdisp;
+			$bcn_breadcrumb->title = apply_filters("the_author", $bcn_curauth->$bcn_authdisp);
 		}
 	}
 	/**
@@ -240,7 +240,7 @@ class bcn_breadcrumb_trail
 		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
 		$bcn_parent = get_post($id);
 		//Assign the title
-		$bcn_breadcrumb->title = $bcn_parent->post_title;
+		$bcn_breadcrumb->title = apply_filters("the_title", $bcn_parent->post_title);
 		//Assign the anchor properties
 		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_parent->post_title, str_replace("%link%", get_permalink($id), $this->opt['page_anchor']));
 		//We want this to be linked
@@ -273,7 +273,7 @@ class bcn_breadcrumb_trail
 		//Assign the suffix
 		$bcn_breadcrumb->suffix = $this->opt['current_item_suffix'] . $this->opt['page_suffix'];
 		//Assign the title, using our older method to replace in the future
-		$bcn_breadcrumb->title = trim(wp_title('', false));
+		$bcn_breadcrumb->title = get_the_title();
 		//Done with the current item, now on to the parents
 		$bcn_parent_id = $post->post_parent;
 		//If there is a parent page let's find it
@@ -347,6 +347,8 @@ class bcn_breadcrumb_trail
 			$bcn_breadcrumb->suffix = $this->opt['category_suffix'];
 			//Get the current category object
 			$bcn_category = get_category($id);
+			//Setup the title, throw it through a filter
+			$bcn_breadcrumb->title = apply_filters("get_category", $bcn_category->cat_name);
 			//Figure out the anchor for the first category
 			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_category->cat_name, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
 			//We want this to be linked
@@ -374,7 +376,7 @@ class bcn_breadcrumb_trail
 		//Assign the suffix
 		$bcn_breadcrumb->suffix = $this->opt['current_item_suffix'] . $this->opt['page_suffix'];
 		//Assign the title, using our older method to replace in the future
-		$bcn_breadcrumb->title = trim(wp_title('', false));
+		$bcn_breadcrumb->title = get_the_title();
 		//Check to see if breadcrumbs for the taxonomy of the post needs to be generated
 		if($this->opt['post_taxonomy_display'])
 		{
