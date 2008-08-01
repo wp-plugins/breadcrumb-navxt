@@ -91,9 +91,8 @@ class bcn_breadcrumb_trail
 		$this->opt = array
 		(
 			'home_display' => 'true',
-			//Separator that is placed between each item in the breadcrumb navigation, but not placed before
-			//the first and not after the last element. You also can use images here,
-			//e.g. '<img src="separator.gif" title="separator" width="10" height="8" />'
+			//Separator that is placed between each item in the breadcrumb trial, but not placed before
+			//the first and not after the last breadcrumb
 			'separator' => ' &gt; ',
 			//The maximum title lenght
 			'max_title_length' => 0,
@@ -108,15 +107,39 @@ class bcn_breadcrumb_trail
 			//Static page options
 			//The prefix for page breadcrumbs, place on all page elements and outside of current_item prefix
 			'page_prefix' => '',
-			//The suffix for page breadcrumbs, place on all page elements and outside of current_item suffix
+			//The suffix for page breadcrumbs, place on all page elements and inside of current_item suffix
 			'page_suffix' => '',
 			//The anchor template for page breadcrumbs, two keywords are available %link% and %title%
 			'page_anchor' => '<a title="Go to %title%." href="%link%">',
 			//The post options previously singleblogpost
+			//The prefix for post breadcrumbs, place on all page elements and outside of current_item prefix
+			'post_prefix' => '',
+			//The suffix for post breadcrumbs, place on all page elements and inside of current_item suffix
+			'post_suffix' => '',
 			//Should the trail include the taxonomy of the post
 			'post_taxonomy_display' => true,
 			//What taxonomy should be shown leading to the post, tag or category
-			'post_taxonomy_type' => 'category'
+			'post_taxonomy_type' => 'category',
+			//Attachment settings
+			//The prefix for attachment breadcrumbs, place on all page elements and outside of current_item prefix
+			'attachment_prefix' => '',
+			//The suffix for attachment breadcrumbs, place on all page elements and inside of current_item suffix
+			'attachment_suffix' => '',
+			//404 page settings
+			//The prefix for 404 breadcrumbs, place on all page elements and outside of current_item prefix
+			'404_prefix' => '',
+			//The suffix for 404 breadcrumbs, place on all page elements and inside of current_item suffix
+			'404_suffix' => '',
+			//The text to be shown in the breadcrumb for a 404 page
+			'404_title' => '404',
+			//Search page options
+			//The prefix for search breadcrumbs, place on all page elements and outside of current_item prefix
+			'search_prefix' => '',
+			//The suffix for search breadcrumbs, place on all page elements and inside of current_item suffix
+			'search_suffix' => '',
+			//Tag related stuff
+			'tag_prefix' => '',
+			'tag_suffix' => ''
 		);
 	}
 	//The do filling functions
@@ -135,9 +158,9 @@ class bcn_breadcrumb_trail
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
 		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['search_prefix'];
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['search_prefix'];
 		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['search_suffix'];
+		$bcn_breadcrumb->suffix = $this->opt['search_suffix'] . $this->opt['current_item_suffix'];
 		//Assign the title
 		$bcn_breadcrumb->title = wp_specialchars($s, 1);
 	}
@@ -156,9 +179,9 @@ class bcn_breadcrumb_trail
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
 		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['attachment_prefix'];
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['attachment_prefix'];
 		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['attachment_suffix'];
+		$bcn_breadcrumb->suffix = $this->opt['attachment_suffix'] . $this->opt['current_item_suffix'];
 		//Addign the title, using a better method
 		$bcn_breadcrumb->title = get_the_title();
 		//Get the parent page/post of the attachment
@@ -178,9 +201,9 @@ class bcn_breadcrumb_trail
 			//Figure out where we placed the crumb, make a nice pointer to it
 			$bcn_breadcrumb = &$this->trail[count($this->trail)--];
 			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['attachment_prefix'];
+			$bcn_breadcrumb->prefix = $this->opt['post_prefix'];
 			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['attachment_suffix'];
+			$bcn_breadcrumb->suffix = $this->opt['post_suffix'];
 			//Get the parent's information
 			$bcn_parent = get_post($bcn_parent_id);
 			//Adding the title, throw it through the filters
@@ -205,15 +228,15 @@ class bcn_breadcrumb_trail
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
 		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['author_prefix'];
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['author_prefix'];
 		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['author_suffix'];
+		$bcn_breadcrumb->suffix = $this->opt['author_suffix'] . $this->opt['current_item_suffix'];
 		//Get the Author name, note it is an array
 		$bcn_curauth = (get_query_var('author_name')) ? get_userdatabylogin(get_query_var('author_name')) : get_userdata(get_query_var('author'));
 		//Get the Author display type
 		$bcn_authdisp = $this->opt['author_display'];
 		//Make sure user picks only safe values
-		if($bcn_authdisp == 'nickname' || $bcn_authdisp == 'first_name' || $bcn_authdisp == 'last_name' || $bcn_authdisp == 'display_name')
+		if($bcn_authdisp == "nickname" || $bcn_authdisp == "first_name" || $bcn_authdisp == "last_name" || $bcn_authdisp == "display_name")
 		{
 			//Assign the title
 			$bcn_breadcrumb->title = apply_filters("the_author", $bcn_curauth->$bcn_authdisp);
@@ -269,9 +292,9 @@ class bcn_breadcrumb_trail
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
 		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['page_prefix'] . $this->opt['current_item_prefix'];
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['page_prefix'];
 		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['current_item_suffix'] . $this->opt['page_suffix'];
+		$bcn_breadcrumb->suffix = $this->opt['page_suffix'] . $this->opt['current_item_suffix'];
 		//Assign the title, using our older method to replace in the future
 		$bcn_breadcrumb->title = get_the_title();
 		//Done with the current item, now on to the parents
@@ -309,12 +332,12 @@ class bcn_breadcrumb_trail
 				//On the first run we don't need a separator
 				if($i)
 				{
-					$bcn_breadcrumb->title = $this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
+					$bcn_breadcrumb->title = $this->opt['post_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['post_tag_suffix'];
 					$i = false;
 				}
 				else
 				{
-					$bcn_breadcrumb->title .= ', ' .$this->opt['singleblogpost_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['singleblogpost_tag_suffix'];
+					$bcn_breadcrumb->title .= ', ' .$this->opt['post_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['post_tag_suffix'];
 				}
 			}
 		}
@@ -372,9 +395,9 @@ class bcn_breadcrumb_trail
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail)--];
 		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['page_prefix'] . $this->opt['current_item_prefix'];
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['post_prefix'];
 		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['current_item_suffix'] . $this->opt['page_suffix'];
+		$bcn_breadcrumb->suffix = $this->opt['post_suffix'] . $this->opt['current_item_suffix'];
 		//Assign the title, using our older method to replace in the future
 		$bcn_breadcrumb->title = get_the_title();
 		//Check to see if breadcrumbs for the taxonomy of the post needs to be generated
@@ -485,7 +508,15 @@ class bcn_breadcrumb_trail
 		//For 404 pages
 		else if(is_404())
 		{
-			$this->breadcrumb['last']['item'] = $this->opt['title_404'];
+			$this->trail[] = new bcn_breadcrumb();
+			//Figure out where we placed the crumb, make a nice pointer to it
+			$bcn_breadcrumb = &$this->trail[count($this->trail)--];
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['404_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['404_suffix'] . $this->opt['current_item_suffix'];
+			//Assign the title, using our older method to replace in the future
+			$bcn_breadcrumb->title = $this->opt['404_title'];
 		}
 		//We always do the home link last
 		$this->do_home();
