@@ -105,14 +105,14 @@ class bcn_breadcrumb_trail
 			//The suffix for current items allows separate styling of the current location breadcrumb
 			'current_item_suffix' => '',
 			//Static page options
-			//The prefix for page breadcrumbs, place on all page elements and outside of current_item prefix
+			//The prefix for page breadcrumbs, place on all page elements and inside of current_item prefix
 			'page_prefix' => '',
 			//The suffix for page breadcrumbs, place on all page elements and inside of current_item suffix
 			'page_suffix' => '',
 			//The anchor template for page breadcrumbs, two keywords are available %link% and %title%
 			'page_anchor' => '<a title="Go to %title%." href="%link%">',
 			//The post options previously singleblogpost
-			//The prefix for post breadcrumbs, place on all page elements and outside of current_item prefix
+			//The prefix for post breadcrumbs, place on all page elements and inside of current_item prefix
 			'post_prefix' => '',
 			//The suffix for post breadcrumbs, place on all page elements and inside of current_item suffix
 			'post_suffix' => '',
@@ -123,41 +123,52 @@ class bcn_breadcrumb_trail
 			//What taxonomy should be shown leading to the post, tag or category
 			'post_taxonomy_type' => 'category',
 			//Attachment settings
-			//The prefix for attachment breadcrumbs, place on all page elements and outside of current_item prefix
+			//The prefix for attachment breadcrumbs, place on all page elements and inside of current_item prefix
 			'attachment_prefix' => '',
 			//The suffix for attachment breadcrumbs, place on all page elements and inside of current_item suffix
 			'attachment_suffix' => '',
 			//404 page settings
-			//The prefix for 404 breadcrumbs, place on all page elements and outside of current_item prefix
+			//The prefix for 404 breadcrumbs, place on all page elements and inside of current_item prefix
 			'404_prefix' => '',
 			//The suffix for 404 breadcrumbs, place on all page elements and inside of current_item suffix
 			'404_suffix' => '',
 			//The text to be shown in the breadcrumb for a 404 page
 			'404_title' => '404',
 			//Search page options
-			//The prefix for search breadcrumbs, place on all page elements and outside of current_item prefix
-			'search_prefix' => '',
+			//The prefix for search breadcrumbs, place on all page elements and inside of current_item prefix
+			'search_prefix' => 'Search results for &#39;',
 			//The suffix for search breadcrumbs, place on all page elements and inside of current_item suffix
-			'search_suffix' => '',
+			'search_suffix' => '&#39;',
 			//Tag related stuff
-			//The prefix for tag breadcrumbs, place on all page elements and outside of current_item prefix
+			//The prefix for tag breadcrumbs, place on all page elements and inside of current_item prefix
 			'tag_prefix' => '',
 			//The suffix for tag breadcrumbs, place on all page elements and inside of current_item suffix
 			'tag_suffix' => '',
+			//Which of the various WordPress display types should the author crumb display
+			'tag_anchor' => '<a title="Go to the %title% tag archives." href="%link%">',
 			//Author page stuff
-			//The prefix for author breadcrumbs, place on all page elements and outside of current_item prefix
+			//The prefix for author breadcrumbs, place on all page elements and inside of current_item prefix
 			'author_prefix' => 'Articles by: ',
 			//The suffix for author breadcrumbs, place on all page elements and inside of current_item suffix
 			'author_suffix' => '',
 			//Which of the various WordPress display types should the author crumb display
 			'author_display' => 'display_name',
 			//Category stuff
-			//The prefix for category breadcrumbs, place on all page elements and outside of current_item prefix
+			//The prefix for category breadcrumbs, place on all page elements and inside of current_item prefix
 			'category_prefix' => '',
 			//The suffix for category breadcrumbs, place on all page elements and inside of current_item suffix
 			'category_suffix' => '',
 			//Which of the various WordPress display types should the author crumb display
-			'category_anchor' => '<a title="Go to %title%." href="%link%">'
+			'category_anchor' => '<a title="Go to the %title% category archives." href="%link%">',
+			//Archives related settings
+			//Prefix for category archives, place inside of both the current_item prefix and the category_prefix
+			'archive_category_prefix' => 'Archive by category &#39;',
+			//Suffix for category archives, place inside of both the current_item suffix and the category_suffix
+			'archive_category_suffix' => '&#39;',
+			//Prefix for tag archives, place inside of the current_item prefix
+			'archive_tag_prefix' => 'Archive by tag &#39;',
+			//Suffix for tag archives, place inside of the current_item suffix
+			'archive_tag_suffix' => '&#39;'
 		);
 	}
 	//The do filling functions
@@ -350,12 +361,12 @@ class bcn_breadcrumb_trail
 				//On the first run we don't need a separator
 				if($i)
 				{
-					$bcn_breadcrumb->title = $this->opt['post_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['post_tag_suffix'];
+					$bcn_breadcrumb->title = $this->opt['tag_prefix'] . str_replace("%title%", $tag->name, str_replace("%link%", get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $this->opt['tag_suffix'];
 					$i = false;
 				}
 				else
 				{
-					$bcn_breadcrumb->title .= ', ' .$this->opt['post_tag_prefix'] . '<a href="' . get_tag_link($tag->term_id) . '" title="' . $this->opt['urltitle_prefix'] . $tag->name . $this->opt['urltitle_suffix'] . '">' . $tag->name . '</a>'. $this->opt['post_tag_suffix'];
+					$bcn_breadcrumb->title .= ', ' . $this->opt['tag_prefix'] . str_replace("%title%", $tag->name, str_replace("%link%", get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $this->opt['tag_suffix'];
 				}
 			}
 		}
@@ -397,6 +408,52 @@ class bcn_breadcrumb_trail
 			//Figure out the rest of the category hiearchy via recursion
 			$this->category_parents($bcn_category->category_parent);
 		}
+	}
+	/**
+	 * do_archive_by_category
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for a category archive.
+	 */
+	function do_archive_by_category()
+	{
+		global $wp_query;
+		//Add new breadcrumb to the trail
+		$this->trail[] = new bcn_breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['category_prefix'] . $this->opt['archive_category_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['archive_category_suffix'] . $this->opt['category_suffix'] . $this->opt['current_item_suffix'];
+		//Assign the title
+		$bcn_breadcrumb->title = single_cat_title("", false);	
+		//Simmilar to using $post, but for things $post doesn't cover
+		$bcn_object = $wp_query->get_queried_object();
+		//Get parents of current category
+		$this->category_parents($bcn_object->category_parent);
+	}
+	/**
+	 * do_archive_by_tag
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for a tag archive.
+	 */
+	function do_archive_by_tag()
+	{
+		global $wp_query;
+		//Add new breadcrumb to the trail
+		$this->trail[] = new bcn_breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_tag_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['archive_tag_suffix'] . $this->opt['current_item_suffix'];
+		//Assign the title
+		$bcn_breadcrumb->title = single_tag_title("", false);	
 	}
 	/**
 	 * do_post
