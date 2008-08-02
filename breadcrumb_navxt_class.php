@@ -146,11 +146,17 @@ class bcn_breadcrumb_trail
 			'tag_suffix' => '',
 			//Author page stuff
 			//The prefix for author breadcrumbs, place on all page elements and outside of current_item prefix
-			'author_prefix' => '',
+			'author_prefix' => 'Articles by: ',
 			//The suffix for author breadcrumbs, place on all page elements and inside of current_item suffix
 			'author_suffix' => '',
 			//Which of the various WordPress display types should the author crumb display
-			'author_display' => 'nickname'
+			//Category stuff
+			//The prefix for category breadcrumbs, place on all page elements and outside of current_item prefix
+			'category_prefix' => '',
+			//The suffix for category breadcrumbs, place on all page elements and inside of current_item suffix
+			'category_suffix' => '',
+			//Which of the various WordPress display types should the author crumb display
+			'category_anchor' => '<a title="Go to %title%." href="%link%">'
 		);
 	}
 	//The do filling functions
@@ -436,7 +442,7 @@ class bcn_breadcrumb_trail
 					$i++;
 				}
 				//Fill out the category hiearchy
-				$this->category_parents($bcn_use_category);
+				$this->category_parents($bcn_object[$bcn_use_category]->term_id);
 			}
 		}
 		//If our max title length is greater than 0 we should do something
