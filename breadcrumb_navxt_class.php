@@ -150,6 +150,7 @@ class bcn_breadcrumb_trail
 			//The suffix for author breadcrumbs, place on all page elements and inside of current_item suffix
 			'author_suffix' => '',
 			//Which of the various WordPress display types should the author crumb display
+			'author_display' => 'display_name',
 			//Category stuff
 			//The prefix for category breadcrumbs, place on all page elements and outside of current_item prefix
 			'category_prefix' => '',
@@ -421,7 +422,7 @@ class bcn_breadcrumb_trail
 		if($this->opt['post_taxonomy_display'])
 		{
 			//Figure out which taxonomy is desired
-			if($this->opt['post_taxonomy'] == 'tag')
+			if($this->opt['post_taxonomy_type'] == "tag")
 			{
 				$this->post_tags();
 			}
