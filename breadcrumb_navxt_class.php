@@ -144,7 +144,7 @@ class bcn_breadcrumb_trail
 			'tag_prefix' => '',
 			//The suffix for tag breadcrumbs, place on all page elements and inside of current_item suffix
 			'tag_suffix' => '',
-			//Which of the various WordPress display types should the author crumb display
+			//The anchor template for tag breadcrumbs, two keywords are available %link% and %title%
 			'tag_anchor' => '<a title="Go to the %title% tag archives." href="%link%">',
 			//Author page stuff
 			//The prefix for author breadcrumbs, place on all page elements and inside of current_item prefix
@@ -158,7 +158,7 @@ class bcn_breadcrumb_trail
 			'category_prefix' => '',
 			//The suffix for category breadcrumbs, place on all page elements and inside of current_item suffix
 			'category_suffix' => '',
-			//Which of the various WordPress display types should the author crumb display
+			//The anchor template for category breadcrumbs, two keywords are available %link% and %title%
 			'category_anchor' => '<a title="Go to the %title% category archives." href="%link%">',
 			//Archives related settings
 			//Prefix for category archives, place inside of both the current_item prefix and the category_prefix
@@ -168,7 +168,12 @@ class bcn_breadcrumb_trail
 			//Prefix for tag archives, place inside of the current_item prefix
 			'archive_tag_prefix' => 'Archive by tag &#39;',
 			//Suffix for tag archives, place inside of the current_item suffix
-			'archive_tag_suffix' => '&#39;'
+			'archive_tag_suffix' => '&#39;',
+			'date_anchor' => '<a title="Go to the %title% archives." href="%link%">',
+			//Prefix for date archives, place inside of the current_item prefix
+			'archive_date_prefix' => '',
+			//Suffix for date archives, place inside of the current_item suffix
+			'archive_date_suffix' => ''
 		);
 	}
 	//The do filling functions
@@ -454,6 +459,82 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->suffix = $this->opt['archive_tag_suffix'] . $this->opt['current_item_suffix'];
 		//Assign the title
 		$bcn_breadcrumb->title = single_tag_title("", false);	
+	}
+	/**
+	 * do_archive_by_date
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for a date archive.
+	 */
+	function do_archive_by_date()
+	{
+		global $wp_query;
+		//Add new breadcrumb to the trail
+		$this->trail[] = new bcn_breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+		if(is_day())
+		{
+			//First deal with the day breadcrumb
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'] . $this->opt['current_item_suffix'];
+			//Assign the title
+			$bcn_breadcrumb->title = get_the_time('d');
+			//Next add in the month breadcrumb
+			//Add new breadcrumb to the trail
+			$this->trail[] = new bcn_breadcrumb();
+			//Figure out where we placed the crumb, make a nice pointer to it
+			$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['archive_date_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'];
+			//Assign the title
+			$bcn_breadcrumb->title = get_the_time('F');
+			//Deal with the anchor
+			$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('F') . " " . get_the_time('Y'), str_replace("%link%", get_year_link(get_the_time('Y')) . get_the_time('m'), $this->opt['date_anchor']));
+			//Yes we want this linked
+			$bcn_breadcrumb->linked = true;
+		}
+		else if(is_month())
+		{
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'] . $this->opt['current_item_suffix'];
+			//Assign the title
+			$bcn_breadcrumb->title = get_the_time('F');
+		}
+		if(is_month() || is_day())
+		{
+			//Next add in the year breadcrumb
+			//Add new breadcrumb to the trail
+			$this->trail[] = new bcn_breadcrumb();
+			//Figure out where we placed the crumb, make a nice pointer to it
+			$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['archive_date_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'];
+			//Assign the title
+			$bcn_breadcrumb->title = get_the_time('Y');
+			//Deal with the anchor
+			$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('Y'), str_replace("%link%", get_year_link(get_the_time('Y')), $this->opt['date_anchor']));
+			//Yes we want this linked
+			$bcn_breadcrumb->linked = true;
+		}
+		else
+		{
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'] . $this->opt['current_item_suffix'];
+			//Assign the title
+			$bcn_breadcrumb->title = get_the_time('Y');
+		}
 	}
 	/**
 	 * do_post
