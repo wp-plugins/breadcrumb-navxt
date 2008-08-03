@@ -90,7 +90,12 @@ class bcn_breadcrumb_trail
 		//Initilize with default option values
 		$this->opt = array
 		(
+			//Should the home page be shown
 			'home_display' => 'true',
+			//Title displayed when is_home() returns true
+			'home_title' => 'Blog',
+			//The anchor template for the home page, this is global, two keywords are available %link% and %title%
+			'home_anchor' => '<a title="Go to %title%." href="%link%">',
 			//Separator that is placed between each item in the breadcrumb trial, but not placed before
 			//the first and not after the last breadcrumb
 			'separator' => ' &gt; ',
@@ -604,12 +609,27 @@ class bcn_breadcrumb_trail
 		$this->trail[] = new bcn_breadcrumb();
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['post_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['post_suffix'] . $this->opt['current_item_suffix'];
-		//Assign the title, using our older method to replace in the future
-		$bcn_breadcrumb->title = "blog";
+		//If on the home page we don't link and need current_item parts
+		if(is_home())
+		{
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['home_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['home_suffix'] . $this->opt['current_item_suffix'];
+		}
+		else
+		{
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['home_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['home_suffix'];
+			//Deal with the anchor
+			$bcn_breadcrumb->anchor = str_replace("%title%", $this->opt['home_title'], str_replace("%link%", get_option('home'), $this->opt['home_anchor']));
+			//Yes link it
+			$bcn_breadcrumb->linked = true;
+		}
+		//Assign the title 
+		$bcn_breadcrumb->title = $this->opt['home_title'];
 	}
 	/**
 	 * fill
@@ -692,7 +712,7 @@ class bcn_breadcrumb_trail
 			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['404_prefix'];
 			//Assign the suffix
 			$bcn_breadcrumb->suffix = $this->opt['404_suffix'] . $this->opt['current_item_suffix'];
-			//Assign the title, using our older method to replace in the future
+			//Assign the title
 			$bcn_breadcrumb->title = $this->opt['404_title'];
 		}
 		//We always do the home link last
