@@ -93,9 +93,11 @@ class bcn_breadcrumb_trail
 			//Should the home page be shown
 			'home_display' => 'true',
 			//Title displayed when is_home() returns true
-			'home_title' => 'Blog',
+			'home_title' => 'Home',
 			//The anchor template for the home page, this is global, two keywords are available %link% and %title%
 			'home_anchor' => '<a title="Go to %title%." href="%link%">',
+			//The anchor template for the blog page only in static front page mode, this is global, two keywords are available %link% and %title%
+			'blog_anchor' => '<a title="Go to %title%." href="%link%">',
 			//Separator that is placed between each item in the breadcrumb trial, but not placed before
 			//the first and not after the last breadcrumb
 			'separator' => ' &gt; ',
@@ -248,7 +250,7 @@ class bcn_breadcrumb_trail
 			//Adding the title, throw it through the filters
 			$bcn_breadcrumb->title = apply_filters("the_title", $bcn_parent->post_title);
 			//Assign the anchor properties
-			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_parent->post_title, str_replace("%link%", get_permalink($bcn_parent_id), $this->opt['post_anchor']));
+			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_permalink($bcn_parent_id), $this->opt['post_anchor']));
 			//We want this to be linked
 			$bcn_breadcrumb->linked = true;
 		}
@@ -304,7 +306,7 @@ class bcn_breadcrumb_trail
 		//Assign the title
 		$bcn_breadcrumb->title = apply_filters("the_title", $bcn_parent->post_title);
 		//Assign the anchor properties
-		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_parent->post_title, str_replace("%link%", get_permalink($id), $this->opt['page_anchor']));
+		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_permalink($id), $this->opt['page_anchor']));
 		//We want this to be linked
 		$bcn_breadcrumb->linked = true;
 		//Figure out the next parent id
@@ -412,7 +414,7 @@ class bcn_breadcrumb_trail
 			//Setup the title, throw it through a filter
 			$bcn_breadcrumb->title = apply_filters("get_category", $bcn_category->cat_name);
 			//Figure out the anchor for the first category
-			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_category->cat_name, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
+			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
 			//We want this to be linked
 			$bcn_breadcrumb->linked = true;
 			//Figure out the rest of the category hiearchy via recursion
@@ -559,7 +561,7 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['post_prefix'];
 		//Assign the suffix
 		$bcn_breadcrumb->suffix = $this->opt['post_suffix'] . $this->opt['current_item_suffix'];
-		//Assign the title, using our older method to replace in the future
+		//Assign the title
 		$bcn_breadcrumb->title = get_the_title();
 		//Check to see if breadcrumbs for the taxonomy of the post needs to be generated
 		if($this->opt['post_taxonomy_display'])
@@ -609,27 +611,90 @@ class bcn_breadcrumb_trail
 		$this->trail[] = new bcn_breadcrumb();
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//If on the home page we don't link and need current_item parts
-		if(is_home())
+		//We must now branch if in a static front page environment
+		if(get_option('show_on_front') == "page")
+		{
+			//Get the blog page ID
+			$bcn_blog = get_post(get_option("page_for_posts"));
+			//Setup the title
+			$bcn_breadcrumb->title = apply_filters("the_title", $bcn_blog->post_title);
+			if(is_home())
+			{
+				//Assign the prefix
+				$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['page_prefix'];
+				//Assign the suffix
+				$bcn_breadcrumb->suffix = $this->opt['page_suffix'] . $this->opt['current_item_suffix'];
+			}
+			else
+			{
+				//Assign the prefix
+				$bcn_breadcrumb->prefix = $this->opt['page_prefix'];
+				//Assign the suffix
+				$bcn_breadcrumb->suffix = $this->opt['page_suffix'];
+				//Deal with the anchor
+				$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_permalink($bcn_blog->ID), $this->opt['blog_anchor']));
+				//Yes link it
+				$bcn_breadcrumb->linked = true;	
+			}
+			//Add new breadcrumb to the trail
+			$this->trail[] = new bcn_breadcrumb();
+			//Figure out where we placed the crumb, make a nice pointer to it
+			$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['home_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['home_suffix'];
+			//Assign the title
+			$bcn_breadcrumb->title = $this->opt['home_title'];
+			//Deal with the anchor
+			$bcn_breadcrumb->anchor = str_replace("%title%", $this->opt['home_title'], str_replace("%link%", get_option('home'), $this->opt['home_anchor']));
+			//Yes link it
+			$bcn_breadcrumb->linked = true;	
+		}
+		//On a normal home page we need current item (pre/suf)fixes but no links
+		else if(is_home())
 		{
 			//Assign the prefix
 			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['home_prefix'];
 			//Assign the suffix
 			$bcn_breadcrumb->suffix = $this->opt['home_suffix'] . $this->opt['current_item_suffix'];
+			//Assign the title 
+			$bcn_breadcrumb->title = $this->opt['home_title'];
 		}
+		//On everything else we need to link, but no current item (pre/suf)fixes
 		else
 		{
 			//Assign the prefix
 			$bcn_breadcrumb->prefix = $this->opt['home_prefix'];
 			//Assign the suffix
 			$bcn_breadcrumb->suffix = $this->opt['home_suffix'];
+			//Assign the title 
+			$bcn_breadcrumb->title = $this->opt['home_title'];
 			//Deal with the anchor
 			$bcn_breadcrumb->anchor = str_replace("%title%", $this->opt['home_title'], str_replace("%link%", get_option('home'), $this->opt['home_anchor']));
 			//Yes link it
-			$bcn_breadcrumb->linked = true;
+			$bcn_breadcrumb->linked = true;	
 		}
-		//Assign the title 
-		$bcn_breadcrumb->title = $this->opt['home_title'];
+	}
+	/**
+	 * do_404
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for 404 pages.
+	 */
+	function do_404()
+	{
+		global $post;
+		$this->trail[] = new bcn_breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['404_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['404_suffix'] . $this->opt['current_item_suffix'];
+		//Assign the title
+		$bcn_breadcrumb->title = $this->opt['404_title'];
 	}
 	/**
 	 * fill
@@ -649,13 +714,8 @@ class bcn_breadcrumb_trail
 		{
 			$this->do_paged();
 		}
-		//For the home/front page
-		if(is_front_page())
-		{
-			$this->do_home();
-		}
 		//For searches
-		else if(is_search())
+		if(is_search())
 		{
 			$this->do_search();
 		}
@@ -705,18 +765,13 @@ class bcn_breadcrumb_trail
 		//For 404 pages
 		else if(is_404())
 		{
-			$this->trail[] = new bcn_breadcrumb();
-			//Figure out where we placed the crumb, make a nice pointer to it
-			$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['404_prefix'];
-			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['404_suffix'] . $this->opt['current_item_suffix'];
-			//Assign the title
-			$bcn_breadcrumb->title = $this->opt['404_title'];
+			$this->do_404();
 		}
-		//We always do the home link last
-		$this->do_home();
+		//We always do the home link last, unless on the frontpage in a static front page situation
+		if(!(get_option('show_on_front') == "page" && is_front_page()))
+		{
+			$this->do_home();
+		}
 		//We build the trail backwards the last thing to do is to get it back to normal order
 		krsort($this->trail);
 	}
