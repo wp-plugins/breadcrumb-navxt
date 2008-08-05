@@ -500,7 +500,7 @@ class bcn_breadcrumb_trail
 			//Assign the title
 			$bcn_breadcrumb->title = get_the_time('F');
 			//Deal with the anchor
-			$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('F') . " " . get_the_time('Y'), str_replace("%link%", get_year_link(get_the_time('Y')) . get_the_time('m'), $this->opt['date_anchor']));
+			$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('F') . " " . get_the_time('Y'), str_replace("%link%", get_month_link(get_the_time('Y'), get_the_time('m')), $this->opt['date_anchor']));
 			//Yes we want this linked
 			$bcn_breadcrumb->linked = true;
 		}
