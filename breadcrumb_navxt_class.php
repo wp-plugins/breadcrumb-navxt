@@ -598,6 +598,27 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
+	 * do_front_page
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for the front page.
+	 */
+	function do_front_page()
+	{
+		global $post;
+		//Add new breadcrumb to the trail
+		$this->trail[] = new bcn_breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+		//Assign the title 
+		$bcn_breadcrumb->title = $this->opt['home_title'];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['home_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['home_suffix'] . $this->opt['current_item_suffix'];
+	}
+	/**
 	 * do_home
 	 * 
 	 * A Breadcrumb Trail Filling Function
@@ -614,32 +635,36 @@ class bcn_breadcrumb_trail
 		//We must now branch if in a static front page environment
 		if(get_option('show_on_front') == "page")
 		{
-			//Get the blog page ID
-			$bcn_blog = get_post(get_option("page_for_posts"));
-			//Setup the title
-			$bcn_breadcrumb->title = apply_filters("the_title", $bcn_blog->post_title);
-			if(is_home())
+			//We only need the "blog" portion on members of the blog, not searches, pages or 404s
+			if(is_single() || is_archive() || is_author() || is_home())
 			{
-				//Assign the prefix
-				$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['page_prefix'];
-				//Assign the suffix
-				$bcn_breadcrumb->suffix = $this->opt['page_suffix'] . $this->opt['current_item_suffix'];
+				//Get the blog page ID
+				$bcn_blog = get_post(get_option("page_for_posts"));
+				//Setup the title
+				$bcn_breadcrumb->title = apply_filters("the_title", $bcn_blog->post_title);
+				if(is_home())
+				{
+					//Assign the prefix
+					$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['page_prefix'];
+					//Assign the suffix
+					$bcn_breadcrumb->suffix = $this->opt['page_suffix'] . $this->opt['current_item_suffix'];
+				}
+				else
+				{
+					//Assign the prefix
+					$bcn_breadcrumb->prefix = $this->opt['page_prefix'];
+					//Assign the suffix
+					$bcn_breadcrumb->suffix = $this->opt['page_suffix'];
+					//Deal with the anchor
+					$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_permalink($bcn_blog->ID), $this->opt['blog_anchor']));
+					//Yes link it
+					$bcn_breadcrumb->linked = true;	
+				}
+				//Add new breadcrumb to the trail
+				$this->trail[] = new bcn_breadcrumb();
+				//Figure out where we placed the crumb, make a nice pointer to it
+				$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 			}
-			else
-			{
-				//Assign the prefix
-				$bcn_breadcrumb->prefix = $this->opt['page_prefix'];
-				//Assign the suffix
-				$bcn_breadcrumb->suffix = $this->opt['page_suffix'];
-				//Deal with the anchor
-				$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_permalink($bcn_blog->ID), $this->opt['blog_anchor']));
-				//Yes link it
-				$bcn_breadcrumb->linked = true;	
-			}
-			//Add new breadcrumb to the trail
-			$this->trail[] = new bcn_breadcrumb();
-			//Figure out where we placed the crumb, make a nice pointer to it
-			$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 			//Assign the prefix
 			$bcn_breadcrumb->prefix = $this->opt['home_prefix'];
 			//Assign the suffix
@@ -650,16 +675,6 @@ class bcn_breadcrumb_trail
 			$bcn_breadcrumb->anchor = str_replace("%title%", $this->opt['home_title'], str_replace("%link%", get_option('home'), $this->opt['home_anchor']));
 			//Yes link it
 			$bcn_breadcrumb->linked = true;	
-		}
-		//On a normal home page we need current item (pre/suf)fixes but no links
-		else if(is_home())
-		{
-			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['home_prefix'];
-			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['home_suffix'] . $this->opt['current_item_suffix'];
-			//Assign the title 
-			$bcn_breadcrumb->title = $this->opt['home_title'];
 		}
 		//On everything else we need to link, but no current item (pre/suf)fixes
 		else
@@ -715,7 +730,11 @@ class bcn_breadcrumb_trail
 			$this->do_paged();
 		}
 		//For searches
-		if(is_search())
+		if(is_front_page())
+		{
+			$this->do_front_page();
+		}
+		else if(is_search())
 		{
 			$this->do_search();
 		}
@@ -767,8 +786,8 @@ class bcn_breadcrumb_trail
 		{
 			$this->do_404();
 		}
-		//We always do the home link last, unless on the frontpage in a static front page situation
-		if(!(get_option('show_on_front') == "page" && is_front_page()))
+		//We always do the home link last, unless on the frontpage
+		if(!is_front_page())
 		{
 			$this->do_home();
 		}
