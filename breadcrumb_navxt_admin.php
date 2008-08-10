@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.1.2
+Version: 2.1.4
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -17,30 +17,22 @@ Author URI: http://mtekk.weblogs.us/
  *       global namespace and to provide better modularization for upgrades.
  */
 
+//Configuration 
 
-/**
- ** configuration 
- **/
-
-$bcn_admin_version = "2.1.3";
+$bcn_admin_version = "2.1.4";
 $bcn_admin_req = 8;
 
-/** 
- ** includes 
- **/
+//Includes 
 
-/* Include the breadcrumb class (if needed) */
+//Include the breadcrumb class (if needed)
 if(!class_exists('bcn_breadcrumb'))
 {
 	require(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
 }
-
-/* Include the supplemental functions */
+//Include the supplemental functions
 require(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
 
-/**
- ** main 
- **/
+//Main
 
 /**
  * Ensure the user has the proper permissions. Dies on failure.
@@ -94,53 +86,80 @@ function bcn_install()
 	global $bcn_admin_req, $bcn_version;
 	
 	bcn_security();
-	
+	//Check if the database settings are for an old version
 	if(get_option('bcn_version') != $bcn_admin_version)
-	{		
-		bcn_update_option('bcn_version' , $bcn_admin_version);
-		bcn_update_option('bcn_preserve', 0);
-		// @todo clean removed in 2.1.3 update_option('bcn_static_frontpage', 'false');
-		bcn_update_option('bcn_url_blog', '');
-		bcn_update_option('bcn_home_display', 'true');
-		bcn_update_option('bcn_home_link', 'true');
-		bcn_update_option('bcn_title_home', 'Home');
-		bcn_update_option('bcn_title_blog', 'Blog');
-		bcn_update_option('bcn_separator', '&nbsp;>&nbsp;');
-		bcn_update_option('bcn_search_prefix', 'Search results for &#39;');
-		bcn_update_option('bcn_search_suffix', '&#39;');
-		bcn_update_option('bcn_author_prefix', 'Posts by ');
-		bcn_update_option('bcn_author_suffix', '');
-		bcn_update_option('bcn_author_display', 'display_name');
-		bcn_update_option('bcn_singleblogpost_prefix', 'Blog article:&nbsp;');
-		bcn_update_option('bcn_singleblogpost_suffix', '');
-		bcn_update_option('bcn_page_prefix', '');
-		bcn_update_option('bcn_page_suffix', '');
-		bcn_update_option('bcn_urltitle_prefix', 'Browse to:&nbsp;');
-		bcn_update_option('bcn_urltitle_suffix', '');
-		bcn_update_option('bcn_archive_category_prefix', 'Archive by category &#39;');
-		bcn_update_option('bcn_archive_category_suffix', '&#39;');
-		bcn_update_option('bcn_archive_date_prefix', 'Archive: ');
-		bcn_update_option('bcn_archive_date_suffix', '');
-		bcn_update_option('bcn_archive_date_format', 'EU');
-		bcn_update_option('bcn_attachment_prefix', 'Attachment:&nbsp;');
-		bcn_update_option('bcn_attachment_suffix', '');
-		bcn_update_option('bcn_archive_tag_prefix', 'Archive by tag &#39;');
-		bcn_update_option('bcn_archive_tag_suffix', '&#39;');
-		bcn_update_option('bcn_title_404', '404');
-		bcn_update_option('bcn_link_current_item', 'false');
-		bcn_update_option('bcn_current_item_urltitle', 'Link of current page (click to refresh)');
-		bcn_update_option('bcn_current_item_style_prefix', '');
-		bcn_update_option('bcn_current_item_style_suffix', '');
-		bcn_update_option('bcn_posttitle_maxlen', 0);
-		bcn_update_option('bcn_paged_display', 'false');
-		bcn_update_option('bcn_paged_prefix', ', Page&nbsp;');
-		bcn_update_option('bcn_paged_suffix', '');
-		bcn_update_option('bcn_singleblogpost_taxonomy', 'category');
-		bcn_update_option('bcn_singleblogpost_taxonomy_display', 'true');
-		bcn_update_option('bcn_singleblogpost_category_prefix', '');
-		bcn_update_option('bcn_singleblogpost_category_suffix', '');
-		bcn_update_option('bcn_singleblogpost_tag_prefix', '');
-		bcn_update_option('bcn_singleblogpost_tag_suffix', '');
+	{
+		//First we should clean up old options we don't use anymore
+		list($major, $minor, $release) = explode('.', get_option('bcn_version'));
+		//If the old DB version was prior to 2.1.3
+		if($major <= 2 && $minor <= 1 && $release <= 3)
+		{
+			//Remove old crap
+			delete_option('bcn_preserve');
+			delete_option('bcn_static_frontpage');
+		}
+		//Fix up depreciated in 2.2
+		else if($major <= 2 && $minor <= 1 && $release <= 4)
+		{
+			delete_option('bcn_url_blog');
+			delete_option('bcn_home_link');
+			//Upgrade to a current option
+			add_options('bcn_home_title', get_option('bcn_title_blog'));
+			//Remove the old stuff
+			delete_option('bcn_title_blog');
+			delete_option('bcn_title_home');
+			if(get_option('bcn_home_display') == "true")
+			{
+				$bcn_display_upgrade = 1;
+			}
+			else
+			{
+				$bcn_display_upgrade = 0;
+			}
+			update_option('bcn_home_display', $bcn_display_upgrade);
+			delete_option('bcn_home_display');
+			delete_option('bcn_urltitle_prefix');
+			delete_option('bcn_urltitle_suffix');
+			delete_option('bcn_archive_date_format');
+		}
+		//No need for using API hacks, we fully controol things here
+		//We always want to update to our current version
+		update_option('bcn_version', $bcn_admin_version);
+		//Add in options if they didn't exist before, load defaults into them
+		add_option('bcn_home_display', 1);
+		add_option('bcn_separator', '&nbsp;&gt;&nbsp;');
+		add_option('bcn_search_prefix', 'Search results for &#39;');
+		add_option('bcn_search_suffix', '&#39;');
+		add_option('bcn_author_prefix', 'Posts by ');
+		add_option('bcn_author_suffix', '');
+		add_option('bcn_author_display', 'display_name');
+		add_option('bcn_singleblogpost_prefix', 'Blog article:&nbsp;');
+		add_option('bcn_singleblogpost_suffix', '');
+		add_option('bcn_page_prefix', '');
+		add_option('bcn_page_suffix', '');
+		add_option('bcn_archive_category_prefix', 'Archive by category &#39;');
+		add_option('bcn_archive_category_suffix', '&#39;');
+		add_option('bcn_archive_date_prefix', 'Archive: ');
+		add_option('bcn_archive_date_suffix', '');
+		add_option('bcn_attachment_prefix', 'Attachment:&nbsp;');
+		add_option('bcn_attachment_suffix', '');
+		add_option('bcn_archive_tag_prefix', 'Archive by tag &#39;');
+		add_option('bcn_archive_tag_suffix', '&#39;');
+		add_option('bcn_title_404', '404');
+		add_option('bcn_link_current_item', 0);
+		add_option('bcn_current_item_urltitle', 'Link of current page (click to refresh)');
+		add_option('bcn_current_item_style_prefix', '');
+		add_option('bcn_current_item_style_suffix', '');
+		add_option('bcn_posttitle_maxlen', 0);
+		add_option('bcn_paged_display', 'false');
+		add_option('bcn_paged_prefix', ', Page&nbsp;');
+		add_option('bcn_paged_suffix', '');
+		add_option('bcn_singleblogpost_taxonomy', 'category');
+		add_option('bcn_singleblogpost_taxonomy_display', 1);
+		add_option('bcn_singleblogpost_category_prefix', '');
+		add_option('bcn_singleblogpost_category_suffix', '');
+		add_option('bcn_singleblogpost_tag_prefix', '');
+		add_option('bcn_singleblogpost_tag_suffix', '');
 	}
 }
 /**
@@ -150,6 +169,10 @@ function bcn_install()
  */
 function breadcrumb_nav_xt_display()
 {
+	if(function_exists('_deprecated_function'))
+	{
+		_deprecated_function('breadcrumb_nav_xt_display','2.1','bcn_display');
+	}
 	bcn_display();
 }
 /**
@@ -159,13 +182,13 @@ function breadcrumb_nav_xt_display()
 function bcn_display()
 {
 	//Playing things really safe here
-	if(class_exists('bcn_breadcrumb'))
+	if(class_exists('bcn_breadcrumb_trail'))
 	{
 		//Make new breadcrumb object
-		$breadcrumb = new bcn_breadcrumb;
+		$breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Set the settings
 		// @todo clean removed in 2.1.3 $breadcrumb->opt['static_frontpage'] = get_option('bcn_static_frontpage');
-		$breadcrumb->opt['url_blog'] = get_option('bcn_url_blog');
+		/*$breadcrumb->opt['url_blog'] = get_option('bcn_url_blog');
 		$breadcrumb->opt['home_display'] = get_option('bcn_home_display');
 		$breadcrumb->opt['home_link'] = get_option('bcn_home_link');
 		$breadcrumb->opt['title_home'] = get_option('bcn_title_home');
@@ -205,11 +228,11 @@ function bcn_display()
 		$breadcrumb->opt['singleblogpost_category_prefix'] = get_option('bcn_singleblogpost_category_prefix');
 		$breadcrumb->opt['singleblogpost_category_suffix'] = get_option('bcn_singleblogpost_category_suffix');
 		$breadcrumb->opt['singleblogpost_tag_prefix'] = get_option('bcn_singleblogpost_tag_prefix');
-		$breadcrumb->opt['singleblogpost_tag_suffix'] = get_option('bcn_singleblogpost_tag_suffix');
-		//Generate the breadcrumb
-		$breadcrumb->assemble();
-		//Display the breadcrumb
-		$breadcrumb->display();
+		$breadcrumb->opt['singleblogpost_tag_suffix'] = get_option('bcn_singleblogpost_tag_suffix');*/
+		//Generate the breadcrumb trail
+		$breadcrumb_trail->fill();
+		//Display the breadcrumb trail
+		$breadcrumb_trail->display();
 	}
 }
 /**
@@ -223,13 +246,9 @@ function bcn_admin_options()
 	
 	bcn_security();
 	
-	/* Do a nonce check, prevent malicious link/form problems */
+	//Do a nonce check, prevent malicious link/form problems
 	check_admin_referer('bcn_admin_options');
-		
-	// @todo clean removed in 2.1.3 update_option('bcn_static_frontpage', bcn_get('static_frontpage'));
-	bcn_update_option('bcn_url_blog', bcn_get('url_blog'));
 	bcn_update_option('bcn_home_display', bcn_get('home_display', 'false'));
-	bcn_update_option('bcn_home_link', bcn_get('home_link', 'false'));
 	bcn_update_option('bcn_title_home', bcn_get('title_home'));
 	bcn_update_option('bcn_title_blog', bcn_get('title_blog'));
 	bcn_update_option('bcn_separator', bcn_get('separator'));
@@ -288,10 +307,10 @@ function bcn_admin()
 {
 	global $bcn_admin_req, $bcn_admin_version, $bcn_version;
 	
-	/* Makes sure the user has the proper permissions. Dies on failure. */
+	//Makes sure the user has the proper permissions. Dies on failure.
 	bcn_security();
 	
-	/* Initilizes localization domain */	
+	//Initilizes l10n domain	
 	bcn_local();
 	
 	/*
@@ -305,18 +324,13 @@ function bcn_admin()
 		?>
 		<div id="message" class="updated fade">
 			<p><?php _e('Warning, your version of Breadcrumb NavXT does not match the version supported by this administrative interface. As a result, settings may not work as expected.', 'breadcrumb_navxt'); ?></p>
-			<p><?php _e('Your Breadcrumb NavXT Administration interface version is ', 'breadcrumb_navxt'); echo $bcn_version; ?>.</p>
-			<p><?php _e('Your Breadcrumb NavXT version is ', 'breadcrumb_navxt'); echo $bcn_admin_version; ?>.</p>
+			<p><?php _e('Your Breadcrumb NavXT Administration interface version is ', 'breadcrumb_navxt'); echo $bcn_admin_version; ?>.</p>
+			<p><?php _e('Your Breadcrumb NavXT version is ', 'breadcrumb_navxt'); echo $bcn_version; ?>.</p>
 		</div>
 		<?php 
 	}
-	
-	/*
-	 * output the administration panel (until end of function)
-	 */
-	
+	//Output the administration panel (until end of function)
 	?>
-
 	<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>
 	<form action="options-general.php?page=breadcrumb-nav-xt" method="post" id="bcn_admin_options">
 		<?php wp_nonce_field('bcn_admin_options');?>
@@ -333,10 +347,10 @@ function bcn_admin()
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="title_blog"><?php _e('Blog Title', 'breadcrumb_navxt'); ?></label>
+						<label for="home_title"><?php _e('Home Title', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="title_blog" id="title_blog" value="<?php echo bcn_get_option_inputvalue('bcn_title_blog'); ?>" size="32" /><br />
+						<input type="text" name="home_title" id="home_title" value="<?php echo bcn_get_option_inputvalue('bcn_home_title'); ?>" size="32" /><br />
 						<?php _e('Will be displayed on the home page (when not using a static front page), always links to the main post page.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
@@ -346,24 +360,7 @@ function bcn_admin()
 					</th>
 					<td>
 						<input type="text" name="separator" id="separator" value="<?php echo bcn_get_option_inputvalue('bcn_separator'); ?>" size="32" /><br />
-						<?php _e('Placed inbetween each breadcrumb.', 'breadcrumb_navxt'); ?>
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="urltitle_prefix"><?php _e('URL Title Prefix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>					
-						<input type="text" name="urltitle_prefix" id="urltitle_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_urltitle_prefix'); ?>" size="32" /><br />
-						<small><em><?php _e('Should be entitled Link-Title instead. A link has a title, a URL not.'); ?></em></small>
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="urltitle_suffix"><?php _e('URL Title Suffix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="urltitle_suffix" id="urltitle_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_urltitle_suffix'); ?>" size="32" />
+						<?php _e('Placed in between each breadcrumb.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -402,16 +399,7 @@ function bcn_admin()
 					<td>
 						<span id="static_frontpage_ex"><?php echo __(bcn_wp_has_static_frontpage() ? 'Yes': 'No'); ?></span>																		
 					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="url_blog"><?php _e('Relative Blog URL', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="url_blog" id="url_blog" value="<?php echo bcn_get_option_inputvalue('bcn_url_blog'); ?>" size="32" /><br />
-						<?php _e('The location of the page that contains posts relative to the WordPress Blog address.', 'breadcrumb_navxt'); ?>
-					</td>
-				</tr>				
+				</tr>			
 				<tr valign="top">
 					<th scope="row">
 						<?php _e('Home Breadcrumb', 'breadcrumb_navxt'); ?>						
@@ -420,23 +408,9 @@ function bcn_admin()
 						<label for="home_display">
 							<input name="home_display" type="checkbox" id="home_display" value="true" <?php checked('true', get_option('bcn_home_display')); ?> />
 							<?php _e('Is in trail', 'breadcrumb_navxt') ?> - <?php _e('Should the "Home" crumb be placed in the breadcrumb trail?', 'breadcrumb_navxt'); ?>							
-						</label><br />
-						<label for="home_link">
-							<input name="home_link" type="checkbox" id="home_link" value="true" <?php checked('true', get_option('bcn_home_link')); ?> />
-							<?php _e('Links to Homepage', 'breadcrumb_navxt') ?> - <?php _e('Should the Home crumb link to the home page?', 'breadcrumb_navxt'); ?>																							
-						</label><br />						
-						<small><em><?php printf(__('URL of Homepage is %s', 'breadcrumb_navxt'), sprintf('<code>%s</code>',  bcn_wp_url_home())) ?></em></small>
+						</label>
 					</td>
 				</tr>				
-				<tr valign="top">
-					<th scope="row">
-						<label for="title_home"><?php _e('Home Title', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="title_home" id="title_home" value="<?php echo bcn_get_option_inputvalue('bcn_title_home'); ?>" size="32" /><br />
-						<?php _e('The title applied to the link to the static home page.', 'breadcrumb_navxt'); ?>
-					</td>
-				</tr>
 			</table>
 		</fieldset>
 		<fieldset id="author" class="bcn_options">
@@ -507,17 +481,6 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="archive_date_format"><?php _e('Archive by Date Format', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<select name="archive_date_format" id="archive_date_format">
-							<?php bcn_select_options('bcn_archive_date_format', array("EU", "US", "ISO")); ?>
-						</select><br />
-						<?php _e('e.g. EU: 14 May 2008, US: May 14, 2008, ISO: 2008 May 14', 'breadcrumb_navxt'); ?>
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
 						<label for="archive_tag_prefix"><?php _e('Archive by Tag Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
@@ -550,14 +513,6 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="current_item_urltitle"><?php _e('Current Item URL Title', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="current_item_urltitle" id="current_item_urltitle" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_urltitle'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
 						<label for="current_item_style_prefix"><?php _e('Current Item Style Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
@@ -579,7 +534,7 @@ function bcn_admin()
 					<td>
 						<label>
 							<input name="paged_display" type="checkbox" id="paged_display" value="true" <?php checked('true', bcn_get_option('bcn_paged_display')); ?> />
-							<?php _e('Display an indication that the user is on a page other than the first on items such as multi paged posts.', 'breadcrumb_navxt'); ?>							
+							<?php _e('Show that the user is on a page other than the first on posts/archives with multiple pages.', 'breadcrumb_navxt'); ?>							
 						</label>	
 					</td>
 				</tr>
@@ -666,38 +621,36 @@ function bcn_admin()
 			<h3><?php _e('Taxonomy', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
-					<th scope="row"><?php _e('Taxonomy Display', 'breadcrumb_navxt') ?></th>
-					<td style="padding-bottom:0;">
-						<table class="form-table-inner">
-						<tr class="spaced">
-							<td>
-								<?php _e('Single Blog Post Taxonomy Display', 'breadcrumb_navxt'); ?>
-							</td>
-							<td>
-								<label for="singleblogpost_taxonomy_display">
-									<input name="singleblogpost_taxonomy_display" type="checkbox" id="singleblogpost_taxonomy_display" value="true" <?php checked('true', bcn_get_option('bcn_singleblogpost_taxonomy_display')); ?> />
-									<?php _e('Show the taxonomy leading to a post in the breadcrumb.', 'breadcrumb_navxt'); ?>							
-								</label>							
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<p><?php _e('Single Blog Post Taxonomy', 'breadcrumb_navxt'); ?></p>
-							</td>
-							<td>
-								<p><label>
-									<input name="singleblogpost_taxonomy" type="radio" value="category" class="togx" <?php checked('category', bcn_get_option('bcn_singleblogpost_taxonomy')); ?> />
-									<?php _e('Categories'); ?>
-								</label>
-								<label>
-									<input name="singleblogpost_taxonomy" type="radio" value="tag" class="togx" <?php checked('tag', bcn_get_option('bcn_singleblogpost_taxonomy')); ?> />
-									<?php _e('Tags'); ?>								
-								</label>
-								 (<?php _e('The taxonomy which the breadcrumb will show.', 'breadcrumb_navxt'); ?>)
-								</p>								
-							</td>
-						</tr>
-						</table>						
+					<th scope="row">
+						<?php _e('Single Blog Post Taxonomy Display', 'breadcrumb_navxt'); ?>
+					</th>
+					<td>
+						<label for="singleblogpost_taxonomy_display">
+							<input name="singleblogpost_taxonomy_display" type="checkbox" id="singleblogpost_taxonomy_display" value="true" <?php checked('true', bcn_get_option('bcn_singleblogpost_taxonomy_display')); ?> />
+							<?php _e('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'); ?>							
+						</label>							
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<p><?php _e('Single Blog Post Taxonomy', 'breadcrumb_navxt'); ?></p>
+					</th>
+					<td>
+						<p>
+							<label>
+								<input name="singleblogpost_taxonomy" type="radio" value="category" class="togx" <?php checked('category', bcn_get_option('bcn_singleblogpost_taxonomy')); ?> />
+								<?php _e('Categories'); ?>
+							</label>
+						</p>
+						<p>
+							<label>
+								<input name="singleblogpost_taxonomy" type="radio" value="tag" class="togx" <?php checked('tag', bcn_get_option('bcn_singleblogpost_taxonomy')); ?> />
+								<?php _e('Tags'); ?>								
+							</label>
+						</p>
+						<p>
+							<?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb_navxt'); ?>
+						</p>														
 					</td>
 				</tr>					
 				<tr valign="top">
@@ -751,13 +704,11 @@ function bcn_admin()
 function bcn_select_options($optionname, $options = array('true','false'))
 {
 	$value = get_option($optionname);
-	
 	//First output the current value
 	if ($value)
 	{
 		printf('<option>%s</option>', $value);
 	}
-	
 	//Now do the rest
 	foreach($options as $option)
 	{
@@ -771,19 +722,176 @@ function bcn_select_options($optionname, $options = array('true','false'))
 /**
  * Additional styles and scripts for admin interface
  * 
- * @todo do not add to any admin page, just to this plugins one.
+ * @todo do not add to any admin page
  */
 function bcn_options_style()
 {
-	/*
-	 * setup styles for admn and tabbed admin page.
-	 */	
+	//wp_version is needed for version checks performed in this function
+	global $wp_version;
+	
+	//setup styles for admn and tabbed admin page
 ?>
 <style type="text/css">
 	.bcn_options{border: none;}	
 	.form-table .form-table-inner td {border:none; height:normal; line-height:normal; margin:0; padding:0 8px 0 0; vertical-align: top;}
 	.form-table .form-table-inner tr.spaced td {padding-bottom:6px;}
+	/**
+	 * Tabbed Admin Page (CSS)
+	 *
+	 * unobtrusive approach to add tabbed forms into
+	 * the wordpress admin panel
+	 *
+	 * @note unstable
+	 * @see http://www.artnorm.de/this-morning-in-bleeding,105,2008-06.html
+	 * @see breadcrumb navxt
+	 * @author Tom Klingenberg
+	 * @cssdoc 1.0-pre
+	 * @colordef #fff    white      (tab background) 
+	 * @colordef #c6d9e9 grey-blue  (tab line)
+	 * @colordef #d54e21 orange     (tab text of active tab)
+	 * @colordef #d54e21 orange     (tab text of inactive tab hovered) external
+	 * @colordef #2583ad dark-blue  (tab text of inactive tab) external	 	 
+	 */
+	ul.ui-tabs-nav {background:#fff; border-bottom:1px solid #c6d9e9; font-size:12px; height:29px; margin:13px 0 0; padding:0; padding-left:8px; list-style:none;}	
+	ul.ui-tabs-nav li {display:inline; line-height: 200%; list-style:none; margin: 0; padding:0; position:relative; top:1px; text-align:center; white-space:nowrap;}
+	ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0%; border:1px transparent #fff; border-bottom:1px solid #c6d9e9; display:block; float:left; line-height:28px; padding:1px 13px 0; position:relative; text-decoration:none;}
+	ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px; -moz-border-radius-topright:4px; background:#fff; border:1px solid #c6d9e9; border-bottom-color:#fff; color:#d54e21; font-weight:normal; padding:0 12px;}
+	ul.ui-tabs-nav a:focus, a:active {outline: none;}
+	#hasadmintabs fieldset {clear:both;}
 </style>
+<?php
+	/* 
+     * needed javascript libraries are included now
+     * add own javascript code now 
+     */
+?>
+<script type="text/javascript">
+/* <![CDATA[ */
+	/**
+	 * Tabbed Admin Page (jQuery)
+	 *
+	 * unobtrusive approach to add tabbed forms into
+	 * the wordpress admin panel
+	 *
+	 * @note unstable
+	 * @see http://www.artnorm.de/this-morning-in-bleeding,105,2008-06.html
+	 * @see breadcrumb navxt
+	 * @author Tom Klingenberg
+	 * @uses jQuery
+	 * @uses ui.core
+	 * @uses ui.tabs
+	 */
+	 
+	jQuery(document).ready(function() 
+	{
+		bcn_tabulator_init();		
+	 });
+	 
+	/**
+	 * Tabulator Bootup
+	 */
+	function bcn_tabulator_init()
+	{
+		bcn_admin_init_tabs();	
+		bcn_admin_gobal_tabs(); // comment out this like to disable tabs in admin 
+					
+	}
+	
+	/**
+	 * inittialize tabs for admin panel pages (wordpress core)
+	 *
+	 * @todo add uniqueid somehow
+	 */	
+	function bcn_admin_gobal_tabs()
+	{	
+		/* if has already a special id quit the global try here */
+		if (jQuery('#hasadmintabs').length > 0) return;
+		
+		jQuery('#wpbody .wrap form').each(function(f)
+		{						
+			var $formEle = jQuery(this).children();
+		
+			var $eleSets      = new Array();	
+			var $eleSet       = new Array();
+			var $eleSetIgnore = new Array();
+								
+			for (var i = 0; i < $formEle.size(); i++)
+			{
+				var curr = $formEle.get(i);
+				var $curr = jQuery(curr);	
+				// cut condition: h3 or stop				
+				// stop: p.submit
+				if ($curr.is('p.submit') || $curr.is('h3'))
+				{
+					if ($eleSet.length)
+					{
+						if ($eleSets.length == 0 && $eleSet.length == 1 && jQuery($eleSet).is('p'))	{
+							$eleSetIgnore = $eleSetIgnore.concat($eleSet);
+						} else {
+							$eleSets.push($eleSet);
+						}						
+						$eleSet  = new Array();
+					}
+					if ($curr.is('p.submit')) break;
+					$eleSet.push(curr);					
+				} else {
+					// handle ingnore bag - works only before the first set is created
+					var pushto = $eleSet; 
+					if ($eleSets.length == 0 && $curr.is("input[type='hidden']"))
+					{
+						pushto = $eleSetIgnore;					
+					}															
+					pushto.push(curr);
+				}
+			}		
+			
+			// if the page has only one set, quit
+			if ($eleSets.length < 2) return;			
+			
+			// tabify
+			formid = 'tabulator-tabs-form-' + f;
+			jQuery($eleSetIgnore).filter(':last').after('<div id="' + formid + '"></div>');
+			jQuery('#'+formid).prepend("<ul><\/ul>");
+			var tabcounter = 0;			
+			jQuery.each($eleSets, function() {
+				tabcounter++;
+				id      = formid + '-tab-' + tabcounter;
+				hash3   = true;
+				h3probe = jQuery(this).filter('h3').eq(0);			
+				if (h3probe.is('h3')) {
+					caption = h3probe.text();					
+				} else {
+					hash3   = false;
+					caption = jQuery('#wpbody .wrap h2').eq(0).text();
+				}
+				if (caption == ''){
+					caption = 'FALLBACK';
+				} 	
+				tabdiv = jQuery(this).wrapAll('<span id="'+id+'"></span>');
+				jQuery('#'+formid+' > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
+				if (hash3) h3probe.hide();
+			});
+			jQuery('#'+formid+' > ul').tabs();				
+		});	
+	}
+	 
+	/**
+	 * inittialize tabs for breadcrumb navxt admin panel
+	 */	 
+	function bcn_admin_init_tabs()
+	{
+		jQuery('#hasadmintabs').prepend("<ul><\/ul>");
+		jQuery('#hasadmintabs > fieldset').each(function(i)
+		{
+		    id      = jQuery(this).attr('id');
+		    caption = jQuery(this).find('h3').text();
+		    jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
+		    jQuery(this).find('h3').hide();
+	    });    
+	    jQuery("#hasadmintabs > ul").tabs();
+	}
+/* ]]> */
+</script>
 <?php
 }
 
@@ -793,10 +901,9 @@ if(function_exists('add_action')){
 	add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php','bcn_install');
 	//WordPress Admin interface hook
 	add_action('admin_menu', 'bcn_add_page');
-	add_action('admin_head', 'bcn_options_style');
-	//enque javscript dependencies
-	wp_enqueue_script('jquery-ui-tabs');
-	
+	//add_action('admin_head', 'bcn_options_style');
+	//Enque javscript dependencies
+	//wp_enqueue_script('jquery-ui-tabs');
 	//Admin Options hook
 	if(isset($_POST['bcn_admin_options']))
 	{
