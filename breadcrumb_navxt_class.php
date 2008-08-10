@@ -91,9 +91,9 @@ class bcn_breadcrumb_trail
 		$this->opt = array
 		(
 			//Should the home page be shown
-			'home_display' => 'true',
+			'home_display' => true,
 			//Title displayed when is_home() returns true
-			'home_title' => 'Home',
+			'home_title' => 'Blog',
 			//The anchor template for the home page, this is global, two keywords are available %link% and %title%
 			'home_anchor' => '<a title="Go to %title%." href="%link%">',
 			//The anchor template for the blog page only in static front page mode, this is global, two keywords are available %link% and %title%
