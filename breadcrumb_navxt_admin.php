@@ -98,7 +98,7 @@ function bcn_install()
 			delete_option('bcn_preserve');
 			delete_option('bcn_static_frontpage');
 		}
-		//Fix up depreciated in 2.2
+		//Fix up depreciated in 2.2, migrate any old settings if possible
 		else if($major <= 2 && $minor <= 1 && $release <= 4)
 		{
 			delete_option('bcn_url_blog');
@@ -108,6 +108,7 @@ function bcn_install()
 			//Remove the old stuff
 			delete_option('bcn_title_blog');
 			delete_option('bcn_title_home');
+			//We now use booleans/ints rather than string expressiongs
 			if(get_option('bcn_home_display') == "true")
 			{
 				$bcn_display_upgrade = 1;
@@ -117,10 +118,47 @@ function bcn_install()
 				$bcn_display_upgrade = 0;
 			}
 			update_option('bcn_home_display', $bcn_display_upgrade);
-			delete_option('bcn_home_display');
 			delete_option('bcn_urltitle_prefix');
 			delete_option('bcn_urltitle_suffix');
 			delete_option('bcn_archive_date_format');
+			add_option('bcn_404_title', get_option('bcn_title_404'));
+			delete_option('bcn_title_404');
+			//Migrate options, then clean up
+			get_option('bcn_singleblogpost_taxonomy_display');
+			
+			add_option('bcn_post_taxonomy', get_option('bcn_singleblogpost_taxonomy'));
+			add_option('bcn_post_taxonomy_display', 1);
+			delete_option('bcn_singleblogpost_taxonomy');
+			delete_option('bcn_singleblogpost_taxonomy_display');
+			add_option('bcn_category_prefix', get_option('bcn_singleblogpost_category_prefix'));
+			add_option('bcn_category_suffix', get_option('bcn_singleblogpost_category_suffix'));
+			add_option('bcn_tag_prefix', get_option('bcn_singleblogpost_tag_prefix'));
+			add_option('bcn_tag_suffix', get_option('bcn_singleblogpost_tag_suffix'));
+			delete_option('bcn_singleblogpost_category_prefix');
+			delete_option('bcn_singleblogpost_category_suffix');
+			delete_option('bcn_singleblogpost_tag_prefix');
+			delete_option('bcn_singleblogpost_tag_suffix');
+			if(get_option('bcn_link_current_item') == "true")
+			{
+				$bcn_link_upgrade = 1;
+			}
+			else
+			{
+				$bcn_link_upgrade = 0;	
+			}
+			update_option('bcn_link_current_item', $bcn_link_upgrade);
+			//Migrate to new option and value type
+			if(get_option('bcn_link_current_item') == "true")
+			{
+				$bcn_link_upgrade = 1;
+			}
+			else
+			{
+				$bcn_link_upgrade = 0;
+			}
+			add_option('bcn_current_item_linked', $bcn_link_upgrade);
+			delete_option('bcn_link_current_item');
+			delete_option('bcn_current_item_urltitle');
 		}
 		//No need for using API hacks, we fully controol things here
 		//We always want to update to our current version
@@ -145,21 +183,22 @@ function bcn_install()
 		add_option('bcn_attachment_suffix', '');
 		add_option('bcn_archive_tag_prefix', 'Archive by tag &#39;');
 		add_option('bcn_archive_tag_suffix', '&#39;');
-		add_option('bcn_title_404', '404');
-		add_option('bcn_link_current_item', 0);
-		add_option('bcn_current_item_urltitle', 'Link of current page (click to refresh)');
+		add_option('bcn_404_prefix', '');
+		add_option('bcn_404_suffix', '');
+		add_option('bcn_404_title', '404');
+		add_option('bcn_current_item_linked', 0);
 		add_option('bcn_current_item_style_prefix', '');
 		add_option('bcn_current_item_style_suffix', '');
 		add_option('bcn_posttitle_maxlen', 0);
 		add_option('bcn_paged_display', 'false');
 		add_option('bcn_paged_prefix', ', Page&nbsp;');
 		add_option('bcn_paged_suffix', '');
-		add_option('bcn_singleblogpost_taxonomy', 'category');
-		add_option('bcn_singleblogpost_taxonomy_display', 1);
-		add_option('bcn_singleblogpost_category_prefix', '');
-		add_option('bcn_singleblogpost_category_suffix', '');
-		add_option('bcn_singleblogpost_tag_prefix', '');
-		add_option('bcn_singleblogpost_tag_suffix', '');
+		add_option('bcn_post_taxonomy', 'category');
+		add_option('bcn_post_taxonomy_display', 1);
+		add_option('bcn_category_prefix', '');
+		add_option('bcn_category_suffix', '');
+		add_option('bcn_tag_prefix', '');
+		add_option('bcn_tag_suffix', '');
 	}
 }
 /**
@@ -187,7 +226,6 @@ function bcn_display()
 		//Make new breadcrumb object
 		$breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Set the settings
-		// @todo clean removed in 2.1.3 $breadcrumb->opt['static_frontpage'] = get_option('bcn_static_frontpage');
 		/*$breadcrumb->opt['url_blog'] = get_option('bcn_url_blog');
 		$breadcrumb->opt['home_display'] = get_option('bcn_home_display');
 		$breadcrumb->opt['home_link'] = get_option('bcn_home_link');
@@ -392,14 +430,6 @@ function bcn_admin()
 		<fieldset id="static_front_page" class="bcn_options">
 			<h3><?php _e('Front Page', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
-				<tr valign="top">
-					<th scope="row">
-						<?php _e('Static Front Page', 'breadcrumb_navxt'); ?>
-					</th>
-					<td>
-						<span id="static_frontpage_ex"><?php echo __(bcn_wp_has_static_frontpage() ? 'Yes': 'No'); ?></span>																		
-					</td>
-				</tr>			
 				<tr valign="top">
 					<th scope="row">
 						<?php _e('Home Breadcrumb', 'breadcrumb_navxt'); ?>						
