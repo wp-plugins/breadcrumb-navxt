@@ -124,12 +124,19 @@ function bcn_install()
 			add_option('bcn_404_title', get_option('bcn_title_404'));
 			delete_option('bcn_title_404');
 			//Migrate options, then clean up
-			get_option('bcn_singleblogpost_taxonomy_display');
-			
+			if(get_option('bcn_singleblogpost_taxonomy_display') == "true")
+			{
+				$bcn_taxonomy_upgrade = 1;
+			}
+			else
+			{
+				$bcn_taxonomy_upgrade = 0;
+			}
 			add_option('bcn_post_taxonomy', get_option('bcn_singleblogpost_taxonomy'));
-			add_option('bcn_post_taxonomy_display', 1);
+			add_option('bcn_post_taxonomy_display', $bcn_taxonomy_upgrade);
 			delete_option('bcn_singleblogpost_taxonomy');
 			delete_option('bcn_singleblogpost_taxonomy_display');
+			//Migrate the next set, then clean up
 			add_option('bcn_category_prefix', get_option('bcn_singleblogpost_category_prefix'));
 			add_option('bcn_category_suffix', get_option('bcn_singleblogpost_category_suffix'));
 			add_option('bcn_tag_prefix', get_option('bcn_singleblogpost_tag_prefix'));
@@ -159,6 +166,10 @@ function bcn_install()
 			add_option('bcn_current_item_linked', $bcn_link_upgrade);
 			delete_option('bcn_link_current_item');
 			delete_option('bcn_current_item_urltitle');
+			add_option('bcn_post_prefix', get_option('bcn_singleblogpost_prefix'));
+			add_option('bcn_post_suffix', get_option('bcn_singleblogpost_suffix'));
+			dalete_option('bcn_singleblogpost_prefix');
+			delete_option('bcn_singleblogpost_suffix');
 		}
 		//No need for using API hacks, we fully controol things here
 		//We always want to update to our current version
@@ -171,8 +182,6 @@ function bcn_install()
 		add_option('bcn_author_prefix', 'Posts by ');
 		add_option('bcn_author_suffix', '');
 		add_option('bcn_author_display', 'display_name');
-		add_option('bcn_singleblogpost_prefix', 'Blog article:&nbsp;');
-		add_option('bcn_singleblogpost_suffix', '');
 		add_option('bcn_page_prefix', '');
 		add_option('bcn_page_suffix', '');
 		add_option('bcn_archive_category_prefix', 'Archive by category &#39;');
@@ -193,6 +202,9 @@ function bcn_install()
 		add_option('bcn_paged_display', 'false');
 		add_option('bcn_paged_prefix', ', Page&nbsp;');
 		add_option('bcn_paged_suffix', '');
+		//Post related options
+		add_option('bcn_post_prefix', 'Blog article:&nbsp;');
+		add_option('bcn_post_suffix', '');
 		add_option('bcn_post_taxonomy', 'category');
 		add_option('bcn_post_taxonomy_display', 1);
 		add_option('bcn_category_prefix', '');
