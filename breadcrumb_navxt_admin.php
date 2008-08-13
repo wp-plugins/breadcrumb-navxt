@@ -104,7 +104,7 @@ function bcn_install()
 			delete_option('bcn_url_blog');
 			delete_option('bcn_home_link');
 			//Upgrade to a current option
-			add_options('bcn_home_title', get_option('bcn_title_blog'));
+			add_option('bcn_home_title', get_option('bcn_title_blog'));
 			//Remove the old stuff
 			delete_option('bcn_title_blog');
 			delete_option('bcn_title_home');
@@ -170,36 +170,61 @@ function bcn_install()
 			add_option('bcn_post_suffix', get_option('bcn_singleblogpost_suffix'));
 			dalete_option('bcn_singleblogpost_prefix');
 			delete_option('bcn_singleblogpost_suffix');
+			if(get_option('bcn_paged_display'))
+			{
+				$bcn_display_upgrade = 1;
+			}
+			else
+			{
+				$bcn_display_upgrade = 0;
+			}
+			update_option('bcn_paged_display', $bcn_display_upgrade);
+			delete_option('bcn_paged_display');
+			//Migrate title_maxlen
+			add_option('bcn_max_title_lenght', get_option('bcn_posttitle_maxlen'));
+			delete_option('bcn_posttitle_maxlen');
 		}
 		//No need for using API hacks, we fully controol things here
 		//We always want to update to our current version
 		update_option('bcn_version', $bcn_admin_version);
 		//Add in options if they didn't exist before, load defaults into them
+		//Home page settings
 		add_option('bcn_home_display', 1);
+		add_option('bcn_home_title', 'Blog');
+		add_option('bcn_home_anchor', '<a title="Go to %title%." href="%link%">');
+		add_option('bcn_blog_anchor', '<a title="Go to %title%." href="%link%">');
+		add_option('bcn_max_title_lenght', 0);
 		add_option('bcn_separator', '&nbsp;&gt;&nbsp;');
+		//Search page settings
 		add_option('bcn_search_prefix', 'Search results for &#39;');
 		add_option('bcn_search_suffix', '&#39;');
+		//Author page settings
 		add_option('bcn_author_prefix', 'Posts by ');
 		add_option('bcn_author_suffix', '');
 		add_option('bcn_author_display', 'display_name');
+		//Page settings
 		add_option('bcn_page_prefix', '');
 		add_option('bcn_page_suffix', '');
+		add_option('bcn_page_anchor', '<a title="Go to %title%." href="%link%">');
+		//Archive settings
 		add_option('bcn_archive_category_prefix', 'Archive by category &#39;');
 		add_option('bcn_archive_category_suffix', '&#39;');
-		add_option('bcn_archive_date_prefix', 'Archive: ');
-		add_option('bcn_archive_date_suffix', '');
-		add_option('bcn_attachment_prefix', 'Attachment:&nbsp;');
-		add_option('bcn_attachment_suffix', '');
 		add_option('bcn_archive_tag_prefix', 'Archive by tag &#39;');
 		add_option('bcn_archive_tag_suffix', '&#39;');
+		//Attachment settings
+		add_option('bcn_attachment_prefix', 'Attachment:&nbsp;');
+		add_option('bcn_attachment_suffix', '');
+		//404 page settings
 		add_option('bcn_404_prefix', '');
 		add_option('bcn_404_suffix', '');
 		add_option('bcn_404_title', '404');
+		//Current item settings
 		add_option('bcn_current_item_linked', 0);
+		add_option('bcn_current_item_anchor', '<a title="Reload the current page." href="%link%">');
 		add_option('bcn_current_item_style_prefix', '');
 		add_option('bcn_current_item_style_suffix', '');
-		add_option('bcn_posttitle_maxlen', 0);
-		add_option('bcn_paged_display', 'false');
+		//Paged settings
+		add_option('bcn_paged_display', 0);
 		add_option('bcn_paged_prefix', ', Page&nbsp;');
 		add_option('bcn_paged_suffix', '');
 		//Post related options
@@ -207,10 +232,18 @@ function bcn_install()
 		add_option('bcn_post_suffix', '');
 		add_option('bcn_post_taxonomy', 'category');
 		add_option('bcn_post_taxonomy_display', 1);
+		//Category settings
 		add_option('bcn_category_prefix', '');
 		add_option('bcn_category_suffix', '');
+		add_option('bcn_category_anchor', '<a title="Go to the %title% category archives." href="%link%">');
+		//Tag settings
 		add_option('bcn_tag_prefix', '');
 		add_option('bcn_tag_suffix', '');
+		add_option('bcn_tag_anchor', '<a title="Go to the %title% tag archives." href="%link%">');
+		//Archive by date settings
+		add_option('bcn_archive_date_prefix', '');
+		add_option('bcn_archive_date_suffix', '');
+		add_option('bcn_date_anchor', '<a title="Go to the %title% archives." href="%link%">');
 	}
 }
 /**
