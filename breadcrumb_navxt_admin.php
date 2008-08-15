@@ -232,6 +232,7 @@ function bcn_install()
 		add_option('bcn_post_suffix', '');
 		add_option('bcn_post_taxonomy', 'category');
 		add_option('bcn_post_taxonomy_display', 1);
+		add_option('bcn_post_anchor', '<a title="Go to %title%." href="%link%">');
 		//Category settings
 		add_option('bcn_category_prefix', '');
 		add_option('bcn_category_suffix', '');
@@ -271,47 +272,47 @@ function bcn_display()
 		//Make new breadcrumb object
 		$breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Set the settings
-		/*$breadcrumb->opt['url_blog'] = get_option('bcn_url_blog');
 		$breadcrumb->opt['home_display'] = get_option('bcn_home_display');
-		$breadcrumb->opt['home_link'] = get_option('bcn_home_link');
-		$breadcrumb->opt['title_home'] = get_option('bcn_title_home');
-		$breadcrumb->opt['title_blog'] = get_option('bcn_title_blog');
+		$breadcrumb->opt['home_title'] = get_option('bcn_home_title');
+		$breadcrumb->opt['home_anchor'] = get_option('bcn_home_anchor');
+		$breadcrumb->opt['blog_anchor'] = get_option('bcn_blog_anchor');
 		$breadcrumb->opt['separator'] = get_option('bcn_separator');
+		$breadcrumb->opt['max_title_length'] = get_option('bcn_max_title_length');
+		$breadcrumb->opt['current_item_linked'] = get_option('bcn_current_item_linked');
+		$breadcrumb->opt['current_item_anchor'] = get_option('bcn_current_item_anchor');
+		$breadcrumb->opt['current_item_prefix'] = get_option('bcn_current_item_prefix');
+		$breadcrumb->opt['current_item_suffix'] = get_option('bcn_current_item_suffix');
+		$breadcrumb->opt['page_prefix'] = get_option('bcn_page_prefix');
+		$breadcrumb->opt['page_suffix'] = get_option('bcn_page_suffix');
+		$breadcrumb->opt['page_anchor'] = get_option('bcn_page_anchor');
+		$breadcrumb->opt['post_prefix'] = get_option('bcn_post_prefix');
+		$breadcrumb->opt['post_suffix'] = get_option('bcn_post_suffix');
+		$breadcrumb->opt['post_anchor'] = get_option('bcn_post_anchor');
+		$breadcrumb->opt['post_taxonomy_display'] = get_option('bcn_post_taxonomy_display');
+		$breadcrumb->opt['post_taxonomy_type'] = get_option('bcn_post_taxonomy_type');
+		$breadcrumb->opt['attachment_prefix'] = get_option('bcn_attachment_prefix');
+		$breadcrumb->opt['attachment_suffix'] = get_option('bcn_attachment_suffix');
+		$breadcrumb->opt['404_prefix'] = get_option('bcn_404_prefix');
+		$breadcrumb->opt['404_suffix'] = get_option('bcn_404_suffix');
+		$breadcrumb->opt['404_title'] = get_option('bcn_404_title');
 		$breadcrumb->opt['search_prefix'] = get_option('bcn_search_prefix');
 		$breadcrumb->opt['search_suffix'] = get_option('bcn_search_suffix');
+		$breadcrumb->opt['tag_prefix'] = get_option('bcn_tag_prefix');
+		$breadcrumb->opt['tag_suffix'] = get_option('bcn_tag_suffix');
+		$breadcrumb->opt['tag_anchor'] = get_option('bcn_tag_anchor');
 		$breadcrumb->opt['author_prefix'] = get_option('bcn_author_prefix');
 		$breadcrumb->opt['author_suffix'] = get_option('bcn_author_suffix');
 		$breadcrumb->opt['author_display'] = get_option('bcn_author_display');
-		$breadcrumb->opt['attachment_prefix'] = get_option('bcn_attachment_prefix');
-		$breadcrumb->opt['attachment_suffix'] = get_option('bcn_attachment_suffix');
-		$breadcrumb->opt['singleblogpost_prefix'] = get_option('bcn_singleblogpost_prefix');
-		$breadcrumb->opt['singleblogpost_suffix'] = get_option('bcn_singleblogpost_suffix');
-		$breadcrumb->opt['page_prefix'] = get_option('bcn_page_prefix');
-		$breadcrumb->opt['page_suffix'] = get_option('bcn_page_suffix');
-		$breadcrumb->opt['urltitle_prefix'] = get_option('bcn_urltitle_prefix');
-		$breadcrumb->opt['urltitle_suffix'] = get_option('bcn_urltitle_suffix');
+		$breadcrumb->opt['category_prefix'] = get_option('bcn_category_prefix');
+		$breadcrumb->opt['category_suffix'] = get_option('bcn_category_suffix');
+		$breadcrumb->opt['category_anchor'] = get_option('bcn_category_anchor');
 		$breadcrumb->opt['archive_category_prefix'] = get_option('bcn_archive_category_prefix');
 		$breadcrumb->opt['archive_category_suffix'] = get_option('bcn_archive_category_suffix');
-		$breadcrumb->opt['archive_date_prefix'] = get_option('bcn_archive_date_prefix');
-		$breadcrumb->opt['archive_date_suffix'] = get_option('bcn_archive_date_suffix');
-		$breadcrumb->opt['archive_date_format'] = get_option('bcn_archive_date_format');
 		$breadcrumb->opt['archive_tag_prefix'] = get_option('bcn_archive_tag_prefix');
 		$breadcrumb->opt['archive_tag_suffix'] = get_option('bcn_archive_tag_suffix');
-		$breadcrumb->opt['title_404'] = get_option('bcn_title_404');
-		$breadcrumb->opt['link_current_item'] = get_option('bcn_link_current_item', 'false');
-		$breadcrumb->opt['current_item_urltitle'] = get_option('bcn_current_item_urltitle');
-		$breadcrumb->opt['current_item_style_prefix'] = get_option('bcn_current_item_style_prefix');
-		$breadcrumb->opt['current_item_style_suffix'] = get_option('bcn_current_item_style_suffix');
-		$breadcrumb->opt['posttitle_maxlen'] = get_option('bcn_posttitle_maxlen');
-		$breadcrumb->opt['paged_display'] = get_option('bcn_paged_display');
-		$breadcrumb->opt['paged_prefix'] = get_option('bcn_paged_prefix');
-		$breadcrumb->opt['paged_suffix'] = get_option('bcn_paged_suffix');
-		$breadcrumb->opt['singleblogpost_taxonomy'] = get_option('bcn_singleblogpost_taxonomy');
-		$breadcrumb->opt['singleblogpost_taxonomy_display'] = get_option('bcn_singleblogpost_taxonomy_display', 'false');
-		$breadcrumb->opt['singleblogpost_category_prefix'] = get_option('bcn_singleblogpost_category_prefix');
-		$breadcrumb->opt['singleblogpost_category_suffix'] = get_option('bcn_singleblogpost_category_suffix');
-		$breadcrumb->opt['singleblogpost_tag_prefix'] = get_option('bcn_singleblogpost_tag_prefix');
-		$breadcrumb->opt['singleblogpost_tag_suffix'] = get_option('bcn_singleblogpost_tag_suffix');*/
+		$breadcrumb->opt['date_anchor'] = get_option('bcn_date_anchor');
+		$breadcrumb->opt['archive_date_prefix'] = get_option('bcn_archive_date_prefix');
+		$breadcrumb->opt['archive_date_suffix'] = get_option('bcn_archive_date_suffix');
 		//Generate the breadcrumb trail
 		$breadcrumb_trail->fill();
 		//Display the breadcrumb trail
