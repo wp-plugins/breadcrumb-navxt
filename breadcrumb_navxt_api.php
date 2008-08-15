@@ -22,16 +22,21 @@
  * Get Option, get_option Replacement
  *
  * @param string optionname name of the wordpress option
+ * @param bool foradmin wheter or not we are returning for the admin interface or for the class
  */
-function bcn_get_option($optionname)
+function bcn_get_option($optionname, $foradmin = true)
 {
 	//Retrieve the option value
 	$bcn_value = get_option($optionname);
-	
-	//Remove &nbsp; so that it looks correct (string problem)
-	$bcn_value = str_replace("&nbsp;", " ", $bcn_value);
-	
-	return $bcn_value;
+	if($foradmin)
+	{
+		//Remove &nbsp; so that it looks correct (string problem)
+		return str_replace("&nbsp;", " ", $bcn_value);
+	}
+	else
+	{
+		return html_entity_decode($bcn_value);
+	}
 }
 
 /**
@@ -48,31 +53,31 @@ function bcn_update_option($optionname, $value)
 	/*
 	 * Only if we have a string should we check for spaces
 	 * 
-	 * @note since $value is from $_POST[] this will return true ever^^
+	 * @note since $value is from $_POST[] this will return true ever^^ - yep :|
 	 * 
 	 * 
 	 * @todo Instead of poking blindly around and inventing stupid algos:
 	 * 	     enclose the whole string sothat everything is preserved automatically
 	 * 		 bcn_get_option can remove the enclosure then again with ease 100% transparent  
-	 */	
-	if(is_string($bcn_value))
-	{		
-		//Preserving the front space if exists
-		if(strpos($bcn_value, " ") === 0)
+	 * 		- I don't think wraping is a good solution (if we wrap then we always have to do
+	 * 		special things each read, verses this only happens on each update which is less often
+	*/
+	//We want to make sure we handle html entities correctly first
+	$bcn_value = htmlentities($bcn_value);
+	//Preserving the front space if exists
+	if(strpos($bcn_value, " ") === 0)
+	{
+		$bcn_value = "&nbsp;" . ltrim($bcn_value);
+	}
+	//Preserv the end space if exists
+	$bcn_length = strlen($bcn_value) - 1;
+	if($bcn_length > 0)
+	{
+		if(strpos($bcn_value, " ", $bcn_length - 1) === $bcn_length)
 		{
-			$bcn_value = "&nbsp;" . ltrim($bcn_value);
-		}
-		//Preserv the end space if exists
-		$bcn_length = strlen($bcn_value) - 1;
-		if($bcn_length > 0)
-		{
-			if(strpos($bcn_value, " ", $bcn_length - 1) === $bcn_length)
-			{
-				$bcn_value = rtrim($bcn_value) . "&nbsp;";
-			}
+			$bcn_value = rtrim($bcn_value) . "&nbsp;";
 		}
 	}
-		
 	return update_option($optionname, $bcn_value);
 }
 
@@ -139,66 +144,4 @@ function bcn_get($varname, $default = "")
 	//Return unslashed value
 	return $bcn_value;
 }
-/**
- * bcn_local
- *
- * Initilizes localization domain
- */
-function bcn_local()
-{
-	//Load breadcrumb-navxt translation
-	load_plugin_textdomain($domain = 'breadcrumb_navxt', $path = PLUGINDIR . '/breadcrumb-navxt');
-}
-
-/**
- * bcn_wp_static_frontpage
- * 
- * does this wordpress installation uses a static page as frontpage
- * or the standard listing of latest posts?
- * 
- * @return bool true if wordpress uses a static frontpage
- * @since  2.1.3
- */
-function bcn_wp_has_static_frontpage()
-{
-	/*
-	 * the option is taken directly from wordpress configuraion 
-	 *	 
-	 * wp option: get_option('show_on_front')
-	 * 
-	 * @see http://codex.wordpress.org/Option_Reference
-	 * 
-	 * 		page_on_front
-	 *  
-	 * 		The ID of the page that should be displayed on the front page. 
-	 * 		Requires show_on_front's value to be page.
-	 * 		Data type: Integer
-	 * 
-	 * 		show_on_front 
-	 * 
-	 * 		What to show on the front page
-	 * 		'posts' : Your latest posts 
-	 *		'page' : A static page (see page_on_front) 
-	 *		Data type: String
-	 */
-	
-	$blog_has_static_frontpage = (bool) (get_option('show_on_front') == 'page');
-	
-	return $blog_has_static_frontpage;
-}
-
-/**
- * Get Wordpress Homepage
- * 
- * @return string URL of wordpress homepage
- * @since  2.1.3
- */
-function bcn_wp_url_home()
-{
-	$url_home = get_option('home') . '/';
-		
-	return $url_home;
-}
-
-
 ?>

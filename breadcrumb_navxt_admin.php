@@ -796,6 +796,17 @@ function bcn_select_options($optionname, $options = array('true','false'))
 	}
 }
 /**
+ * bcn_local
+ *
+ * Initilizes localization domain
+ */
+function bcn_local()
+{
+	//Load breadcrumb-navxt translation
+	load_plugin_textdomain($domain = 'breadcrumb_navxt', $path = PLUGINDIR . '/breadcrumb-navxt');
+}
+
+/**
  * Additional styles and scripts for admin interface
  * 
  * @todo do not add to any admin page
