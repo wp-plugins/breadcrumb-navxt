@@ -332,45 +332,64 @@ function bcn_admin_options()
 	
 	//Do a nonce check, prevent malicious link/form problems
 	check_admin_referer('bcn_admin_options');
-	bcn_update_option('bcn_home_display', bcn_get('home_display', 'false'));
-	bcn_update_option('bcn_title_home', bcn_get('title_home'));
-	bcn_update_option('bcn_title_blog', bcn_get('title_blog'));
+	//Update the options
+	//Home page settings
+	bcn_update_option('bcn_home_display', bcn_get('home_display', true);
+	bcn_update_option('bcn_home_title', bcn_get('home_title'));
+	bcn_update_option('bcn_home_anchor', bcn_get('home_anchor'));
+	bcn_update_option('bcn_blog_anchor', bcn_get('blog_anchor'));
+	bcn_update_option('bcn_max_title_lenght', bcn_get('max_title_lenght', false));
 	bcn_update_option('bcn_separator', bcn_get('separator'));
+	//Search page settings
 	bcn_update_option('bcn_search_prefix', bcn_get('search_prefix'));
 	bcn_update_option('bcn_search_suffix', bcn_get('search_suffix'));
+	//Author page settings
 	bcn_update_option('bcn_author_prefix', bcn_get('author_prefix'));
 	bcn_update_option('bcn_author_suffix', bcn_get('author_suffix'));
 	bcn_update_option('bcn_author_display', bcn_get('author_display'));
-	bcn_update_option('bcn_attachment_prefix', bcn_get('attachment_prefix'));
-	bcn_update_option('bcn_attachment_suffix', bcn_get('attachment_suffix'));
-	bcn_update_option('bcn_singleblogpost_prefix', bcn_get('singleblogpost_prefix'));
-	bcn_update_option('bcn_singleblogpost_suffix', bcn_get('singleblogpost_suffix'));
+	//Page settings
 	bcn_update_option('bcn_page_prefix', bcn_get('page_prefix'));
 	bcn_update_option('bcn_page_suffix', bcn_get('page_suffix'));
-	bcn_update_option('bcn_urltitle_prefix', bcn_get('urltitle_prefix'));
-	bcn_update_option('bcn_urltitle_suffix',	bcn_get('urltitle_suffix'));
+	bcn_update_option('bcn_page_anchor', bcn_get('page_anchor'));
+	//Archive settings
 	bcn_update_option('bcn_archive_category_prefix', bcn_get('archive_category_prefix'));
 	bcn_update_option('bcn_archive_category_suffix', bcn_get('archive_category_suffix'));
-	bcn_update_option('bcn_archive_date_prefix', bcn_get('archive_date_prefix'));
-	bcn_update_option('bcn_archive_date_suffix', bcn_get('archive_date_suffix'));
-	bcn_update_option('bcn_archive_date_format', bcn_get('archive_date_format'));
 	bcn_update_option('bcn_archive_tag_prefix', bcn_get('archive_tag_prefix'));
 	bcn_update_option('bcn_archive_tag_suffix', bcn_get('archive_tag_suffix'));
-	bcn_update_option('bcn_title_404', bcn_get('title_404'));
-	bcn_update_option('bcn_link_current_item', bcn_get('link_current_item', 'false'));
-	bcn_update_option('bcn_current_item_urltitle', bcn_get('current_item_urltitle'));
+	//Attachment settings
+	bcn_update_option('bcn_attachment_prefix', bcn_get('attachment_prefix'));
+	bcn_update_option('bcn_attachment_suffix', bcn_get('attachment_suffix'));
+	//404 page settings
+	bcn_update_option('bcn_404_prefix', bcn_get('attachment_suffix'));
+	bcn_update_option('bcn_404_suffix', bcn_get('attachment_suffix'));
+	bcn_update_option('bcn_404_title', bcn_get('attachment_suffix'));
+	//Current item settings
+	bcn_update_option('bcn_current_item_linked', bcn_get('current_item_linked', false));
+	bcn_update_option('bcn_current_item_anchor', bcn_get('current_item_anchor'));
 	bcn_update_option('bcn_current_item_style_prefix', bcn_get('current_item_style_prefix'));
 	bcn_update_option('bcn_current_item_style_suffix', bcn_get('current_item_style_suffix'));
-	bcn_update_option('bcn_posttitle_maxlen', bcn_get('posttitle_maxlen'));
-	bcn_update_option('bcn_paged_display', bcn_get('paged_display'));
+	//Paged settings
+	bcn_update_option('bcn_paged_display', bcn_get('paged_display', false));
 	bcn_update_option('bcn_paged_prefix', bcn_get('paged_prefix'));
 	bcn_update_option('bcn_paged_suffix', bcn_get('paged_suffix'));
-	bcn_update_option('bcn_singleblogpost_taxonomy', bcn_get('singleblogpost_taxonomy'));
-	bcn_update_option('bcn_singleblogpost_taxonomy_display', bcn_get('singleblogpost_taxonomy_display'));
-	bcn_update_option('bcn_singleblogpost_category_prefix', bcn_get('singleblogpost_category_prefix'));
-	bcn_update_option('bcn_singleblogpost_category_suffix', bcn_get('singleblogpost_category_suffix'));
-	bcn_update_option('bcn_singleblogpost_tag_prefix', bcn_get('singleblogpost_tag_prefix'));
-	bcn_update_option('bcn_singleblogpost_tag_suffix', bcn_get('singleblogpost_tag_suffix'));
+	//Post related options
+	bcn_update_option('bcn_post_prefix', bcn_get('post_prefix'));
+	bcn_update_option('bcn_post_suffix', bcn_get('post_suffix'));
+	bcn_update_option('bcn_post_taxonomy', bcn_get('post_taxonomy'));
+	bcn_update_option('bcn_post_taxonomy_display', bcn_get('post_taxonomy_display', true));
+	bcn_update_option('bcn_post_anchor', bcn_get('post_anchor'));
+	//Category settings
+	bcn_update_option('bcn_category_prefix', bcn_get('category_prefix'));
+	bcn_update_option('bcn_category_suffix', bcn_get('category_suffix'));
+	bcn_update_option('bcn_category_anchor', bcn_get('category_anchor'));
+	//Tag settings
+	bcn_update_option('bcn_tag_prefix', bcn_get('tag_prefix'));
+	bcn_update_option('bcn_tag_suffix', bcn_get('tag_suffix'));
+	bcn_update_option('bcn_tag_anchor', bcn_get('tag_anchor'));
+	//Archive by date settings
+	bcn_update_option('bcn_archive_date_prefix', bcn_get('archive_date_prefix'));
+	bcn_update_option('bcn_archive_date_suffix', bcn_get('archive_date_suffix'));
+	bcn_update_option('bcn_date_anchor', bcn_get('date_anchor'));
 }
 /**
  * bcn_add_page

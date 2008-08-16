@@ -124,7 +124,7 @@ function bcn_get_option_inputvalue($optionname)
  * @return (string) unescaped post data
  * @note   WP-Version 2.3.3, wp-settings.php #259ff
  */
-function bcn_get($varname, $default = "")
+function bcn_get($varname, $default = false)
 {	
 	//Import variable from post-request
 	$bcn_value = $_POST[$varname];
