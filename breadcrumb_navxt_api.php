@@ -32,10 +32,11 @@ function bcn_get_option($optionname, $foradmin = true)
 	{
 		//Remove &nbsp; so that it looks correct (string problem)
 		return str_replace("&nbsp;", " ", $bcn_value);
+		
 	}
 	else
 	{
-		return html_entity_decode($bcn_value);
+		return htmlspecialchars_decode($bcn_value);
 	}
 }
 
@@ -63,7 +64,7 @@ function bcn_update_option($optionname, $value)
 	 * 		special things each read, verses this only happens on each update which is less often
 	*/
 	//We want to make sure we handle html entities correctly first
-	$bcn_value = htmlentities($bcn_value);
+	$bcn_value = htmlspecialchars($bcn_value);
 	//Preserving the front space if exists
 	if(strpos($bcn_value, " ") === 0)
 	{
@@ -124,7 +125,7 @@ function bcn_get_option_inputvalue($optionname)
  * @return (string) unescaped post data
  * @note   WP-Version 2.3.3, wp-settings.php #259ff
  */
-function bcn_get($varname, $default = false)
+function bcn_get($varname, $default = "")
 {	
 	//Import variable from post-request
 	$bcn_value = $_POST[$varname];

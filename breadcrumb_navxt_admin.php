@@ -181,7 +181,7 @@ function bcn_install()
 			update_option('bcn_paged_display', $bcn_display_upgrade);
 			delete_option('bcn_paged_display');
 			//Migrate title_maxlen
-			add_option('bcn_max_title_lenght', get_option('bcn_posttitle_maxlen'));
+			add_option('bcn_max_title_length', get_option('bcn_posttitle_maxlen'));
 			delete_option('bcn_posttitle_maxlen');
 		}
 		//No need for using API hacks, we fully controol things here
@@ -193,7 +193,7 @@ function bcn_install()
 		add_option('bcn_home_title', 'Blog');
 		add_option('bcn_home_anchor', '<a title="Go to %title%." href="%link%">');
 		add_option('bcn_blog_anchor', '<a title="Go to %title%." href="%link%">');
-		add_option('bcn_max_title_lenght', 0);
+		add_option('bcn_max_title_length', 0);
 		add_option('bcn_separator', '&nbsp;&gt;&nbsp;');
 		//Search page settings
 		add_option('bcn_search_prefix', 'Search results for &#39;');
@@ -334,11 +334,11 @@ function bcn_admin_options()
 	check_admin_referer('bcn_admin_options');
 	//Update the options
 	//Home page settings
-	bcn_update_option('bcn_home_display', bcn_get('home_display', true);
+	bcn_update_option('bcn_home_display', bcn_get('home_display', 'true'));
 	bcn_update_option('bcn_home_title', bcn_get('home_title'));
 	bcn_update_option('bcn_home_anchor', bcn_get('home_anchor'));
 	bcn_update_option('bcn_blog_anchor', bcn_get('blog_anchor'));
-	bcn_update_option('bcn_max_title_lenght', bcn_get('max_title_lenght', false));
+	bcn_update_option('bcn_max_title_length', bcn_get('max_title_length'));
 	bcn_update_option('bcn_separator', bcn_get('separator'));
 	//Search page settings
 	bcn_update_option('bcn_search_prefix', bcn_get('search_prefix'));
@@ -364,19 +364,19 @@ function bcn_admin_options()
 	bcn_update_option('bcn_404_suffix', bcn_get('attachment_suffix'));
 	bcn_update_option('bcn_404_title', bcn_get('attachment_suffix'));
 	//Current item settings
-	bcn_update_option('bcn_current_item_linked', bcn_get('current_item_linked', false));
+	bcn_update_option('bcn_current_item_linked', bcn_get('current_item_linked', 'false'));
 	bcn_update_option('bcn_current_item_anchor', bcn_get('current_item_anchor'));
 	bcn_update_option('bcn_current_item_style_prefix', bcn_get('current_item_style_prefix'));
 	bcn_update_option('bcn_current_item_style_suffix', bcn_get('current_item_style_suffix'));
 	//Paged settings
-	bcn_update_option('bcn_paged_display', bcn_get('paged_display', false));
+	bcn_update_option('bcn_paged_display', bcn_get('paged_display', 'false'));
 	bcn_update_option('bcn_paged_prefix', bcn_get('paged_prefix'));
 	bcn_update_option('bcn_paged_suffix', bcn_get('paged_suffix'));
 	//Post related options
 	bcn_update_option('bcn_post_prefix', bcn_get('post_prefix'));
 	bcn_update_option('bcn_post_suffix', bcn_get('post_suffix'));
 	bcn_update_option('bcn_post_taxonomy', bcn_get('post_taxonomy'));
-	bcn_update_option('bcn_post_taxonomy_display', bcn_get('post_taxonomy_display', true));
+	bcn_update_option('bcn_post_taxonomy_display', bcn_get('post_taxonomy_display', 'true'));
 	bcn_update_option('bcn_post_anchor', bcn_get('post_anchor'));
 	//Category settings
 	bcn_update_option('bcn_category_prefix', bcn_get('category_prefix'));
@@ -409,17 +409,11 @@ function bcn_add_page()
 function bcn_admin()
 {
 	global $bcn_admin_req, $bcn_admin_version, $bcn_version;
-	
 	//Makes sure the user has the proper permissions. Dies on failure.
 	bcn_security();
-	
 	//Initilizes l10n domain	
 	bcn_local();
-	
-	/*
-	 * compare breadcrumb plugin and breadcrumb admin version with each other	 
-	 * major and minor version numbering must both match, revision numbers are ignored  
-	 */	
+	//See if the administrative interface matches versions with the class, if not then warn the user
 	list($bcn_plugin_major, $bcn_plugin_minor, $bcn_plugin_bugfix) = explode('.', $bcn_version);	
 	list($bcn_admin_major,  $bcn_admin_minor,  $bcn_admin_bugfix)  = explode('.', $bcn_admin_version);		
 	if($bcn_plugin_major != $bcn_admin_major || $bcn_plugin_minor != $bcn_admin_minor)
@@ -440,23 +434,40 @@ function bcn_admin()
 		<div id="hasadmintabs">
 		<fieldset id="general" class="bcn_options">
 			<p><?php 
-	printf(__(	'This administration interface allows the full customization of the breadcrumb output with no loss
-	of functionality when compared to manual configuration. Each setting is the same as the corresponding
-	class option, please refer to the 
-	%sdocumentation%s 
-	for more detailed explanation of each setting.', 'breadcrumb_navxt'), '<a title="Go to the Breadcrumb NavXT online documentation" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>'); 
+				printf(__('This administration interface allows the full customization of the breadcrumb output with no loss
+				of functionality when compared to manual configuration. Please refer to the %sdocumentation%s for more detailed 
+				explanation of each setting.', 'breadcrumb_navxt'), 
+				'<a title="Go to the Breadcrumb NavXT online documentation" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>'); 
 			?></p>
 			<h3><?php _e('General', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="home_title"><?php _e('Home Title', 'breadcrumb_navxt'); ?></label>
+						<?php _e('Home Breadcrumb', 'breadcrumb_navxt'); ?>						
 					</th>
 					<td>
-						<input type="text" name="home_title" id="home_title" value="<?php echo bcn_get_option_inputvalue('bcn_home_title'); ?>" size="32" /><br />
-						<?php _e('Will be displayed on the home page (when not using a static front page), always links to the main post page.', 'breadcrumb_navxt'); ?>
+						<p>
+							<label>
+								<input name="home_display" type="radio" value="false" class="togx" <?php checked(0, bcn_get_option('bcn_home_display')); ?> />
+								<?php _e('Leave the home breadcrumb out of the trail.', 'breadcrumb_navxt'); ?>
+							</label>
+						</p>
+						<p>
+							<label>
+								<input name="home_display" type="radio" value="true" class="togx" <?php checked(1, bcn_get_option('bcn_home_display')); ?> />
+								<?php _e('Place the home breadcrumb in the trail.', 'breadcrumb_navxt'); ?>	
+							</label>
+							<ul>
+								<li>
+									<label for="home_title">
+										<?php _e('Home Title: ','breadcrumb_navxt');?>
+										<input type="text" name="home_title" id="home_title" value="<?php echo bcn_get_option_inputvalue('bcn_home_title'); ?>" size="20" />			
+									</label>
+								</li>
+							</ul>							
+						</p>													
 					</td>
-				</tr>
+				</tr>		
 				<tr valign="top">
 					<th scope="row">
 						<label for="separator"><?php _e('Breadcrumb Separator', 'breadcrumb_navxt'); ?></label>
@@ -466,6 +477,37 @@ function bcn_admin()
 						<?php _e('Placed in between each breadcrumb.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="max_title_length"><?php _e('Breadcrumb Max Title Length', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="max_title_length" id="max_title_length" value="<?php echo bcn_get_option_inputvalue('bcn_max_title_length'); ?>" size="10" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="home_anchor"><?php _e('Home Anchor', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="home_anchor" id="home_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_home_anchor'); ?>" size="50" /><br />
+						<?php _e('The anchor template for the home breadcrumb.', 'breadcrumb_navxt'); ?>
+					</td>
+				</tr>
+				<?php 
+				//We only need this if in a static front page condition
+				if(get_option('show_on_front') == "page")
+				{?>
+				<tr valign="top">
+					<th scope="row">
+						<label for="blog_anchor"><?php _e('Blog Anchor', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="blog_anchor" id="blog_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_blog_anchor'); ?>" size="50" /><br />
+						<?php _e('The anchor template for the blog breadcrumb.', 'breadcrumb_navxt'); ?>
+					</td>
+				</tr> 
+				<?php } ?>
 				<tr valign="top">
 					<th scope="row">
 						<label for="search_prefix"><?php _e('Search Prefix', 'breadcrumb_navxt'); ?></label>
@@ -484,28 +526,28 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="title_404"><?php _e('404 Title', 'breadcrumb_navxt'); ?></label>
+						<label for="404_title"><?php _e('404 Title', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="title_404" id="title_404" value="<?php echo bcn_get_option_inputvalue('bcn_title_404'); ?>" size="32" />
+						<input type="text" name="404_title" id="404_title" value="<?php echo bcn_get_option_inputvalue('bcn_404_title'); ?>" size="32" />
 					</td>
 				</tr>
-			</table>
-		</fieldset>
-		<fieldset id="static_front_page" class="bcn_options">
-			<h3><?php _e('Front Page', 'breadcrumb_navxt'); ?></h3>
-			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<?php _e('Home Breadcrumb', 'breadcrumb_navxt'); ?>						
+						<label for="404_prefix"><?php _e('404 Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
-					<td>					
-						<label for="home_display">
-							<input name="home_display" type="checkbox" id="home_display" value="true" <?php checked('true', get_option('bcn_home_display')); ?> />
-							<?php _e('Is in trail', 'breadcrumb_navxt') ?> - <?php _e('Should the "Home" crumb be placed in the breadcrumb trail?', 'breadcrumb_navxt'); ?>							
-						</label>
+					<td>
+						<input type="text" name="404_prefix" id="404_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_404_prefix'); ?>" size="32" />
 					</td>
-				</tr>				
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="404_suffix"><?php _e('404 Suffix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="404_suffix" id="404_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_404_suffix'); ?>" size="32" />
+					</td>
+				</tr>
 			</table>
 		</fieldset>
 		<fieldset id="author" class="bcn_options">
@@ -700,14 +742,6 @@ function bcn_admin()
 					</th>
 					<td>
 						<input type="text" name="attachment_suffix" id="attachment_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_attachment_suffix'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="title_home"><?php _e('Post Title Max Length', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="posttitle_maxlen" id="posttitle_maxlen" value="<?php echo bcn_get_option_inputvalue('bcn_posttitle_maxlen'); ?>" size="10" />
 					</td>
 				</tr>
 			</table>
