@@ -582,7 +582,7 @@ function bcn_admin()
 			</table>
 		</fieldset>
 		<fieldset id="category" class="bcn_options">
-			<h3><?php _e('Archive Display', 'breadcrumb_navxt'); ?></h3>
+			<h3><?php _e('Categories', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
@@ -602,6 +602,36 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
+						<label for="category_prefix"><?php _e('Category Prefix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="category_prefix" id="category_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_category_prefix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="category_suffix"><?php _e('Category Suffix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="category_suffix" id="category_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_category_suffix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="category_anchor"><?php _e('Category Anchor', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="category_anchor" id="category_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_category_anchor'); ?>" size="50" /><br />
+						<?php _e('The anchor template for category breadcrumbs.', 'breadcrumb_navxt'); ?>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset id="date" class="bcn_options">
+			<h3><?php _e('Date Archives', 'breadcrumb_navxt'); ?></h3>
+			<table class="form-table">
+				<tr valign="top">
+					<th scope="row">
 						<label for="archive_date_prefix"><?php _e('Archive by Date Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
@@ -618,6 +648,20 @@ function bcn_admin()
 				</tr>
 				<tr valign="top">
 					<th scope="row">
+						<label for="date_anchor"><?php _e('Date Anchor', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="date_anchor" id="category_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_date_anchor'); ?>" size="50" /><br />
+						<?php _e('The anchor template for date breadcrumbs.', 'breadcrumb_navxt'); ?>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset id="tag" class="bcn_options">
+			<h3><?php _e('Tags', 'breadcrumb_navxt'); ?></h3>
+			<table class="form-table">
+				<tr valign="top">
+					<th scope="row">
 						<label for="archive_tag_prefix"><?php _e('Archive by Tag Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
@@ -630,6 +674,22 @@ function bcn_admin()
 					</th>
 					<td>
 						<input type="text" name="archive_tag_suffix" id="archive_tag_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_tag_suffix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="tag_prefix"><?php _e('Tag Prefix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="tag_prefix" id="tag_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_tag_prefix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="tag_suffix"><?php _e('Tag Suffix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="tag_suffix" id="tag_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_tag_suffix'); ?>" size="32" />
 					</td>
 				</tr>
 			</table>
@@ -780,38 +840,6 @@ function bcn_admin()
 						<p>
 							<?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb_navxt'); ?>
 						</p>														
-					</td>
-				</tr>					
-				<tr valign="top">
-					<th scope="row">
-						<label for="singleblogpost_category_prefix"><?php _e('Single Blog Post Category Prefix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="singleblogpost_category_prefix" id="singleblogpost_category_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_category_prefix'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="singleblogpost_category_suffix"><?php _e('Single Blog Post Category Suffix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="singleblogpost_category_suffix" id="singleblogpost_category_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_category_suffix'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="singleblogpost_tag_prefix"><?php _e('Single Blog Post Tag Prefix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="singleblogpost_tag_prefix" id="singleblogpost_tag_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_tag_prefix'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="singleblogpost_tag_suffix"><?php _e('Single Blog Post Tag Suffix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="singleblogpost_tag_suffix" id="singleblogpost_tag_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_tag_suffix'); ?>" size="32" />
 					</td>
 				</tr>
 			</table>
