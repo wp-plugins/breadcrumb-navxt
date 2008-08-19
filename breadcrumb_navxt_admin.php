@@ -184,7 +184,6 @@ function bcn_install()
 			add_option('bcn_max_title_length', get_option('bcn_posttitle_maxlen'));
 			delete_option('bcn_posttitle_maxlen');
 		}
-		//No need for using API hacks, we fully controol things here
 		//We always want to update to our current version
 		update_option('bcn_version', $bcn_admin_version);
 		//Add in options if they didn't exist before, load defaults into them
@@ -627,36 +626,6 @@ function bcn_admin()
 				</tr>
 			</table>
 		</fieldset>
-		<fieldset id="date" class="bcn_options">
-			<h3><?php _e('Date Archives', 'breadcrumb_navxt'); ?></h3>
-			<table class="form-table">
-				<tr valign="top">
-					<th scope="row">
-						<label for="archive_date_prefix"><?php _e('Archive by Date Prefix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="archive_date_prefix" id="archive_date_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_date_prefix'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="archive_date_suffix"><?php _e('Archive by Date Suffix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="archive_date_suffix" id="archive_date_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_date_suffix'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="date_anchor"><?php _e('Date Anchor', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="date_anchor" id="category_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_date_anchor'); ?>" size="50" /><br />
-						<?php _e('The anchor template for date breadcrumbs.', 'breadcrumb_navxt'); ?>
-					</td>
-				</tr>
-			</table>
-		</fieldset>
 		<fieldset id="tag" class="bcn_options">
 			<h3><?php _e('Tags', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
@@ -692,6 +661,45 @@ function bcn_admin()
 						<input type="text" name="tag_suffix" id="tag_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_tag_suffix'); ?>" size="32" />
 					</td>
 				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="tag_anchor"><?php _e('Tag Anchor', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="tag_anchor" id="tag_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_tag_anchor'); ?>" size="50" /><br />
+						<?php _e('The anchor template for tag breadcrumbs.', 'breadcrumb_navxt'); ?>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset id="date" class="bcn_options">
+			<h3><?php _e('Date Archives', 'breadcrumb_navxt'); ?></h3>
+			<table class="form-table">
+				<tr valign="top">
+					<th scope="row">
+						<label for="archive_date_prefix"><?php _e('Archive by Date Prefix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="archive_date_prefix" id="archive_date_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_date_prefix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="archive_date_suffix"><?php _e('Archive by Date Suffix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="archive_date_suffix" id="archive_date_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_archive_date_suffix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="date_anchor"><?php _e('Date Anchor', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="date_anchor" id="date_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_date_anchor'); ?>" size="50" /><br />
+						<?php _e('The anchor template for date breadcrumbs.', 'breadcrumb_navxt'); ?>
+					</td>
+				</tr>
 			</table>
 		</fieldset>
 		<fieldset id="current" class="bcn_options">
@@ -699,29 +707,38 @@ function bcn_admin()
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="link_current_item"><?php _e('Link Current Item', 'breadcrumb_navxt'); ?></label>
+						<label for="current_item_linked"><?php _e('Link Current Item', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
 						<label>
-							<input name="link_current_item" type="checkbox" id="link_current_item" value="true" <?php checked('true', bcn_get_option('bcn_link_current_item')); ?> />
+							<input name="current_item_linked" type="checkbox" id="current_item_linked" value="true" <?php checked('true', bcn_get_option('bcn_current_item_linked')); ?> />
 							<?php _e('Yes'); ?>							
 						</label>					
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="current_item_style_prefix"><?php _e('Current Item Style Prefix', 'breadcrumb_navxt'); ?></label>
+						<label for="current_item_prefix"><?php _e('Current Item Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="current_item_style_prefix" id="current_item_style_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_style_prefix'); ?>" size="32" />
+						<input type="text" name="current_item_prefix" id="current_item_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_prefix'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="current_item_style_suffix"><?php _e('Current Item Style Suffix', 'breadcrumb_navxt'); ?></label>
+						<label for="current_item_suffix"><?php _e('Current Item Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="current_item_style_suffix" id="current_item_style_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_style_suffix'); ?>" size="32" />
+						<input type="text" name="current_item_suffix" id="current_item_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_suffix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="current_item_anchor"><?php _e('Current Item Anchor', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="current_item_anchor" id="current_item__anchor" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_anchor'); ?>" size="50" /><br />
+						<?php _e('The anchor template for current item breadcrumbs.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -1069,9 +1086,9 @@ if(function_exists('add_action')){
 	add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php','bcn_install');
 	//WordPress Admin interface hook
 	add_action('admin_menu', 'bcn_add_page');
-	//add_action('admin_head', 'bcn_options_style');
+	add_action('admin_head', 'bcn_options_style');
 	//Enque javscript dependencies
-	//wp_enqueue_script('jquery-ui-tabs');
+	wp_enqueue_script('jquery-ui-tabs');
 	//Admin Options hook
 	if(isset($_POST['bcn_admin_options']))
 	{

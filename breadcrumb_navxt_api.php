@@ -36,7 +36,8 @@ function bcn_get_option($optionname, $foradmin = true)
 	}
 	else
 	{
-		return htmlspecialchars_decode($bcn_value);
+		//We use entity_decode as that's the inverse of what wpdb->escape() uses
+		return html_entity_decode($bcn_value);
 	}
 }
 
@@ -64,7 +65,7 @@ function bcn_update_option($optionname, $value)
 	 * 		special things each read, verses this only happens on each update which is less often
 	*/
 	//We want to make sure we handle html entities correctly first
-	$bcn_value = htmlspecialchars($bcn_value);
+	//$bcn_value = htmlspecialchars($bcn_value);
 	//Preserving the front space if exists
 	if(strpos($bcn_value, " ") === 0)
 	{
