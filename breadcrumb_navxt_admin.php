@@ -406,14 +406,14 @@ function bcn_add_page()
 {
 	global $bcn_admin_req;
 	//A workaround to have 2.6 and 2.7 compatibility
-	if(strpos(get_bloginfo('version'), '2.7') !== false)
+	/*if(strpos(get_bloginfo('version'), '2.7') !== false)
 	{
 		add_submenu_page('inbox.php', 'Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');
 	}
 	else
-	{
+	{*/
 		add_options_page('Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');	
-	}
+	//}
 }
 /**
  * bcn_admin
