@@ -19,7 +19,9 @@ Author URI: http://mtekk.weblogs.us/
 
 //Configuration 
 
-$bcn_admin_version = "2.1.4";
+//Globals are evil, we only use two
+//This has to be redeclaired in the install function, hell if I know why
+$bcn_admin_version = "2.2.0";
 $bcn_admin_req = 8;
 
 //Includes 
@@ -27,10 +29,10 @@ $bcn_admin_req = 8;
 //Include the breadcrumb class (if needed)
 if(!class_exists('bcn_breadcrumb'))
 {
-	require(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
+	require_once(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
 }
 //Include the supplemental functions
-require(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
+require_once(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
 
 //Main
 
@@ -42,7 +44,7 @@ require(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
 function bcn_security()
 {
 	global $userdata, $bcn_admin_req, $bcn_version, $wp_version;
-	//Make sure $userdata is filled
+	//Make sure userdata is filled
 	get_currentuserinfo();
 	//If the user_levels aren't proper and the user is not an administrator via capabilities
 	if($userdata->user_level < $bcn_admin_req && $userdata->wp_capabilities['administrator'] != true)
@@ -83,11 +85,12 @@ function bcn_security()
  */
 function bcn_install()
 {
-	global $bcn_admin_req, $bcn_version;
-	
+	global $bcn_admin_req, $bcn_admin_version;
 	bcn_security();
+	//Globals seem not to work with WordPress' odd way of doing these calls
+	$bcn_admin_version = "2.2.0";
 	//Check if the database settings are for an old version
-	if(get_option('bcn_version') != $bcn_admin_version)
+	if(get_option('bcn_version') !== $bcn_admin_version)
 	{
 		//First we should clean up old options we don't use anymore
 		list($major, $minor, $release) = explode('.', get_option('bcn_version'));
@@ -99,7 +102,7 @@ function bcn_install()
 			delete_option('bcn_static_frontpage');
 		}
 		//Fix up depreciated in 2.2, migrate any old settings if possible
-		else if($major <= 2 && $minor <= 1 && $release <= 4)
+		else if($major <= 2 && $minor < 2)
 		{
 			delete_option('bcn_url_blog');
 			delete_option('bcn_home_link');
@@ -271,47 +274,47 @@ function bcn_display()
 		//Make new breadcrumb object
 		$breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Set the settings
-		$breadcrumb->opt['home_display'] = get_option('bcn_home_display');
-		$breadcrumb->opt['home_title'] = get_option('bcn_home_title');
-		$breadcrumb->opt['home_anchor'] = get_option('bcn_home_anchor');
-		$breadcrumb->opt['blog_anchor'] = get_option('bcn_blog_anchor');
-		$breadcrumb->opt['separator'] = get_option('bcn_separator');
-		$breadcrumb->opt['max_title_length'] = get_option('bcn_max_title_length');
-		$breadcrumb->opt['current_item_linked'] = get_option('bcn_current_item_linked');
-		$breadcrumb->opt['current_item_anchor'] = get_option('bcn_current_item_anchor');
-		$breadcrumb->opt['current_item_prefix'] = get_option('bcn_current_item_prefix');
-		$breadcrumb->opt['current_item_suffix'] = get_option('bcn_current_item_suffix');
-		$breadcrumb->opt['page_prefix'] = get_option('bcn_page_prefix');
-		$breadcrumb->opt['page_suffix'] = get_option('bcn_page_suffix');
-		$breadcrumb->opt['page_anchor'] = get_option('bcn_page_anchor');
-		$breadcrumb->opt['post_prefix'] = get_option('bcn_post_prefix');
-		$breadcrumb->opt['post_suffix'] = get_option('bcn_post_suffix');
-		$breadcrumb->opt['post_anchor'] = get_option('bcn_post_anchor');
-		$breadcrumb->opt['post_taxonomy_display'] = get_option('bcn_post_taxonomy_display');
-		$breadcrumb->opt['post_taxonomy_type'] = get_option('bcn_post_taxonomy_type');
-		$breadcrumb->opt['attachment_prefix'] = get_option('bcn_attachment_prefix');
-		$breadcrumb->opt['attachment_suffix'] = get_option('bcn_attachment_suffix');
-		$breadcrumb->opt['404_prefix'] = get_option('bcn_404_prefix');
-		$breadcrumb->opt['404_suffix'] = get_option('bcn_404_suffix');
-		$breadcrumb->opt['404_title'] = get_option('bcn_404_title');
-		$breadcrumb->opt['search_prefix'] = get_option('bcn_search_prefix');
-		$breadcrumb->opt['search_suffix'] = get_option('bcn_search_suffix');
-		$breadcrumb->opt['tag_prefix'] = get_option('bcn_tag_prefix');
-		$breadcrumb->opt['tag_suffix'] = get_option('bcn_tag_suffix');
-		$breadcrumb->opt['tag_anchor'] = get_option('bcn_tag_anchor');
-		$breadcrumb->opt['author_prefix'] = get_option('bcn_author_prefix');
-		$breadcrumb->opt['author_suffix'] = get_option('bcn_author_suffix');
-		$breadcrumb->opt['author_display'] = get_option('bcn_author_display');
-		$breadcrumb->opt['category_prefix'] = get_option('bcn_category_prefix');
-		$breadcrumb->opt['category_suffix'] = get_option('bcn_category_suffix');
-		$breadcrumb->opt['category_anchor'] = get_option('bcn_category_anchor');
-		$breadcrumb->opt['archive_category_prefix'] = get_option('bcn_archive_category_prefix');
-		$breadcrumb->opt['archive_category_suffix'] = get_option('bcn_archive_category_suffix');
-		$breadcrumb->opt['archive_tag_prefix'] = get_option('bcn_archive_tag_prefix');
-		$breadcrumb->opt['archive_tag_suffix'] = get_option('bcn_archive_tag_suffix');
-		$breadcrumb->opt['date_anchor'] = get_option('bcn_date_anchor');
-		$breadcrumb->opt['archive_date_prefix'] = get_option('bcn_archive_date_prefix');
-		$breadcrumb->opt['archive_date_suffix'] = get_option('bcn_archive_date_suffix');
+		$breadcrumb_trail->opt['home_display'] = get_option('bcn_home_display');
+		$breadcrumb_trail->opt['home_title'] = get_option('bcn_home_title');
+		$breadcrumb_trail->opt['home_anchor'] = get_option('bcn_home_anchor');
+		$breadcrumb_trail->opt['blog_anchor'] = get_option('bcn_blog_anchor');
+		$breadcrumb_trail->opt['separator'] = get_option('bcn_separator');
+		$breadcrumb_trail->opt['max_title_length'] = get_option('bcn_max_title_length');
+		$breadcrumb_trail->opt['current_item_linked'] = get_option('bcn_current_item_linked');
+		$breadcrumb_trail->opt['current_item_anchor'] = get_option('bcn_current_item_anchor');
+		$breadcrumb_trail->opt['current_item_prefix'] = get_option('bcn_current_item_prefix');
+		$breadcrumb_trail->opt['current_item_suffix'] = get_option('bcn_current_item_suffix');
+		$breadcrumb_trail->opt['page_prefix'] = get_option('bcn_page_prefix');
+		$breadcrumb_trail->opt['page_suffix'] = get_option('bcn_page_suffix');
+		$breadcrumb_trail->opt['page_anchor'] = get_option('bcn_page_anchor');
+		$breadcrumb_trail->opt['post_prefix'] = get_option('bcn_post_prefix');
+		$breadcrumb_trail->opt['post_suffix'] = get_option('bcn_post_suffix');
+		$breadcrumb_trail->opt['post_anchor'] = get_option('bcn_post_anchor');
+		$breadcrumb_trail->opt['post_taxonomy_display'] = get_option('bcn_post_taxonomy_display');
+		$breadcrumb_trail->opt['post_taxonomy_type'] = get_option('bcn_post_taxonomy_type');
+		$breadcrumb_trail->opt['attachment_prefix'] = get_option('bcn_attachment_prefix');
+		$breadcrumb_trail->opt['attachment_suffix'] = get_option('bcn_attachment_suffix');
+		$breadcrumb_trail->opt['404_prefix'] = get_option('bcn_404_prefix');
+		$breadcrumb_trail->opt['404_suffix'] = get_option('bcn_404_suffix');
+		$breadcrumb_trail->opt['404_title'] = get_option('bcn_404_title');
+		$breadcrumb_trail->opt['search_prefix'] = get_option('bcn_search_prefix');
+		$breadcrumb_trail->opt['search_suffix'] = get_option('bcn_search_suffix');
+		$breadcrumb_trail->opt['tag_prefix'] = get_option('bcn_tag_prefix');
+		$breadcrumb_trail->opt['tag_suffix'] = get_option('bcn_tag_suffix');
+		$breadcrumb_trail->opt['tag_anchor'] = get_option('bcn_tag_anchor');
+		$breadcrumb_trail->opt['author_prefix'] = get_option('bcn_author_prefix');
+		$breadcrumb_trail->opt['author_suffix'] = get_option('bcn_author_suffix');
+		$breadcrumb_trail->opt['author_display'] = get_option('bcn_author_display');
+		$breadcrumb_trail->opt['category_prefix'] = get_option('bcn_category_prefix');
+		$breadcrumb_trail->opt['category_suffix'] = get_option('bcn_category_suffix');
+		$breadcrumb_trail->opt['category_anchor'] = get_option('bcn_category_anchor');
+		$breadcrumb_trail->opt['archive_category_prefix'] = get_option('bcn_archive_category_prefix');
+		$breadcrumb_trail->opt['archive_category_suffix'] = get_option('bcn_archive_category_suffix');
+		$breadcrumb_trail->opt['archive_tag_prefix'] = get_option('bcn_archive_tag_prefix');
+		$breadcrumb_trail->opt['archive_tag_suffix'] = get_option('bcn_archive_tag_suffix');
+		$breadcrumb_trail->opt['date_anchor'] = get_option('bcn_date_anchor');
+		$breadcrumb_trail->opt['archive_date_prefix'] = get_option('bcn_archive_date_prefix');
+		$breadcrumb_trail->opt['archive_date_suffix'] = get_option('bcn_archive_date_suffix');
 		//Generate the breadcrumb trail
 		$breadcrumb_trail->fill();
 		//Display the breadcrumb trail
@@ -398,7 +401,15 @@ function bcn_admin_options()
 function bcn_add_page()
 {
 	global $bcn_admin_req;
-    add_options_page('Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');
+	//A workaround to have 2.6 and 2.7 compatibility
+	if(strpos(get_bloginfo('version'), '2.7') !== false)
+	{
+		add_submenu_page('inbox.php', 'Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');
+	}
+	else
+	{
+		add_options_page('Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');	
+	}
 }
 /**
  * bcn_admin
@@ -428,16 +439,14 @@ function bcn_admin()
 	//Output the administration panel (until end of function)
 	?>
 	<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>
+	<p><?php 
+		printf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more detailed explanation of each setting.', 'breadcrumb_navxt'), 
+		'<a title="Go to the Breadcrumb NavXT online documentation" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>'); 
+	?></p>
 	<form action="options-general.php?page=breadcrumb-nav-xt" method="post" id="bcn_admin_options">
 		<?php wp_nonce_field('bcn_admin_options');?>
 		<div id="hasadmintabs">
 		<fieldset id="general" class="bcn_options">
-			<p><?php 
-				printf(__('This administration interface allows the full customization of the breadcrumb output with no loss
-				of functionality when compared to manual configuration. Please refer to the %sdocumentation%s for more detailed 
-				explanation of each setting.', 'breadcrumb_navxt'), 
-				'<a title="Go to the Breadcrumb NavXT online documentation" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>'); 
-			?></p>
 			<h3><?php _e('General', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
@@ -507,75 +516,176 @@ function bcn_admin()
 					</td>
 				</tr> 
 				<?php } ?>
+			</table>
+		</fieldset>
+		<fieldset id="current" class="bcn_options">
+			<h3><?php _e('Current Item', 'breadcrumb_navxt'); ?></h3>
+			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="search_prefix"><?php _e('Search Prefix', 'breadcrumb_navxt'); ?></label>
+						<label for="current_item_linked"><?php _e('Link Current Item', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="search_prefix" id="search_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_search_prefix'); ?>" size="32" />
+						<label>
+							<input name="current_item_linked" type="checkbox" id="current_item_linked" value="true" <?php checked('true', bcn_get_option('bcn_current_item_linked')); ?> />
+							<?php _e('Yes'); ?>							
+						</label>					
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="search_suffix"><?php _e('Search Suffix', 'breadcrumb_navxt'); ?></label>
+						<label for="current_item_prefix"><?php _e('Current Item Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="search_suffix" id="search_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_search_suffix'); ?>" size="32" />
+						<input type="text" name="current_item_prefix" id="current_item_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_prefix'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="404_title"><?php _e('404 Title', 'breadcrumb_navxt'); ?></label>
+						<label for="current_item_suffix"><?php _e('Current Item Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="404_title" id="404_title" value="<?php echo bcn_get_option_inputvalue('bcn_404_title'); ?>" size="32" />
+						<input type="text" name="current_item_suffix" id="current_item_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_suffix'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="404_prefix"><?php _e('404 Prefix', 'breadcrumb_navxt'); ?></label>
+						<label for="current_item_anchor"><?php _e('Current Item Anchor', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="404_prefix" id="404_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_404_prefix'); ?>" size="32" />
+						<input type="text" name="current_item_anchor" id="current_item_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_anchor'); ?>" size="50" /><br />
+						<?php _e('The anchor template for current item breadcrumbs.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="404_suffix"><?php _e('404 Suffix', 'breadcrumb_navxt'); ?></label>
+						<label for="paged_display"><?php _e('Display Paged Text', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="404_suffix" id="404_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_404_suffix'); ?>" size="32" />
+						<label>
+							<input name="paged_display" type="checkbox" id="paged_display" value="true" <?php checked('true', bcn_get_option('bcn_paged_display')); ?> />
+							<?php _e('Show that the user is on a page other than the first on posts/archives with multiple pages.', 'breadcrumb_navxt'); ?>							
+						</label>	
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="paged_prefix"><?php _e('Paged Prefix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="paged_prefix" id="paged_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_paged_prefix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="paged_suffix"><?php _e('Paged Suffix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="paged_suffix" id="paged_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_paged_suffix'); ?>" size="32" />
 					</td>
 				</tr>
 			</table>
 		</fieldset>
-		<fieldset id="author" class="bcn_options">
-			<h3><?php _e('Author Page', 'breadcrumb_navxt'); ?></h3>
+		<fieldset id="single" class="bcn_options">
+			<h3><?php _e('Posts & Pages', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="author_prefix"><?php _e('Author Prefix', 'breadcrumb_navxt'); ?></label>
+						<label for="post_prefix"><?php _e('Post Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="author_prefix" id="author_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_author_prefix'); ?>" size="32" />
+						<input type="text" name="post_prefix" id="post_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_post_prefix'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="author_suffix"><?php _e('Author Suffix', 'breadcrumb_navxt'); ?></label>
+						<label for="post_suffix"><?php _e('Post Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="author_suffix" id="author_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_author_suffix'); ?>" size="32" />
+						<input type="text" name="post_suffix" id="post_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_post_suffix'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="author_display"><?php _e('Author Display Format', 'breadcrumb_navxt'); ?></label>
+						<label for="post_anchor"><?php _e('Post Anchor', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<select name="author_display" id="author_display">
-							<?php bcn_select_options('bcn_author_display', array("display_name", "nickname", "first_name", "last_name")); ?>
-						</select>
+						<input type="text" name="post_anchor" id="post_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_post_anchor'); ?>" size="50" /><br />
+						<?php _e('The anchor template for post breadcrumbs.', 'breadcrumb_navxt'); ?>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<?php _e('Post Taxonomy Display', 'breadcrumb_navxt'); ?>
+					</th>
+					<td>
+						<label for="post_taxonomy_display">
+							<input name="post_taxonomy_display" type="checkbox" id="post_taxonomy_display" value="true" <?php checked('true', bcn_get_option('bcn_post_taxonomy_display')); ?> />
+							<?php _e('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'); ?>							
+						</label>							
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<p><?php _e('Post Taxonomy', 'breadcrumb_navxt'); ?></p>
+					</th>
+					<td>
+						<p>
+							<label>
+								<input name="post_taxonomy_type" type="radio" value="category" class="togx" <?php checked('category', bcn_get_option('bcn_post_taxonomy_type')); ?> />
+								<?php _e('Categories'); ?>
+							</label>
+						</p>
+						<p>
+							<label>
+								<input name="post_taxonomy_type" type="radio" value="tag" class="togx" <?php checked('tag', bcn_get_option('bcn_post_taxonomy_type')); ?> />
+								<?php _e('Tags'); ?>								
+							</label>
+						</p>
+						<p>
+							<?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb_navxt'); ?>
+						</p>														
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="page_prefix"><?php _e('Page Prefix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="page_prefix" id="page_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_page_prefix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="page_suffix"><?php _e('Page Suffix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="page_suffix" id="page_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_page_suffix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="page_anchor"><?php _e('Page Anchor', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="page_anchor" id="page_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_page_anchor'); ?>" size="50" /><br />
+						<?php _e('The anchor template for page breadcrumbs.', 'breadcrumb_navxt'); ?>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="attachment_prefix"><?php _e('Attachment Prefix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="attachment_prefix" id="attachment_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_attachment_prefix'); ?>" size="32" />
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="attachment_suffix"><?php _e('Attachment Suffix', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="attachment_suffix" id="attachment_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_attachment_suffix'); ?>" size="32" />
 					</td>
 				</tr>
 			</table>
@@ -702,161 +812,73 @@ function bcn_admin()
 				</tr>
 			</table>
 		</fieldset>
-		<fieldset id="current" class="bcn_options">
-			<h3><?php _e('Current Item', 'breadcrumb_navxt'); ?></h3>
+		<fieldset id="miscellaneous" class="bcn_options">
+			<h3><?php _e('Miscellaneous', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
 				<tr valign="top">
 					<th scope="row">
-						<label for="current_item_linked"><?php _e('Link Current Item', 'breadcrumb_navxt'); ?></label>
+						<label for="author_prefix"><?php _e('Author Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<label>
-							<input name="current_item_linked" type="checkbox" id="current_item_linked" value="true" <?php checked('true', bcn_get_option('bcn_current_item_linked')); ?> />
-							<?php _e('Yes'); ?>							
-						</label>					
+						<input type="text" name="author_prefix" id="author_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_author_prefix'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="current_item_prefix"><?php _e('Current Item Prefix', 'breadcrumb_navxt'); ?></label>
+						<label for="author_suffix"><?php _e('Author Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="current_item_prefix" id="current_item_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_prefix'); ?>" size="32" />
+						<input type="text" name="author_suffix" id="author_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_author_suffix'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="current_item_suffix"><?php _e('Current Item Suffix', 'breadcrumb_navxt'); ?></label>
+						<label for="author_display"><?php _e('Author Display Format', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="current_item_suffix" id="current_item_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_suffix'); ?>" size="32" />
+						<select name="author_display" id="author_display">
+							<?php bcn_select_options('bcn_author_display', array("display_name", "nickname", "first_name", "last_name")); ?>
+						</select>
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="current_item_anchor"><?php _e('Current Item Anchor', 'breadcrumb_navxt'); ?></label>
+						<label for="search_prefix"><?php _e('Search Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="current_item_anchor" id="current_item__anchor" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_anchor'); ?>" size="50" /><br />
-						<?php _e('The anchor template for current item breadcrumbs.', 'breadcrumb_navxt'); ?>
+						<input type="text" name="search_prefix" id="search_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_search_prefix'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="paged_display"><?php _e('Display Paged Text', 'breadcrumb_navxt'); ?></label>
+						<label for="search_suffix"><?php _e('Search Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<label>
-							<input name="paged_display" type="checkbox" id="paged_display" value="true" <?php checked('true', bcn_get_option('bcn_paged_display')); ?> />
-							<?php _e('Show that the user is on a page other than the first on posts/archives with multiple pages.', 'breadcrumb_navxt'); ?>							
-						</label>	
+						<input type="text" name="search_suffix" id="search_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_search_suffix'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="paged_prefix"><?php _e('Paged Prefix', 'breadcrumb_navxt'); ?></label>
+						<label for="404_title"><?php _e('404 Title', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="paged_prefix" id="paged_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_paged_prefix'); ?>" size="32" />
+						<input type="text" name="404_title" id="404_title" value="<?php echo bcn_get_option_inputvalue('bcn_404_title'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="paged_suffix"><?php _e('Paged Suffix', 'breadcrumb_navxt'); ?></label>
+						<label for="404_prefix"><?php _e('404 Prefix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="paged_suffix" id="paged_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_paged_suffix'); ?>" size="32" />
-					</td>
-				</tr>
-			</table>
-		</fieldset>
-		<fieldset id="single" class="bcn_options">
-			<h3><?php _e('Single Post', 'breadcrumb_navxt'); ?></h3>
-			<table class="form-table">
-				<tr valign="top">
-					<th scope="row">
-						<label for="singleblogpost_prefix"><?php _e('Single Blogpost Prefix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="singleblogpost_prefix" id="singleblogpost_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_prefix'); ?>" size="32" />
+						<input type="text" name="404_prefix" id="404_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_404_prefix'); ?>" size="32" />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">
-						<label for="singleblogpost_suffix"><?php _e('Single Blogpost Suffix', 'breadcrumb_navxt'); ?></label>
+						<label for="404_suffix"><?php _e('404 Suffix', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="singleblogpost_suffix" id="singleblogpost_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_singleblogpost_suffix'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="page_prefix"><?php _e('Page Prefix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="page_prefix" id="page_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_page_prefix'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="page_suffix"><?php _e('Page Suffix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="page_suffix" id="page_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_page_suffix'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="attachment_prefix"><?php _e('Post Attachment Prefix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="attachment_prefix" id="attachment_prefix" value="<?php echo bcn_get_option_inputvalue('bcn_attachment_prefix'); ?>" size="32" />
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<label for="attachment_suffix"><?php _e('Post Attachment Suffix', 'breadcrumb_navxt'); ?></label>
-					</th>
-					<td>
-						<input type="text" name="attachment_suffix" id="attachment_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_attachment_suffix'); ?>" size="32" />
-					</td>
-				</tr>
-			</table>
-		</fieldset>
-		<fieldset id="taxonomy" class="bcn_options">
-			<h3><?php _e('Taxonomy', 'breadcrumb_navxt'); ?></h3>
-			<table class="form-table">
-				<tr valign="top">
-					<th scope="row">
-						<?php _e('Single Blog Post Taxonomy Display', 'breadcrumb_navxt'); ?>
-					</th>
-					<td>
-						<label for="singleblogpost_taxonomy_display">
-							<input name="singleblogpost_taxonomy_display" type="checkbox" id="singleblogpost_taxonomy_display" value="true" <?php checked('true', bcn_get_option('bcn_singleblogpost_taxonomy_display')); ?> />
-							<?php _e('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'); ?>							
-						</label>							
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<p><?php _e('Single Blog Post Taxonomy', 'breadcrumb_navxt'); ?></p>
-					</th>
-					<td>
-						<p>
-							<label>
-								<input name="singleblogpost_taxonomy" type="radio" value="category" class="togx" <?php checked('category', bcn_get_option('bcn_singleblogpost_taxonomy')); ?> />
-								<?php _e('Categories'); ?>
-							</label>
-						</p>
-						<p>
-							<label>
-								<input name="singleblogpost_taxonomy" type="radio" value="tag" class="togx" <?php checked('tag', bcn_get_option('bcn_singleblogpost_taxonomy')); ?> />
-								<?php _e('Tags'); ?>								
-							</label>
-						</p>
-						<p>
-							<?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb_navxt'); ?>
-						</p>														
+						<input type="text" name="404_suffix" id="404_suffix" value="<?php echo bcn_get_option_inputvalue('bcn_404_suffix'); ?>" size="32" />
 					</td>
 				</tr>
 			</table>
