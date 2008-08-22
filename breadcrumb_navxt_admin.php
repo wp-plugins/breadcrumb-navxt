@@ -173,6 +173,10 @@ function bcn_install()
 			add_option('bcn_post_suffix', get_option('bcn_singleblogpost_suffix'));
 			dalete_option('bcn_singleblogpost_prefix');
 			delete_option('bcn_singleblogpost_suffix');
+			add_option('bcn_current_item_prefix', get_option('bcn_singleblogpost_style_prefix'));
+			add_option('bcn_current_item_suffix', get_option('bcn_singleblogpost_style_suffix'));
+			dalete_option('bcn_singleblogpost_style_prefix');
+			delete_option('bcn_singleblogpost_style_suffix');
 			if(get_option('bcn_paged_display'))
 			{
 				$bcn_display_upgrade = 1;
@@ -223,8 +227,8 @@ function bcn_install()
 		//Current item settings
 		add_option('bcn_current_item_linked', 0);
 		add_option('bcn_current_item_anchor', '<a title="Reload the current page." href="%link%">');
-		add_option('bcn_current_item_style_prefix', '');
-		add_option('bcn_current_item_style_suffix', '');
+		add_option('bcn_current_item_prefix', '');
+		add_option('bcn_current_item_suffix', '');
 		//Paged settings
 		add_option('bcn_paged_display', 0);
 		add_option('bcn_paged_prefix', ', Page&nbsp;');
@@ -368,8 +372,8 @@ function bcn_admin_options()
 	//Current item settings
 	bcn_update_option('bcn_current_item_linked', bcn_get('current_item_linked', 'false'));
 	bcn_update_option('bcn_current_item_anchor', bcn_get('current_item_anchor'));
-	bcn_update_option('bcn_current_item_style_prefix', bcn_get('current_item_style_prefix'));
-	bcn_update_option('bcn_current_item_style_suffix', bcn_get('current_item_style_suffix'));
+	bcn_update_option('bcn_current_item_prefix', bcn_get('current_item_prefix'));
+	bcn_update_option('bcn_current_item_suffix', bcn_get('current_item_suffix'));
 	//Paged settings
 	bcn_update_option('bcn_paged_display', bcn_get('paged_display', 'false'));
 	bcn_update_option('bcn_paged_prefix', bcn_get('paged_prefix'));
