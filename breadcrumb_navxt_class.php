@@ -58,9 +58,9 @@ class bcn_breadcrumb
 	{
 		if((strlen($this->title) + 3) > $max_length)
 		{
-			$this->title = substr($this->title, $max_length - 1);
+			$this->title = substr($this->title, 0, $max_length - 1);
 			//Make sure we can split at a space, but we want to limmit to cutting at max an additional 25%
-			if(strpos($this->title, " ", 3 * $max_length / 4) > 0)
+			if(strpos($this->title, " ", .75 * $max_length) > 0)
 			{
 				//Don't split mid word
 				while(substr($this->title,-1) != " ")
