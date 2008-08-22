@@ -56,8 +56,10 @@ class bcn_breadcrumb
 	 */
 	function title_trim($max_length)
 	{
+		//Make sure that we are not making it longer with that ellipse
 		if((strlen($this->title) + 3) > $max_length)
 		{
+			//Trim the title
 			$this->title = substr($this->title, 0, $max_length - 1);
 			//Make sure we can split at a space, but we want to limmit to cutting at max an additional 25%
 			if(strpos($this->title, " ", .75 * $max_length) > 0)
@@ -68,7 +70,7 @@ class bcn_breadcrumb
 					$this->title = substr($this->title, 0, -1);
 				}
 			}
-			//remove the whitespace at the end and add the hellip
+			//Remove the whitespace at the end and add the hellip
 			$this->title = rtrim($this->title) . '&hellip;';
 		}
 	}
