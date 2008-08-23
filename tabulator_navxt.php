@@ -12,7 +12,7 @@
  * Plugin Name: Tabulator (Breadcrumb NavXT Extending) [PHP5]
  * Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/?component=tabulator
  * Description: And Tabs should come over all your admin pages as WP 2.5 will let you rule the world of jQuery and beyond! Thou shall it be! 
- * Version: 2.1.3 (0.1.0)
+ * Version: 2.1.4
  * Author: Tom Klingenberg
  * Author URI: http://www.artnorm.de/
  */
@@ -42,14 +42,25 @@ class Navxt_Plugin_Tabulator
 {
 	public static function init()
 	{
-		$plugin = new self();		
-				
+		$plugin = new self();
 		add_action('admin_head', array($plugin, 'admin_head'));
-				
-		wp_enqueue_script('jquery-ui-tabs');
-				
+		//We should use this for handling library dependancies
+		add_action('wp_print_scripts', array($plugin, 'javascript'));
 	}
-	
+	/**
+	 * javascript hook function
+	 * 
+	 * Adds needed javascript dependancies, only runs in the dashboard
+	 *
+	 */
+	public function javascript()
+	{
+		//If we are in the dashboard we may need this
+		if(is_admin())
+		{
+			wp_enqueue_script('jquery-ui-tabs');
+		}
+	}
 	/**
 	 * admin_head hook function
 	 * 
