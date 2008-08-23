@@ -120,6 +120,13 @@ class bcn_breadcrumb_trail
 			'page_suffix' => '',
 			//The anchor template for page breadcrumbs, two keywords are available %link% and %title%
 			'page_anchor' => '<a title="Go to %title%." href="%link%">',
+			//Paged options
+			//The prefix for paged breadcrumbs, place on all page elements and inside of current_item prefix
+			'paged_prefix' => '',
+			//The suffix for paged breadcrumbs, place on all page elements and inside of current_item suffix
+			'paged_suffix' => '',
+			//Should we try filling out paged information
+			'paged_display' => false,
 			//The post options previously singleblogpost
 			//The prefix for post breadcrumbs, place on all page elements and inside of current_item prefix
 			'post_prefix' => '',
@@ -630,16 +637,15 @@ class bcn_breadcrumb_trail
 	function do_home()
 	{
 		global $post;
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//We must now branch if in a static front page environment
 		if(get_option('show_on_front') == "page")
 		{
 			//We only need the "blog" portion on members of the blog, not searches, pages or 404s
 			if(is_single() || is_archive() || is_author() || is_home())
 			{
+				//Add new breadcrumb to the trail
+				$this->trail[] = new bcn_breadcrumb();
+				//Figure out where we placed the crumb, make a nice pointer to it
+				$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 				//Get the blog page ID
 				$bcn_blog = get_post(get_option("page_for_posts"));
 				//Setup the title
@@ -662,25 +668,33 @@ class bcn_breadcrumb_trail
 					//Yes link it
 					$bcn_breadcrumb->linked = true;	
 				}
+			}
+			//Sometimes we don't have a home breadcrumb in the trail
+			if($this->opt['home_display'])
+			{
 				//Add new breadcrumb to the trail
 				$this->trail[] = new bcn_breadcrumb();
 				//Figure out where we placed the crumb, make a nice pointer to it
 				$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+				//Assign the prefix
+				$bcn_breadcrumb->prefix = $this->opt['home_prefix'];
+				//Assign the suffix
+				$bcn_breadcrumb->suffix = $this->opt['home_suffix'];
+				//Assign the title
+				$bcn_breadcrumb->title = $this->opt['home_title'];
+				//Deal with the anchor
+				$bcn_breadcrumb->anchor = str_replace("%title%", $this->opt['home_title'], str_replace("%link%", get_option('home'), $this->opt['home_anchor']));
+				//Yes link it
+				$bcn_breadcrumb->linked = true;	
 			}
-			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['home_prefix'];
-			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['home_suffix'];
-			//Assign the title
-			$bcn_breadcrumb->title = $this->opt['home_title'];
-			//Deal with the anchor
-			$bcn_breadcrumb->anchor = str_replace("%title%", $this->opt['home_title'], str_replace("%link%", get_option('home'), $this->opt['home_anchor']));
-			//Yes link it
-			$bcn_breadcrumb->linked = true;	
 		}
 		//On everything else we need to link, but no current item (pre/suf)fixes
-		else
+		else if($this->opt['home_display'])
 		{
+			//Add new breadcrumb to the trail
+			$this->trail[] = new bcn_breadcrumb();
+			//Figure out where we placed the crumb, make a nice pointer to it
+			$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 			//Assign the prefix
 			$bcn_breadcrumb->prefix = $this->opt['home_prefix'];
 			//Assign the suffix
@@ -727,15 +741,20 @@ class bcn_breadcrumb_trail
 		//Do specific opperations for the various page types
 		////////////////////////////////////
 		//Check if this isn't the first of a multi paged item
-		if(is_paged() && $this->opt['paged_display'] === 'true')
+		if(is_paged() && $this->opt['paged_display'])
 		{
 			$this->do_paged();
 		}
-		//For searches
+		//For the front page, as it may also validate as a page
 		if(is_front_page())
 		{
-			$this->do_front_page();
+			//Must have two seperate branches so that we don't evaluate it as a page
+			if($this->opt['home_display'])
+			{
+				$this->do_front_page();
+			}
 		}
+		//For searches
 		else if(is_search())
 		{
 			$this->do_search();
