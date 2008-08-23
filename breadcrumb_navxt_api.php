@@ -40,30 +40,35 @@ function bcn_get_option($optionname, $foradmin = true)
 		return html_entity_decode($bcn_value);
 	}
 }
-
+/**
+ * str2bool converts string of "true" to true and "false" to false
+ * 
+ * Probably could be moved to bcn_get_option, we'll see
+ * 
+ * @param string $input
+ * @return bool
+ */
+function str2bool($input)
+{
+	if($input === "true")
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 /**
  * Update Option, update_option Replacement
  * 
- * @param unknown_type $optionname
- * @param unknown_type $value
+ * @param string $optionname
+ * @param string $value
  * @see bcn_get_option
  */
 function bcn_update_option($optionname, $value)
 {
 	$bcn_value = $value;
-	
-	/*
-	 * Only if we have a string should we check for spaces
-	 * 
-	 * @note since $value is from $_POST[] this will return true ever^^ - yep :|
-	 * 
-	 * 
-	 * @todo Instead of poking blindly around and inventing stupid algos:
-	 * 	     enclose the whole string sothat everything is preserved automatically
-	 * 		 bcn_get_option can remove the enclosure then again with ease 100% transparent  
-	 * 		- I don't think wraping is a good solution (if we wrap then we always have to do
-	 * 		special things each read, verses this only happens on each update which is less often
-	*/
 	//We want to make sure we handle html entities correctly first
 	//$bcn_value = htmlspecialchars($bcn_value);
 	//Preserving the front space if exists

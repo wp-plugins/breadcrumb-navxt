@@ -111,32 +111,14 @@ function bcn_install()
 			//Remove the old stuff
 			delete_option('bcn_title_blog');
 			delete_option('bcn_title_home');
-			//We now use booleans/ints rather than string expressiongs
-			if(get_option('bcn_home_display') == "true")
-			{
-				$bcn_display_upgrade = 1;
-			}
-			else
-			{
-				$bcn_display_upgrade = 0;
-			}
-			update_option('bcn_home_display', $bcn_display_upgrade);
+			update_option('bcn_home_display', get_option('bcn_home_display'));
 			delete_option('bcn_urltitle_prefix');
 			delete_option('bcn_urltitle_suffix');
 			delete_option('bcn_archive_date_format');
 			add_option('bcn_404_title', get_option('bcn_title_404'));
 			delete_option('bcn_title_404');
-			//Migrate options, then clean up
-			if(get_option('bcn_singleblogpost_taxonomy_display') == "true")
-			{
-				$bcn_taxonomy_upgrade = 1;
-			}
-			else
-			{
-				$bcn_taxonomy_upgrade = 0;
-			}
 			add_option('bcn_post_taxonomy', get_option('bcn_singleblogpost_taxonomy'));
-			add_option('bcn_post_taxonomy_display', $bcn_taxonomy_upgrade);
+			add_option('bcn_post_taxonomy_display', get_option('bcn_singleblogpost_taxonomy_display'));
 			delete_option('bcn_singleblogpost_taxonomy');
 			delete_option('bcn_singleblogpost_taxonomy_display');
 			//Migrate the next set, then clean up
@@ -148,25 +130,7 @@ function bcn_install()
 			delete_option('bcn_singleblogpost_category_suffix');
 			delete_option('bcn_singleblogpost_tag_prefix');
 			delete_option('bcn_singleblogpost_tag_suffix');
-			if(get_option('bcn_link_current_item') == "true")
-			{
-				$bcn_link_upgrade = 1;
-			}
-			else
-			{
-				$bcn_link_upgrade = 0;	
-			}
-			update_option('bcn_link_current_item', $bcn_link_upgrade);
-			//Migrate to new option and value type
-			if(get_option('bcn_link_current_item') == "true")
-			{
-				$bcn_link_upgrade = 1;
-			}
-			else
-			{
-				$bcn_link_upgrade = 0;
-			}
-			add_option('bcn_current_item_linked', $bcn_link_upgrade);
+			add_option('bcn_current_item_linked', get_option('bcn_link_current_item'));
 			delete_option('bcn_link_current_item');
 			delete_option('bcn_current_item_urltitle');
 			add_option('bcn_post_prefix', get_option('bcn_singleblogpost_prefix'));
@@ -177,15 +141,7 @@ function bcn_install()
 			add_option('bcn_current_item_suffix', get_option('bcn_singleblogpost_style_suffix'));
 			dalete_option('bcn_singleblogpost_style_prefix');
 			delete_option('bcn_singleblogpost_style_suffix');
-			if(get_option('bcn_paged_display'))
-			{
-				$bcn_display_upgrade = 1;
-			}
-			else
-			{
-				$bcn_display_upgrade = 0;
-			}
-			update_option('bcn_paged_display', $bcn_display_upgrade);
+			update_option('bcn_paged_display', get_option('bcn_paged_display'));
 			delete_option('bcn_paged_display');
 			//Migrate title_maxlen
 			add_option('bcn_max_title_length', get_option('bcn_posttitle_maxlen'));
@@ -195,7 +151,7 @@ function bcn_install()
 		update_option('bcn_version', $bcn_admin_version);
 		//Add in options if they didn't exist before, load defaults into them
 		//Home page settings
-		add_option('bcn_home_display', 1);
+		add_option('bcn_home_display', 'true');
 		add_option('bcn_home_title', 'Blog');
 		add_option('bcn_home_anchor', '<a title="Go to %title%." href="%link%">');
 		add_option('bcn_blog_anchor', '<a title="Go to %title%." href="%link%">');
@@ -225,19 +181,19 @@ function bcn_install()
 		add_option('bcn_404_suffix', '');
 		add_option('bcn_404_title', '404');
 		//Current item settings
-		add_option('bcn_current_item_linked', 0);
+		add_option('bcn_current_item_linked', 'false');
 		add_option('bcn_current_item_anchor', '<a title="Reload the current page." href="%link%">');
 		add_option('bcn_current_item_prefix', '');
 		add_option('bcn_current_item_suffix', '');
 		//Paged settings
-		add_option('bcn_paged_display', 0);
+		add_option('bcn_paged_display', 'false');
 		add_option('bcn_paged_prefix', ', Page&nbsp;');
 		add_option('bcn_paged_suffix', '');
 		//Post related options
 		add_option('bcn_post_prefix', 'Blog article:&nbsp;');
 		add_option('bcn_post_suffix', '');
 		add_option('bcn_post_taxonomy', 'category');
-		add_option('bcn_post_taxonomy_display', 1);
+		add_option('bcn_post_taxonomy_display', 'true');
 		add_option('bcn_post_anchor', '<a title="Go to %title%." href="%link%">');
 		//Category settings
 		add_option('bcn_category_prefix', '');
@@ -278,13 +234,13 @@ function bcn_display()
 		//Make new breadcrumb object
 		$breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Set the settings
-		$breadcrumb_trail->opt['home_display'] = get_option('bcn_home_display');
+		$breadcrumb_trail->opt['home_display'] = str2bool(get_option('bcn_home_display'));
 		$breadcrumb_trail->opt['home_title'] = get_option('bcn_home_title');
-		$breadcrumb_trail->opt['home_anchor'] = get_option('bcn_home_anchor');
-		$breadcrumb_trail->opt['blog_anchor'] = get_option('bcn_blog_anchor');
+		$breadcrumb_trail->opt['home_anchor'] = bcn_get_option('bcn_home_anchor');
+		$breadcrumb_trail->opt['blog_anchor'] = bcn_get_option('bcn_blog_anchor');
 		$breadcrumb_trail->opt['separator'] = get_option('bcn_separator');
 		$breadcrumb_trail->opt['max_title_length'] = get_option('bcn_max_title_length');
-		$breadcrumb_trail->opt['current_item_linked'] = get_option('bcn_current_item_linked');
+		$breadcrumb_trail->opt['current_item_linked'] = str2bool(get_option('bcn_current_item_linked'));
 		$breadcrumb_trail->opt['current_item_anchor'] = get_option('bcn_current_item_anchor');
 		$breadcrumb_trail->opt['current_item_prefix'] = get_option('bcn_current_item_prefix');
 		$breadcrumb_trail->opt['current_item_suffix'] = get_option('bcn_current_item_suffix');
@@ -294,7 +250,7 @@ function bcn_display()
 		$breadcrumb_trail->opt['post_prefix'] = get_option('bcn_post_prefix');
 		$breadcrumb_trail->opt['post_suffix'] = get_option('bcn_post_suffix');
 		$breadcrumb_trail->opt['post_anchor'] = get_option('bcn_post_anchor');
-		$breadcrumb_trail->opt['post_taxonomy_display'] = get_option('bcn_post_taxonomy_display');
+		$breadcrumb_trail->opt['post_taxonomy_display'] = str2bool(get_option('bcn_post_taxonomy_display'));
 		$breadcrumb_trail->opt['post_taxonomy_type'] = get_option('bcn_post_taxonomy_type');
 		$breadcrumb_trail->opt['attachment_prefix'] = get_option('bcn_attachment_prefix');
 		$breadcrumb_trail->opt['attachment_suffix'] = get_option('bcn_attachment_suffix');
@@ -340,7 +296,7 @@ function bcn_admin_options()
 	check_admin_referer('bcn_admin_options');
 	//Update the options
 	//Home page settings
-	bcn_update_option('bcn_home_display', bcn_get('home_display', 'true'));
+	bcn_update_option('bcn_home_display', bcn_get('home_display', 'false'));
 	bcn_update_option('bcn_home_title', bcn_get('home_title'));
 	bcn_update_option('bcn_home_anchor', bcn_get('home_anchor'));
 	bcn_update_option('bcn_blog_anchor', bcn_get('blog_anchor'));
@@ -382,7 +338,7 @@ function bcn_admin_options()
 	bcn_update_option('bcn_post_prefix', bcn_get('post_prefix'));
 	bcn_update_option('bcn_post_suffix', bcn_get('post_suffix'));
 	bcn_update_option('bcn_post_taxonomy', bcn_get('post_taxonomy'));
-	bcn_update_option('bcn_post_taxonomy_display', bcn_get('post_taxonomy_display', 'true'));
+	bcn_update_option('bcn_post_taxonomy_display', bcn_get('post_taxonomy_display', 'false'));
 	bcn_update_option('bcn_post_anchor', bcn_get('post_anchor'));
 	//Category settings
 	bcn_update_option('bcn_category_prefix', bcn_get('category_prefix'));
@@ -405,15 +361,7 @@ function bcn_admin_options()
 function bcn_add_page()
 {
 	global $bcn_admin_req;
-	//A workaround to have 2.6 and 2.7 compatibility
-	/*if(strpos(get_bloginfo('version'), '2.7') !== false)
-	{
-		add_submenu_page('inbox.php', 'Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');
-	}
-	else
-	{*/
-		add_options_page('Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');	
-	//}
+	add_options_page('Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');
 }
 /**
  * bcn_admin
@@ -460,13 +408,13 @@ function bcn_admin()
 					<td>
 						<p>
 							<label>
-								<input name="home_display" type="radio" value="false" class="togx" <?php checked(0, bcn_get_option('bcn_home_display')); ?> />
+								<input name="home_display" type="radio" value="false" class="togx" <?php checked('false', bcn_get_option('bcn_home_display')); ?> />
 								<?php _e('Leave the home breadcrumb out of the trail.', 'breadcrumb_navxt'); ?>
 							</label>
 						</p>
 						<p>
 							<label>
-								<input name="home_display" type="radio" value="true" class="togx" <?php checked(1, bcn_get_option('bcn_home_display')); ?> />
+								<input name="home_display" type="radio" value="true" class="togx" <?php checked('true', bcn_get_option('bcn_home_display')); ?> />
 								<?php _e('Place the home breadcrumb in the trail.', 'breadcrumb_navxt'); ?>	
 							</label>
 							<ul>

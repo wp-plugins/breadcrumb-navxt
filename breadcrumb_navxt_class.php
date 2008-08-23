@@ -815,13 +815,18 @@ class bcn_breadcrumb_trail
 		//Initilize the string which will hold the compiled trail
 		$bcn_trail_str = "";
 		//The main compiling loop
-		//var_dump($this->trail);
 		foreach($this->trail as $key=>$breadcrumb)
 		{
 			//We only use a separator if there is more than one element
 			if($key < count($this->trail) - 1)
 			{
 				$bcn_trail_str .= $this->opt['separator'];
+			}
+			//If we are on the current item, we better check if we need to link it
+			if($key === 0 && $this->opt['current_item_linked'])
+			{
+				$breadcrumb->linked = true;
+				$breadcrumb->anchor = str_replace("%title%", $breadcrumb->title, str_replace("%link%", "", $this->opt['current_item_anchor']));	
 			}
 			//Place in the breadcrumb's elements
 			$bcn_trail_str .= $breadcrumb->prefix;
