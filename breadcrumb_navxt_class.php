@@ -379,15 +379,17 @@ class bcn_breadcrumb_trail
 			$i = true;
 			foreach($bcn_object as $tag)
 			{
+				//Run through a filter for good measure
+				$tag->name = apply_filters("get_tag", $tag->name);
 				//On the first run we don't need a separator
 				if($i)
 				{
-					$bcn_breadcrumb->title = $this->opt['tag_prefix'] . str_replace("%title%", $tag->name, str_replace("%link%", get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $this->opt['tag_suffix'];
+					$bcn_breadcrumb->title = $this->opt['tag_prefix'] . str_replace("%title%",  $tag->name, str_replace("%link%", get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $tag->name . "</a>" . $this->opt['tag_suffix'];
 					$i = false;
 				}
 				else
 				{
-					$bcn_breadcrumb->title .= ', ' . $this->opt['tag_prefix'] . str_replace("%title%", $tag->name, str_replace("%link%", get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $this->opt['tag_suffix'];
+					$bcn_breadcrumb->title .= ', ' . $this->opt['tag_prefix'] . str_replace("%title%", $tag->name, str_replace("%link%", get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $tag->name . "</a>" . $this->opt['tag_suffix'];
 				}
 			}
 		}

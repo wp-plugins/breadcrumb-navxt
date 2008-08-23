@@ -117,7 +117,7 @@ function bcn_install()
 			delete_option('bcn_archive_date_format');
 			add_option('bcn_404_title', get_option('bcn_title_404'));
 			delete_option('bcn_title_404');
-			add_option('bcn_post_taxonomy', get_option('bcn_singleblogpost_taxonomy'));
+			add_option('bcn_post_taxonomy_type', get_option('bcn_singleblogpost_taxonomy'));
 			add_option('bcn_post_taxonomy_display', get_option('bcn_singleblogpost_taxonomy_display'));
 			delete_option('bcn_singleblogpost_taxonomy');
 			delete_option('bcn_singleblogpost_taxonomy_display');
@@ -192,7 +192,7 @@ function bcn_install()
 		//Post related options
 		add_option('bcn_post_prefix', 'Blog article:&nbsp;');
 		add_option('bcn_post_suffix', '');
-		add_option('bcn_post_taxonomy', 'category');
+		add_option('bcn_post_taxonomy_type', 'category');
 		add_option('bcn_post_taxonomy_display', 'true');
 		add_option('bcn_post_anchor', '<a title="Go to %title%." href="%link%">');
 		//Category settings
@@ -337,7 +337,7 @@ function bcn_admin_options()
 	//Post related options
 	bcn_update_option('bcn_post_prefix', bcn_get('post_prefix'));
 	bcn_update_option('bcn_post_suffix', bcn_get('post_suffix'));
-	bcn_update_option('bcn_post_taxonomy', bcn_get('post_taxonomy'));
+	bcn_update_option('bcn_post_taxonomy_type', bcn_get('post_taxonomy_type'));
 	bcn_update_option('bcn_post_taxonomy_display', bcn_get('post_taxonomy_display', 'false'));
 	bcn_update_option('bcn_post_anchor', bcn_get('post_anchor'));
 	//Category settings
@@ -450,7 +450,7 @@ function bcn_admin()
 						<label for="home_anchor"><?php _e('Home Anchor', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="home_anchor" id="home_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_home_anchor'); ?>" size="50" /><br />
+						<input type="text" name="home_anchor" id="home_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_home_anchor'); ?>" size="60" /><br />
 						<?php _e('The anchor template for the home breadcrumb.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
@@ -463,7 +463,7 @@ function bcn_admin()
 						<label for="blog_anchor"><?php _e('Blog Anchor', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="blog_anchor" id="blog_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_blog_anchor'); ?>" size="50" /><br />
+						<input type="text" name="blog_anchor" id="blog_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_blog_anchor'); ?>" size="60" /><br />
 						<?php _e('The anchor template for the blog breadcrumb.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr> 
@@ -505,7 +505,7 @@ function bcn_admin()
 						<label for="current_item_anchor"><?php _e('Current Item Anchor', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="current_item_anchor" id="current_item_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_anchor'); ?>" size="50" /><br />
+						<input type="text" name="current_item_anchor" id="current_item_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_current_item_anchor'); ?>" size="60" /><br />
 						<?php _e('The anchor template for current item breadcrumbs.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
@@ -562,7 +562,7 @@ function bcn_admin()
 						<label for="post_anchor"><?php _e('Post Anchor', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="post_anchor" id="post_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_post_anchor'); ?>" size="50" /><br />
+						<input type="text" name="post_anchor" id="post_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_post_anchor'); ?>" size="60" /><br />
 						<?php _e('The anchor template for post breadcrumbs.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
@@ -620,7 +620,7 @@ function bcn_admin()
 						<label for="page_anchor"><?php _e('Page Anchor', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="page_anchor" id="page_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_page_anchor'); ?>" size="50" /><br />
+						<input type="text" name="page_anchor" id="page_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_page_anchor'); ?>" size="60" /><br />
 						<?php _e('The anchor template for page breadcrumbs.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
@@ -682,7 +682,7 @@ function bcn_admin()
 						<label for="category_anchor"><?php _e('Category Anchor', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="category_anchor" id="category_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_category_anchor'); ?>" size="50" /><br />
+						<input type="text" name="category_anchor" id="category_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_category_anchor'); ?>" size="60" /><br />
 						<?php _e('The anchor template for category breadcrumbs.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
@@ -728,7 +728,7 @@ function bcn_admin()
 						<label for="tag_anchor"><?php _e('Tag Anchor', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="tag_anchor" id="tag_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_tag_anchor'); ?>" size="50" /><br />
+						<input type="text" name="tag_anchor" id="tag_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_tag_anchor'); ?>" size="60" /><br />
 						<?php _e('The anchor template for tag breadcrumbs.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
@@ -758,7 +758,7 @@ function bcn_admin()
 						<label for="date_anchor"><?php _e('Date Anchor', 'breadcrumb_navxt'); ?></label>
 					</th>
 					<td>
-						<input type="text" name="date_anchor" id="date_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_date_anchor'); ?>" size="50" /><br />
+						<input type="text" name="date_anchor" id="date_anchor" value="<?php echo bcn_get_option_inputvalue('bcn_date_anchor'); ?>" size="60" /><br />
 						<?php _e('The anchor template for date breadcrumbs.', 'breadcrumb_navxt'); ?>
 					</td>
 				</tr>
