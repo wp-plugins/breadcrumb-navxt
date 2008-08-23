@@ -366,9 +366,9 @@ function bcn_admin_options()
 	bcn_update_option('bcn_attachment_prefix', bcn_get('attachment_prefix'));
 	bcn_update_option('bcn_attachment_suffix', bcn_get('attachment_suffix'));
 	//404 page settings
-	bcn_update_option('bcn_404_prefix', bcn_get('attachment_suffix'));
-	bcn_update_option('bcn_404_suffix', bcn_get('attachment_suffix'));
-	bcn_update_option('bcn_404_title', bcn_get('attachment_suffix'));
+	bcn_update_option('bcn_404_prefix', bcn_get('404_prefix'));
+	bcn_update_option('bcn_404_suffix', bcn_get('404_suffix'));
+	bcn_update_option('bcn_404_title', bcn_get('404_title'));
 	//Current item settings
 	bcn_update_option('bcn_current_item_linked', bcn_get('current_item_linked', 'false'));
 	bcn_update_option('bcn_current_item_anchor', bcn_get('current_item_anchor'));
@@ -929,192 +929,12 @@ function bcn_local()
 	//Load breadcrumb-navxt translation
 	load_plugin_textdomain($domain = 'breadcrumb_navxt', $path = PLUGINDIR . '/breadcrumb-navxt');
 }
-
-/**
- * Additional styles and scripts for admin interface
- * 
- * @todo do not add to any admin page
- */
-function bcn_options_style()
-{
-	//wp_version is needed for version checks performed in this function
-	global $wp_version;
-	
-	//setup styles for admn and tabbed admin page
-?>
-<style type="text/css">
-	.bcn_options{border: none;}	
-	.form-table .form-table-inner td {border:none; height:normal; line-height:normal; margin:0; padding:0 8px 0 0; vertical-align: top;}
-	.form-table .form-table-inner tr.spaced td {padding-bottom:6px;}
-	/**
-	 * Tabbed Admin Page (CSS)
-	 *
-	 * unobtrusive approach to add tabbed forms into
-	 * the wordpress admin panel
-	 *
-	 * @note unstable
-	 * @see http://www.artnorm.de/this-morning-in-bleeding,105,2008-06.html
-	 * @see breadcrumb navxt
-	 * @author Tom Klingenberg
-	 * @cssdoc 1.0-pre
-	 * @colordef #fff    white      (tab background) 
-	 * @colordef #c6d9e9 grey-blue  (tab line)
-	 * @colordef #d54e21 orange     (tab text of active tab)
-	 * @colordef #d54e21 orange     (tab text of inactive tab hovered) external
-	 * @colordef #2583ad dark-blue  (tab text of inactive tab) external	 	 
-	 */
-	ul.ui-tabs-nav {background:#fff; border-bottom:1px solid #c6d9e9; font-size:12px; height:29px; margin:13px 0 0; padding:0; padding-left:8px; list-style:none;}	
-	ul.ui-tabs-nav li {display:inline; line-height: 200%; list-style:none; margin: 0; padding:0; position:relative; top:1px; text-align:center; white-space:nowrap;}
-	ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0%; border:1px transparent #fff; border-bottom:1px solid #c6d9e9; display:block; float:left; line-height:28px; padding:1px 13px 0; position:relative; text-decoration:none;}
-	ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px; -moz-border-radius-topright:4px; background:#fff; border:1px solid #c6d9e9; border-bottom-color:#fff; color:#d54e21; font-weight:normal; padding:0 12px;}
-	ul.ui-tabs-nav a:focus, a:active {outline: none;}
-	#hasadmintabs fieldset {clear:both;}
-</style>
-<?php
-	/* 
-     * needed javascript libraries are included now
-     * add own javascript code now 
-     */
-?>
-<script type="text/javascript">
-/* <![CDATA[ */
-	/**
-	 * Tabbed Admin Page (jQuery)
-	 *
-	 * unobtrusive approach to add tabbed forms into
-	 * the wordpress admin panel
-	 *
-	 * @note unstable
-	 * @see http://www.artnorm.de/this-morning-in-bleeding,105,2008-06.html
-	 * @see breadcrumb navxt
-	 * @author Tom Klingenberg
-	 * @uses jQuery
-	 * @uses ui.core
-	 * @uses ui.tabs
-	 */
-	 
-	jQuery(document).ready(function() 
-	{
-		bcn_tabulator_init();		
-	 });
-	 
-	/**
-	 * Tabulator Bootup
-	 */
-	function bcn_tabulator_init()
-	{
-		bcn_admin_init_tabs();	
-		bcn_admin_gobal_tabs(); // comment out this like to disable tabs in admin 
-					
-	}
-	
-	/**
-	 * inittialize tabs for admin panel pages (wordpress core)
-	 *
-	 * @todo add uniqueid somehow
-	 */	
-	function bcn_admin_gobal_tabs()
-	{	
-		/* if has already a special id quit the global try here */
-		if (jQuery('#hasadmintabs').length > 0) return;
-		
-		jQuery('#wpbody .wrap form').each(function(f)
-		{						
-			var $formEle = jQuery(this).children();
-		
-			var $eleSets      = new Array();	
-			var $eleSet       = new Array();
-			var $eleSetIgnore = new Array();
-								
-			for (var i = 0; i < $formEle.size(); i++)
-			{
-				var curr = $formEle.get(i);
-				var $curr = jQuery(curr);	
-				// cut condition: h3 or stop				
-				// stop: p.submit
-				if ($curr.is('p.submit') || $curr.is('h3'))
-				{
-					if ($eleSet.length)
-					{
-						if ($eleSets.length == 0 && $eleSet.length == 1 && jQuery($eleSet).is('p'))	{
-							$eleSetIgnore = $eleSetIgnore.concat($eleSet);
-						} else {
-							$eleSets.push($eleSet);
-						}						
-						$eleSet  = new Array();
-					}
-					if ($curr.is('p.submit')) break;
-					$eleSet.push(curr);					
-				} else {
-					// handle ingnore bag - works only before the first set is created
-					var pushto = $eleSet; 
-					if ($eleSets.length == 0 && $curr.is("input[type='hidden']"))
-					{
-						pushto = $eleSetIgnore;					
-					}															
-					pushto.push(curr);
-				}
-			}		
-			
-			// if the page has only one set, quit
-			if ($eleSets.length < 2) return;			
-			
-			// tabify
-			formid = 'tabulator-tabs-form-' + f;
-			jQuery($eleSetIgnore).filter(':last').after('<div id="' + formid + '"></div>');
-			jQuery('#'+formid).prepend("<ul><\/ul>");
-			var tabcounter = 0;			
-			jQuery.each($eleSets, function() {
-				tabcounter++;
-				id      = formid + '-tab-' + tabcounter;
-				hash3   = true;
-				h3probe = jQuery(this).filter('h3').eq(0);			
-				if (h3probe.is('h3')) {
-					caption = h3probe.text();					
-				} else {
-					hash3   = false;
-					caption = jQuery('#wpbody .wrap h2').eq(0).text();
-				}
-				if (caption == ''){
-					caption = 'FALLBACK';
-				} 	
-				tabdiv = jQuery(this).wrapAll('<span id="'+id+'"></span>');
-				jQuery('#'+formid+' > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
-				if (hash3) h3probe.hide();
-			});
-			jQuery('#'+formid+' > ul').tabs();				
-		});	
-	}
-	 
-	/**
-	 * inittialize tabs for breadcrumb navxt admin panel
-	 */	 
-	function bcn_admin_init_tabs()
-	{
-		jQuery('#hasadmintabs').prepend("<ul><\/ul>");
-		jQuery('#hasadmintabs > fieldset').each(function(i)
-		{
-		    id      = jQuery(this).attr('id');
-		    caption = jQuery(this).find('h3').text();
-		    jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
-		    jQuery(this).find('h3').hide();
-	    });    
-	    jQuery("#hasadmintabs > ul").tabs();
-	}
-/* ]]> */
-</script>
-<?php
-}
-
 //WordPress hooks
 if(function_exists('add_action')){
 	//Installation Script hook
 	add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php','bcn_install');
 	//WordPress Admin interface hook
 	add_action('admin_menu', 'bcn_add_page');
-	add_action('admin_head', 'bcn_options_style');
-	//Enque javscript dependencies
-	wp_enqueue_script('jquery-ui-tabs');
 	//Admin Options hook
 	if(isset($_POST['bcn_admin_options']))
 	{
