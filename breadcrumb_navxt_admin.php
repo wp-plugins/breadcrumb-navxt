@@ -868,6 +868,30 @@ function bcn_select_options($optionname, $options = array('true','false'))
 	}
 }
 /**
+ * bcn_widget
+ *
+ * The sidebar widget 
+ */
+function bcn_widget($args)
+{
+	extract($args);
+	//Manditory before widget junk
+	echo $before_widget;
+	//Display the breadcrumb trial
+	bcn_display();
+	//Manditory after widget junk
+	echo $after_widget;
+}
+/**
+ * bcn_register_widget
+ *
+ * Registers the sidebar widget 
+ */
+function bcn_register_widget()
+{
+	register_sidebar_widget('Breadcrumb NavXT', 'bcn_widget');
+}
+/**
  * bcn_local
  *
  * Initilizes localization domain
@@ -883,6 +907,8 @@ if(function_exists('add_action')){
 	add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php','bcn_install');
 	//WordPress Admin interface hook
 	add_action('admin_menu', 'bcn_add_page');
+	//WordPress Hook for the widget
+	add_action('plugins_loaded','bcn_register_widget');
 	//Admin Options hook
 	if(isset($_POST['bcn_admin_options']))
 	{
