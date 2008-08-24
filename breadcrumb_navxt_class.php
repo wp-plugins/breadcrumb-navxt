@@ -730,6 +730,26 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->title = $this->opt['404_title'];
 	}
 	/**
+	 * do_paged
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for paged pages.
+	 */
+	function do_paged()
+	{
+		global $paged;
+		$this->trail[] = new bcn_breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['paged_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['paged_suffix'];
+		//Assign the title
+		$bcn_breadcrumb->title = $paged;
+	}
+	/**
 	 * fill
 	 * 
 	 * Breadcrumb Trail Filling Function

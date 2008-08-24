@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.1.4
+Version: 2.1.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -47,7 +47,7 @@ function bcn_security()
 	//Make sure userdata is filled
 	get_currentuserinfo();
 	//If the user_levels aren't proper and the user is not an administrator via capabilities
-	if($userdata->user_level < $bcn_admin_req && $userdata->wp_capabilities['administrator'] != true)
+	if($userdata->user_level < $bcn_admin_req && $userdata->wp_capabilities['administrator'] != true && !current_user_can('manage_options'))
 	{
 		//If user_level is null which tends to cause problems for everyone
 		if($userdata->user_level == NULL)
@@ -88,7 +88,7 @@ function bcn_install()
 	global $bcn_admin_req, $bcn_admin_version;
 	bcn_security();
 	//Globals seem not to work with WordPress' odd way of doing these calls
-	$bcn_admin_version = "2.2.0";
+	$bcn_admin_version = "2.1.99";
 	//Check if the database settings are for an old version
 	if(get_option('bcn_version') !== $bcn_admin_version)
 	{
@@ -141,8 +141,6 @@ function bcn_install()
 			add_option('bcn_current_item_suffix', get_option('bcn_singleblogpost_style_suffix'));
 			dalete_option('bcn_singleblogpost_style_prefix');
 			delete_option('bcn_singleblogpost_style_suffix');
-			update_option('bcn_paged_display', get_option('bcn_paged_display'));
-			delete_option('bcn_paged_display');
 			//Migrate title_maxlen
 			add_option('bcn_max_title_length', get_option('bcn_posttitle_maxlen'));
 			delete_option('bcn_posttitle_maxlen');
@@ -150,6 +148,7 @@ function bcn_install()
 		//We always want to update to our current version
 		update_option('bcn_version', $bcn_admin_version);
 		//Add in options if they didn't exist before, load defaults into them
+		add_option('bcn_trail_linked', 'true');
 		//Home page settings
 		add_option('bcn_home_display', 'true');
 		add_option('bcn_home_title', 'Blog');
@@ -210,23 +209,19 @@ function bcn_install()
 	}
 }
 /**
- * An alias of bcn_display, exists for legacy compatibility. Use bcn_display instead of this.
- * 
- * @see bcn_display
+ * Exists for legacy compatibility. Tells user to use bcn_display, function slated for removal in 3.1.
  */
 function breadcrumb_nav_xt_display()
 {
-	if(function_exists('_deprecated_function'))
-	{
-		_deprecated_function('breadcrumb_nav_xt_display','2.1','bcn_display');
-	}
-	bcn_display();
+	echo "Please use bcn_display instead of breadcrumb_nav_xt_display";
 }
 /**
  * Creates a bcn_breadcrumb object, sets the options per user specification in the 
  * administration interface and outputs the breadcrumb
+ * 
+ * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
  */
-function bcn_display()
+function bcn_display($linked = true)
 {
 	//Playing things really safe here
 	if(class_exists('bcn_breadcrumb_trail'))
@@ -244,6 +239,9 @@ function bcn_display()
 		$breadcrumb_trail->opt['current_item_anchor'] = get_option('bcn_current_item_anchor');
 		$breadcrumb_trail->opt['current_item_prefix'] = get_option('bcn_current_item_prefix');
 		$breadcrumb_trail->opt['current_item_suffix'] = get_option('bcn_current_item_suffix');
+		$breadcrumb_trail->opt['paged_prefix'] = get_option('bcn_paged_prefix');
+		$breadcrumb_trail->opt['paged_suffix'] = get_option('bcn_paged_suffix');
+		$breadcrumb_trail->opt['paged_display'] = str2bool(get_option('bcn_paged_display'));
 		$breadcrumb_trail->opt['page_prefix'] = get_option('bcn_page_prefix');
 		$breadcrumb_trail->opt['page_suffix'] = get_option('bcn_page_suffix');
 		$breadcrumb_trail->opt['page_anchor'] = get_option('bcn_page_anchor');
@@ -278,7 +276,7 @@ function bcn_display()
 		//Generate the breadcrumb trail
 		$breadcrumb_trail->fill();
 		//Display the breadcrumb trail
-		$breadcrumb_trail->display();
+		$breadcrumb_trail->display(false, str2bool(get_option('bcn_trail_linked')));
 	}
 }
 /**
@@ -295,6 +293,7 @@ function bcn_admin_options()
 	//Do a nonce check, prevent malicious link/form problems
 	check_admin_referer('bcn_admin_options');
 	//Update the options
+	bcn_update_option('bcn_trail_linked', bcn_get('trail_linked', 'false'));
 	//Home page settings
 	bcn_update_option('bcn_home_display', bcn_get('home_display', 'false'));
 	bcn_update_option('bcn_home_title', bcn_get('home_title'));
@@ -353,6 +352,24 @@ function bcn_admin_options()
 	bcn_update_option('bcn_archive_date_suffix', bcn_get('archive_date_suffix'));
 	bcn_update_option('bcn_date_anchor', bcn_get('date_anchor'));
 }
+//Deals with the "action link" in the plugin page
+function bcn_filter_plugin_actions($links, $file)
+{
+	static $this_plugin;
+	if(!$this_plugin)
+	{
+		$this_plugin = plugin_basename(__FILE__);
+	}
+	//Make sure we are adding only for Breadcrumb NavXT
+	if($file == $this_plugin)
+	{
+		//Setup the link string
+		$settings_link = '<a href="options-general.php?page=breadcrumb-navxt">' . __('Settings') . '</a>';
+		//Add it to the beginning of the array
+		array_unshift($links, $settings_link);
+	}
+	return $links;
+}
 /**
  * bcn_add_page
  *
@@ -361,7 +378,11 @@ function bcn_admin_options()
 function bcn_add_page()
 {
 	global $bcn_admin_req;
-	add_options_page('Breadcrumb NavXT Settings', 'Breadcrumb NavXT', $bcn_admin_req, 'breadcrumb-nav-xt', 'bcn_admin');
+	if(current_user_can('manage_options'))
+	{
+		add_submenu_page('options-general.php', 'Breadcrumb NavXT Settings', 'Breadcrumb NavXT', 'manage_options', 'breadcrumb-navxt', 'bcn_admin');
+		add_filter( 'plugin_action_links', 'bcn_filter_plugin_actions', 10, 2 );
+	}
 }
 /**
  * bcn_admin
@@ -401,6 +422,18 @@ function bcn_admin()
 		<fieldset id="general" class="bcn_options">
 			<h3><?php _e('General', 'breadcrumb_navxt'); ?></h3>
 			<table class="form-table">
+				<tr valign="top">
+					<th scope="row">
+						<label for="trail_linked"><?php _e('Breadcrumbs Linked', 'breadcrumb_navxt'); ?></label>
+					</th>
+					<td>
+						<label>
+							<input name="trail_linked" type="checkbox" id="trail_linked" value="true" <?php checked('true', bcn_get_option('bcn_trail_linked')); ?> />
+							<?php _e('Yes'); ?>
+						</label><br />
+						<?php _e('Allow breadcrumbs in the trail to be linked.', 'breadcrumb_navxt');?>
+					</td>
+				</tr>
 				<tr valign="top">
 					<th scope="row">
 						<?php _e('Home Breadcrumb', 'breadcrumb_navxt'); ?>						
