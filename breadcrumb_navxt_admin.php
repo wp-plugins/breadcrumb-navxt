@@ -416,7 +416,7 @@ function bcn_admin()
 		printf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more detailed explanation of each setting.', 'breadcrumb_navxt'), 
 		'<a title="Go to the Breadcrumb NavXT online documentation" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>'); 
 	?></p>
-	<form action="options-general.php?page=breadcrumb-nav-xt" method="post" id="bcn_admin_options">
+	<form action="options-general.php?page=breadcrumb-navxt" method="post" id="bcn_admin_options">
 		<?php wp_nonce_field('bcn_admin_options');?>
 		<div id="hasadmintabs">
 		<fieldset id="general" class="bcn_options">
