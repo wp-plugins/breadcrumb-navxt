@@ -80,6 +80,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
+	var $version;
 	//An array of breadcrumbs
 	var $trail;
 	//The options
@@ -87,6 +88,7 @@ class bcn_breadcrumb_trail
 	//Default constructor
 	function bcn_breadcrumb_trail()
 	{
+		$this->version = "2.2.0";
 		//Initilize the trail as an array
 		$this->trail = array();
 		//Initilize with default option values

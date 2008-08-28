@@ -48,17 +48,22 @@ function bcn_get_option($optionname, $foradmin = true)
  * @param string $input
  * @return bool
  */
-function str2bool($input)
+//Safely add this in just incase someone else makes one with the same name
+if(!function_exists('str2bool'))
 {
-	if($input === "true")
+	function str2bool($input)
 	{
-		return true;
-	}
-	else
-	{
-		return false;
+		if($input === "true")
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
+
 /**
  * Update Option, update_option Replacement
  * 
