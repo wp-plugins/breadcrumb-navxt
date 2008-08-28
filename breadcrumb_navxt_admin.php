@@ -7,7 +7,6 @@ Version: 2.1.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
-
 //Include the breadcrumb class (if needed)
 if(!class_exists('bcn_breadcrumb'))
 {
@@ -51,6 +50,7 @@ class bcn_admin
 	 */
 	function security()
 	{
+		//If the user can not manage options we will die on them
 		if(!current_user_can('manage_options'))
 		{
 			_e('Insufficient privileges to proceed.', 'breadcrumb_navxt');
@@ -231,7 +231,6 @@ class bcn_admin
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_admin_options');
-		echo "foo";
 		//Grab the options from the from post
 		//Home page settings
 		$this->breadcrumb_trail->opt['home_display'] = str2bool(bcn_get('home_display', 'false'));
