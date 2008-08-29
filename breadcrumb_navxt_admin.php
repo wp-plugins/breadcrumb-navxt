@@ -121,7 +121,7 @@ class bcn_admin
 				delete_option('bcn_singleblogpost_tag_suffix');
 			}
 			//For upgrading from 2.2.x betas
-			if($major < 3)
+			if($major < 3 && $major > 1)
 			{
 				//Migrate over stuff
 				$this->breadcrumb_trail->opt['home_display'] = str2bool(get_option('bcn_home_display'));

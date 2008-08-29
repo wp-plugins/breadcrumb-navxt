@@ -44,15 +44,8 @@ class Navxt_Plugin_Tabulator
 	{
 		$plugin = new self();
 		add_action('admin_head', array($plugin, 'admin_head'));
-		//We should use this for handling library dependancies
 		add_action('wp_print_scripts', array($plugin, 'javascript'));
 	}
-	/**
-	 * javascript hook function
-	 * 
-	 * Adds needed javascript dependancies, only runs in the dashboard
-	 *
-	 */
 	public function javascript()
 	{
 		//If we are in the dashboard we may need this
@@ -125,7 +118,7 @@ class Navxt_Plugin_Tabulator
 	function bcn_tabulator_init()
 	{
 		bcn_admin_init_tabs();	
-		bcn_admin_gobal_tabs(); // comment out this like to disable tabs in admin					
+		//bcn_admin_gobal_tabs(); // comment out this like to disable tabs in admin					
 	}
 	
 	/**

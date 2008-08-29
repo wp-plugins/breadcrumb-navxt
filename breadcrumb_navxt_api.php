@@ -17,29 +17,6 @@
  *                                  	codebase in 2007-09.
  *                                  	see http://trac.wordpress.org/ticket/4781
  */
-
-/**
- * Get Option, get_option Replacement
- *
- * @param string optionname name of the wordpress option
- * @param bool foradmin wheter or not we are returning for the admin interface or for the class
- */
-function bcn_get_option($optionname, $foradmin = true)
-{
-	//Retrieve the option value
-	$bcn_value = get_option($optionname);
-	if($foradmin)
-	{
-		//Remove &nbsp; so that it looks correct (string problem)
-		return str_replace("&nbsp;", " ", $bcn_value);
-		
-	}
-	else
-	{
-		//We use entity_decode as that's the inverse of what wpdb->escape() uses
-		return html_entity_decode($bcn_value);
-	}
-}
 /**
  * str2bool converts string of "true" to true and "false" to false
  * 
@@ -64,57 +41,6 @@ if(!function_exists('str2bool'))
 	}
 }
 
-/**
- * Update Option, update_option Replacement
- * 
- * @param string $optionname
- * @param string $value
- * @see bcn_get_option
- */
-function bcn_update_option($optionname, $value)
-{
-	$bcn_value = $value;
-	//We want to make sure we handle html entities correctly first
-	//$bcn_value = htmlspecialchars($bcn_value);
-	//Preserving the front space if exists
-	if(strpos($bcn_value, " ") === 0)
-	{
-		$bcn_value = "&nbsp;" . ltrim($bcn_value);
-	}
-	//Preserv the end space if exists
-	$bcn_length = strlen($bcn_value) - 1;
-	if($bcn_length > 0)
-	{
-		if(strpos($bcn_value, " ", $bcn_length - 1) === $bcn_length)
-		{
-			$bcn_value = rtrim($bcn_value) . "&nbsp;";
-		}
-	}
-	return update_option($optionname, $bcn_value);
-}
-
-/**
- * bcn_get_option_inputvalue
- *
- * Administration input complex, Escapes Option Values for the 
- * Output inside the XHTML Forms. The returned value is safe
- * for usage inside value="".
- *
- * @param  (string) optionname name of the wordpress option
- * @return (string) escaped option-value
- * @since  2008-02-07
- */
-function bcn_get_option_inputvalue($optionname)
-{
-	//Retrieve the option value
-	$bcn_value = bcn_get_option($optionname);
-	
-	//Convert any (x)HTML special charactors into a form that won't mess up the web form
-	$bcn_value_secaped = htmlspecialchars($bcn_value);
-	
-	//Return the escaped value
-	return $bcn_value_secaped;
-}
 /**
  * bcn_get
  *
@@ -146,9 +72,6 @@ function bcn_get($varname, $default = "")
 	{
 		return $default;
 	}
-	
-	//Only if we have a string should we check for spaces
-	// >> this has been migrated to where it belongs to: bcn_update_option	
 	
 	//Remove by faulty-wordpress-code added slashes
 	$bcn_value = stripslashes($bcn_value);
