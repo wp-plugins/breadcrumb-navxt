@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/breadcrumb-navxt\n"
-"POT-Creation-Date: 2008-08-24 20:24+0000\n"
+"POT-Creation-Date: 2008-08-29 02:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,350 +15,306 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: breadcrumb_navxt_admin.php:55
-msgid ""
-"<strong>Aborting: WordPress API Malfunction</strong><br /> For some reason "
-"the \n"
-"\t\t\t\tfunction get_currentuserinfo() did not behave as expected. Your "
-"user_level seems to be null.\n"
-"\t\t\t\tThis can be resolved by navigationg to the Users section of the "
-"WordPress administrative interface.\n"
-"\t\t\t\tIn this section check the user that you use for administrative "
-"purposes. Then under the drop down\n"
-"\t\t\t\tlabled \"change role to...\" select administrator. Now click the "
-"change button. Should you still \n"
-"\t\t\t\trecieve this error please report this bug to the plug-in author. In "
-"your report please specify \n"
-"\t\t\t\tyour WordPress version, PHP version, Apache (or whatever HTTP server "
-"you are using) verion, and \n"
-"\t\t\t\tthe version of the plug-in you are using.<br />"
+#: breadcrumb_navxt_admin.php:56
+msgid "Insufficient privileges to proceed."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:63
-msgid "WordPress version: "
-msgstr ""
-
-#: breadcrumb_navxt_admin.php:65
-msgid "PHP version: "
-msgstr ""
-
-#: breadcrumb_navxt_admin.php:67
-msgid "Plug-in version: "
-msgstr ""
-
-#: breadcrumb_navxt_admin.php:73
-msgid ""
-"<strong>Aborting: Insufficient Privleges</strong><br /> Your User Level: "
-msgstr ""
-
-#: breadcrumb_navxt_admin.php:75
-msgid "<br /> Required User Level: "
-msgstr ""
-
-#: breadcrumb_navxt_admin.php:367
+#: breadcrumb_navxt_admin.php:331
 msgid "Settings"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:406
+#: breadcrumb_navxt_admin.php:376
 msgid ""
 "Warning, your version of Breadcrumb NavXT does not match the version "
 "supported by this administrative interface. As a result, settings may not "
 "work as expected."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:407
+#: breadcrumb_navxt_admin.php:377
 msgid "Your Breadcrumb NavXT Administration interface version is "
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:408
+#: breadcrumb_navxt_admin.php:378
 msgid "Your Breadcrumb NavXT version is "
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:414
+#: breadcrumb_navxt_admin.php:382
 msgid "Breadcrumb NavXT Settings"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:416
+#: breadcrumb_navxt_admin.php:384
 #, php-format
 msgid ""
 "Tips for the settings are located below select options. Please refer to the %"
 "sdocumentation%s for more detailed explanation of each setting."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:423
+#: breadcrumb_navxt_admin.php:391
 msgid "General"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:427
-msgid "Breadcrumbs Linked"
-msgstr ""
-
-#: breadcrumb_navxt_admin.php:432 breadcrumb_navxt_admin.php:516
-msgid "Yes"
-msgstr ""
-
-#: breadcrumb_navxt_admin.php:434
-msgid "Allow breadcrumbs in the trail to be linked."
-msgstr ""
-
-#: breadcrumb_navxt_admin.php:439
+#: breadcrumb_navxt_admin.php:395
 msgid "Home Breadcrumb"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:445
+#: breadcrumb_navxt_admin.php:401
 msgid "Leave the home breadcrumb out of the trail."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:451
+#: breadcrumb_navxt_admin.php:407
 msgid "Place the home breadcrumb in the trail."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:456
+#: breadcrumb_navxt_admin.php:412
 msgid "Home Title: "
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:466
+#: breadcrumb_navxt_admin.php:422
 msgid "Breadcrumb Separator"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:470
+#: breadcrumb_navxt_admin.php:426
 msgid "Placed in between each breadcrumb."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:475
+#: breadcrumb_navxt_admin.php:431
 msgid "Breadcrumb Max Title Length"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:483
+#: breadcrumb_navxt_admin.php:439
 msgid "Home Anchor"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:487
+#: breadcrumb_navxt_admin.php:443
 msgid "The anchor template for the home breadcrumb."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:496
+#: breadcrumb_navxt_admin.php:452
 msgid "Blog Anchor"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:500
+#: breadcrumb_navxt_admin.php:456
 msgid "The anchor template for the blog breadcrumb."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:507
+#: breadcrumb_navxt_admin.php:463
 msgid "Current Item"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:511
+#: breadcrumb_navxt_admin.php:467
 msgid "Link Current Item"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:522
+#: breadcrumb_navxt_admin.php:472
+msgid "Yes"
+msgstr ""
+
+#: breadcrumb_navxt_admin.php:478
 msgid "Current Item Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:530
+#: breadcrumb_navxt_admin.php:486
 msgid "Current Item Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:538
+#: breadcrumb_navxt_admin.php:494
 msgid "Current Item Anchor"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:542
+#: breadcrumb_navxt_admin.php:498
 msgid "The anchor template for current item breadcrumbs."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:547
+#: breadcrumb_navxt_admin.php:503
 msgid "Display Paged Text"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:552
+#: breadcrumb_navxt_admin.php:508
 msgid ""
 "Show that the user is on a page other than the first on posts/archives with "
 "multiple pages."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:558
+#: breadcrumb_navxt_admin.php:514
 msgid "Paged Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:566
+#: breadcrumb_navxt_admin.php:522
 msgid "Paged Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:575
+#: breadcrumb_navxt_admin.php:531
 msgid "Posts & Pages"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:579
+#: breadcrumb_navxt_admin.php:535
 msgid "Post Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:587
+#: breadcrumb_navxt_admin.php:543
 msgid "Post Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:595
+#: breadcrumb_navxt_admin.php:551
 msgid "Post Anchor"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:599
+#: breadcrumb_navxt_admin.php:555
 msgid "The anchor template for post breadcrumbs."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:604
+#: breadcrumb_navxt_admin.php:560
 msgid "Post Taxonomy Display"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:609
+#: breadcrumb_navxt_admin.php:565
 msgid "Show the taxonomy leading to a post in the breadcrumb trail."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:615
+#: breadcrumb_navxt_admin.php:571
 msgid "Post Taxonomy"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:621 breadcrumb_navxt_admin.php:679
+#: breadcrumb_navxt_admin.php:577 breadcrumb_navxt_admin.php:635
 msgid "Categories"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:627 breadcrumb_navxt_admin.php:725
+#: breadcrumb_navxt_admin.php:583 breadcrumb_navxt_admin.php:681
 msgid "Tags"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:631
+#: breadcrumb_navxt_admin.php:587
 msgid "The taxonomy which the breadcrumb trail will show."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:637
+#: breadcrumb_navxt_admin.php:593
 msgid "Page Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:645
+#: breadcrumb_navxt_admin.php:601
 msgid "Page Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:653
+#: breadcrumb_navxt_admin.php:609
 msgid "Page Anchor"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:657
+#: breadcrumb_navxt_admin.php:613
 msgid "The anchor template for page breadcrumbs."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:662
+#: breadcrumb_navxt_admin.php:618
 msgid "Attachment Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:670
+#: breadcrumb_navxt_admin.php:626
 msgid "Attachment Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:683
+#: breadcrumb_navxt_admin.php:639
 msgid "Archive by Category Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:691
+#: breadcrumb_navxt_admin.php:647
 msgid "Archive by Category Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:699
+#: breadcrumb_navxt_admin.php:655
 msgid "Category Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:707
+#: breadcrumb_navxt_admin.php:663
 msgid "Category Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:715
+#: breadcrumb_navxt_admin.php:671
 msgid "Category Anchor"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:719
+#: breadcrumb_navxt_admin.php:675
 msgid "The anchor template for category breadcrumbs."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:729
+#: breadcrumb_navxt_admin.php:685
 msgid "Archive by Tag Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:737
+#: breadcrumb_navxt_admin.php:693
 msgid "Archive by Tag Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:745
+#: breadcrumb_navxt_admin.php:701
 msgid "Tag Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:753
+#: breadcrumb_navxt_admin.php:709
 msgid "Tag Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:761
+#: breadcrumb_navxt_admin.php:717
 msgid "Tag Anchor"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:765
+#: breadcrumb_navxt_admin.php:721
 msgid "The anchor template for tag breadcrumbs."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:771
+#: breadcrumb_navxt_admin.php:727
 msgid "Date Archives"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:775
+#: breadcrumb_navxt_admin.php:731
 msgid "Archive by Date Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:783
+#: breadcrumb_navxt_admin.php:739
 msgid "Archive by Date Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:791
+#: breadcrumb_navxt_admin.php:747
 msgid "Date Anchor"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:795
+#: breadcrumb_navxt_admin.php:751
 msgid "The anchor template for date breadcrumbs."
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:801
+#: breadcrumb_navxt_admin.php:757
 msgid "Miscellaneous"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:805
+#: breadcrumb_navxt_admin.php:761
 msgid "Author Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:813
+#: breadcrumb_navxt_admin.php:769
 msgid "Author Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:821
+#: breadcrumb_navxt_admin.php:777
 msgid "Author Display Format"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:831
+#: breadcrumb_navxt_admin.php:787
 msgid "Search Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:839
+#: breadcrumb_navxt_admin.php:795
 msgid "Search Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:847
+#: breadcrumb_navxt_admin.php:803
 msgid "404 Title"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:855
+#: breadcrumb_navxt_admin.php:811
 msgid "404 Prefix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:863
+#: breadcrumb_navxt_admin.php:819
 msgid "404 Suffix"
 msgstr ""
 
-#: breadcrumb_navxt_admin.php:872
+#: breadcrumb_navxt_admin.php:828
 msgid "Save Changes"
 msgstr ""
