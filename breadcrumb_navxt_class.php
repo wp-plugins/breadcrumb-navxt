@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.1.99
+Version: 2.2.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -122,7 +122,7 @@ class bcn_breadcrumb_trail
 			'page_anchor' => '<a title="Go to %title%." href="%link%">',
 			//Paged options
 			//The prefix for paged breadcrumbs, place on all page elements and inside of current_item prefix
-			'paged_prefix' => '',
+			'paged_prefix' => 'Page ',
 			//The suffix for paged breadcrumbs, place on all page elements and inside of current_item suffix
 			'paged_suffix' => '',
 			//Should we try filling out paged information
@@ -472,9 +472,9 @@ class bcn_breadcrumb_trail
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_tag_prefix'];
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['tag_prefix'] .$this->opt['archive_tag_prefix'];
 		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['archive_tag_suffix'] . $this->opt['current_item_suffix'];
+		$bcn_breadcrumb->suffix = $this->opt['archive_tag_suffix'] . $this->opt['tag_suffix'] .$this->opt['current_item_suffix'];
 		//Assign the title
 		$bcn_breadcrumb->title = single_tag_title("", false);	
 	}

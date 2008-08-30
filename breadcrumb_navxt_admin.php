@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.1.99
+Version: 2.2.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -305,7 +305,6 @@ class bcn_admin
 		$this->breadcrumb_trail->opt['date_anchor'] = bcn_get('date_anchor');
 		$this->breadcrumb_trail->opt['archive_date_prefix'] = bcn_get('archive_date_prefix');
 		$this->breadcrumb_trail->opt['archive_date_suffix'] = bcn_get('archive_date_suffix');
-		//bcn_update_option('bcn_trail_linked', bcn_get('trail_linked', 'false'));
 		//Commit the option changes
 		update_option('bcn_options', $this->breadcrumb_trail->opt);
 	}
@@ -397,7 +396,7 @@ class bcn_admin
 		} ?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>
 		<p><?php 
-			printf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more detailed explanation of each setting.', 'breadcrumb_navxt'), 
+			printf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
 			'<a title="Go to the Breadcrumb NavXT online documentation" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>'); 
 		?></p>
 		<form action="options-general.php?page=breadcrumb-navxt" method="post" id="bcn_admin_options">
@@ -469,7 +468,7 @@ class bcn_admin
 						</th>
 						<td>
 							<input type="text" name="blog_anchor" id="blog_anchor" value="<?php echo $this->breadcrumb_trail->opt['blog_anchor']; ?>" size="60" /><br />
-							<?php _e('The anchor template for the blog breadcrumb.', 'breadcrumb_navxt'); ?>
+							<?php _e('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr> 
 					<?php } ?>
@@ -494,7 +493,8 @@ class bcn_admin
 							<label for="current_item_prefix"><?php _e('Current Item Prefix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="current_item_prefix" id="current_item_prefix" value="<?php echo $this->breadcrumb_trail->opt['current_item_prefix']; ?>" size="32" />
+							<input type="text" name="current_item_prefix" id="current_item_prefix" value="<?php echo $this->breadcrumb_trail->opt['current_item_prefix']; ?>" size="32" /><br />
+							<?php _e('This is always placed in front of the last breadcrumb in the trail, before any other prefixes for that breadcrumb.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -502,7 +502,8 @@ class bcn_admin
 							<label for="current_item_suffix"><?php _e('Current Item Suffix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="current_item_suffix" id="current_item_suffix" value="<?php echo $this->breadcrumb_trail->opt['current_item_suffix']; ?>" size="32" />
+							<input type="text" name="current_item_suffix" id="current_item_suffix" value="<?php echo $this->breadcrumb_trail->opt['current_item_suffix']; ?>" size="32" /><br />
+							<?php _e('This is always placed after the last breadcrumb in the trail, and after any other prefixes for that breadcrumb.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -516,13 +517,14 @@ class bcn_admin
 					</tr>
 					<tr valign="top">
 						<th scope="row">
-							<label for="paged_display"><?php _e('Display Paged Text', 'breadcrumb_navxt'); ?></label>
+							<label for="paged_display"><?php _e('Paged Breadcrumb', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
 							<label>
 								<input name="paged_display" type="checkbox" id="paged_display" value="true" <?php checked(true, $this->breadcrumb_trail->opt['paged_display']); ?> />
-								<?php _e('Show that the user is on a page other than the first on posts/archives with multiple pages.', 'breadcrumb_navxt'); ?>							
-							</label>	
+								<?php _e('Include the paged breadcrumb in the breadcrumb trail.', 'breadcrumb_navxt'); ?>
+							</label><br />
+							<?php _e('Indicates that the user is on a page other than the first on paginated posts/pages.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -655,7 +657,8 @@ class bcn_admin
 							<label for="archive_category_prefix"><?php _e('Archive by Category Prefix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="archive_category_prefix" id="archive_category_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_category_prefix']; ?>" size="32" />
+							<input type="text" name="archive_category_prefix" id="archive_category_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_category_prefix']; ?>" size="32" /><br />
+							<?php _e('Applied before the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -663,7 +666,8 @@ class bcn_admin
 							<label for="archive_category_suffix"><?php _e('Archive by Category Suffix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="archive_category_suffix" id="archive_category_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_category_suffix']; ?>" size="32" />
+							<input type="text" name="archive_category_suffix" id="archive_category_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_category_suffix']; ?>" size="32" /><br />
+							<?php _e('Applied after the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -671,7 +675,8 @@ class bcn_admin
 							<label for="category_prefix"><?php _e('Category Prefix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="category_prefix" id="category_prefix" value="<?php echo $this->breadcrumb_trail->opt['category_prefix']; ?>" size="32" />
+							<input type="text" name="category_prefix" id="category_prefix" value="<?php echo $this->breadcrumb_trail->opt['category_prefix']; ?>" size="32" /><br />
+							<?php _e('Applied before the anchor on all category breadcrumbs.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -679,7 +684,8 @@ class bcn_admin
 							<label for="category_suffix"><?php _e('Category Suffix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="category_suffix" id="category_suffix" value="<?php echo $this->breadcrumb_trail->opt['category_suffix']; ?>" size="32" />
+							<input type="text" name="category_suffix" id="category_suffix" value="<?php echo $this->breadcrumb_trail->opt['category_suffix']; ?>" size="32" /><br />
+							<?php _e('Applied after the anchor on all category breadcrumbs.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -701,7 +707,8 @@ class bcn_admin
 							<label for="archive_tag_prefix"><?php _e('Archive by Tag Prefix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="archive_tag_prefix" id="archive_tag_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_tag_prefix']; ?>" size="32" />
+							<input type="text" name="archive_tag_prefix" id="archive_tag_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_tag_prefix']; ?>" size="32" /><br />
+							<?php _e('Applied before the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -709,7 +716,8 @@ class bcn_admin
 							<label for="archive_tag_suffix"><?php _e('Archive by Tag Suffix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="archive_tag_suffix" id="archive_tag_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_tag_suffix']; ?>" size="32" />
+							<input type="text" name="archive_tag_suffix" id="archive_tag_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_tag_suffix']; ?>" size="32" /><br />
+							<?php _e('Applied after the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -717,7 +725,8 @@ class bcn_admin
 							<label for="tag_prefix"><?php _e('Tag Prefix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="tag_prefix" id="tag_prefix" value="<?php echo $this->breadcrumb_trail->opt['tag_prefix']; ?>" size="32" />
+							<input type="text" name="tag_prefix" id="tag_prefix" value="<?php echo $this->breadcrumb_trail->opt['tag_prefix']; ?>" size="32" /><br />
+							<?php _e('Applied before the anchor on all tag breadcrumbs.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -725,7 +734,8 @@ class bcn_admin
 							<label for="tag_suffix"><?php _e('Tag Suffix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="tag_suffix" id="tag_suffix" value="<?php echo $this->breadcrumb_trail->opt['tag_suffix']; ?>" size="32" />
+							<input type="text" name="tag_suffix" id="tag_suffix" value="<?php echo $this->breadcrumb_trail->opt['tag_suffix']; ?>" size="32" /><br />
+							<?php _e('Applied after the anchor on all tag breadcrumbs.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -747,7 +757,8 @@ class bcn_admin
 							<label for="archive_date_prefix"><?php _e('Archive by Date Prefix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="archive_date_prefix" id="archive_date_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_date_prefix']; ?>" size="32" />
+							<input type="text" name="archive_date_prefix" id="archive_date_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_date_prefix']; ?>" size="32" /><br />
+							<?php _e('Applied before the anchor on all date breadcrumbs.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -755,7 +766,8 @@ class bcn_admin
 							<label for="archive_date_suffix"><?php _e('Archive by Date Suffix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="archive_date_suffix" id="archive_date_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_date_suffix']; ?>" size="32" />
+							<input type="text" name="archive_date_suffix" id="archive_date_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_date_suffix']; ?>" size="32" /><br />
+							<?php _e('Applied after the anchor on all date breadcrumbs.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -795,7 +807,8 @@ class bcn_admin
 						<td>
 							<select name="author_display" id="author_display">
 								<?php $this->select_options('author_display', array("display_name", "nickname", "first_name", "last_name")); ?>
-							</select>
+							</select><br />
+							<?php _e('display_name uses the name specified in "Display name publicly as" under the user profile the others correspond to options in the user profile.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">

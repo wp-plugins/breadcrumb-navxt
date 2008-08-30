@@ -4,7 +4,7 @@
  * 
  * Add Tabs to the Breadcrumb NavXT Admin Page (and the rest of the admin pages in wp)
  *
- * @version   0.1.1
+ * @version   0.1.2
  * @author    Tom Klingenberg
  * @copyright by the author, some rights reserved
  * @see http://www.artnorm.de/this-morning-in-bleeding,105,2008-06.html
@@ -12,7 +12,7 @@
  * Plugin Name: Tabulator (Breadcrumb NavXT Extending) [PHP5]
  * Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/?component=tabulator
  * Description: And Tabs should come over all your admin pages as WP 2.5 will let you rule the world of jQuery and beyond! Thou shall it be! 
- * Version: 2.1.4
+ * Version: 2.2.99
  * Author: Tom Klingenberg
  * Author URI: http://www.artnorm.de/
  */
@@ -118,7 +118,7 @@ class Navxt_Plugin_Tabulator
 	function bcn_tabulator_init()
 	{
 		bcn_admin_init_tabs();	
-		//bcn_admin_gobal_tabs(); // comment out this like to disable tabs in admin					
+		bcn_admin_gobal_tabs(); // comment out this like to disable tabs in admin					
 	}
 	
 	/**
@@ -195,7 +195,11 @@ class Navxt_Plugin_Tabulator
 				jQuery('#'+formid+' > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
 				if (hash3) h3probe.hide();
 			});
-			jQuery('#'+formid+' > ul').tabs();				
+			jQuery('#'+formid+' > ul').tabs({
+				select: function(e, ui) {
+				jQuery('#wpbody .wrap form').attr("action", (jQuery('#wpbody .wrap form').attr("action")).split('#', 1) + '#' + ui.panel.id);
+				}
+			});				
 		});	
 	}
 	 
@@ -212,7 +216,11 @@ class Navxt_Plugin_Tabulator
 		    jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
 		    jQuery(this).find('h3').hide();
 	    });    
-	    jQuery("#hasadmintabs > ul").tabs();
+	    jQuery("#hasadmintabs > ul").tabs({
+		    select: function(e, ui) {
+			jQuery('#wpbody .wrap form').attr("action", (jQuery('#wpbody .wrap form').attr("action")).split('#', 1) + '#' + ui.panel.id);
+			}
+		});	
 	}
 /* ]]> */
 </script>
