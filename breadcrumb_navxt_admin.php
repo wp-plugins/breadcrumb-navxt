@@ -546,7 +546,7 @@ class bcn_admin
 				</table>
 			</fieldset>
 			<fieldset id="single" class="bcn_options">
-				<h3><?php _e('Posts & Pages', 'breadcrumb_navxt'); ?></h3>
+				<h3><?php _e('Posts &amp; Pages', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
 					<tr valign="top">
 						<th scope="row">
