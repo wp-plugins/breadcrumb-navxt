@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Breadcrumb NavXT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-30 16:22-0600\n"
-"PO-Revision-Date: 2008-08-30 16:22-0600\n"
+"POT-Creation-Date: 2008-09-03 13:35-0600\n"
+"PO-Revision-Date: 2008-09-03 13:35-0600\n"
 "Last-Translator: John Havlik <mtekkmonkey@gmail.com>\n"
 "Language-Team: John Havlik <mtekkmonkey@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -216,7 +216,7 @@ msgstr ""
 #: C:\Documents
 #: and Settings\mtekk\My Documents\Aptana Studio\Breadcrumb
 #: NavXT\trunk/breadcrumb_navxt_admin.php:549
-msgid "Posts & Pages"
+msgid "Posts &amp; Pages"
 msgstr ""
 
 #: C:\Documents
