@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.2.99
+Version: 2.9.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -100,6 +100,10 @@ class bcn_breadcrumb_trail
 			'home_anchor' => '<a title="Go to %title%." href="%link%">',
 			//The anchor template for the blog page only in static front page mode, this is global, two keywords are available %link% and %title%
 			'blog_anchor' => '<a title="Go to %title%." href="%link%">',
+			//The prefix for page breadcrumbs, place on all page elements and inside of current_item prefix
+			'home_prefix' => '',
+			//The suffix for page breadcrumbs, place on all page elements and inside of current_item suffix
+			'home_suffix' => '',
 			//Separator that is placed between each item in the breadcrumb trial, but not placed before
 			//the first and not after the last breadcrumb
 			'separator' => ' &gt; ',
@@ -122,7 +126,7 @@ class bcn_breadcrumb_trail
 			'page_anchor' => '<a title="Go to %title%." href="%link%">',
 			//Paged options
 			//The prefix for paged breadcrumbs, place on all page elements and inside of current_item prefix
-			'paged_prefix' => 'Page ',
+			'paged_prefix' => '',
 			//The suffix for paged breadcrumbs, place on all page elements and inside of current_item suffix
 			'paged_suffix' => '',
 			//Should we try filling out paged information
@@ -299,8 +303,9 @@ class bcn_breadcrumb_trail
 	 * 
 	 * This recursive functions fills the trail with breadcrumbs for parent pages.
 	 * @param  (int)   $id The id of the parent page.
+	 * @param  (int)   $frontpage The id of the front page.
 	 */
-	function page_parents($id)
+	function page_parents($id, $frontpage)
 	{
 		//Add new breadcrumb to the trail
 		$this->trail[] = new bcn_breadcrumb();
@@ -318,13 +323,11 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_permalink($id), $this->opt['page_anchor']));
 		//We want this to be linked
 		$bcn_breadcrumb->linked = true;
-		//Figure out the next parent id
-		$bcn_parent_id  = $bcn_parent->post_parent;
-		//Make sure the id is valid
-		if(is_numeric($bcn_parent_id) && $bcn_parent_id != 0)
+		//Make sure the id is valid, and that we won't end up spinning in a loop
+		if($bcn_parent->post_parent && $id != $bcn_parent->post_parent && $frontpage != $bcn_parent->post_parent)
 		{
 			//If valid, recursivly call this function
-			$this->page_parents($bcn_parent_id);
+			$this->page_parents($bcn_parent->post_parent, $frontpage);
 		}
 	}
 	/**
@@ -348,11 +351,11 @@ class bcn_breadcrumb_trail
 		//Assign the title, using our older method to replace in the future
 		$bcn_breadcrumb->title = get_the_title();
 		//Done with the current item, now on to the parents
-		$bcn_parent_id = $post->post_parent;
+		$bcn_frontpage = get_option('page_on_front');
 		//If there is a parent page let's find it
-		if(is_numeric($bcn_parent_id) && $bcn_parent_id != 0)
+		if($post->post_parent && $post->ID != $post->post_parent && $bcn_frontpage != $post->post_parent)
 		{
-			$this->page_parents($bcn_parent_id);
+			$this->page_parents($post->post_parent, $bcn_frontpage);
 		}
 	}
 	/**
@@ -409,25 +412,25 @@ class bcn_breadcrumb_trail
 	function category_parents($id)
 	{
 		global $post;
-		//We kick out of the recursive loop when the id is not valid
-		if($id)
+		//Add new breadcrumb to the trail
+		$this->trail[] = new bcn_breadcrumb();
+		//Figure out where we placed the crumb, make a nice pointer to it
+		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+		//Assign the prefix
+		$bcn_breadcrumb->prefix = $this->opt['category_prefix'];
+		//Assign the suffix
+		$bcn_breadcrumb->suffix = $this->opt['category_suffix'];
+		//Get the current category object
+		$bcn_category = get_category($id);
+		//Setup the title, throw it through a filter
+		$bcn_breadcrumb->title = apply_filters("get_category", $bcn_category->cat_name);
+		//Figure out the anchor for the first category
+		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
+		//We want this to be linked
+		$bcn_breadcrumb->linked = true;
+		//Make sure the id is valid, and that we won't end up spinning in a loop
+		if($bcn_category->category_parent && $bcn_category->category_parent != $id)
 		{
-			//Add new breadcrumb to the trail
-			$this->trail[] = new bcn_breadcrumb();
-			//Figure out where we placed the crumb, make a nice pointer to it
-			$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['category_prefix'];
-			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['category_suffix'];
-			//Get the current category object
-			$bcn_category = get_category($id);
-			//Setup the title, throw it through a filter
-			$bcn_breadcrumb->title = apply_filters("get_category", $bcn_category->cat_name);
-			//Figure out the anchor for the first category
-			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
-			//We want this to be linked
-			$bcn_breadcrumb->linked = true;
 			//Figure out the rest of the category hiearchy via recursion
 			$this->category_parents($bcn_category->category_parent);
 		}
@@ -455,7 +458,10 @@ class bcn_breadcrumb_trail
 		//Simmilar to using $post, but for things $post doesn't cover
 		$bcn_object = $wp_query->get_queried_object();
 		//Get parents of current category
-		$this->category_parents($bcn_object->category_parent);
+		if($bcn_object->category_parent)
+		{
+			$this->category_parents($bcn_object->category_parent);
+		}
 	}
 	/**
 	 * do_archive_by_tag
@@ -472,9 +478,9 @@ class bcn_breadcrumb_trail
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['tag_prefix'] .$this->opt['archive_tag_prefix'];
+		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_tag_prefix'];
 		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['archive_tag_suffix'] . $this->opt['tag_suffix'] .$this->opt['current_item_suffix'];
+		$bcn_breadcrumb->suffix = $this->opt['archive_tag_suffix'] . $this->opt['current_item_suffix'];
 		//Assign the title
 		$bcn_breadcrumb->title = single_tag_title("", false);	
 	}
@@ -649,9 +655,9 @@ class bcn_breadcrumb_trail
 				//Figure out where we placed the crumb, make a nice pointer to it
 				$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 				//Get the blog page ID
-				$bcn_blog = get_post(get_option("page_for_posts"));
+				$post = get_post(get_option("page_for_posts"));
 				//Setup the title
-				$bcn_breadcrumb->title = apply_filters("the_title", $bcn_blog->post_title);
+				$bcn_breadcrumb->title = apply_filters("the_title", $post->post_title);
 				if(is_home())
 				{
 					//Assign the prefix
@@ -666,9 +672,16 @@ class bcn_breadcrumb_trail
 					//Assign the suffix
 					$bcn_breadcrumb->suffix = $this->opt['page_suffix'];
 					//Deal with the anchor
-					$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_permalink($bcn_blog->ID), $this->opt['blog_anchor']));
+					$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_permalink($post->ID), $this->opt['blog_anchor']));
 					//Yes link it
 					$bcn_breadcrumb->linked = true;	
+				}
+				//Done with the current item, now on to the parents
+				$bcn_frontpage = get_option('page_on_front');
+				//If there is a parent page let's find it
+				if($post->post_parent && $post->ID != $post->post_parent && $bcn_frontpage != $post->post_parent)
+				{
+					$this->page_parents($post->post_parent, $bcn_frontpage);
 				}
 			}
 			//Sometimes we don't have a home breadcrumb in the trail

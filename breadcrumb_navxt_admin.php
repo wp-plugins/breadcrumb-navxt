@@ -3,9 +3,25 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 2.2.99
+Version: 2.9.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
+*/
+/*  Copyright 2007-2008  John Havlik  (email : mtekkmonkey@gmail.com)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 //Include the breadcrumb class (if needed)
 if(!class_exists('bcn_breadcrumb'))
@@ -253,6 +269,8 @@ class bcn_admin
 		$this->breadcrumb_trail->opt['home_title'] = bcn_get('home_title');
 		$this->breadcrumb_trail->opt['home_anchor'] = bcn_get('home_anchor');
 		$this->breadcrumb_trail->opt['blog_anchor'] = bcn_get('blog_anchor');
+		$this->breadcrumb_trail->opt['home_prefix'] = bcn_get('home_prefix');
+		$this->breadcrumb_trail->opt['home_suffix'] = bcn_get('home_suffix');
 		$this->breadcrumb_trail->opt['separator'] = bcn_get('separator');
 		$this->breadcrumb_trail->opt['max_title_length'] = bcn_get('max_title_length');
 		//Current item settings
@@ -447,6 +465,22 @@ class bcn_admin
 						</th>
 						<td>
 							<input type="text" name="max_title_length" id="max_title_length" value="<?php echo $this->breadcrumb_trail->opt['max_title_length'];?>" size="10" />
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="home_prefix"><?php _e('Home Prefix', 'breadcrumb_navxt'); ?></label>
+						</th>
+						<td>
+							<input type="text" name="home_prefix" id="home_prefix" value="<?php echo $this->breadcrumb_trail->opt['home_prefix']; ?>" size="32" />
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="home_suffix"><?php _e('Home Suffix', 'breadcrumb_navxt'); ?></label>
+						</th>
+						<td>
+							<input type="text" name="home_suffix" id="home_suffix" value="<?php echo $this->breadcrumb_trail->opt['home_suffix']; ?>" size="32" />
 						</td>
 					</tr>
 					<tr valign="top">
