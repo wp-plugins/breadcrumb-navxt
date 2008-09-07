@@ -90,7 +90,7 @@ class bcn_admin
 			//Split up the db version into it's components
 			list($major, $minor, $release) = explode('.', $db_version);
 			//For upgrading from 2.2.x betas
-			if($major < 3 && $major > 1)
+			if($major < 3 && $major > 1 && $minor > 1)
 			{
 				//Migrate over stuff
 				$this->breadcrumb_trail->opt['home_display'] = str2bool(get_option('bcn_home_display'));
