@@ -83,7 +83,7 @@ class bcn_admin
 		//Call our little security function
 		$this->security();
 		//Reduce db queries by saving this
-		$db_version = get_option('bcn_version');
+		$db_version = $this->get_option('bcn_version');
 		//If our version is not the same as in the db, time to update
 		if($db_version !== $this->version)
 		{
@@ -248,9 +248,9 @@ class bcn_admin
 				delete_option('bcn_singleblogpost_tag_suffix');
 			}
 			//Always have to update the version
-			update_option('bcn_version', $this->version);
+			$this->update_option('bcn_version', $this->version);
 			//Store the options
-			add_option('bcn_options', $this->breadcrumb_trail->opt);
+			$this->add_option('bcn_options', $this->breadcrumb_trail->opt);
 		}
 	}
 	/**
@@ -324,7 +324,7 @@ class bcn_admin
 		$this->breadcrumb_trail->opt['archive_date_prefix'] = bcn_get('archive_date_prefix');
 		$this->breadcrumb_trail->opt['archive_date_suffix'] = bcn_get('archive_date_suffix');
 		//Commit the option changes
-		update_option('bcn_options', $this->breadcrumb_trail->opt);
+		$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
 	}
 	/**
 	 * display
@@ -336,7 +336,7 @@ class bcn_admin
 	function display($linked = true)
 	{
 		//Update our internal settings
-		$this->breadcrumb_trail->opt = get_option('bcn_options');
+		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		//Display the breadcrumb trail
@@ -395,7 +395,7 @@ class bcn_admin
 	{
 		$this->security();
 		//Update our internal options array, use form safe function
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+		$this->breadcrumb_trail->opt = $this->get_option('bcn_options', true);
 		//var_dump($this->breadcrumb_trail->opt);
 		//Initilizes l10n domain	
 		$this->local();
@@ -494,7 +494,7 @@ class bcn_admin
 					</tr>
 					<?php 
 					//We only need this if in a static front page condition
-					if(get_option('show_on_front') == "page")
+					if($this->get_option('show_on_front') == "page")
 					{?>
 					<tr valign="top">
 						<th scope="row">
@@ -954,34 +954,90 @@ class bcn_admin
 		}
 	}
 	/**
-	 * get_option
+	 * add_option
 	 *
-	 * This grabs the the data from the db and places it in a form safe manner
+	 * This inserts the value into the option name, WPMU safe
 	 *
-	 * @param (string) option name of wordpress option to get
-	 * @return (mixed)
+	 * @param (string) key name where to save the value in $value
+	 * @param (mixed) value to insert into the options db
+	 * @return (bool)
 	 */
-	function get_option($option)
+	function add_option($key, $value)
 	{
-		$db_data = get_option($option);
-		//If we get an array, we should loop through all of its members
-		if(is_array($db_data))
+		//If in a WPMU environment
+		if(function_exists('get_current_site'))
 		{
-			//Loop through all the members
-			foreach($db_data as $key=>$item)
-			{
-				//We ignore anything but strings
-				if(is_string($item))
-				{
-					$db_data[$key] = htmlentities($item);
-				}
-			}
-			return $db_data;
+			return add_blog_option(get_current_site()->id, $key, $value);
 		}
 		else
 		{
-			return htmlentities($db_data);
+			return add_option($key, $value);
 		}
+	}
+	/**
+	 * update_option
+	 *
+	 * This updates the value into the option name, WPMU safe
+	 *
+	 * @param (string) key name where to save the value in $value
+	 * @param (mixed) value to insert into the options db
+	 * @return (bool)
+	 */
+	function update_option($key, $value)
+	{
+		//If in a WPMU environment
+		if(function_exists('get_current_site'))
+		{
+			return update_blog_option(get_current_site()->id, $key, $value);
+		}
+		else
+		{
+			return update_option($key, $value);
+		}
+	}
+	/**
+	 * get_option
+	 *
+	 * This grabs the the data from the db it is WPMU safe and can place the data 
+	 * in a HTML form safe manner.
+	 *
+	 * @param (string) key name of the wordpress option to get
+	 * @param (bool) safe output for HTML forms (default: false)
+	 * @return (mixed)
+	 */
+	function get_option($key, $safe = false)
+	{
+		//If in a WPMU environment
+		if(function_exists('get_current_site'))
+		{
+			$db_data = get_blog_option(get_current_site()->id, $key);
+		}
+		else
+		{
+			$db_data = get_option($key);
+		}
+		if($safe)
+		{
+			//If we get an array, we should loop through all of its members
+			if(is_array($db_data))
+			{
+				//Loop through all the members
+				foreach($db_data as $key=>$item)
+				{
+					//We ignore anything but strings
+					if(is_string($item))
+					{
+						$db_data[$key] = htmlentities($item);
+					}
+				}
+				return $db_data;
+			}
+			else
+			{
+				return htmlentities($db_data);
+			}
+		}
+		return $db_data;
 	}
 }
 //Let's make an instance of our object takes care of everything
