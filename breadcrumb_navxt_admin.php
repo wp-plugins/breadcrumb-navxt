@@ -396,7 +396,6 @@ class bcn_admin
 		$this->security();
 		//Update our internal options array, use form safe function
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options', true);
-		//var_dump($this->breadcrumb_trail->opt);
 		//Initilizes l10n domain	
 		$this->local();
 		//See if the administrative interface matches versions with the class, if not then warn the user
@@ -1030,11 +1029,10 @@ class bcn_admin
 						$db_data[$key] = htmlentities($item);
 					}
 				}
-				return $db_data;
 			}
 			else
 			{
-				return htmlentities($db_data);
+				$db_data = htmlentities($db_data);
 			}
 		}
 		return $db_data;
@@ -1043,14 +1041,14 @@ class bcn_admin
 //Let's make an instance of our object takes care of everything
 $bcn_admin = new bcn_admin;
 /**
- * Exists for legacy compatibility. Tells user to use bcn_display, function slated for removal in 3.1.
+ * Exists for legacy "compatibility". Tells user to use bcn_display, function slated for removal in 3.1.
  */
 function breadcrumb_nav_xt_display()
 {
 	echo "Please use bcn_display instead of breadcrumb_nav_xt_display";
 }
 /**
- * A wrapper for the internal function in the class, please directly acess the admin class instead
+ * A wrapper for the internal function in the class
  * 
  * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
  */

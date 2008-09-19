@@ -277,6 +277,7 @@ class bcn_breadcrumb_trail
 	 */
 	function do_author()
 	{
+		global $author;
 		//Add new breadcrumb to the trail
 		$this->trail[] = new bcn_breadcrumb();
 		//Figure out where we placed the crumb, make a nice pointer to it
@@ -285,12 +286,12 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['author_prefix'];
 		//Assign the suffix
 		$bcn_breadcrumb->suffix = $this->opt['author_suffix'] . $this->opt['current_item_suffix'];
-		//Get the Author name, note it is an array
-		$bcn_curauth = (get_query_var('author_name')) ? get_userdatabylogin(get_query_var('author_name')) : get_userdata(get_query_var('author'));
+		//Get the Author name, note it is an object
+		$bcn_curauth = (isset($_GET['author_name'])) ? get_userdatabylogin($author_name) : get_userdata(intval($author));
 		//Get the Author display type
 		$bcn_authdisp = $this->opt['author_display'];
 		//Make sure user picks only safe values
-		if($bcn_authdisp == "nickname" || $bcn_authdisp == "first_name" || $bcn_authdisp == "last_name" || $bcn_authdisp == "display_name")
+		if($bcn_authdisp == "display_name" || $bcn_authdisp == "nickname" || $bcn_authdisp == "first_name" || $bcn_authdisp == "last_name")
 		{
 			//Assign the title
 			$bcn_breadcrumb->title = apply_filters("the_author", $bcn_curauth->$bcn_authdisp);
