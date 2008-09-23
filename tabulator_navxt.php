@@ -13,8 +13,8 @@
  * Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt
  * Description: And Tabs should come over all your admin pages as WP 2.5 will let you rule the world of jQuery and beyond! Thou shall it be! 
  * Version: 3.0.0
- * Author: Tom Klingenberg
- * Author URI: http://www.artnorm.de/
+ * Author: Tom Klingenberg/John Havlik
+ * Author URI: http://mtekk.weblogs.us
  */
 
 
