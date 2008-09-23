@@ -10,9 +10,9 @@
  * @see http://www.artnorm.de/this-morning-in-bleeding,105,2008-06.html
  * 
  * Plugin Name: Tabulator (Breadcrumb NavXT Extending) [PHP5]
- * Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/?component=tabulator
+ * Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt
  * Description: And Tabs should come over all your admin pages as WP 2.5 will let you rule the world of jQuery and beyond! Thou shall it be! 
- * Version: 2.2.99
+ * Version: 3.0.0
  * Author: Tom Klingenberg
  * Author URI: http://www.artnorm.de/
  */
