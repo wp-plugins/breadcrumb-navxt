@@ -1026,13 +1026,13 @@ class bcn_admin
 					//We ignore anything but strings
 					if(is_string($item))
 					{
-						$db_data[$key] = htmlentities($item);
+						$db_data[$key] = htmlentities($item, ENT_COMPAT, "UTF-8");
 					}
 				}
 			}
 			else
 			{
-				$db_data = htmlentities($db_data);
+				$db_data = htmlentities($item, ENT_COMPAT, "UTF-8");
 			}
 		}
 		return $db_data;
