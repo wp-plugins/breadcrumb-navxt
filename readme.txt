@@ -13,4 +13,4 @@ Breadcrumb NavXT, the successor to the popular WordPress plugin Breadcrumb Navig
 
 == Installation ==
 
-Please visit [Breadcrumb NavXT's](http://mtekk.weblogs.us/code/breadcrumb-navxt/ "Go to Breadcrumb NavXT's project page") project page for intallation and usage instructions.
+Please visit [Breadcrumb NavXT's](http://mtekk.weblogs.us/code/breadcrumb-navxt/#installation "Go to Breadcrumb NavXT's project page's installation section.") project page for intallation and usage instructions.
