@@ -245,8 +245,10 @@ class bcn_breadcrumb_trail
 		//We need to treat post and page attachment hierachy differently
 		if($bcn_parent->post_type == "page")
 		{
+			//Grab the page on front ID for page_parents
+			$bcn_frontpage = get_option('page_on_front');
 			//Place the rest of the page hierachy
-			$this->page_parents($bcn_parent_id);
+			$this->page_parents($bcn_parent_id, $bcn_frontpage);
 		}
 		else
 		{
