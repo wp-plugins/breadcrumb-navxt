@@ -910,5 +910,7 @@ class bcn_breadcrumb_trail
 			$bcn_tag = "<!-- Breadcrumb NavXT " . $this->version . " -->\n";
 			echo $bcn_tag . $bcn_trail_str;
 		}
+		//Added for good measure
+		rewind_posts();
 	}
 }
