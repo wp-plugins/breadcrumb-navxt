@@ -82,6 +82,8 @@ class bcn_admin
 	{
 		//Call our little security function
 		$this->security();
+		//Initilize the options
+		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Reduce db queries by saving this
 		$db_version = $this->get_option('bcn_version');
 		//If our version is not the same as in the db, time to update
