@@ -650,15 +650,17 @@ class bcn_breadcrumb_trail
 		global $post;
 		if(get_option('show_on_front') == "page")
 		{
+			//We'll have to check if this ID is valid, e.g. user has specified a posts page
+			$posts_id = get_option("page_for_posts");
 			//We only need the "blog" portion on members of the blog, not searches, pages or 404s
-			if(is_single() || is_archive() || is_author() || is_home())
+			if((is_single() || is_archive() || is_author() || is_home()) && $posts_id != NULL)
 			{
 				//Add new breadcrumb to the trail
 				$this->trail[] = new bcn_breadcrumb();
 				//Figure out where we placed the crumb, make a nice pointer to it
 				$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 				//Get the blog page ID
-				$post = get_post(get_option("page_for_posts"));
+				$post = get_post($posts_id);
 				//Setup the title
 				$bcn_breadcrumb->title = apply_filters("the_title", $post->post_title);
 				if(is_home())
@@ -687,7 +689,7 @@ class bcn_breadcrumb_trail
 					$this->page_parents($post->post_parent, $bcn_frontpage);
 				}
 			}
-			//Sometimes we don't have a home breadcrumb in the trail
+			//Sometimes we don't have a blog breadcrumb in the trail
 			if($this->opt['home_display'])
 			{
 				//Add new breadcrumb to the trail
