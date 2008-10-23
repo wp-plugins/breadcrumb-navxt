@@ -86,7 +86,7 @@ class bcn_breadcrumb_trail
 	//Default constructor
 	function bcn_breadcrumb_trail()
 	{
-		$this->version = "3.0.0";
+		$this->version = "3.0.1";
 		//Initilize the trail as an array
 		$this->trail = array();
 		//Initilize with default option values

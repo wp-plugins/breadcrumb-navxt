@@ -44,7 +44,7 @@ class bcn_admin
 	function bcn_admin()
 	{
 		//Setup our internal version
-		$this->version = "3.0.0";
+		$this->version = "3.0.1";
 		//We'll let the fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
