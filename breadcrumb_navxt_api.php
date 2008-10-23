@@ -7,15 +7,6 @@
  * @author John Havlik
  * @author Tom Klingenberg
  *
- * 2008-03-06:
- * FIX: bcn_get						-	Reworked the conditions for when spaces
- * 										will be preserved.
- * 2008-02-07:
- * ADD: bcn_get_option_inputvalue	-	Escape Option Values to be used inside 
- *                                  	(X)HTML Element Attribute Values.
- * FIX: bcn_get                   	- 	fixed issue solved inside wordpress main 
- *                                  	codebase in 2007-09.
- *                                  	see http://trac.wordpress.org/ticket/4781
  */
 /**
  * str2bool converts string of "true" to true and "false" to false
