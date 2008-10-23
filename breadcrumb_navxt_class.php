@@ -854,6 +854,8 @@ class bcn_breadcrumb_trail
 		}
 		//We build the trail backwards the last thing to do is to get it back to normal order
 		krsort($this->trail);
+		//Added for good measure
+		rewind_posts();
 	}
 	/**
 	 * display
@@ -912,7 +914,5 @@ class bcn_breadcrumb_trail
 			$bcn_tag = "<!-- Breadcrumb NavXT " . $this->version . " -->\n";
 			echo $bcn_tag . $bcn_trail_str;
 		}
-		//Added for good measure
-		rewind_posts();
 	}
 }
