@@ -894,10 +894,10 @@ class bcn_admin
 	 *
 	 * This removes the option name, WPMU safe
 	 *
-	 * @param (string) key name where to save the value in $value
+	 * @param (string) key name of the option to remove
 	 * @return (bool)
 	 */
-	function add_option($key, $value)
+	function delete_option($key)
 	{
 		//If in a WPMU environment
 		if(function_exists('get_current_site'))
