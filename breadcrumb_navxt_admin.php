@@ -154,11 +154,16 @@ class bcn_admin
 				delete_option('bcn_singleblogpost_tag_prefix');
 				delete_option('bcn_singleblogpost_tag_suffix');
 			}
-			else
+			//Check if we have valid anchors
+			if($temp = $this->get_option('bcn_options'))
 			{
-				//Update our internal settings
-				$temp = $this->get_option('bcn_options');
-				if(strlen($temp['category_anchor']) == 0)
+				if(strlen($temp['home_anchor']) == 0 || 
+					strlen($temp['blog_anchor']) == 0 || 
+					strlen($temp['page_anchor']) == 0 || 
+					strlen($temp['post_anchor']) == 0 || 
+					strlen($temp['tag_anchor']) == 0 ||
+					strlen($temp['date_anchor']) == 0 ||
+					strlen($temp['category_anchor']) == 0)
 				{
 					$this->delete_option('bcn_options');
 				}
