@@ -154,6 +154,15 @@ class bcn_admin
 				delete_option('bcn_singleblogpost_tag_prefix');
 				delete_option('bcn_singleblogpost_tag_suffix');
 			}
+			else
+			{
+				//Update our internal settings
+				$temp = $this->get_option('bcn_options');
+				if($temp['category_anchor'] == 0)
+				{
+					$this->delete_option('bcn_options');
+				}
+			}
 			//Always have to update the version
 			$this->update_option('bcn_version', $this->version);
 			//Store the options
@@ -878,6 +887,26 @@ class bcn_admin
 		else
 		{
 			return add_option($key, $value);
+		}
+	}
+	/**
+	 * delete_option
+	 *
+	 * This removes the option name, WPMU safe
+	 *
+	 * @param (string) key name where to save the value in $value
+	 * @return (bool)
+	 */
+	function add_option($key, $value)
+	{
+		//If in a WPMU environment
+		if(function_exists('get_current_site'))
+		{
+			return delete_blog_option(get_current_site()->id, $key);
+		}
+		else
+		{
+			return delete_option($key);
 		}
 	}
 	/**
