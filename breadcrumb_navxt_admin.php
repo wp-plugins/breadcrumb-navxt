@@ -158,7 +158,7 @@ class bcn_admin
 			{
 				//Update our internal settings
 				$temp = $this->get_option('bcn_options');
-				if($temp['category_anchor'] == 0)
+				if(strlen($temp['category_anchor']) == 0)
 				{
 					$this->delete_option('bcn_options');
 				}
