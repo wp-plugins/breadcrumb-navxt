@@ -51,6 +51,10 @@ class bcn_admin
 		add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php', array(&$this, 'install'));
 		//WordPress Admin interface hook
 		add_action('admin_menu', array(&$this, 'add_page'));
+		//WordPress Admin headder hook
+		add_action('admin_head', array(&$this, 'admin_head'));
+		//WordPress JS enquery hook
+		add_action('wp_print_scripts', array(&$this, 'javascript'));
 		//WordPress Hook for the widget
 		add_action('plugins_loaded', array(&$this, 'register_widget'));
 		//Admin Options hook
@@ -808,7 +812,7 @@ class bcn_admin
 				</table>
 			</fieldset>
 			</div>
-			<p class="submit"><input type="submit" name="bcn_admin_options" value="<?php _e('Save Changes') ?>" /></p>
+			<p class="submit"><input type="submit" class="button-primary" name="bcn_admin_options" value="<?php _e('Save Changes') ?>" /></p>
 		</form>
 		</div>
 		<?php
@@ -977,6 +981,86 @@ class bcn_admin
 			}
 		}
 		return $db_data;
+	}
+	/**
+	 * admin_head
+	 *
+	 * Adds in the JavaScript and CSS for the tabs in the adminsitrative interface
+	 *
+	 */
+	function admin_head()
+	{
+		?>
+<style type="text/css">
+	/**
+	 * Tabbed Admin Page (CSS)
+	 * 
+	 * @see Breadcrumb NavXT (Wordpress Plugin)
+	 * @author Tom Klingenberg 
+	 */
+#hasadmintabs ul.ui-tabs-nav {background:#F9F9F9 none repeat scroll 0 0;border-bottom:1px solid #C6D9E9;font-size:12px;height:29px;list-style-image:none;list-style-position:outside;list-style-type:none;margin:13px 0 0;padding:0 0 0 8px;}
+#hasadmintabs ul.ui-tabs-nav li {display:inline;line-height:200%;list-style-image:none;list-style-position:outside;list-style-type:none;margin:0;padding:0;position:relative;text-align:center;top:1px;white-space:nowrap;}
+#hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%;border-bottom:1px solid #DFDFDF;display:block;float:left;line-height:28px;padding:1px 13px 0;position:relative;text-decoration:none;}
+#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;background:#F9F9F9 none repeat scroll 0 0;border-color:#DFDFDF #DFDFDF #F9F9F9;border-style:solid;border-width:1px;color:#333333;font-weight:normal;padding:0 12px;}
+#hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color;outline-style:none;outline-width:medium;}
+#hasadmintabs fieldset {clear:both;}
+</style>
+<script type="text/javascript">
+/* <![CDATA[ */
+	/**
+	 * Tabbed Admin Page (jQuery)
+	 *
+	 * unobtrusive approach to add tabbed forms into
+	 * the wordpress admin panel
+	 *
+	 * @see Breadcrumb NavXT (Wordpress Plugin)
+	 * @author Tom Klingenberg
+	 * @uses jQuery
+	 * @uses ui.core
+	 * @uses ui.tabs
+	 */
+	 
+	jQuery(function() 
+	{
+		bcn_tabulator_init();		
+	 });
+	 
+	/**
+	 * Tabulator Bootup
+	 */
+	function bcn_tabulator_init()
+	{
+		jQuery('#hasadmintabs').prepend("<ul><\/ul>");
+		jQuery('#hasadmintabs > fieldset').each(function(i)
+		{
+		    id      = jQuery(this).attr('id');
+		    caption = jQuery(this).find('h3').text();
+		    jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
+		    jQuery(this).find('h3').hide();
+	    });    
+	    jQuery("#hasadmintabs > ul").tabs({
+		    select: function(e, ui) {
+			jQuery('#wpbody .wrap form').attr("action", (jQuery('#wpbody .wrap form').attr("action")).split('#', 1) + '#' + ui.panel.id);
+			}
+		});						
+	}
+/* ]]> */
+</script>
+<?php
+	}
+	/**
+	 * javascript
+	 *
+	 * Queues up JS dependencies (jquery) for the tabs
+	 * 
+	 */
+	function javascript()
+	{
+		//Only if we are in the dashboard do we need this
+		if(is_admin())
+		{
+			wp_enqueue_script('jquery-ui-tabs');
+		}
 	}
 }
 //Let's make an instance of our object takes care of everything
