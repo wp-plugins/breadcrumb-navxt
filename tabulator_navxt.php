@@ -4,7 +4,7 @@
  * 
  * Add Tabs to the Breadcrumb NavXT Admin Page (and the rest of the admin pages in wp)
  *
- * @version   0.1.2
+ * @version   0.1.4
  * @author    Tom Klingenberg
  * @copyright by the author, some rights reserved
  * @see http://www.artnorm.de/this-morning-in-bleeding,105,2008-06.html
@@ -83,12 +83,12 @@ class Navxt_Plugin_Tabulator
 	 * @colordef #d54e21 orange     (tab text of inactive tab hovered) external
 	 * @colordef #2583ad dark-blue  (tab text of inactive tab) external	 	 
 	 */
-	ul.ui-tabs-nav {background:#fff; border-bottom:1px solid #c6d9e9; font-size:12px; height:29px; margin:13px 0 0; padding:0; padding-left:8px; list-style:none;}	
-	ul.ui-tabs-nav li {display:inline; line-height: 200%; list-style:none; margin: 0; padding:0; position:relative; top:1px; text-align:center; white-space:nowrap;}
-	ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0%; border:1px transparent #fff; border-bottom:1px solid #c6d9e9; display:block; float:left; line-height:28px; padding:1px 13px 0; position:relative; text-decoration:none;}
-	ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px; -moz-border-radius-topright:4px; background:#fff; border:1px solid #c6d9e9; border-bottom-color:#fff; color:#d54e21; font-weight:normal; padding:0 12px;}
-	ul.ui-tabs-nav a:focus, a:active {outline: none;}
-	#hasadmintabs fieldset {clear:both;}
+#hasadmintabs ul.ui-tabs-nav {background:#F9F9F9 none repeat scroll 0 0;border-bottom:1px solid #C6D9E9;font-size:12px;height:29px;list-style-image:none;list-style-position:outside;list-style-type:none;margin:13px 0 0;padding:0 0 0 8px;}
+#hasadmintabs ul.ui-tabs-nav li {display:inline;line-height:200%;list-style-image:none;list-style-position:outside;list-style-type:none;margin:0;padding:0;position:relative;text-align:center;top:1px;white-space:nowrap;}
+#hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%;border-bottom:1px solid #DFDFDF;display:block;float:left;line-height:28px;padding:1px 13px 0;position:relative;text-decoration:none;}
+#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;background:#F9F9F9 none repeat scroll 0 0;border-color:#DFDFDF #DFDFDF #F9F9F9;border-style:solid;border-width:1px;color:#333333;font-weight:normal;padding:0 12px;}
+#hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color;outline-style:none;outline-width:medium;}
+#hasadmintabs fieldset {clear:both;}
 </style>
 <script type="text/javascript">
 /* <![CDATA[ */
@@ -117,92 +117,9 @@ class Navxt_Plugin_Tabulator
 	 */
 	function bcn_tabulator_init()
 	{
-		bcn_admin_init_tabs();	
-		bcn_admin_gobal_tabs(); // comment out this like to disable tabs in admin					
+		bcn_admin_init_tabs();					
 	}
 	
-	/**
-	 * inittialize tabs for admin panel pages (wordpress core)
-	 *
-	 * @todo add uniqueid somehow
-	 */	
-	function bcn_admin_gobal_tabs()
-	{	
-		/* if has already a special id quit the global try here */
-		if (jQuery('#hasadmintabs').length > 0) return;
-		
-		jQuery('#wpbody .wrap form').each(function(f)
-		{						
-			var $formEle = jQuery(this).children();
-		
-			var $eleSets      = new Array();	
-			var $eleSet       = new Array();
-			var $eleSetIgnore = new Array();
-								
-			for (var i = 0; i < $formEle.size(); i++)
-			{
-				var curr = $formEle.get(i);
-				var $curr = jQuery(curr);	
-				// cut condition: h3 or stop				
-				// stop: p.submit
-				if ($curr.is('p.submit') || $curr.is('h3'))
-				{
-					if ($eleSet.length)
-					{
-						if ($eleSets.length == 0 && $eleSet.length == 1 && jQuery($eleSet).is('p'))	{
-							$eleSetIgnore = $eleSetIgnore.concat($eleSet);
-						} else {
-							$eleSets.push($eleSet);
-						}						
-						$eleSet  = new Array();
-					}
-					if ($curr.is('p.submit')) break;
-					$eleSet.push(curr);					
-				} else {
-					// handle ingnore bag - works only before the first set is created
-					var pushto = $eleSet; 
-					if ($eleSets.length == 0 && $curr.is("input[type='hidden']"))
-					{
-						pushto = $eleSetIgnore;					
-					}															
-					pushto.push(curr);
-				}
-			}		
-			
-			// if the page has only one set, quit
-			if ($eleSets.length < 2) return;			
-			
-			// tabify
-			formid = 'tabulator-tabs-form-' + f;
-			jQuery($eleSetIgnore).filter(':last').after('<div id="' + formid + '"></div>');
-			jQuery('#'+formid).prepend("<ul><\/ul>");
-			var tabcounter = 0;			
-			jQuery.each($eleSets, function() {
-				tabcounter++;
-				id      = formid + '-tab-' + tabcounter;
-				hash3   = true;
-				h3probe = jQuery(this).filter('h3').eq(0);			
-				if (h3probe.is('h3')) {
-					caption = h3probe.text();					
-				} else {
-					hash3   = false;
-					caption = jQuery('#wpbody .wrap h2').eq(0).text();
-				}
-				if (caption == ''){
-					caption = 'FALLBACK';
-				} 	
-				tabdiv = jQuery(this).wrapAll('<span id="'+id+'"></span>');
-				jQuery('#'+formid+' > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
-				if (hash3) h3probe.hide();
-			});
-			jQuery('#'+formid+' > ul').tabs({
-				select: function(e, ui) {
-				jQuery('#wpbody .wrap form').attr("action", (jQuery('#wpbody .wrap form').attr("action")).split('#', 1) + '#' + ui.panel.id);
-				}
-			});				
-		});	
-	}
-	 
 	/**
 	 * inittialize tabs for breadcrumb navxt admin panel
 	 */	 
