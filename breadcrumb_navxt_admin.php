@@ -45,7 +45,7 @@ class bcn_admin
 	{
 		//Setup our internal version
 		$this->version = "3.0.1";
-		//We'll let the fail fataly if the class isn't there as we depend on it
+		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
 		add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php', array(&$this, 'install'));
@@ -998,10 +998,10 @@ class bcn_admin
 	 * @see Breadcrumb NavXT (Wordpress Plugin)
 	 * @author Tom Klingenberg 
 	 */
-#hasadmintabs ul.ui-tabs-nav {background:#F9F9F9 none repeat scroll 0 0;border-bottom:1px solid #C6D9E9;font-size:12px;height:29px;list-style-image:none;list-style-position:outside;list-style-type:none;margin:13px 0 0;padding:0 0 0 8px;}
+#hasadmintabs ul.ui-tabs-nav {background:#fff none repeat scroll 0 0;border-bottom:1px solid #C6D9E9;font-size:12px;height:29px;list-style-image:none;list-style-position:outside;list-style-type:none;margin:13px 0 0;padding:0 0 0 8px;}
 #hasadmintabs ul.ui-tabs-nav li {display:inline;line-height:200%;list-style-image:none;list-style-position:outside;list-style-type:none;margin:0;padding:0;position:relative;text-align:center;top:1px;white-space:nowrap;}
 #hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%;border-bottom:1px solid #DFDFDF;display:block;float:left;line-height:28px;padding:1px 13px 0;position:relative;text-decoration:none;}
-#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;background:#F9F9F9 none repeat scroll 0 0;border-color:#DFDFDF #DFDFDF #F9F9F9;border-style:solid;border-width:1px;color:#333333;font-weight:normal;padding:0 12px;}
+#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;background:#fff none repeat scroll 0 0;border-color:#DFDFDF #DFDFDF #fff;border-style:solid;border-width:1px;color:#333333;font-weight:normal;padding:0 12px;}
 #hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color;outline-style:none;outline-width:medium;}
 #hasadmintabs fieldset {clear:both;}
 </style>
