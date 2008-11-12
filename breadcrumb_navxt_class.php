@@ -423,10 +423,10 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->prefix = $this->opt['category_prefix'];
 		//Assign the suffix
 		$bcn_breadcrumb->suffix = $this->opt['category_suffix'];
-		//Get the current category object
+		//Get the current category object, filter applied within this call
 		$bcn_category = get_category($id);
-		//Setup the title, throw it through a filter
-		$bcn_breadcrumb->title = apply_filters("get_category", $bcn_category->cat_name);
+		//Setup the title
+		$bcn_breadcrumb->title = $bcn_category->cat_name;
 		//Figure out the anchor for the first category
 		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
 		//We want this to be linked
