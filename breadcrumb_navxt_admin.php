@@ -252,16 +252,17 @@ class bcn_admin
 	 * 
 	 * Outputs the breadcrumb trail
 	 * 
+	 * @param  (bool)   $return Whether to return or echo the trail.
 	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
 	 */
-	function display($linked = true)
+	function display($return = false, $linked = true)
 	{
 		//Update our internal settings
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		//Display the breadcrumb trail
-		$this->breadcrumb_trail->display(false, $linked);
+		$this->breadcrumb_trail->display($return, $linked);
 	}
 	/**
 	 * filter_plugin_actions
@@ -991,11 +992,12 @@ function breadcrumb_nav_xt_display()
 /**
  * A wrapper for the internal function in the class
  * 
+ * @param  (bool)   $return Whether to return or echo the trail.
  * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
  */
-function bcn_display($linked = true)
+function bcn_display($return = false, $linked = true)
 {
 	global $bcn_admin;
-	$bcn_admin->display($linked);
+	$bcn_admin->display($return, $linked);
 }
 ?>
