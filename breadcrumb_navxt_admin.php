@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb trail. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.0.1
+Version: 3.0.98
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -256,16 +256,17 @@ class bcn_admin
 	 * 
 	 * Outputs the breadcrumb trail
 	 * 
+	 * @param  (bool)   $return Whether to return or echo the trail.
 	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
 	 */
-	function display($linked = true)
+	function display($return = false, $linked = true)
 	{
 		//Update our internal settings
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		//Display the breadcrumb trail
-		$this->breadcrumb_trail->display(false, $linked);
+		$this->breadcrumb_trail->display($return, $linked);
 	}
 	/**
 	 * filter_plugin_actions
@@ -998,10 +999,10 @@ class bcn_admin
 	 * @see Breadcrumb NavXT (Wordpress Plugin)
 	 * @author Tom Klingenberg 
 	 */
-#hasadmintabs ul.ui-tabs-nav {background:#fff none repeat scroll 0 0;border-bottom:1px solid #C6D9E9;font-size:12px;height:29px;list-style-image:none;list-style-position:outside;list-style-type:none;margin:13px 0 0;padding:0 0 0 8px;}
+#hasadmintabs ul.ui-tabs-nav {background:#F9F9F9 none repeat scroll 0 0;border-bottom:1px solid #C6D9E9;font-size:12px;height:29px;list-style-image:none;list-style-position:outside;list-style-type:none;margin:13px 0 0;padding:0 0 0 8px;}
 #hasadmintabs ul.ui-tabs-nav li {display:inline;line-height:200%;list-style-image:none;list-style-position:outside;list-style-type:none;margin:0;padding:0;position:relative;text-align:center;top:1px;white-space:nowrap;}
 #hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%;border-bottom:1px solid #DFDFDF;display:block;float:left;line-height:28px;padding:1px 13px 0;position:relative;text-decoration:none;}
-#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;background:#fff none repeat scroll 0 0;border-color:#DFDFDF #DFDFDF #fff;border-style:solid;border-width:1px;color:#333333;font-weight:normal;padding:0 12px;}
+#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;background:#F9F9F9 none repeat scroll 0 0;border-color:#DFDFDF #DFDFDF #F9F9F9;border-style:solid;border-width:1px;color:#333333;font-weight:normal;padding:0 12px;}
 #hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color;outline-style:none;outline-width:medium;}
 #hasadmintabs fieldset {clear:both;}
 </style>
@@ -1066,20 +1067,14 @@ class bcn_admin
 //Let's make an instance of our object takes care of everything
 $bcn_admin = new bcn_admin;
 /**
- * Exists for legacy "compatibility". Tells user to use bcn_display, function slated for removal in 3.1.
- */
-function breadcrumb_nav_xt_display()
-{
-	echo "Please use bcn_display instead of breadcrumb_nav_xt_display";
-}
-/**
  * A wrapper for the internal function in the class
  * 
+ * @param  (bool)   $return Whether to return or echo the trail.
  * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
  */
-function bcn_display($linked = true)
+function bcn_display($return = false, $linked = true)
 {
 	global $bcn_admin;
-	$bcn_admin->display($linked);
+	$bcn_admin->display($return, $linked);
 }
 ?>
