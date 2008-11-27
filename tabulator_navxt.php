@@ -12,7 +12,7 @@
  * Plugin Name: Tabulator (Breadcrumb NavXT Extending) [PHP5]
  * Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt
  * Description: And Tabs should come over all your admin pages as WP 2.5 will let you rule the world of jQuery and beyond! Thou shall it be! 
- * Version: 3.0.1
+ * Version: 3.0.2
  * Author: Tom Klingenberg/John Havlik
  * Author URI: http://mtekk.weblogs.us
  */
