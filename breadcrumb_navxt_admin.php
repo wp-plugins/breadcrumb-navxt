@@ -44,7 +44,7 @@ class bcn_admin
 	function bcn_admin()
 	{
 		//Setup our internal version
-		$this->version = "3.0.2";
+		$this->version = "3.0.1";
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
@@ -158,31 +158,24 @@ class bcn_admin
 				$this->delete_option('bcn_singleblogpost_tag_prefix');
 				$this->delete_option('bcn_singleblogpost_tag_suffix');
 			}
+			//Check if we have valid anchors
+			if($temp = $this->get_option('bcn_options'))
+			{
+				if(strlen($temp['home_anchor']) == 0 || 
+					strlen($temp['blog_anchor']) == 0 || 
+					strlen($temp['page_anchor']) == 0 || 
+					strlen($temp['post_anchor']) == 0 || 
+					strlen($temp['tag_anchor']) == 0 ||
+					strlen($temp['date_anchor']) == 0 ||
+					strlen($temp['category_anchor']) == 0)
+				{
+					$this->delete_option('bcn_options');
+				}
+			}
 			//Always have to update the version
 			$this->update_option('bcn_version', $this->version);
 			//Store the options
 			$this->add_option('bcn_options', $this->breadcrumb_trail->opt);
-		}
-		//Check if we have valid anchors
-		if($temp = $this->get_option('bcn_options'))
-		{
-			//Missing the blog anchor is a bug from 3.0.0/3.0.1 so we soft error that one
-			if(strlen($temp['blog_anchor']) == 0)
-			{
-				$temp['blog_anchor'] = $this->breadcrumb_trail->opt['blog_anchor'];
-				$this->update_option('bcn_options', $temp);
-			}
-			else if(strlen($temp['home_anchor']) == 0 || 
-				strlen($temp['blog_anchor']) == 0 || 
-				strlen($temp['page_anchor']) == 0 || 
-				strlen($temp['post_anchor']) == 0 || 
-				strlen($temp['tag_anchor']) == 0 ||
-				strlen($temp['date_anchor']) == 0 ||
-				strlen($temp['category_anchor']) == 0)
-			{
-				$this->delete_option('bcn_options');
-				$this->add_option('bcn_options', $this->breadcrumb_trail->opt);
-			}
 		}
 	}
 	/**
@@ -437,14 +430,7 @@ class bcn_admin
 							<?php _e('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr> 
-					<?php
-					}
-					//Still need to have a field for the blog anchor, so we'll hide it
-					else
-					{
-						?><input type="hidden" name="blog_anchor" id="blog_anchor" value="<?php echo $this->breadcrumb_trail->opt['blog_anchor']; ?>" size="60" /><?php
-					}
-					?>
+					<?php } ?>
 				</table>
 			</fieldset>
 			<fieldset id="current" class="bcn_options">
@@ -843,7 +829,14 @@ class bcn_admin
 		//Manditory before widget junk
 		echo $before_widget;
 		//Display the breadcrumb trial
-		bcn_display();
+		if($this->breadcrumb_trail->trail[0] != NULL)
+		{
+			$this->breadcrumb_trail->display();
+		}
+		else
+		{
+			$this->display();
+		}
 		//Manditory after widget junk
 		echo $after_widget;
 	}
@@ -903,7 +896,15 @@ class bcn_admin
 	 */
 	function add_option($key, $value)
 	{
-		return add_option($key, $value);
+		//If in a WPMU environment
+		if(function_exists('get_current_site'))
+		{
+			return add_blog_option(get_current_site()->id, $key, $value);
+		}
+		else
+		{
+			return add_option($key, $value);
+		}
 	}
 	/**
 	 * delete_option
@@ -915,7 +916,15 @@ class bcn_admin
 	 */
 	function delete_option($key)
 	{
-		return delete_option($key);
+		//If in a WPMU environment
+		if(function_exists('get_current_site'))
+		{
+			return delete_blog_option(get_current_site()->id, $key);
+		}
+		else
+		{
+			return delete_option($key);
+		}
 	}
 	/**
 	 * update_option
@@ -928,7 +937,15 @@ class bcn_admin
 	 */
 	function update_option($key, $value)
 	{
-		return update_option($key, $value);
+		//If in a WPMU environment
+		if(function_exists('get_current_site'))
+		{
+			return update_blog_option(get_current_site()->id, $key, $value);
+		}
+		else
+		{
+			return update_option($key, $value);
+		}
 	}
 	/**
 	 * get_option
@@ -942,7 +959,15 @@ class bcn_admin
 	 */
 	function get_option($key, $safe = false)
 	{
-		$db_data = get_option($key);
+		//If in a WPMU environment
+		if(function_exists('get_current_site'))
+		{
+			$db_data = get_blog_option(get_current_site()->id, $key);
+		}
+		else
+		{
+			$db_data = get_option($key);
+		}
 		if($safe)
 		{
 			//If we get an array, we should loop through all of its members
