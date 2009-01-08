@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: breadcrumb-navxt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-07 08:00+0100\n"
+"POT-Creation-Date: 2008-11-05 12:34+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Laurent Grabielle <infos@3w3t.com>\n"
 "Language-Team: 3w3t\n"
@@ -379,27 +379,50 @@ msgstr "Suffixe erreur 404"
 msgid "Save Changes"
 msgstr "Sauvegarder les changements"
 
-#~ msgid "Blog"
-#~ msgstr "Accueil"
-#~ msgid "<a title=\"Go to %title%.\" href=\"%link%\">"
-#~ msgstr "<a title=\"Aller à %title%.\" href=\"%link%\">"
-#~ msgid "breadcrumb"
-#~ msgstr "fil d'ariane :"
-#~ msgid "<a title=\"Reload the current page.\" href=\"%link%\">"
-#~ msgstr "<a title=\"recharger la page courante. \" href=\"%link%\">"
-#~ msgid "404"
-#~ msgstr "404"
-#~ msgid "Search results for &#39;"
-#~ msgstr "Résultat de recherche pour &#39;"
-#~ msgid "<a title=\"Go to the %title% tag archives.\" href=\"%link%\">"
-#~ msgstr "<a title=\"Aller aux archives du tag %title%.\" href=\"%link%\">"
-#~ msgid "Articles by: "
-#~ msgstr "Articles par:"
-#~ msgid "<a title=\"Go to the %title% category archives.\" href=\"%link%\">"
-#~ msgstr ""
-#~ "<a title=\"Aller aux archives de la gatégorie %title%.\" href=\"%link%\">"
-#~ msgid "Archive by category &#39;"
-#~ msgstr "Archive par categorie &#39;"
-#~ msgid "Archive by tag &#39;"
-#~ msgstr "Archive par tag &#39;"
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:101
+msgid "Blog"
+msgstr "Accueil"
+
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:103
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:105
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:129
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:143
+msgid "<a title=\"Go to %title%.\" href=\"%link%\">"
+msgstr "<a title=\"Aller à %title%.\" href=\"%link%\">"
+
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:107
+msgid "breadcrumb"
+msgstr "fil d'ariane :"
+
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:118
+msgid "<a title=\"Reload the current page.\" href=\"%link%\">"
+msgstr "<a title=\"recharger la page courante. \" href=\"%link%\">"
+
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:159
+msgid "404"
+msgstr "404"
+
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:162
+msgid "Search results for &#39;"
+msgstr "Résultat de recherche pour &#39;"
+
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:171
+msgid "<a title=\"Go to the %title% tag archives.\" href=\"%link%\">"
+msgstr "<a title=\"Aller aux archives du tag %title%.\" href=\"%link%\">"
+
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:174
+msgid "Articles by: "
+msgstr "Articles par:"
+
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:185
+msgid "<a title=\"Go to the %title% category archives.\" href=\"%link%\">"
+msgstr "<a title=\"Aller aux archives de la gatégorie %title%.\" href=\"%link%\">"
+
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:188
+msgid "Archive by category &#39;"
+msgstr "Archive par categorie &#39;"
+
+#: D:\3w3t.com\wordpress2.6.3\wp-content\plugins\breadcrumb-navxt/breadcrumb_navxt_class.php:192
+msgid "Archive by tag &#39;"
+msgstr "Archive par tag &#39;"
 
