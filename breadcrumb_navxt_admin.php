@@ -49,6 +49,11 @@ class bcn_admin
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
 		add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php', array(&$this, 'install'));
+		//Uninstallation Script hook
+		if(function_exists('register_uninstall_hook'))
+		{
+			register_uninstall_hook(__FILE__, array(&$this, 'uninstall'));
+		}
 		//WordPress Admin interface hook
 		add_action('admin_menu', array(&$this, 'add_page'));
 		//WordPress Admin headder hook
@@ -80,7 +85,7 @@ class bcn_admin
 	/**
 	 * install
 	 * 
-	 * This setsup and upgrades the database settings, runs on every activation
+	 * This sets up and upgrades the database settings, runs on every activation
 	 */
 	function install()
 	{
@@ -184,6 +189,20 @@ class bcn_admin
 				$this->add_option('bcn_options', $this->breadcrumb_trail->opt);
 			}
 		}
+	}
+	/**
+	 * uninstall
+	 * 
+	 * This removes database settings upon deletion of the plugin from WordPress
+	 */
+	function uninstall()
+	{
+		//Call our little security function
+		$this->security();
+		//Remove the option array setting
+		$this->delete_option('bcn_options');
+		//Remove the version setting
+		$this->delete_option('bcn_version');
 	}
 	/**
 	 * update
