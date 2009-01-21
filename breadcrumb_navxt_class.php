@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb_trail class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.0.98
+Version: 3.0.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -86,7 +86,7 @@ class bcn_breadcrumb_trail
 	//Default constructor
 	function bcn_breadcrumb_trail()
 	{
-		$this->version = "3.0.2";
+		$this->version = "3.0.99";
 		//Initilize the trail as an array
 		$this->trail = array();
 		//Load the translation domain as the next part needs it
@@ -108,7 +108,7 @@ class bcn_breadcrumb_trail
 			'home_suffix' => '',
 			//Separator that is placed between each item in the breadcrumb trial, but not placed before
 			//the first and not after the last breadcrumb
-			'separator' => ' &gt; ',
+			'separator' => '&nbsp;&gt;&nbsp;',
 			//The maximum title lenght
 			'max_title_length' => 0,
 			//Current item options, really only applies to static pages and posts unless other current items are linked
@@ -161,6 +161,8 @@ class bcn_breadcrumb_trail
 			'search_prefix' => __('Search results for &#39;','breadcrumb_navxt'),
 			//The suffix for search breadcrumbs, place on all page elements and inside of current_item suffix
 			'search_suffix' => '&#39;',
+			//The anchor template for search breadcrumbs, two keywords are available %link% and %title%
+			'search_anchor' => __('<a title="Go to the first page of search results for %title%." href="%link%">','breadcrumb_navxt'),
 			//Tag related stuff
 			//The prefix for tag breadcrumbs, place on all page elements and inside of current_item prefix
 			'tag_prefix' => '',
@@ -219,6 +221,16 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->suffix = $this->opt['search_suffix'] . $this->opt['current_item_suffix'];
 		//Assign the title
 		$bcn_breadcrumb->title = wp_specialchars($s, 1);
+		//If we're paged, let's link to the first page
+		if(is_paged() && $this->opt['paged_display'])
+		{
+			//Figure out the hyperlink for the anchor
+			$url = get_settings('home'). "?s=" . str_replace(" ", "+", wp_specialchars($s, 1));
+			//Figure out the anchor for the search
+			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", $url, $this->opt['search_anchor']));
+			//We want this to be linked
+			$bcn_breadcrumb->linked = true;
+		}
 	}
 	/**
 	 * do_attachment
@@ -461,11 +473,19 @@ class bcn_breadcrumb_trail
 		//Assign the title
 		$bcn_breadcrumb->title = single_cat_title("", false);	
 		//Simmilar to using $post, but for things $post doesn't cover
-		$bcn_object = $wp_query->get_queried_object();
-		//Get parents of current category
-		if($bcn_object->category_parent)
+		$bcn_category = $wp_query->get_queried_object();
+		//If we're paged, let's link to the first page
+		if(is_paged() && $this->opt['paged_display'])
 		{
-			$this->category_parents($bcn_object->category_parent);
+			//Figure out the anchor for current category
+			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
+			//We want this to be linked
+			$bcn_breadcrumb->linked = true;
+		}
+		//Get parents of current category
+		if($bcn_category->category_parent)
+		{
+			$this->category_parents($bcn_category->category_parent);
 		}
 	}
 	/**
@@ -639,6 +659,14 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['home_prefix'];
 		//Assign the suffix
 		$bcn_breadcrumb->suffix = $this->opt['home_suffix'] . $this->opt['current_item_suffix'];
+		//If we're paged, let's link to the first page
+		if(is_paged() && $this->opt['paged_display'])
+		{
+			//Figure out the anchor for home page
+			$bcn_breadcrumb->anchor = str_replace("%title%", $this->opt['home_title'], str_replace("%link%", get_option('home'), $this->opt['home_anchor']));
+			//We want this to be linked
+			$bcn_breadcrumb->linked = true;
+		}
 	}
 	/**
 	 * do_home
@@ -665,7 +693,7 @@ class bcn_breadcrumb_trail
 				$post = get_post($posts_id);
 				//Setup the title
 				$bcn_breadcrumb->title = apply_filters("the_title", $post->post_title);
-				if(is_home())
+				if(is_home() && (!is_paged() || !$this->opt['paged_display']))
 				{
 					//Assign the prefix
 					$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['page_prefix'];
@@ -779,9 +807,7 @@ class bcn_breadcrumb_trail
 	function fill()
 	{
 		global $wpdb, $post, $wp_query, $bcn_version, $paged;
-		////////////////////////////////////
 		//Do specific opperations for the various page types
-		////////////////////////////////////
 		//Check if this isn't the first of a multi paged item
 		if(is_paged() && $this->opt['paged_display'])
 		{
@@ -801,49 +827,41 @@ class bcn_breadcrumb_trail
 		{
 			$this->do_search();
 		}
-		////////////////////////////////////
 		//For pages
 		else if(is_page())
 		{
 			$this->do_page();
 		}
-		////////////////////////////////////
 		//For post/page attachments
 		else if(is_attachment())
 		{
 			$this->do_attachment();
 		}
-		////////////////////////////////////
 		//For blog posts
 		else if(is_single())
 		{
 			$this->do_post();
 		}
-		////////////////////////////////////
 		//For author pages
 		else if(is_author())
 		{
 			$this->do_author();
 		}
-		////////////////////////////////////
 		//For category based archives
 		else if(is_archive() && is_category())
 		{
 			$this->do_archive_by_category();
 		}
-		////////////////////////////////////
 		//For date based archives
 		else if(is_archive() && is_date())
 		{
 			$this->do_archive_by_date();
 		}
-		////////////////////////////////////
 		//For tag based archives
 		else if(is_archive() && is_tag())
 		{
 			$this->do_archive_by_tag();
 		}
-		////////////////////////////////////
 		//For 404 pages
 		else if(is_404())
 		{

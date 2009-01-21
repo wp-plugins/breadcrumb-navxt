@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb trail. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.0.98
+Version: 3.0.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -44,7 +44,7 @@ class bcn_admin
 	function bcn_admin()
 	{
 		//Setup our internal version
-		$this->version = "3.0.1";
+		$this->version = "3.0.99";
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
@@ -810,6 +810,15 @@ class bcn_admin
 						</th>
 						<td>
 							<input type="text" name="search_suffix" id="search_suffix" value="<?php echo $this->breadcrumb_trail->opt['search_suffix']; ?>" size="32" />
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="search_anchor"><?php _e('Search Anchor', 'breadcrumb_navxt'); ?></label>
+						</th>
+						<td>
+							<input type="text" name="search_anchor" id="search_anchor" value="<?php echo $this->breadcrumb_trail->opt['search_anchor']; ?>" size="60" /><br />
+							<?php _e('The anchor template for search breadcrumbs, used only when the search results span several pages.', 'breadcrumb_navxt'); ?>
 						</td>
 					</tr>
 					<tr valign="top">
