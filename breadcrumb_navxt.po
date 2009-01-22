@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Breadcrumb NavXT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-20 21:35-0600\n"
-"PO-Revision-Date: 2009-01-20 21:35-0600\n"
+"POT-Creation-Date: 2009-01-22 09:20-0600\n"
+"PO-Revision-Date: 2009-01-22 09:21-0600\n"
 "Last-Translator: John Havlik <mtekkmonkey@gmail.com>\n"
 "Language-Team: John Havlik <mtekkmonkey@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -55,6 +55,12 @@ msgstr ""
 #: NavXT\trunk/breadcrumb_navxt_admin.php:368
 #, php-format
 msgid "Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information."
+msgstr ""
+
+#: C:\Users\John\Documents\Aptana
+#: Studio\Breadcrumb
+#: NavXT\trunk/breadcrumb_navxt_admin.php:369
+msgid "Go to the Breadcrumb NavXT online documentation."
 msgstr ""
 
 #: C:\Users\John\Documents\Aptana
