@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/breadcrumb-navxt\n"
-"POT-Creation-Date: 2009-01-22 15:01+0000\n"
+"POT-Creation-Date: 2009-01-22 15:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,6 +47,10 @@ msgstr ""
 msgid ""
 "Tips for the settings are located below select options. Please refer to the %"
 "sdocumentation%s for more information."
+msgstr ""
+
+#: breadcrumb_navxt_admin.php:369
+msgid "Go to the Breadcrumb NavXT online documentation."
 msgstr ""
 
 #: breadcrumb_navxt_admin.php:375
