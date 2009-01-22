@@ -507,7 +507,17 @@ class bcn_breadcrumb_trail
 		//Assign the suffix
 		$bcn_breadcrumb->suffix = $this->opt['archive_tag_suffix'] . $this->opt['current_item_suffix'];
 		//Assign the title
-		$bcn_breadcrumb->title = single_tag_title("", false);	
+		$bcn_breadcrumb->title = single_tag_title("", false);
+		//If we're paged, let's link to the first page
+		if(is_paged() && $this->opt['paged_display'])
+		{
+			//Simmilar to using $post, but for things $post doesn't cover
+			$bcn_tag = $wp_query->get_queried_object();
+			//Figure out the anchor for current category
+			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_tag_link($bcn_tag->term_id), $this->opt['tag_anchor']));
+			//We want this to be linked
+			$bcn_breadcrumb->linked = true;
+		}
 	}
 	/**
 	 * do_archive_by_date
@@ -532,6 +542,14 @@ class bcn_breadcrumb_trail
 			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'] . $this->opt['current_item_suffix'];
 			//Assign the title
 			$bcn_breadcrumb->title = get_the_time('d');
+			//If we're paged, let's link to the first page
+			if(is_paged() && $this->opt['paged_display'])
+			{
+				//Deal with the anchor
+				$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('F') . " " . $bcn_breadcrumb->title . ", " . get_the_time('Y'), str_replace("%link%", get_day_link(get_the_time('Y'), get_the_time('m'), $bcn_breadcrumb->title), $this->opt['date_anchor']));
+				//Yes we want this linked
+				$bcn_breadcrumb->linked = true;
+			}
 			//Next add in the month breadcrumb
 			//Add new breadcrumb to the trail
 			$this->trail[] = new bcn_breadcrumb();
@@ -556,10 +574,35 @@ class bcn_breadcrumb_trail
 			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'] . $this->opt['current_item_suffix'];
 			//Assign the title
 			$bcn_breadcrumb->title = get_the_time('F');
+			//If we're paged, let's link to the first page
+			if(is_paged() && $this->opt['paged_display'])
+			{
+				//Deal with the anchor
+				$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('F') . " " . get_the_time('Y'), str_replace("%link%", get_month_link(get_the_time('Y'), get_the_time('m')), $this->opt['date_anchor']));
+				//Yes we want this linked
+				$bcn_breadcrumb->linked = true;
+			}
 		}
-		if(is_month() || is_day())
+		//Next add in the year breadcrumb
+		if(is_year())
+		{	
+			//Assign the prefix
+			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'];
+			//Assign the suffix
+			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'] . $this->opt['current_item_suffix'];
+			//Assign the title
+			$bcn_breadcrumb->title = get_the_time('Y');
+			//If we're paged, let's link to the first page
+			if(is_paged() && $this->opt['paged_display'])
+			{
+				//Deal with the anchor
+				$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('Y'), str_replace("%link%", get_year_link(get_the_time('Y')), $this->opt['date_anchor']));
+				//Yes we want this linked
+				$bcn_breadcrumb->linked = true;
+			}
+		}
+		else
 		{
-			//Next add in the year breadcrumb
 			//Add new breadcrumb to the trail
 			$this->trail[] = new bcn_breadcrumb();
 			//Figure out where we placed the crumb, make a nice pointer to it
@@ -574,15 +617,6 @@ class bcn_breadcrumb_trail
 			$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('Y'), str_replace("%link%", get_year_link(get_the_time('Y')), $this->opt['date_anchor']));
 			//Yes we want this linked
 			$bcn_breadcrumb->linked = true;
-		}
-		else
-		{
-			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'];
-			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'] . $this->opt['current_item_suffix'];
-			//Assign the title
-			$bcn_breadcrumb->title = get_the_time('Y');
 		}
 	}
 	/**
