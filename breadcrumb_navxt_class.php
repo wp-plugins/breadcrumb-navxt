@@ -7,7 +7,7 @@ Version: 3.0.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
-/*  Copyright 2007-2008  John Havlik  (email : mtekkmonkey@gmail.com)
+/*  Copyright 2007-2009  John Havlik  (email : mtekkmonkey@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
