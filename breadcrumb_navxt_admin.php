@@ -586,7 +586,7 @@ class bcn_admin
 						<td>
 							<input type="text" name="page_prefix" id="page_prefix" value="<?php echo $this->breadcrumb_trail->opt['page_prefix']; ?>" size="32" />
 						</td>
-				</tr>
+					</tr>
 					<tr valign="top">
 						<th scope="row">
 							<label for="page_suffix"><?php _e('Page Suffix', 'breadcrumb_navxt'); ?></label>
@@ -996,18 +996,23 @@ class bcn_admin
 	 * 
 	 * @see Breadcrumb NavXT (Wordpress Plugin)
 	 * @author Tom Klingenberg 
+	 * @colordef #c6d9e9 light-blue (older tabs border color, obsolete)
+	 * @colordef #dfdfdf light-grey (tabs border color)
+	 * @colordef #f9f9f9 very-light-grey (admin standard background color)
+	 * @colordef #fff    white (active tab background color)
 	 */
-#hasadmintabs ul.ui-tabs-nav {background:#F9F9F9 none repeat scroll 0 0;border-bottom:1px solid #C6D9E9;font-size:12px;height:29px;list-style-image:none;list-style-position:outside;list-style-type:none;margin:13px 0 0;padding:0 0 0 8px;}
-#hasadmintabs ul.ui-tabs-nav li {display:inline;line-height:200%;list-style-image:none;list-style-position:outside;list-style-type:none;margin:0;padding:0;position:relative;text-align:center;top:1px;white-space:nowrap;}
-#hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%;border-bottom:1px solid #DFDFDF;display:block;float:left;line-height:28px;padding:1px 13px 0;position:relative;text-decoration:none;}
-#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a {-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;background:#F9F9F9 none repeat scroll 0 0;border-color:#DFDFDF #DFDFDF #F9F9F9;border-style:solid;border-width:1px;color:#333333;font-weight:normal;padding:0 12px;}
-#hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color;outline-style:none;outline-width:medium;}
-#hasadmintabs fieldset {clear:both;}
+#hasadmintabs ul.ui-tabs-nav {background:#f9f9f9 none repeat scroll 0 0; border-bottom:1px solid #dfdfdf; font-size:12px; height:29px; list-style-image:none; list-style-position:outside; list-style-type:none; margin:13px 0 0; overflow:visible; padding:0 0 0 8px;}
+#hasadmintabs ul.ui-tabs-nav li {display:block; float:left; line-height:200%; list-style-image:none; list-style-position:outside; list-style-type:none; margin:0; padding:0; position:relative; text-align:center; white-space:nowrap; width:auto;}
+#hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%; border-bottom:1px solid #dfdfdf; display:block; float:left; line-height:28px; padding:1px 13px 0; position:relative; text-decoration:none; }
+#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a{-moz-border-radius-topleft:4px; -moz-border-radius-topright:4px; background:#f9f9f9 none repeat scroll 0 0; border:1px solid #dfdfdf; border-bottom-color:#f9f9f9; color:#333333; font-weight:normal; padding:0 12px;}
+#hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color; outline-style:none; outline-width:medium; }
+#hasadmintabs {-background:#fff;}
+#hasadmintabs -.ui-tabs-panel {background:#fff; border:1px solid #dfdfdf; border-top:none;}
 </style>
 <script type="text/javascript">
 /* <![CDATA[ */
 	/**
-	 * Tabbed Admin Page (jQuery)
+	 * Tabbed Admin Page (javascript/jQuery)
 	 *
 	 * unobtrusive approach to add tabbed forms into
 	 * the wordpress admin panel
@@ -1029,6 +1034,10 @@ class bcn_admin
 	 */
 	function bcn_tabulator_init()
 	{
+		/* if this is not the breadcrumb admin page, quit */
+		if (!jQuery("#hasadmintabs").length) return;
+
+		/* init markup for tabs */
 		jQuery('#hasadmintabs').prepend("<ul><\/ul>");
 		jQuery('#hasadmintabs > fieldset').each(function(i)
 		{
@@ -1036,12 +1045,17 @@ class bcn_admin
 		    caption = jQuery(this).find('h3').text();
 		    jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
 		    jQuery(this).find('h3').hide();
-	    });    
-	    jQuery("#hasadmintabs > ul").tabs({
-		    select: function(e, ui) {
-			jQuery('#wpbody .wrap form').attr("action", (jQuery('#wpbody .wrap form').attr("action")).split('#', 1) + '#' + ui.panel.id);
-			}
-		});						
+			// jQuery(this).addClass('tabs-container');
+	    });
+		
+		/* init the tabs plugin */
+	    jQuery("#hasadmintabs > ul").tabs();
+
+		/* handler for openeing the last tab after submit (compability version) */
+		jQuery('#hasadmintabs ul a').click(function(i){
+			var form = jQuery('#bcn_admin_options');
+			form.attr("action", (form.attr("action")).split('#', 1) + jQuery(this).attr('href'));
+		});
 	}
 /* ]]> */
 </script>
@@ -1051,7 +1065,6 @@ class bcn_admin
 	 * javascript
 	 *
 	 * Queues up JS dependencies (jquery) for the tabs
-	 * 
 	 */
 	function javascript()
 	{
