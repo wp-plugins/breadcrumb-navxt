@@ -7,7 +7,7 @@ Version: 3.0.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
-/*  Copyright 2007-2008  John Havlik  (email : mtekkmonkey@gmail.com)
+/*  Copyright 2007-2009  John Havlik  (email : mtekkmonkey@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -376,33 +376,6 @@ class bcn_admin
 				<table class="form-table">
 					<tr valign="top">
 						<th scope="row">
-							<?php _e('Home Breadcrumb', 'breadcrumb_navxt'); ?>						
-						</th>
-						<td>
-							<p>
-								<label>
-									<input name="home_display" type="radio" value="false" class="togx" <?php checked(false, $this->breadcrumb_trail->opt['home_display']); ?> />
-									<?php _e('Leave the home breadcrumb out of the trail.', 'breadcrumb_navxt'); ?>
-								</label>
-							</p>
-							<p>
-								<label>
-									<input name="home_display" type="radio" value="true" class="togx" <?php checked(true, $this->breadcrumb_trail->opt['home_display']); ?> />
-									<?php _e('Place the home breadcrumb in the trail.', 'breadcrumb_navxt'); ?>	
-								</label>
-								<ul>
-									<li>
-										<label for="home_title">
-											<?php _e('Home Title: ','breadcrumb_navxt');?>
-											<input type="text" name="home_title" id="home_title" value="<?php echo $this->breadcrumb_trail->opt['home_title']; ?>" size="20" />			
-										</label>
-									</li>
-								</ul>							
-							</p>													
-						</td>
-					</tr>		
-					<tr valign="top">
-						<th scope="row">
 							<label for="separator"><?php _e('Breadcrumb Separator', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
@@ -416,6 +389,25 @@ class bcn_admin
 						</th>
 						<td>
 							<input type="text" name="max_title_length" id="max_title_length" value="<?php echo $this->breadcrumb_trail->opt['max_title_length'];?>" size="10" />
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<?php _e('Home Breadcrumb', 'breadcrumb_navxt'); ?>						
+						</th>
+						<td>
+							<label>
+								<input name="home_display" type="checkbox" id="current_item_linked" value="true" <?php checked(true, $this->breadcrumb_trail->opt['home_display']); ?> />
+								<?php _e('Place the home breadcrumb in the trail.', 'breadcrumb_navxt'); ?>				
+							</label><br />
+							<ul>
+								<li>
+									<label for="home_title">
+										<?php _e('Home Title: ','breadcrumb_navxt');?>
+										<input type="text" name="home_title" id="home_title" value="<?php echo $this->breadcrumb_trail->opt['home_title']; ?>" size="20" />
+									</label>
+								</li>
+							</ul>							
 						</td>
 					</tr>
 					<tr valign="top">
@@ -565,28 +557,26 @@ class bcn_admin
 						<td>
 							<label for="post_taxonomy_display">
 								<input name="post_taxonomy_display" type="checkbox" id="post_taxonomy_display" value="true" <?php checked(true, $this->breadcrumb_trail->opt['post_taxonomy_display']); ?> />
-								<?php _e('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'); ?>							
+								<?php _e('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'); ?>
 							</label>							
 						</td>
 					</tr>
 					<tr valign="top">
 						<th scope="row">
-							<p><?php _e('Post Taxonomy', 'breadcrumb_navxt'); ?></p>
+							<?php _e('Post Taxonomy', 'breadcrumb_navxt'); ?>
 						</th>
 						<td>
-							<p>
-								<label>
-									<input name="post_taxonomy_type" type="radio" value="category" class="togx" <?php checked('category', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
-									<?php _e('Categories'); ?>
-								</label>
-							</p>
-							<p>
-								<label>
-									<input name="post_taxonomy_type" type="radio" value="tag" class="togx" <?php checked('tag', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
-									<?php _e('Tags'); ?>								
-								</label>
-							</p>
-							<span class="setting-description"><?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb_navxt'); ?></span>														
+							<label>
+								<input name="post_taxonomy_type" type="radio" value="category" class="togx" <?php checked('category', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
+								<?php _e('Categories'); ?>
+							</label>
+							<br/>
+							<label>
+								<input name="post_taxonomy_type" type="radio" value="tag" class="togx" <?php checked('tag', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
+								<?php _e('Tags'); ?>								
+							</label>
+							<br/>
+							<span class="setting-description"><?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -637,24 +627,6 @@ class bcn_admin
 				<table class="form-table">
 					<tr valign="top">
 						<th scope="row">
-							<label for="archive_category_prefix"><?php _e('Archive by Category Prefix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="archive_category_prefix" id="archive_category_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_category_prefix']; ?>" size="32" /><br />
-							<span class="setting-description"><?php _e('Applied before the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="archive_category_suffix"><?php _e('Archive by Category Suffix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="archive_category_suffix" id="archive_category_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_category_suffix']; ?>" size="32" /><br />
-							<span class="setting-description"><?php _e('Applied after the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
 							<label for="category_prefix"><?php _e('Category Prefix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
@@ -680,29 +652,29 @@ class bcn_admin
 							<span class="setting-description"><?php _e('The anchor template for category breadcrumbs.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="archive_category_prefix"><?php _e('Archive by Category Prefix', 'breadcrumb_navxt'); ?></label>
+						</th>
+						<td>
+							<input type="text" name="archive_category_prefix" id="archive_category_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_category_prefix']; ?>" size="32" /><br />
+							<span class="setting-description"><?php _e('Applied before the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'); ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="archive_category_suffix"><?php _e('Archive by Category Suffix', 'breadcrumb_navxt'); ?></label>
+						</th>
+						<td>
+							<input type="text" name="archive_category_suffix" id="archive_category_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_category_suffix']; ?>" size="32" /><br />
+							<span class="setting-description"><?php _e('Applied after the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'); ?></span>
+						</td>
+					</tr>
 				</table>
 			</fieldset>
 			<fieldset id="tag" class="bcn_options">
 				<h3><?php _e('Tags', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
-					<tr valign="top">
-						<th scope="row">
-							<label for="archive_tag_prefix"><?php _e('Archive by Tag Prefix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="archive_tag_prefix" id="archive_tag_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_tag_prefix']; ?>" size="32" /><br />
-							<span class="setting-description"><?php _e('Applied before the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="archive_tag_suffix"><?php _e('Archive by Tag Suffix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="archive_tag_suffix" id="archive_tag_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_tag_suffix']; ?>" size="32" /><br />
-							<span class="setting-description"><?php _e('Applied after the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
 					<tr valign="top">
 						<th scope="row">
 							<label for="tag_prefix"><?php _e('Tag Prefix', 'breadcrumb_navxt'); ?></label>
@@ -728,6 +700,24 @@ class bcn_admin
 						<td>
 							<input type="text" name="tag_anchor" id="tag_anchor" value="<?php echo $this->breadcrumb_trail->opt['tag_anchor']; ?>" size="60" /><br />
 							<span class="setting-description"><?php _e('The anchor template for tag breadcrumbs.', 'breadcrumb_navxt'); ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="archive_tag_prefix"><?php _e('Archive by Tag Prefix', 'breadcrumb_navxt'); ?></label>
+						</th>
+						<td>
+							<input type="text" name="archive_tag_prefix" id="archive_tag_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_tag_prefix']; ?>" size="32" /><br />
+							<span class="setting-description"><?php _e('Applied before the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'); ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="archive_tag_suffix"><?php _e('Archive by Tag Suffix', 'breadcrumb_navxt'); ?></label>
+						</th>
+						<td>
+							<input type="text" name="archive_tag_suffix" id="archive_tag_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_tag_suffix']; ?>" size="32" /><br />
+							<span class="setting-description"><?php _e('Applied after the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
 				</table>
