@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Breadcrumb NavXT\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-01-20 21:35-0600\n"
-"PO-Revision-Date: 2009-01-24 12:27+0100\n"
+"PO-Revision-Date: 2009-01-25 13:56+0100\n"
 "Last-Translator: mot <artnorm@gmail.com>\n"
 "Language-Team: John Havlik <mtekkmonkey@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -573,7 +573,7 @@ msgstr "Änderungen speichern"
 #: Studio\Breadcrumb
 #: NavXT\trunk/breadcrumb_navxt_class.php:100
 msgid "Blog"
-msgstr "Bog"
+msgstr "Blog"
 
 #: C:\Users\John\Documents\Aptana
 #: Studio\Breadcrumb
