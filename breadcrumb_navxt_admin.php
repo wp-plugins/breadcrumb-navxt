@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb trail. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.0.99
+Version: 3.1.0
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -44,7 +44,7 @@ class bcn_admin
 	function bcn_admin()
 	{
 		//Setup our internal version
-		$this->version = "3.0.99";
+		$this->version = "3.1.0";
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
@@ -163,6 +163,12 @@ class bcn_admin
 				$this->delete_option('bcn_singleblogpost_tag_prefix');
 				$this->delete_option('bcn_singleblogpost_tag_suffix');
 			}
+			else if($major == 3 && $minor == 0)
+			{
+				//Update our internal settings
+				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+				$this->breadcrumb_trail->opt['search_anchor'] = __('<a title="Go to the first page of search results for %title%." href="%link%">','breadcrumb_navxt');
+			}
 			//Always have to update the version
 			$this->update_option('bcn_version', $this->version);
 			//Store the options
@@ -253,6 +259,7 @@ class bcn_admin
 		//Search page settings
 		$this->breadcrumb_trail->opt['search_prefix'] = bcn_get('search_prefix');
 		$this->breadcrumb_trail->opt['search_suffix'] = bcn_get('search_suffix');
+		$this->breadcrumb_trail->opt['search_anchor'] = bcn_get('search_anchor');
 		//Tag settings
 		$this->breadcrumb_trail->opt['tag_prefix'] = bcn_get('tag_prefix');
 		$this->breadcrumb_trail->opt['tag_suffix'] = bcn_get('tag_suffix');
