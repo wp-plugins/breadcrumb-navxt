@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb_trail class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.1.0
+Version: 3.1.99
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -86,7 +86,7 @@ class bcn_breadcrumb_trail
 	//Default constructor
 	function bcn_breadcrumb_trail()
 	{
-		$this->version = "3.1.0";
+		$this->version = "3.1.99";
 		//Initilize the trail as an array
 		$this->trail = array();
 		//Load the translation domain as the next part needs it
@@ -282,6 +282,13 @@ class bcn_breadcrumb_trail
 			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_permalink($bcn_parent_id), $this->opt['post_anchor']));
 			//We want this to be linked
 			$bcn_breadcrumb->linked = true;
+			//Handle the post's taxonomy
+			$this->post_taxonomy($post->ID);
+			//If our max title length is greater than 0 we should do something
+			if($this->opt['max_title_length'] > 0)
+			{
+				$bcn_breadcrumb->title_trim($this->opt['max_title_length']);
+			}
 		}
 	}
 	/**
@@ -376,23 +383,62 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
+	 * post_taxonomy
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This function fills breadcrumbs for any post taxonomy.
+	 * @param  (int)   $id The id of the post to figure out the taxonomy for.
+	 */
+	function post_taxonomy($id)
+	{
+		//Check to see if breadcrumbs for the taxonomy of the post needs to be generated
+		if($this->opt['post_taxonomy_display'])
+		{
+			//Figure out which taxonomy is desired
+			if($this->opt['post_taxonomy_type'] == "tag")
+			{
+				$this->post_tags($id);
+			}
+			else
+			{
+				//Fills the temp object to get the categories 
+				$bcn_object = get_the_category($id);
+				//Now find which one has a parent, pick the first one that does
+				$i = 0;
+				$bcn_use_category = 0;
+				foreach($bcn_object as $object)
+				{
+					//We want the first category hiearchy
+					if($object->category_parent > 0 && $bcn_use_category == 0)
+					{
+						$bcn_use_category = $i;
+					}
+					$i++;
+				}
+				//Fill out the category hiearchy
+				$this->category_parents($bcn_object[$bcn_use_category]->term_id);
+			}
+		}
+	}
+	/**
 	 * post_tag
 	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for the tags of a post
+	 * @param  (int)   $id The id of the post to find the tags for.
 	 * 
 	 * @TODO	Need to implement this cleaner, possibly a recursive object
 	 */
-	function post_tags()
+	function post_tags($id)
 	{
-		global $post;
 		//Add new breadcrumb to the trail
 		$this->trail[] = new bcn_breadcrumb();
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 		//Fills a temporary object with the tags for the post
-		$bcn_object = get_the_tags($post->ID);
+		$bcn_object = get_the_tags($id);
 		//Only process if we have tags
 		if(is_array($bcn_object))
 		{
@@ -639,34 +685,8 @@ class bcn_breadcrumb_trail
 		$bcn_breadcrumb->suffix = $this->opt['post_suffix'] . $this->opt['current_item_suffix'];
 		//Assign the title
 		$bcn_breadcrumb->title = get_the_title();
-		//Check to see if breadcrumbs for the taxonomy of the post needs to be generated
-		if($this->opt['post_taxonomy_display'])
-		{
-			//Figure out which taxonomy is desired
-			if($this->opt['post_taxonomy_type'] == "tag")
-			{
-				$this->post_tags();
-			}
-			else
-			{
-				//Fills the temp object to get the categories 
-				$bcn_object = get_the_category();
-				//Now find which one has a parent, pick the first one that does
-				$i = 0;
-				$bcn_use_category = 0;
-				foreach($bcn_object as $object)
-				{
-					//We want the first category hiearchy
-					if($object->category_parent > 0 && $bcn_use_category == 0)
-					{
-						$bcn_use_category = $i;
-					}
-					$i++;
-				}
-				//Fill out the category hiearchy
-				$this->category_parents($bcn_object[$bcn_use_category]->term_id);
-			}
-		}
+		//Handle the post's taxonomy
+		$this->post_taxonomy($post->ID);
 		//If our max title length is greater than 0 we should do something
 		if($this->opt['max_title_length'] > 0)
 		{
