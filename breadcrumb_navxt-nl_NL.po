@@ -44,7 +44,7 @@ msgstr "Tips voor de instellingen staan onder de te selecteren opties. Raadpleeg
 
 #: breadcrumb_navxt_admin.php:369
 msgid "Go to the Breadcrumb NavXT online documentation."
-msgstr "Ga naar de Breadcrumb NavXT online documentatie."
+msgstr "Ga naar de online documentatie van Breadcrumb NavXT."
 
 #: breadcrumb_navxt_admin.php:375
 msgid "General"
@@ -52,7 +52,7 @@ msgstr "Algemeen"
 
 #: breadcrumb_navxt_admin.php:379
 msgid "Home Breadcrumb"
-msgstr "Home-pad"
+msgstr "Home-pagina in pad"
 
 #: breadcrumb_navxt_admin.php:385
 msgid "Leave the home breadcrumb out of the trail."
@@ -68,7 +68,7 @@ msgstr "Home-titel:"
 
 #: breadcrumb_navxt_admin.php:406
 msgid "Breadcrumb Separator"
-msgstr "Pad-separator"
+msgstr "Scheidingsteken"
 
 #: breadcrumb_navxt_admin.php:410
 msgid "Placed in between each breadcrumb."
@@ -354,7 +354,7 @@ msgstr "Afbeeldingswijze auteur"
 
 #: breadcrumb_navxt_admin.php:796
 msgid "display_name uses the name specified in \"Display name publicly as\" under the user profile the others correspond to options in the user profile."
-msgstr "display_name gebruikt de naam die gespecificeerd is in \"Display name publicly as\" in het gebruikersprofiel, de anderen corresponderen met de opties in het gebruikersprofiel."
+msgstr "display_name gebruikt de naam die gespecificeerd is in \"Display name publicly as\" in het gebruikersprofiel. De andere namen corresponderen met de opties in het gebruikersprofiel."
 
 #: breadcrumb_navxt_admin.php:801
 msgid "Search Prefix"
@@ -417,7 +417,7 @@ msgstr "<a title=\"Ga naar de eerste pagina van zoekresultaten voor %title%.\" h
 
 #: breadcrumb_navxt_class.php:172
 msgid "<a title=\"Go to the %title% tag archives.\" href=\"%link%\">"
-msgstr "<a title=\"Ga naar de %title%-tag archieven.\" href=\"%link%\">"
+msgstr "<a title=\"Ga naar het archief van tag %title%.\" href=\"%link%\">"
 
 #: breadcrumb_navxt_class.php:175
 msgid "Articles by: "
@@ -425,7 +425,7 @@ msgstr "Artikelen van:"
 
 #: breadcrumb_navxt_class.php:186
 msgid "<a title=\"Go to the %title% category archives.\" href=\"%link%\">"
-msgstr "<a title=\"Ga naar de %title%-categorie archieven.\" href=\"%link%\""
+msgstr "<a title=\"Ga naar het archief van categorie %title%.\" href=\"%link%\""
 
 #: breadcrumb_navxt_class.php:189
 msgid "Archive by category &#39;"
@@ -437,5 +437,5 @@ msgstr "Archief van tag &#39;"
 
 #: breadcrumb_navxt_class.php:196
 msgid "<a title=\"Go to the %title% archives.\" href=\"%link%\">"
-msgstr "<a title=\"Ga naar de %title% archieven.\" href=\"%link%\">"
+msgstr "<a title=\"Ga naar het archief van %title%.\" href=\"%link%\">"
 

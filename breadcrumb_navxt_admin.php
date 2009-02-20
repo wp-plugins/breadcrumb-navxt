@@ -48,24 +48,24 @@ class bcn_admin
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
-		add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php', array(&$this, 'install'));
+		add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php', array($this, 'install'));
 		//Uninstallation Script hook
 		if(function_exists('register_uninstall_hook'))
 		{
-			register_uninstall_hook(__FILE__, array(&$this, 'uninstall'));
+			register_uninstall_hook(__FILE__, array($this, 'uninstall'));
 		}
 		//WordPress Admin interface hook
-		add_action('admin_menu', array(&$this, 'add_page'));
+		add_action('admin_menu', array($this, 'add_page'));
 		//WordPress Admin headder hook
-		add_action('admin_head', array(&$this, 'admin_head'));
+		add_action('admin_head', array($this, 'admin_head'));
 		//WordPress JS enquery hook
-		add_action('wp_print_scripts', array(&$this, 'javascript'));
+		add_action('wp_print_scripts', array($this, 'javascript'));
 		//WordPress Hook for the widget
-		add_action('plugins_loaded', array(&$this, 'register_widget'));
+		add_action('plugins_loaded', array($this, 'register_widget'));
 		//Admin Options hook
 		if(isset($_POST['bcn_admin_options']))
 		{
-			add_action('init', array(&$this, 'update'));
+			add_action('init', array($this, 'update'));
 		}
 	}
 	/**
@@ -103,22 +103,7 @@ class bcn_admin
 			//For upgrading from 2.x.x
 			if($major == 2)
 			{
-				//Upgrade to a current option
-				$this->breadcrumb_trail->opt['home_title'] = $this->get_option('bcn_title_blog');
-				$this->breadcrumb_trail->opt['home_display'] =  $this->get_option('bcn_home_display');
-				$this->breadcrumb_trail->opt['404_title'] = $this->get_option('bcn_title_404');
-				$this->breadcrumb_trail->opt['post_taxonomy_type'] = $this->get_option('bcn_singleblogpost_taxonomy');
-				$this->breadcrumb_trail->opt['post_taxonomy_display'] = $this->get_option('bcn_singleblogpost_taxonomy_display');
-				$this->breadcrumb_trail->opt['category_prefix'] = $this->get_option('bcn_singleblogpost_category_prefix');
-				$this->breadcrumb_trail->opt['category_suffix'] = $this->get_option('bcn_singleblogpost_category_suffix');
-				$this->breadcrumb_trail->opt['tag_prefix'] = $this->get_option('bcn_singleblogpost_tag_prefix');
-				$this->breadcrumb_trail->opt['tag_suffix'] = $this->get_option('bcn_singleblogpost_tag_suffix');
-				$this->breadcrumb_trail->opt['current_item_linked'] = $this->get_option('bcn_link_current_item');
-				$this->breadcrumb_trail->opt['post_prefix'] = $this->get_option('bcn_singleblogpost_prefix');
-				$this->breadcrumb_trail->opt['post_suffix'] = $this->get_option('bcn_singleblogpost_suffix');
-				$this->breadcrumb_trail->opt['current_item_prefix'] = $this->get_option('bcn_singleblogpost_style_prefix');
-				$this->breadcrumb_trail->opt['current_item_suffix'] = $this->get_option('bcn_singleblogpost_style_suffix');
-				$this->breadcrumb_trail->opt['max_title_length'] = $this->get_option('bcn_posttitle_maxlen');
+				//Clean up old options
 				$this->delete_option('bcn_preserve');
 				$this->delete_option('bcn_static_frontpage');
 				$this->delete_option('bcn_url_blog');
@@ -339,9 +324,9 @@ class bcn_admin
 		if(current_user_can('manage_options'))
 		{
 			//Add the submenu page to "settings", more robust than previous method
-			add_submenu_page('options-general.php', 'Breadcrumb NavXT Settings', 'Breadcrumb NavXT', 'manage_options', 'breadcrumb-navxt', array(&$this, 'admin_panel'));
+			add_submenu_page('options-general.php', 'Breadcrumb NavXT Settings', 'Breadcrumb NavXT', 'manage_options', 'breadcrumb-navxt', array($this, 'admin_panel'));
 			//Add in the nice "settings" link to the plugins page
-			add_filter('plugin_action_links', array(&$this, 'filter_plugin_actions'), 10, 2);
+			add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
 		}
 	}
 	/**
@@ -877,7 +862,7 @@ class bcn_admin
 	 */
 	function register_widget()
 	{
-		register_sidebar_widget('Breadcrumb NavXT', array(&$this, 'widget'));
+		register_sidebar_widget('Breadcrumb NavXT', array($this, 'widget'));
 	}
 	/**
 	 * local
@@ -895,9 +880,9 @@ class bcn_admin
 	 * Displays wordpress options as <seclect> options defaults to true/false
 	 *
 	 * @param (string) optionname name of wordpress options store
-	 * @param (array) options array of options defaults to array('true','false')
+	 * @param (array) options array of names of options that can be selected
 	 */
-	function select_options($optionname, $options = array('true','false'))
+	function select_options($optionname, $options)
 	{
 		$value = $this->breadcrumb_trail->opt[$optionname];
 		//First output the current value
