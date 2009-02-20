@@ -283,7 +283,7 @@ class bcn_breadcrumb_trail
 			//We want this to be linked
 			$bcn_breadcrumb->linked = true;
 			//Handle the post's taxonomy
-			$this->post_taxonomy($post->ID);
+			$this->post_taxonomy($bcn_parent_id);
 			//If our max title length is greater than 0 we should do something
 			if($this->opt['max_title_length'] > 0)
 			{
