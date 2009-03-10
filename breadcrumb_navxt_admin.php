@@ -283,8 +283,16 @@ class bcn_admin
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
-		//Display the breadcrumb trail
-		$this->breadcrumb_trail->display($return, $linked);
+		if($return)
+		{
+			//Return the breadcrumb trail
+			return $this->breadcrumb_trail->display($return, $linked);
+		}
+		else
+		{
+			//Display the breadcrumb trail
+			$this->breadcrumb_trail->display($return, $linked);
+		}
 	}
 	/**
 	 * filter_plugin_actions
