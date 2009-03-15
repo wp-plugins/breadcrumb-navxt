@@ -276,8 +276,9 @@ class bcn_admin
 	 * 
 	 * @param  (bool)   $return Whether to return or echo the trail.
 	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
+	 * @param  (bool)	$reverse Whether to reverse the output or not.
 	 */
-	function display($return = false, $linked = true)
+	function display($return = false, $linked = true, $reverse = false)
 	{
 		//Update our internal settings
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
@@ -286,12 +287,12 @@ class bcn_admin
 		if($return)
 		{
 			//Return the breadcrumb trail
-			return $this->breadcrumb_trail->display($return, $linked);
+			return $this->breadcrumb_trail->display($return, $linked, $reverse);
 		}
 		else
 		{
 			//Display the breadcrumb trail
-			$this->breadcrumb_trail->display($return, $linked);
+			$this->breadcrumb_trail->display($return, $linked, $reverse);
 		}
 	}
 	/**
@@ -1080,10 +1081,11 @@ $bcn_admin = new bcn_admin;
  * 
  * @param  (bool)   $return Whether to return or echo the trail.
  * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
+ * @param  (bool)	$reverse Whether to reverse the output or not.
  */
-function bcn_display($return = false, $linked = true)
+function bcn_display($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
-	$bcn_admin->display($return, $linked);
+	$bcn_admin->display($return, $linked, $reverse);
 }
 ?>

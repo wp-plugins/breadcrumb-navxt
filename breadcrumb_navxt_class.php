@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb_trail class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.1.99
+Version: 3.1.100
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -86,7 +86,7 @@ class bcn_breadcrumb_trail
 	//Default constructor
 	function bcn_breadcrumb_trail()
 	{
-		$this->version = "3.1.99";
+		$this->version = "3.1.100";
 		//Initilize the trail as an array
 		$this->trail = array();
 		//Load the translation domain as the next part needs it
@@ -861,6 +861,10 @@ class bcn_breadcrumb_trail
 	function fill()
 	{
 		global $wpdb, $post, $wp_query, $bcn_version, $paged;
+		if(count($this->trail) > 0)
+		{
+			return null;
+		}
 		//Do specific opperations for the various page types
 		//Check if this isn't the first of a multi paged item
 		if(is_paged() && $this->opt['paged_display'])
@@ -926,34 +930,56 @@ class bcn_breadcrumb_trail
 		{
 			$this->do_home();
 		}
-		//We build the trail backwards the last thing to do is to get it back to normal order
-		krsort($this->trail);
 	}
 	/**
 	 * display
 	 * 
 	 * Breadcrumb Creation Function
 	 * 
-	 * This functions outputs or returns the breadcrumb trail.
+	 * This functions outputs or returns the breadcrumb trail in string form.
 	 *
-	 * @param  (bool)   $bcn_return Whether to return data or to echo it.
-	 * @param  (bool)   $bcn_linked Whether to allow hyperlinks in the trail or not.
+	 * @param  (bool)   $return Whether to return data or to echo it.
+	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
+	 * @param  (bool)	$reverse Whether to reverse the output or not.
 	 * 
 	 * @return (void)   Void if Option to print out breadcrumb trail was chosen.
 	 * @return (string) String-Data of breadcrumb trail. 
 	 */
-	function display($bcn_return = false, $bcn_linked = true)
+	function display($return = false, $linked = true, $reverse = false)
 	{
 		global $bcn_version;
+		//Sort based on reverse flag
+		if($reverse)
+		{
+			//Since there may be multiple calls our trail may be in a non-standard order
+			ksort($this->trail);
+		}
+		else
+		{
+			//For normal opperation we must reverse the array by key
+			krsort($this->trail);
+		}
 		//Initilize the string which will hold the compiled trail
 		$bcn_trail_str = "";
 		//The main compiling loop
 		foreach($this->trail as $key=>$breadcrumb)
 		{
-			//We only use a separator if there is more than one element
-			if($key < count($this->trail) - 1)
+			//Must branch if we are reversing the output or not
+			if($reverse)
 			{
-				$bcn_trail_str .= $this->opt['separator'];
+				//Add in the separator only if we are the 2nd or greater element
+				if($key > 0)
+				{
+					$bcn_trail_str .= $this->opt['separator'];
+				}
+			}
+			else
+			{
+				//Only show the separator when necessary
+				if($key < count($this->trail) - 1)
+				{
+					$bcn_trail_str .= $this->opt['separator'];
+				}
 			}
 			//If we are on the current item, we better check if we need to link it
 			if($key === 0 && $this->opt['current_item_linked'])
@@ -964,7 +990,7 @@ class bcn_breadcrumb_trail
 			//Place in the breadcrumb's elements
 			$bcn_trail_str .= $breadcrumb->prefix;
 			//If we are linked we'll need to do up the link
-			if($breadcrumb->linked && $bcn_linked)
+			if($breadcrumb->linked && $linked)
 			{
 				$bcn_trail_str .= $breadcrumb->anchor . $breadcrumb->title . "</a>";
 			}
@@ -976,7 +1002,7 @@ class bcn_breadcrumb_trail
 			$bcn_trail_str .= $breadcrumb->suffix;
 		}
 		//Should we return or echo the compiled trail?
-		if($bcn_return)
+		if($return)
 		{
 			return $bcn_trail_str;
 		}
