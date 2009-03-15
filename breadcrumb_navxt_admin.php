@@ -296,6 +296,32 @@ class bcn_admin
 		}
 	}
 	/**
+	 * display_list
+	 * 
+	 * Outputs the breadcrumb trail
+	 * 
+	 * @param  (bool)   $return Whether to return or echo the trail.
+	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
+	 * @param  (bool)	$reverse Whether to reverse the output or not.
+	 */
+	function display_list($return = false, $linked = true, $reverse = false)
+	{
+		//Update our internal settings
+		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+		//Generate the breadcrumb trail
+		$this->breadcrumb_trail->fill();
+		if($return)
+		{
+			//Return the breadcrumb trail
+			return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
+		}
+		else
+		{
+			//Display the breadcrumb trail
+			$this->breadcrumb_trail->display_list($return, $linked, $reverse);
+		}
+	}
+	/**
 	 * filter_plugin_actions
 	 * 
 	 * Places in a link to the settings page on the plugins listing
@@ -1087,5 +1113,17 @@ function bcn_display($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
 	$bcn_admin->display($return, $linked, $reverse);
+}
+/**
+ * A wrapper for the internal function in the class
+ * 
+ * @param  (bool)   $return Whether to return or echo the trail.
+ * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
+ * @param  (bool)	$reverse Whether to reverse the output or not.
+ */
+function bcn_display_list($return = false, $linked = true, $reverse = false)
+{
+	global $bcn_admin;
+	$bcn_admin->display_list($return, $linked, $reverse);
 }
 ?>

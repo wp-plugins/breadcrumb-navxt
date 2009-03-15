@@ -1013,4 +1013,70 @@ class bcn_breadcrumb_trail
 			echo $bcn_tag . $bcn_trail_str;
 		}
 	}
+	/**
+	 * display_list
+	 * 
+	 * Breadcrumb Creation Function
+	 * 
+	 * This functions outputs or returns the breadcrumb trail in list form.
+	 *
+	 * @param  (bool)   $return Whether to return data or to echo it.
+	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
+	 * @param  (bool)	$reverse Whether to reverse the output or not.
+	 * 
+	 * @return (void)   Void if Option to print out breadcrumb trail was chosen.
+	 * @return (string) String-Data of breadcrumb trail. 
+	 */
+	function display_list($return = false, $linked = true, $reverse = false)
+	{
+		global $bcn_version;
+		//Sort based on reverse flag
+		if($reverse)
+		{
+			//Since there may be multiple calls our trail may be in a non-standard order
+			ksort($this->trail);
+		}
+		else
+		{
+			//For normal opperation we must reverse the array by key
+			krsort($this->trail);
+		}
+		//Initilize the string which will hold the compiled trail
+		$bcn_trail_str = "";
+		//The main compiling loop
+		foreach($this->trail as $key=>$breadcrumb)
+		{
+			$bcn_trail_str .= "<li>";
+			//If we are on the current item, we better check if we need to link it
+			if($key === 0 && $this->opt['current_item_linked'])
+			{
+				$breadcrumb->linked = true;
+				$breadcrumb->anchor = str_replace("%title%", $breadcrumb->title, str_replace("%link%", "", $this->opt['current_item_anchor']));	
+			}
+			//Place in the breadcrumb's elements
+			$bcn_trail_str .= $breadcrumb->prefix;
+			//If we are linked we'll need to do up the link
+			if($breadcrumb->linked && $linked)
+			{
+				$bcn_trail_str .= $breadcrumb->anchor . $breadcrumb->title . "</a>";
+			}
+			//Otherwise we just slip in the title
+			else
+			{
+				$bcn_trail_str .= $breadcrumb->title;
+			}
+			$bcn_trail_str .= $breadcrumb->suffix . "</li>\n";
+		}
+		//Should we return or echo the compiled trail?
+		if($return)
+		{
+			return $bcn_trail_str;
+		}
+		else
+		{
+			//Giving credit where credit is due, please don't remove it
+			$bcn_tag = "<!-- Breadcrumb NavXT " . $this->version . " -->\n";
+			echo $bcn_tag . $bcn_trail_str;
+		}
+	}
 }
