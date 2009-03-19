@@ -348,7 +348,7 @@ class bcn_breadcrumb_trail
 		//We want this to be linked
 		$bcn_breadcrumb->linked = true;
 		//Make sure the id is valid, and that we won't end up spinning in a loop
-		if($bcn_parent->post_parent && $id != $bcn_parent->post_parent && $frontpage != $bcn_parent->post_parent)
+		if($bcn_parent->post_parent >= 0 && $bcn_parent->post_parent != false && $id != $bcn_parent->post_parent && $frontpage != $bcn_parent->post_parent)
 		{
 			//If valid, recursivly call this function
 			$this->page_parents($bcn_parent->post_parent, $frontpage);
