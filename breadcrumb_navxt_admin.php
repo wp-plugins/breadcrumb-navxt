@@ -31,11 +31,45 @@ if(!class_exists('bcn_breadcrumb'))
 //Include the supplemental functions
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
 
-//The administrative interface class
+/**
+ * The administrative interface class 
+ * 
+ * @since 2.1.3
+ */
 class bcn_admin
 {
-	private $version;
+	/**
+	 * local store for breadcrumb version
+	 * 
+	 * Example: String '3.1.0' 
+	 * 
+	 * @var string
+	 */
+	private $version = '3.1.0';
+
+	/**
+	 * local store for the breadcrumb object
+	 * 
+	 * @see bcn_admin::bcn_admin()
+	 * @var string bcn_breadcrumb
+	 */
 	private $breadcrumb_trail;
+	
+	
+	/**
+	 * admin initialisation callback function
+	 * 
+	 * is bound to wpordpress action 'admin_init' on instantiation
+	 * 
+	 * @since  3.1.1
+	 * @return void
+	 */
+	public function admin_init()
+	{
+		// TODO WPMU options: register options
+		register_setting($option_group = 'bcn_admin_options', $option_name = 'bcn_options', $sanitize_callback = '');						
+	}
+
 	/**
 	 * bcn_admin
 	 * 
@@ -43,8 +77,8 @@ class bcn_admin
 	 */
 	function bcn_admin()
 	{
-		//Setup our internal version
-		$this->version = "3.1.0";
+		//Setup our internal version (commentend, now done in class definition)
+		//$this->version = "3.1.0";
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
@@ -65,8 +99,13 @@ class bcn_admin
 		//Admin Options hook
 		if(isset($_POST['bcn_admin_options']))
 		{
+			// temporarily add update function on init if form has been submitted
 			add_action('init', array($this, 'update'));
 		}
+		//Admin Init Hook
+		// TODO WPMU options: admin-init
+		add_action('admin_init', array($this, 'admin_init'));
+		
 	}
 	/**
 	 * security
@@ -204,7 +243,10 @@ class bcn_admin
 	{
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
-		check_admin_referer('bcn_admin_options');
+		// TODO WPMU options: check_admin_referer('bcn_admin_options-options'); 
+		check_admin_referer('bcn_admin_options-options');
+		// was: check_admin_referer('bcn_admin_options');
+		
 		//Grab the options from the from post
 		//Home page settings
 		$this->breadcrumb_trail->opt['home_display'] = str2bool(bcn_get('home_display', 'false'));
@@ -377,11 +419,14 @@ class bcn_admin
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options', true);
 		//Initilizes l10n domain	
 		$this->local();
-		//See if the administrative interface matches versions with the class, if not then warn the user
+		//See if the administrative interface matches versions with the class, if not then warn the user		
+
+		// TODO One File: check can could removed if implemented
+		
 		list($bcn_plugin_major, $bcn_plugin_minor, $bcn_plugin_bugfix) = explode('.', $this->breadcrumb_trail->version);	
 		list($bcn_admin_major,  $bcn_admin_minor,  $bcn_admin_bugfix)  = explode('.', $this->version);		
 		if($bcn_plugin_major != $bcn_admin_major || $bcn_plugin_minor != $bcn_admin_minor)
-		{
+		{			
 			?>
 			<div id="message" class="updated fade">
 				<p><?php _e('Warning, your version of Breadcrumb NavXT does not match the version supported by this administrative interface. As a result, settings may not work as expected.', 'breadcrumb_navxt'); ?></p>
@@ -396,7 +441,11 @@ class bcn_admin
 			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>'); 
 		?></p>
 		<form action="options-general.php?page=breadcrumb-navxt" method="post" id="bcn_admin_options">
-			<?php wp_nonce_field('bcn_admin_options');?>
+			<?php
+				// TODO WPMU options: settings_fields('bcn_admin_options');
+				settings_fields('bcn_admin_options'); 
+				// was: wp_nonce_field('bcn_admin_options');
+			?>
 			<div id="hasadmintabs">
 			<fieldset id="general" class="bcn_options">
 				<h3><?php _e('General', 'breadcrumb_navxt'); ?></h3>
