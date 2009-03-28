@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Adminstration Interface
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This enables the administrative interface for specifying the output of the breadcrumb trail. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.1.0
+Version: 3.1.100
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -34,7 +34,7 @@ require_once(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
 /**
  * The administrative interface class 
  * 
- * @since 2.1.3
+ * @since 3.0.0
  */
 class bcn_admin
 {
@@ -45,7 +45,7 @@ class bcn_admin
 	 * 
 	 * @var string
 	 */
-	private $version = '3.1.0';
+	private $version = '3.1.100';
 
 	/**
 	 * local store for the breadcrumb object
@@ -61,13 +61,13 @@ class bcn_admin
 	 * 
 	 * is bound to wpordpress action 'admin_init' on instantiation
 	 * 
-	 * @since  3.1.1
+	 * @since  3.2.0
 	 * @return void
 	 */
 	public function admin_init()
 	{
 		// TODO WPMU options: register options
-		register_setting($option_group = 'bcn_admin_options', $option_name = 'bcn_options', $sanitize_callback = '');						
+		register_setting($option_group = 'bcn_admin', $option_name = 'bcn_options', $sanitize_callback = '');						
 	}
 
 	/**
@@ -244,7 +244,7 @@ class bcn_admin
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
 		// TODO WPMU options: check_admin_referer('bcn_admin_options-options'); 
-		check_admin_referer('bcn_admin_options-options');
+		check_admin_referer('bcn_admin-options');
 		// was: check_admin_referer('bcn_admin_options');
 		
 		//Grab the options from the from post
@@ -342,6 +342,7 @@ class bcn_admin
 	 * 
 	 * Outputs the breadcrumb trail
 	 * 
+	 * @since  3.2.0
 	 * @param  (bool)   $return Whether to return or echo the trail.
 	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
 	 * @param  (bool)	$reverse Whether to reverse the output or not.
@@ -362,6 +363,37 @@ class bcn_admin
 			//Display the breadcrumb trail
 			$this->breadcrumb_trail->display_list($return, $linked, $reverse);
 		}
+	}
+	/**
+	 * widget
+	 *
+	 * The sidebar widget 
+	 */
+	function widget($args)
+	{
+		extract($args);
+		//Manditory before widget junk
+		echo $before_widget;
+		//Display the breadcrumb trial
+		if($this->breadcrumb_trail->trail[0] != NULL)
+		{
+			$this->breadcrumb_trail->display();
+		}
+		else
+		{
+			$this->display();
+		}
+		//Manditory after widget junk
+		echo $after_widget;
+	}
+	/**
+	 * register_widget
+	 *
+	 * Registers the sidebar widget 
+	 */
+	function register_widget()
+	{
+		register_sidebar_widget('Breadcrumb NavXT', array($this, 'widget'));
 	}
 	/**
 	 * filter_plugin_actions
@@ -420,9 +452,6 @@ class bcn_admin
 		//Initilizes l10n domain	
 		$this->local();
 		//See if the administrative interface matches versions with the class, if not then warn the user		
-
-		// TODO One File: check can could removed if implemented
-		
 		list($bcn_plugin_major, $bcn_plugin_minor, $bcn_plugin_bugfix) = explode('.', $this->breadcrumb_trail->version);	
 		list($bcn_admin_major,  $bcn_admin_minor,  $bcn_admin_bugfix)  = explode('.', $this->version);		
 		if($bcn_plugin_major != $bcn_admin_major || $bcn_plugin_minor != $bcn_admin_minor)
@@ -443,7 +472,7 @@ class bcn_admin
 		<form action="options-general.php?page=breadcrumb-navxt" method="post" id="bcn_admin_options">
 			<?php
 				// TODO WPMU options: settings_fields('bcn_admin_options');
-				settings_fields('bcn_admin_options'); 
+				settings_fields('bcn_admin'); 
 				// was: wp_nonce_field('bcn_admin_options');
 			?>
 			<div id="hasadmintabs">
@@ -916,37 +945,6 @@ class bcn_admin
 		</form>
 		</div>
 		<?php
-	}
-	/**
-	 * widget
-	 *
-	 * The sidebar widget 
-	 */
-	function widget($args)
-	{
-		extract($args);
-		//Manditory before widget junk
-		echo $before_widget;
-		//Display the breadcrumb trial
-		if($this->breadcrumb_trail->trail[0] != NULL)
-		{
-			$this->breadcrumb_trail->display();
-		}
-		else
-		{
-			$this->display();
-		}
-		//Manditory after widget junk
-		echo $after_widget;
-	}
-	/**
-	 * register_widget
-	 *
-	 * Registers the sidebar widget 
-	 */
-	function register_widget()
-	{
-		register_sidebar_widget('Breadcrumb NavXT', array($this, 'widget'));
 	}
 	/**
 	 * local
