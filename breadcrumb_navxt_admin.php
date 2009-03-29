@@ -1095,7 +1095,6 @@ class bcn_admin
 	 * @uses ui.core
 	 * @uses ui.tabs
 	 */
-	 
 	jQuery(function() 
 	{
 		bcn_tabulator_init();		
@@ -1107,7 +1106,7 @@ class bcn_admin
 	function bcn_tabulator_init()
 	{
 		/* if this is not the breadcrumb admin page, quit */
-		if (!jQuery("#hasadmintabs").length) return;
+		if (!jQuery("#hasadmintabs").length) return;		
 
 		/* init markup for tabs */
 		jQuery('#hasadmintabs').prepend("<ul><\/ul>");
@@ -1116,17 +1115,20 @@ class bcn_admin
 		    id      = jQuery(this).attr('id');
 		    caption = jQuery(this).find('h3').text();
 		    jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
-		    jQuery(this).find('h3').hide();
-			// jQuery(this).addClass('tabs-container');
+		    jQuery(this).find('h3').hide();					    
 	    });
 		
 		/* init the tabs plugin */
-	    jQuery("#hasadmintabs > ul").tabs();
+	    jQuery("#hasadmintabs").tabs(); // tabs plugin has been fixed to work on the parent element again.
 
 		/* handler for openeing the last tab after submit (compability version) */
 		jQuery('#hasadmintabs ul a').click(function(i){
-			var form = jQuery('#bcn_admin_options');
-			form.attr("action", (form.attr("action")).split('#', 1) + jQuery(this).attr('href'));
+			var form   = jQuery('#bcn_admin_options');
+			var action = form.attr("action").split('#', 1) + jQuery(this).attr('href');
+			// an older bug pops up again with current jQuery version, which makes it
+			// necessary to set the form's action attribute by standard javascript 
+			// node access:						
+			form.get(0).setAttribute("action", action);
 		});
 	}
 /* ]]> */
