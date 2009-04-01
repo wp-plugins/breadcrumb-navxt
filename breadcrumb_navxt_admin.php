@@ -605,20 +605,25 @@ class bcn_admin
 							<span class="setting-description"><?php _e('The anchor template for the home breadcrumb.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
-					<?php 
-					//We only need this if in a static front page condition
-					if($this->get_option('show_on_front') == "page")
-					{?>
 					<tr valign="top">
 						<th scope="row">
 							<label for="blog_anchor"><?php _e('Blog Anchor', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
+							<?php 
+							//We only need this (blog_anchor) if in a static front page condition
+							//TODO add a disabled feture
+							if($this->get_option('show_on_front') == "page")
+							{?>						
 							<input type="text" name="blog_anchor" id="blog_anchor" value="<?php echo $this->breadcrumb_trail->opt['blog_anchor']; ?>" size="60" /><br />
-							<span class="setting-description"><?php _e('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'); ?></span>
+							<?php } else {
+								// TODO make this more nice, maybe looking disabled or so. 
+							?>
+							<strong>INFO: Static Homepage is switched off</strong><br />
+							<?php } ?>
+							<span class="setting-description"><?php _e('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'); ?></span>			
 						</td>
 					</tr> 
-					<?php } ?>
 				</table>
 			</fieldset>
 			<fieldset id="current" class="bcn_options">

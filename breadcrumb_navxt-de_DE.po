@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Breadcrumb NavXT\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-01-20 21:35-0600\n"
-"PO-Revision-Date: 2009-01-25 13:56+0100\n"
+"PO-Revision-Date: 2009-04-01 18:06+0100\n"
 "Last-Translator: mot <artnorm@gmail.com>\n"
 "Language-Team: John Havlik <mtekkmonkey@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -139,7 +139,7 @@ msgstr "Blog-Link"
 #: Studio\Breadcrumb
 #: NavXT\trunk/breadcrumb_navxt_admin.php:456
 msgid "The anchor template for the blog breadcrumb, used only in static front page environments."
-msgstr "Vorlage für den Link des Blog-Breadcrumbs, wird nur verwendet bei \"static front page environments\" (ältere Einstellung)."
+msgstr "Vorlage für den Link des Blog-Breadcrumbs, wird nur verwendet wenn eine \"statische Seite\" als Startseite verwendet wird."
 
 #: C:\Users\John\Documents\Aptana
 #: Studio\Breadcrumb
