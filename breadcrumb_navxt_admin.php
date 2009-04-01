@@ -502,7 +502,7 @@ class bcn_admin
 						</th>
 						<td>
 							<label>
-								<input name="home_display" type="checkbox" id="current_item_linked" value="true" <?php checked(true, $this->breadcrumb_trail->opt['home_display']); ?> />
+								<input name="home_display" type="checkbox" id="home_display" value="true" <?php checked(true, $this->breadcrumb_trail->opt['home_display']); ?> />
 								<?php _e('Place the home breadcrumb in the trail.', 'breadcrumb_navxt'); ?>				
 							</label><br />
 							<ul>
@@ -916,26 +916,26 @@ class bcn_admin
 					</tr>
 					<tr valign="top">
 						<th scope="row">
-							<label for="404_title"><?php _e('404 Title', 'breadcrumb_navxt'); ?></label>
+							<label for="id404_title"><?php _e('404 Title', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="404_title" id="404_title" value="<?php echo $this->breadcrumb_trail->opt['404_title']; ?>" size="32" />
+							<input type="text" name="404_title" id="id404_title" value="<?php echo $this->breadcrumb_trail->opt['404_title']; ?>" size="32" />
 						</td>
 					</tr>
 					<tr valign="top">
 						<th scope="row">
-							<label for="404_prefix"><?php _e('404 Prefix', 'breadcrumb_navxt'); ?></label>
+							<label for="id404_prefix"><?php _e('404 Prefix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="404_prefix" id="404_prefix" value="<?php echo $this->breadcrumb_trail->opt['404_prefix']; ?>" size="32" />
+							<input type="text" name="404_prefix" id="id404_prefix" value="<?php echo $this->breadcrumb_trail->opt['404_prefix']; ?>" size="32" />
 						</td>
 					</tr>
 					<tr valign="top">
 						<th scope="row">
-							<label for="404_suffix"><?php _e('404 Suffix', 'breadcrumb_navxt'); ?></label>
+							<label for="id404_suffix"><?php _e('404 Suffix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="404_suffix" id="404_suffix" value="<?php echo $this->breadcrumb_trail->opt['404_suffix']; ?>" size="32" />
+							<input type="text" name="404_suffix" id="id404_suffix" value="<?php echo $this->breadcrumb_trail->opt['404_suffix']; ?>" size="32" />
 						</td>
 					</tr>
 				</table>
