@@ -43,18 +43,19 @@ class bcn_admin
 	 * 
 	 * Example: String '3.1.0' 
 	 * 
-	 * @var string
+	 * @var   string
+	 * @since 3.1.0
 	 */
 	private $version = '3.1.100';
 
 	/**
 	 * local store for the breadcrumb object
 	 * 
-	 * @see bcn_admin::bcn_admin()
-	 * @var string bcn_breadcrumb
+	 * @see   bcn_admin()
+	 * @var   bcn_breadcrumb
+	 * @since 2.0
 	 */
-	private $breadcrumb_trail;
-	
+	private $breadcrumb_trail;	
 	
 	/**
 	 * admin initialisation callback function
@@ -67,7 +68,11 @@ class bcn_admin
 	public function admin_init()
 	{
 		// TODO WPMU options: register options
-		register_setting($option_group = 'bcn_admin', $option_name = 'bcn_options', $sanitize_callback = '');						
+		register_setting($option_group = 'bcn_admin', $option_name = 'bcn_options', $sanitize_callback = '');
+		//Add in the nice "settings" link to the plugins page
+		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
+		// add javascript enqeueing callback
+		add_action('wp_print_scripts', array($this, 'javascript'));
 	}
 
 	/**
@@ -77,8 +82,6 @@ class bcn_admin
 	 */
 	function bcn_admin()
 	{
-		//Setup our internal version (commentend, now done in class definition)
-		//$this->version = "3.1.0";
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
@@ -90,10 +93,6 @@ class bcn_admin
 		}
 		//WordPress Admin interface hook
 		add_action('admin_menu', array($this, 'add_page'));
-		//WordPress Admin headder hook
-		add_action('admin_head', array($this, 'admin_head'));
-		//WordPress JS enquery hook
-		add_action('wp_print_scripts', array($this, 'javascript'));
 		//WordPress Hook for the widget
 		add_action('plugins_loaded', array($this, 'register_widget'));
 		//Admin Options hook
@@ -142,50 +141,32 @@ class bcn_admin
 			//For upgrading from 2.x.x
 			if($major == 2)
 			{
-				//Clean up old options
-				$this->delete_option('bcn_preserve');
-				$this->delete_option('bcn_static_frontpage');
-				$this->delete_option('bcn_url_blog');
-				$this->delete_option('bcn_home_display');
-				$this->delete_option('bcn_home_link');
-				$this->delete_option('bcn_title_home');
-				$this->delete_option('bcn_title_blog');
-				$this->delete_option('bcn_separator');
-				$this->delete_option('bcn_search_prefix');
-				$this->delete_option('bcn_search_suffix');
-				$this->delete_option('bcn_author_prefix');
-				$this->delete_option('bcn_author_suffix');
-				$this->delete_option('bcn_author_display');
-				$this->delete_option('bcn_singleblogpost_prefix');
-				$this->delete_option('bcn_singleblogpost_suffix');
-				$this->delete_option('bcn_page_prefix');
-				$this->delete_option('bcn_page_suffix');
-				$this->delete_option('bcn_urltitle_prefix');
-				$this->delete_option('bcn_urltitle_suffix');
-				$this->delete_option('bcn_archive_category_prefix');
-				$this->delete_option('bcn_archive_category_suffix');
-				$this->delete_option('bcn_archive_date_prefix');
-				$this->delete_option('bcn_archive_date_suffix');
-				$this->delete_option('bcn_archive_date_format');
-				$this->delete_option('bcn_attachment_prefix');
-				$this->delete_option('bcn_attachment_suffix');
-				$this->delete_option('bcn_archive_tag_prefix');
-				$this->delete_option('bcn_archive_tag_suffix');
-				$this->delete_option('bcn_title_404');
-				$this->delete_option('bcn_link_current_item');
-				$this->delete_option('bcn_current_item_urltitle');
-				$this->delete_option('bcn_current_item_style_prefix');
-				$this->delete_option('bcn_current_item_style_suffix');
-				$this->delete_option('bcn_posttitle_maxlen');
-				$this->delete_option('bcn_paged_display');
-				$this->delete_option('bcn_paged_prefix');
-				$this->delete_option('bcn_paged_suffix');
-				$this->delete_option('bcn_singleblogpost_taxonomy');
-				$this->delete_option('bcn_singleblogpost_taxonomy_display');
-				$this->delete_option('bcn_singleblogpost_category_prefix');
-				$this->delete_option('bcn_singleblogpost_category_suffix');
-				$this->delete_option('bcn_singleblogpost_tag_prefix');
-				$this->delete_option('bcn_singleblogpost_tag_suffix');
+				//Delete old options
+				$delete_options = array
+				(
+					'bcn_preserve', 'bcn_static_frontpage', 'bcn_url_blog', 
+					'bcn_home_display', 'bcn_home_link', 'bcn_title_home', 
+					'bcn_title_blog', 'bcn_separator', 'bcn_search_prefix', 
+					'bcn_search_suffix', 'bcn_author_prefix', 'bcn_author_suffix', 
+					'bcn_author_display', 'bcn_singleblogpost_prefix', 
+					'bcn_singleblogpost_suffix', 'bcn_page_prefix', 'bcn_page_suffix', 
+					'bcn_urltitle_prefix', 'bcn_urltitle_suffix', 
+					'bcn_archive_category_prefix', 'bcn_archive_category_suffix', 
+					'bcn_archive_date_prefix', 'bcn_archive_date_suffix', 
+					'bcn_archive_date_format', 'bcn_attachment_prefix', 
+					'bcn_attachment_suffix', 'bcn_archive_tag_prefix', 
+					'bcn_archive_tag_suffix', 'bcn_title_404', 'bcn_link_current_item', 
+					'bcn_current_item_urltitle', 'bcn_current_item_style_prefix', 
+					'bcn_current_item_style_suffix', 'bcn_posttitle_maxlen', 
+					'bcn_paged_display', 'bcn_paged_prefix', 'bcn_paged_suffix', 
+					'bcn_singleblogpost_taxonomy', 'bcn_singleblogpost_taxonomy_display', 
+					'bcn_singleblogpost_category_prefix', 'bcn_singleblogpost_category_suffix', 
+					'bcn_singleblogpost_tag_prefix', 'bcn_singleblogpost_tag_suffix'
+				);
+				foreach ($delete_options as $option)
+				{
+					$this->delete_option($option);	
+				}
 			}
 			else if($major == 3 && $minor == 0)
 			{
@@ -398,10 +379,11 @@ class bcn_admin
 	/**
 	 * filter_plugin_actions
 	 * 
-	 * Places in a link to the settings page on the plugins listing
+	 * Places in a link to the settings page in the plugins listing entry
 	 * 
-	 * @param  (array)   $links An array of links that are output in the listing
-	 * @param  (string)   $file The file that is currently in processing
+	 * @param  (array)  $links An array of links that are output in the listing
+	 * @param  (string) $file The file that is currently in processing
+	 * @return (array)  Array of links that are output in the listing.
 	 */
 	function filter_plugin_actions($links, $file)
 	{
@@ -428,16 +410,99 @@ class bcn_admin
 	 */
 	function add_page()
 	{
-		global $bcn_admin_req;
-		//We did away with bcn_security in favor of this nice thing
+		// check capability of user to manage options (access control)
 		if(current_user_can('manage_options'))
 		{
-			//Add the submenu page to "settings", more robust than previous method
-			add_submenu_page('options-general.php', 'Breadcrumb NavXT Settings', 'Breadcrumb NavXT', 'manage_options', 'breadcrumb-navxt', array($this, 'admin_panel'));
-			//Add in the nice "settings" link to the plugins page
-			add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
+			//Add the submenu page to "settings" menu
+			$hookname = add_submenu_page('options-general.php', 'Breadcrumb NavXT Settings', 'Breadcrumb NavXT', 'manage_options', 'breadcrumb-navxt', array($this, 'admin_panel'));		
+			//Register admin_head-$hookname callback
+			add_action('admin_head-'.$hookname, array($this, 'admin_head'));
 		}
 	}
+	
+	/**
+	 * admin_head
+	 *
+	 * Adds in the JavaScript and CSS for the tabs in the adminsitrative 
+	 * interface
+	 * 
+	 */
+	function admin_head()
+	{	
+		// print style and script element (should to into head element) 
+		?>
+<style type="text/css">
+	/**
+	 * Tabbed Admin Page (CSS)
+	 * 
+	 * @see Breadcrumb NavXT (Wordpress Plugin)
+	 * @author Tom Klingenberg 
+	 * @colordef #c6d9e9 light-blue (older tabs border color, obsolete)
+	 * @colordef #dfdfdf light-grey (tabs border color)
+	 * @colordef #f9f9f9 very-light-grey (admin standard background color)
+	 * @colordef #fff    white (active tab background color)
+	 */
+#hasadmintabs ul.ui-tabs-nav {border-bottom:1px solid #dfdfdf; font-size:12px; height:29px; list-style-image:none; list-style-position:outside; list-style-type:none; margin:13px 0 0; overflow:visible; padding:0 0 0 8px;}
+#hasadmintabs ul.ui-tabs-nav li {display:block; float:left; line-height:200%; list-style-image:none; list-style-position:outside; list-style-type:none; margin:0; padding:0; position:relative; text-align:center; white-space:nowrap; width:auto;}
+#hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%; border-bottom:1px solid #dfdfdf; display:block; float:left; line-height:28px; padding:1px 13px 0; position:relative; text-decoration:none;}
+#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a{-moz-border-radius-topleft:4px; -moz-border-radius-topright:4px;border:1px solid #dfdfdf; border-bottom-color:#f9f9f9; color:#333333; font-weight:normal; padding:0 12px;}
+#hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color; outline-style:none; outline-width:medium; }
+</style>
+<script type="text/javascript">
+/* <![CDATA[ */
+	/**
+	 * Tabbed Admin Page (javascript/jQuery)
+	 *
+	 * unobtrusive approach to add tabbed forms into
+	 * the wordpress admin panel
+	 *
+	 * @see Breadcrumb NavXT (Wordpress Plugin)
+	 * @author Tom Klingenberg
+	 * @uses jQuery
+	 * @uses ui.core
+	 * @uses ui.tabs
+	 */
+	jQuery(function() 
+	{
+		bcn_tabulator_init();		
+	 });
+	 
+	/**
+	 * Tabulator Bootup
+	 */
+	function bcn_tabulator_init()
+	{
+		/* if this is not the breadcrumb admin page, quit */
+		if (!jQuery("#hasadmintabs").length) return;		
+
+		/* init markup for tabs */
+		jQuery('#hasadmintabs').prepend("<ul><\/ul>");
+		jQuery('#hasadmintabs > fieldset').each(function(i)
+		{
+		    id      = jQuery(this).attr('id');
+		    caption = jQuery(this).find('h3').text();
+		    jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
+		    jQuery(this).find('h3').hide();					    
+	    });
+		
+		/* init the tabs plugin */
+	    jQuery("#hasadmintabs").tabs(); // tabs plugin has been fixed to work on the parent element again.
+
+		/* handler for openeing the last tab after submit (compability version) */
+		jQuery('#hasadmintabs ul a').click(function(i){
+			var form   = jQuery('#bcn_admin_options');
+			var action = form.attr("action").split('#', 1) + jQuery(this).attr('href');
+			// an older bug pops up again with current jQuery version, which makes it
+			// necessary to set the form's action attribute by standard javascript 
+			// node access:						
+			form.get(0).setAttribute("action", action);
+		});
+	}
+/* ]]> */
+</script>
+<?php
+	} //function admin_head()
+		
 	/**
 	 * admin_panel
 	 * 
@@ -1026,9 +1091,9 @@ class bcn_admin
 	 * This grabs the the data from the db it is WPMU safe and can place the data 
 	 * in a HTML form safe manner.
 	 *
-	 * @param (string) key name of the wordpress option to get
-	 * @param (bool) safe output for HTML forms (default: false)
-	 * @return (mixed)
+	 * @param  (string) key name of the wordpress option to get
+	 * @param  (bool)   safe output for HTML forms (default: false)
+	 * @return (mixed)  value of option
 	 */
 	function get_option($key, $safe = false)
 	{
@@ -1054,99 +1119,18 @@ class bcn_admin
 			}
 		}
 		return $db_data;
-	}
-	/**
-	 * admin_head
-	 *
-	 * Adds in the JavaScript and CSS for the tabs in the adminsitrative interface
-	 *
-	 */
-	function admin_head()
-	{
-		?>
-<style type="text/css">
-	/**
-	 * Tabbed Admin Page (CSS)
-	 * 
-	 * @see Breadcrumb NavXT (Wordpress Plugin)
-	 * @author Tom Klingenberg 
-	 * @colordef #c6d9e9 light-blue (older tabs border color, obsolete)
-	 * @colordef #dfdfdf light-grey (tabs border color)
-	 * @colordef #f9f9f9 very-light-grey (admin standard background color)
-	 * @colordef #fff    white (active tab background color)
-	 */
-#hasadmintabs ul.ui-tabs-nav {border-bottom:1px solid #dfdfdf; font-size:12px; height:29px; list-style-image:none; list-style-position:outside; list-style-type:none; margin:13px 0 0; overflow:visible; padding:0 0 0 8px;}
-#hasadmintabs ul.ui-tabs-nav li {display:block; float:left; line-height:200%; list-style-image:none; list-style-position:outside; list-style-type:none; margin:0; padding:0; position:relative; text-align:center; white-space:nowrap; width:auto;}
-#hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%; border-bottom:1px solid #dfdfdf; display:block; float:left; line-height:28px; padding:1px 13px 0; position:relative; text-decoration:none;}
-#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a{-moz-border-radius-topleft:4px; -moz-border-radius-topright:4px;border:1px solid #dfdfdf; border-bottom-color:#f9f9f9; color:#333333; font-weight:normal; padding:0 12px;}
-#hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color; outline-style:none; outline-width:medium; }
-</style>
-<script type="text/javascript">
-/* <![CDATA[ */
-	/**
-	 * Tabbed Admin Page (javascript/jQuery)
-	 *
-	 * unobtrusive approach to add tabbed forms into
-	 * the wordpress admin panel
-	 *
-	 * @see Breadcrumb NavXT (Wordpress Plugin)
-	 * @author Tom Klingenberg
-	 * @uses jQuery
-	 * @uses ui.core
-	 * @uses ui.tabs
-	 */
-	jQuery(function() 
-	{
-		bcn_tabulator_init();		
-	 });
-	 
-	/**
-	 * Tabulator Bootup
-	 */
-	function bcn_tabulator_init()
-	{
-		/* if this is not the breadcrumb admin page, quit */
-		if (!jQuery("#hasadmintabs").length) return;		
-
-		/* init markup for tabs */
-		jQuery('#hasadmintabs').prepend("<ul><\/ul>");
-		jQuery('#hasadmintabs > fieldset').each(function(i)
-		{
-		    id      = jQuery(this).attr('id');
-		    caption = jQuery(this).find('h3').text();
-		    jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
-		    jQuery(this).find('h3').hide();					    
-	    });
-		
-		/* init the tabs plugin */
-	    jQuery("#hasadmintabs").tabs(); // tabs plugin has been fixed to work on the parent element again.
-
-		/* handler for openeing the last tab after submit (compability version) */
-		jQuery('#hasadmintabs ul a').click(function(i){
-			var form   = jQuery('#bcn_admin_options');
-			var action = form.attr("action").split('#', 1) + jQuery(this).attr('href');
-			// an older bug pops up again with current jQuery version, which makes it
-			// necessary to set the form's action attribute by standard javascript 
-			// node access:						
-			form.get(0).setAttribute("action", action);
-		});
-	}
-/* ]]> */
-</script>
-<?php
-	}
+	}	
 	/**
 	 * javascript
 	 *
-	 * Queues up JS dependencies (jquery) for the tabs
+	 * Enqueues up JS dependencies (jquery) for the tabs
+	 * 
+	 * @see admin_init()
 	 */
 	function javascript()
 	{
-		//Only if we are in the dashboard do we need this
-		if(is_admin())
-		{
-			wp_enqueue_script('jquery-ui-tabs');
-		}
+		// enque ui-tabs
+		wp_enqueue_script('jquery-ui-tabs');
 	}
 }
 //Let's make an instance of our object takes care of everything
