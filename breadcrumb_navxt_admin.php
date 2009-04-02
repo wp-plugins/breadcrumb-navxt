@@ -232,15 +232,15 @@ class bcn_admin
 		//Home page settings
 		$this->breadcrumb_trail->opt['home_display'] = str2bool(bcn_get('home_display', 'false'));
 		$this->breadcrumb_trail->opt['home_title'] = bcn_get('home_title');
-		$this->breadcrumb_trail->opt['home_anchor'] = bcn_get('home_anchor');
-		$this->breadcrumb_trail->opt['blog_anchor'] = bcn_get('blog_anchor');
+		$this->breadcrumb_trail->opt['home_anchor'] = bcn_get('home_anchor', $this->breadcrumb_trail->opt['home_anchor']);
+		$this->breadcrumb_trail->opt['blog_anchor'] = bcn_get('blog_anchor', $this->breadcrumb_trail->opt['blog_anchor']);
 		$this->breadcrumb_trail->opt['home_prefix'] = bcn_get('home_prefix');
 		$this->breadcrumb_trail->opt['home_suffix'] = bcn_get('home_suffix');
 		$this->breadcrumb_trail->opt['separator'] = bcn_get('separator');
 		$this->breadcrumb_trail->opt['max_title_length'] = bcn_get('max_title_length');
 		//Current item settings
 		$this->breadcrumb_trail->opt['current_item_linked'] = str2bool(bcn_get('current_item_linked', 'false'));
-		$this->breadcrumb_trail->opt['current_item_anchor'] = bcn_get('current_item_anchor');
+		$this->breadcrumb_trail->opt['current_item_anchor'] = bcn_get('current_item_anchor', $this->breadcrumb_trail->opt['current_item_anchor']);
 		$this->breadcrumb_trail->opt['current_item_prefix'] = bcn_get('current_item_prefix');
 		$this->breadcrumb_trail->opt['current_item_suffix'] = bcn_get('current_item_suffix');
 		//Paged settings
@@ -250,11 +250,11 @@ class bcn_admin
 		//Page settings
 		$this->breadcrumb_trail->opt['page_prefix'] = bcn_get('page_prefix');
 		$this->breadcrumb_trail->opt['page_suffix'] = bcn_get('page_suffix');
-		$this->breadcrumb_trail->opt['page_anchor'] = bcn_get('page_anchor');
+		$this->breadcrumb_trail->opt['page_anchor'] = bcn_get('page_anchor', $this->breadcrumb_trail->opt['page_anchor']);
 		//Post related options
 		$this->breadcrumb_trail->opt['post_prefix'] = bcn_get('post_prefix');
 		$this->breadcrumb_trail->opt['post_suffix'] = bcn_get('post_suffix');
-		$this->breadcrumb_trail->opt['post_anchor'] = bcn_get('post_anchor');
+		$this->breadcrumb_trail->opt['post_anchor'] = bcn_get('post_anchor', $this->breadcrumb_trail->opt['post_anchor']);
 		$this->breadcrumb_trail->opt['post_taxonomy_display'] = str2bool(bcn_get('post_taxonomy_display', 'false'));
 		$this->breadcrumb_trail->opt['post_taxonomy_type'] = bcn_get('post_taxonomy_type');
 		//Attachment settings
@@ -267,11 +267,11 @@ class bcn_admin
 		//Search page settings
 		$this->breadcrumb_trail->opt['search_prefix'] = bcn_get('search_prefix');
 		$this->breadcrumb_trail->opt['search_suffix'] = bcn_get('search_suffix');
-		$this->breadcrumb_trail->opt['search_anchor'] = bcn_get('search_anchor');
+		$this->breadcrumb_trail->opt['search_anchor'] = bcn_get('search_anchor', $this->breadcrumb_trail->opt['search_anchor']);
 		//Tag settings
 		$this->breadcrumb_trail->opt['tag_prefix'] = bcn_get('tag_prefix');
 		$this->breadcrumb_trail->opt['tag_suffix'] = bcn_get('tag_suffix');
-		$this->breadcrumb_trail->opt['tag_anchor'] = bcn_get('tag_anchor');
+		$this->breadcrumb_trail->opt['tag_anchor'] = bcn_get('tag_anchor', $this->breadcrumb_trail->opt['tag_anchor']);
 		//Author page settings
 		$this->breadcrumb_trail->opt['author_prefix'] = bcn_get('author_prefix');
 		$this->breadcrumb_trail->opt['author_suffix'] = bcn_get('author_suffix');
@@ -279,14 +279,14 @@ class bcn_admin
 		//Category settings
 		$this->breadcrumb_trail->opt['category_prefix'] = bcn_get('category_prefix');
 		$this->breadcrumb_trail->opt['category_suffix'] = bcn_get('category_suffix');
-		$this->breadcrumb_trail->opt['category_anchor'] = bcn_get('category_anchor');
+		$this->breadcrumb_trail->opt['category_anchor'] = bcn_get('category_anchor', $this->breadcrumb_trail->opt['category_anchor']);
 		//Archive settings
 		$this->breadcrumb_trail->opt['archive_category_prefix'] = bcn_get('archive_category_prefix');
 		$this->breadcrumb_trail->opt['archive_category_suffix'] = bcn_get('archive_category_suffix');
 		$this->breadcrumb_trail->opt['archive_tag_prefix'] = bcn_get('archive_tag_prefix');
 		$this->breadcrumb_trail->opt['archive_tag_suffix'] = bcn_get('archive_tag_suffix');
 		//Archive by date settings
-		$this->breadcrumb_trail->opt['date_anchor'] = bcn_get('date_anchor');
+		$this->breadcrumb_trail->opt['date_anchor'] = bcn_get('date_anchor', $this->breadcrumb_trail->opt['date_anchor']);
 		$this->breadcrumb_trail->opt['archive_date_prefix'] = bcn_get('archive_date_prefix');
 		$this->breadcrumb_trail->opt['archive_date_suffix'] = bcn_get('archive_date_suffix');
 		//Commit the option changes
@@ -610,7 +610,7 @@ class bcn_admin
 							<label for="blog_anchor"><?php _e('Blog Anchor', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>				
-							<input type="text" <?php if($this->get_option('show_on_front') !== "page"){echo 'readonly="readonly"';} ?> name="blog_anchor" id="blog_anchor" value="<?php echo $this->breadcrumb_trail->opt['blog_anchor']; ?>" size="60" /><br />
+							<input type="text" <?php if($this->get_option('show_on_front') !== "page"){echo 'disabled="disabled" class="disabled"';} ?> name="blog_anchor" id="blog_anchor" value="<?php echo $this->breadcrumb_trail->opt['blog_anchor']; ?>" size="60" /><br />
 							<span class="setting-description"><?php _e('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'); ?></span>			
 						</td>
 					</tr> 
