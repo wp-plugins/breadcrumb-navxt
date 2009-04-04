@@ -259,14 +259,17 @@ class bcn_admin
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options',true);
 		//Create a DOM document
 		$dom = new DOMDocument("1.0");
-		//For debuggin purposes, this adds in newlines and tabs
+		//Adds in newlines and tabs to the output
 		$dom->formatOutput = true;
 		//Add an element called options
 		$node = $dom->createElement("options");
 		$parnode = $dom->appendChild($node);
+		//Add a child element named plugin
+		$node = $dom->createElement("plugin");
+		$plugnode = $parnode->appendChild($node);
 		//Add some attributes that identify the plugin and version for the options export
-		$parnode->setAttribute("plugin_name", "breadcrumb_navxt");
-		$parnode->setAttribute("version", $this->version);
+		$plugnode->setAttribute("name", "breadcrumb_navxt");
+		$plugnode->setAttribute("version", $this->version);
 		//Change our headder to text/xml for direct save
 		header("Cache-Control: public");
 		//The next two will cause good browsers to download instead of displaying the file
@@ -278,7 +281,7 @@ class bcn_admin
 		{
 			//Add a option tag under the options tag, store the option value
 			$node = $dom->createElement("option",$option);
-			$newnode = $parnode->appendChild($node);
+			$newnode = $plugnode->appendChild($node);
 			//Change the tag's name to that of the stored option
 			$newnode->setAttribute("name",$key);
 		}
@@ -300,7 +303,8 @@ class bcn_admin
 		//Create a DOM document
 		$dom = new DOMDocument("1.0");
 		$dom->load($_FILES['bcn_admin_import_file']['tmp_name']);
-		$option_sets = $dom->getelementsByTagName('options');
+		$xpath = new DOMXPath($dom);  
+		$option_sets = $xpath->query('plugin');  
 		foreach($option_sets as $options)
 		{
 			//We only want to import options for Breadcrumb NavXT
@@ -308,15 +312,19 @@ class bcn_admin
 			{
 				//Do a quick version check
 				list($plug_major, $plug_minor, $plug_release) = explode('.', $this->version);
-				list($major, $minor, $release) = explode(".",$options->getAttribute('version') === "breadcrumb_navxt");
+				list($major, $minor, $release) = explode(".",$options->getAttribute('version'));
 				//We don't support using newer versioned option files in older releases
 				if($plug_major == $major && $plug_minor >= $minor)
 				{
-					//Loop around all of the options
-					foreach($options->childNodes as $child)
+					/*foreach($this->breadcrumb_trail->opt as $key => $setting)
+					{
+						$this->breadcrumb_trail->opt[$key] = 
+					}*/
+					//Loop around all of the options a little insecure, above code will replace it eventually
+					foreach($options->getelementsByTagName("option") as $child)
 					{
 						//Place the option into the option array, decode html entities
-						$this->breadcrumb_trail->opt[$child->attributes->getNamedItem("name")] = html_entity_decode($child->nodeValue);
+						$this->breadcrumb_trail->opt[$child->getAttribute("name")] = html_entity_decode($child->nodeValue);
 					}
 				}
 			}
