@@ -302,9 +302,12 @@ class bcn_admin
 		check_admin_referer('bcn_admin_upload');
 		//Create a DOM document
 		$dom = new DOMDocument("1.0");
+		//Load the user uploaded file
 		$dom->load($_FILES['bcn_admin_import_file']['tmp_name']);
+		//Have to use an xpath query otherwise we run into problems
 		$xpath = new DOMXPath($dom);  
-		$option_sets = $xpath->query('plugin');  
+		$option_sets = $xpath->query('plugin');
+		//Loop through all of the xpath query results
 		foreach($option_sets as $options)
 		{
 			//We only want to import options for Breadcrumb NavXT
@@ -316,11 +319,7 @@ class bcn_admin
 				//We don't support using newer versioned option files in older releases
 				if($plug_major == $major && $plug_minor >= $minor)
 				{
-					/*foreach($this->breadcrumb_trail->opt as $key => $setting)
-					{
-						$this->breadcrumb_trail->opt[$key] = 
-					}*/
-					//Loop around all of the options a little insecure, above code will replace it eventually
+					//Loop around all of the options
 					foreach($options->getelementsByTagName("option") as $child)
 					{
 						//Place the option into the option array, decode html entities
