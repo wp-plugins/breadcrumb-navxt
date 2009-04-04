@@ -47,7 +47,6 @@ class bcn_admin
 	 * @since 3.1.0
 	 */
 	private $version = '3.1.100';
-
 	/**
 	 * local store for the breadcrumb object
 	 * 
@@ -55,26 +54,7 @@ class bcn_admin
 	 * @var   bcn_breadcrumb
 	 * @since 3.0
 	 */
-	public $breadcrumb_trail;	
-	
-	/**
-	 * admin initialisation callback function
-	 * 
-	 * is bound to wpordpress action 'admin_init' on instantiation
-	 * 
-	 * @since  3.2.0
-	 * @return void
-	 */
-	public function admin_init()
-	{
-		// TODO WPMU options: register options
-		register_setting($option_group = 'bcn_admin', $option_name = 'bcn_options', $sanitize_callback = '');
-		//Add in the nice "settings" link to the plugins page
-		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
-		// add javascript enqeueing callback
-		add_action('wp_print_scripts', array($this, 'javascript'));
-	}
-
+	public $breadcrumb_trail;
 	/**
 	 * bcn_admin
 	 * 
@@ -95,16 +75,51 @@ class bcn_admin
 		add_action('admin_menu', array($this, 'add_page'));
 		//WordPress Hook for the widget
 		add_action('plugins_loaded', array($this, 'register_widget'));
-		//Admin Options hook
+		//Admin Options update hook
 		if(isset($_POST['bcn_admin_options']))
 		{
-			// temporarily add update function on init if form has been submitted
+			//Temporarily add update function on init if form has been submitted
 			add_action('init', array($this, 'update'));
+		}
+		//Admin Options reset hook
+		if(isset($_POST['bcn_admin_reset']))
+		{
+			//Temporarily add update function on init if form has been submitted
+			add_action('init', array($this, 'reset'));
+		}
+		//Admin Options export hook
+		if(isset($_POST['bcn_admin_export']))
+		{
+			//Temporarily add update function on init if form has been submitted
+			add_action('init', array($this, 'export'));
+		}
+		//Admin Options import hook
+		if(isset($_FILES['bcn_admin_import_file']) && !empty($_FILES['bcn_admin_import_file']['name']))
+		{
+			//Temporarily add update function on init if form has been submitted
+			add_action('init', array($this, 'import'));
 		}
 		//Admin Init Hook
 		// TODO WPMU options: admin-init
 		add_action('admin_init', array($this, 'admin_init'));
 		
+	}
+	/**
+	 * admin initialisation callback function
+	 * 
+	 * is bound to wpordpress action 'admin_init' on instantiation
+	 * 
+	 * @since  3.2.0
+	 * @return void
+	 */
+	public function admin_init()
+	{
+		// TODO WPMU options: register options
+		register_setting($option_group = 'bcn_admin', $option_name = 'bcn_options', $sanitize_callback = '');
+		//Add in the nice "settings" link to the plugins page
+		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
+		//Add javascript enqeueing callback
+		add_action('wp_print_scripts', array($this, 'javascript'));
 	}
 	/**
 	 * security
@@ -214,6 +229,100 @@ class bcn_admin
 		$this->delete_option('bcn_options');
 		//Remove the version setting
 		$this->delete_option('bcn_version');
+	}
+	/**
+	 * reset
+	 * 
+	 * Resets the options to the default values
+	 */
+	function reset()
+	{
+		$this->security();
+		//Do a nonce check, prevent malicious link/form problems
+		// TODO WPMU options: check_admin_referer('bcn_admin_options-options'); 
+		check_admin_referer('bcn_admin-options');
+		//Only needs this one line, will load in the hard coded default option values
+		$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
+	}
+	/**
+	 * export
+	 * 
+	 * Exports the database settings to a XML document
+	 */
+	function export()
+	{
+		$this->security();
+		//Do a nonce check, prevent malicious link/form problems
+		// TODO WPMU options: check_admin_referer('bcn_admin_options-options'); 
+		check_admin_referer('bcn_admin-options');
+		//Update our internal settings
+		$this->breadcrumb_trail->opt = $this->get_option('bcn_options',true);
+		//Create a DOM document
+		$dom = new DOMDocument("1.0");
+		//For debuggin purposes, this adds in newlines and tabs
+		$dom->formatOutput = true;
+		//Add an element called options
+		$node = $dom->createElement("options");
+		$parnode = $dom->appendChild($node);
+		//Add some attributes that identify the plugin and version for the options export
+		$parnode->setAttribute("plugin_name", "breadcrumb_navxt");
+		$parnode->setAttribute("version", $this->version);
+		//Change our headder to text/xml for direct save
+		header("Cache-Control: public");
+		//The next two will cause good browsers to download instead of displaying the file
+		header("Content-Description: File Transfer");
+		header("Content-disposition: attachemnt; filename=bcn_options.xml");
+		header("Content-Type: text/xml");
+		//Loop through the options array
+		foreach($this->breadcrumb_trail->opt as $key=>$option)
+		{
+			//Add a option tag under the options tag, store the option value
+			$node = $dom->createElement("option",$option);
+			$newnode = $parnode->appendChild($node);
+			//Change the tag's name to that of the stored option
+			$newnode->setAttribute("name",$key);
+		}
+		$output = $dom->saveXML();
+		header("Content-Length: " . mb_strlen($output));
+		echo $output;
+		die();
+	}
+	/**
+	 * import
+	 * 
+	 * Imports a XML options dump
+	 */
+	function import()
+	{
+		$this->security();
+		//Do a nonce check, prevent malicious link/form problems
+		check_admin_referer('bcn_admin_upload');
+		//Create a DOM document
+		$dom = new DOMDocument("1.0");
+		$dom->load($_FILES['bcn_admin_import_file']['tmp_name']);
+		$option_sets = $dom->getelementsByTagName('options');
+		foreach($option_sets as $options)
+		{
+			//We only want to import options for Breadcrumb NavXT
+			if($options->getAttribute('name') === "breadcrumb_navxt")
+			{
+				//Do a quick version check
+				list($plug_major, $plug_minor, $plug_release) = explode('.', $this->version);
+				list($major, $minor, $release) = explode(".",$options->getAttribute('version') === "breadcrumb_navxt");
+				//We don't support using newer versioned option files in older releases
+				if($plug_major == $major && $plug_minor >= $minor)
+				{
+					//Loop around all of the options
+					foreach($options->childNodes as $child)
+					{
+						//Place the option into the option array, decode html entities
+						$this->breadcrumb_trail->opt[$child->attributes->getNamedItem("name")] = html_entity_decode($child->nodeValue);
+					}
+				}
+			}
+		}
+		//Commit the loaded options to the database
+		$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
 	}
 	/**
 	 * update
@@ -403,6 +512,28 @@ class bcn_admin
 		return $links;
 	}
 	/**
+	 * javascript
+	 *
+	 * Enqueues JS dependencies (jquery) for the tabs
+	 * 
+	 * @see admin_init()
+	 */
+	function javascript()
+	{
+		//Enqueue ui-tabs
+		wp_enqueue_script('jquery-ui-tabs');
+	}
+	/**
+	 * local
+	 *
+	 * Initilizes localization domain
+	 */
+	function local()
+	{
+		//Load breadcrumb-navxt translation
+		load_plugin_textdomain($domain = 'breadcrumb_navxt', $path = PLUGINDIR . '/breadcrumb-navxt');
+	}
+	/**
 	 * add_page
 	 * 
 	 * Adds the adminpage the menue and the nice little settings link
@@ -419,7 +550,6 @@ class bcn_admin
 			add_action('admin_head-'.$hookname, array($this, 'admin_head'));
 		}
 	}
-	
 	/**
 	 * admin_head
 	 *
@@ -466,7 +596,6 @@ class bcn_admin
 	{
 		bcn_tabulator_init();		
 	 });
-	 
 	/**
 	 * Tabulator Bootup
 	 */
@@ -999,22 +1128,35 @@ class bcn_admin
 						</td>
 					</tr>
 				</table>
+				<p class="submit">
+					<input type="submit" class="button" name="bcn_admin_reset" value="<?php _e('Reset') ?>" />
+					<input type="submit" class="button" name="bcn_admin_export" value="<?php _e('Export') ?>" />
+				</p>
 			</fieldset>
 			</div>
 			<p class="submit"><input type="submit" class="button-primary" name="bcn_admin_options" value="<?php _e('Save Changes') ?>" /></p>
 		</form>
+		<form action="options-general.php?page=breadcrumb-navxt" method="post" enctype="multipart/form-data" id="bcn_admin_upload">
+			<?php wp_nonce_field('bcn_admin_upload');?>
+			<fieldset id="miscellaneous" class="bcn_options">
+				<h3><?php _e('Import Options', 'breadcrumb_navxt'); ?></h3>
+				<table class="form-table">
+					<tr valign="top">
+						<th scope="row">
+							<label for="bcn_admin_import_file"><?php _e('Options File', 'breadcrumb_navxt'); ?></label>
+						</th>
+						<td>
+							<input type="file" name="bcn_admin_import_file" id="bcn_admin_import_file" size="32"/>
+						</td>
+					</tr>
+				</table>
+				<p class="submit">
+					<input type="submit" class="button" name="bcn_admin_import" value="<?php _e('Import') ?>" />
+				</p>
+			</fieldset>
+		</form>
 		</div>
 		<?php
-	}
-	/**
-	 * local
-	 *
-	 * Initilizes localization domain
-	 */
-	function local()
-	{
-		//Load breadcrumb-navxt translation
-		load_plugin_textdomain($domain = 'breadcrumb_navxt', $path = PLUGINDIR . '/breadcrumb-navxt');
 	}
 	/**
 	 * select_options
@@ -1115,18 +1257,6 @@ class bcn_admin
 		}
 		return $db_data;
 	}	
-	/**
-	 * javascript
-	 *
-	 * Enqueues up JS dependencies (jquery) for the tabs
-	 * 
-	 * @see admin_init()
-	 */
-	function javascript()
-	{
-		// enque ui-tabs
-		wp_enqueue_script('jquery-ui-tabs');
-	}
 }
 //Let's make an instance of our object takes care of everything
 $bcn_admin = new bcn_admin;
