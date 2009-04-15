@@ -274,7 +274,7 @@ class bcn_admin
 		header("Cache-Control: public");
 		//The next two will cause good browsers to download instead of displaying the file
 		header("Content-Description: File Transfer");
-		header("Content-disposition: attachemnt; filename=bcn_options.xml");
+		header("Content-disposition: attachemnt; filename=bcn_settings.xml");
 		header("Content-Type: text/xml");
 		//Loop through the options array
 		foreach($this->breadcrumb_trail->opt as $key=>$option)
@@ -1142,16 +1142,16 @@ class bcn_admin
 		<form action="options-general.php?page=breadcrumb-navxt" method="post" enctype="multipart/form-data" id="bcn_admin_upload">
 			<?php wp_nonce_field('bcn_admin_upload');?>
 				<fieldset id="import_export" class="bcn_options">
-					<h3><?php _e('Import/Export', 'breadcrumb_navxt'); ?></h3>
-					<p><?php _e('Import Breadcrumb NavXT options from a XML file, export the current options to a XML file, or reset to the default Breadcrumb NavXT options.', 'breadcrumb_navxt');?></p>
+					<h3><?php _e('Import/Export/Reset Settings', 'breadcrumb_navxt'); ?></h3>
+					<p><?php _e('Import Breadcrumb NavXT settings from a XML file, export the current settings to a XML file, or reset to the default Breadcrumb NavXT settings.', 'breadcrumb_navxt');?></p>
 					<table class="form-table">
 						<tr valign="top">
 							<th scope="row">
-								<label for="bcn_admin_import_file"><?php _e('Options File', 'breadcrumb_navxt'); ?></label>
+								<label for="bcn_admin_import_file"><?php _e('Settings File', 'breadcrumb_navxt'); ?></label>
 							</th>
 							<td>
 								<input type="file" name="bcn_admin_import_file" id="bcn_admin_import_file" size="32"/><br />
-								<span class="setting-description"><?php _e('Select a XML options file to upload and import settings from.', 'breadcrumb_navxt'); ?></span>
+								<span class="setting-description"><?php _e('Select a XML settings file to upload and import settings from.', 'breadcrumb_navxt'); ?></span>
 							</td>
 						</tr>
 					</table>
