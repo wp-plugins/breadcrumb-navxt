@@ -601,8 +601,23 @@ class bcn_admin
 	 */
 	jQuery(function() 
 	{
-		bcn_tabulator_init();		
+		bcn_tabulator_init();
 	 });
+	function bcn_confirm(type)
+	{
+		if(type == 'reset')
+		{
+			var answer = confirm("<?php _e('All of your current Breadcrumb NavXT settings will be overwritten with the default values. Are you sure you want to continue?', 'breadcrumb_navxt'); ?>");
+		}
+		else
+		{
+			var answer = confirm("<?php _e('All of your current Breadcrumb NavXT settings will be overwritten with the imported values. Are you sure you want to continue?', 'breadcrumb_navxt'); ?>");
+		}
+		if(answer)
+			return true;
+		else
+			return false;
+	}
 	/**
 	 * Tabulator Bootup
 	 */
@@ -1156,9 +1171,9 @@ class bcn_admin
 						</tr>
 					</table>
 					<p class="submit">
-						<input type="submit" class="button" name="bcn_admin_import" value="<?php _e('Import') ?>" />
+						<input type="submit" class="button" name="bcn_admin_import" value="<?php _e('Import') ?>" onclick="return bcn_confirm('import')" />
 						<input type="submit" class="button" name="bcn_admin_export" value="<?php _e('Export') ?>" />
-						<input type="submit" class="button" name="bcn_admin_reset" value="<?php _e('Reset') ?>" />
+						<input type="submit" class="button" name="bcn_admin_reset" value="<?php _e('Reset') ?>" onclick="return bcn_confirm('reset')" />
 					</p>
 				</fieldset>
 		</form>
