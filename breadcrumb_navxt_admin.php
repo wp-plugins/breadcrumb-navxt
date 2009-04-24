@@ -239,10 +239,11 @@ class bcn_admin
 	{
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
-		// TODO WPMU options: check_admin_referer('bcn_admin_options-options'); 
 		check_admin_referer('bcn_admin_upload');
 		//Only needs this one line, will load in the hard coded default option values
 		$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
+		//Reset successful, let the user know
+		add_action('admin_notices', array($this, 'notify_reset'));
 	}
 	/**
 	 * export
@@ -252,8 +253,7 @@ class bcn_admin
 	function export()
 	{
 		$this->security();
-		//Do a nonce check, prevent malicious link/form problems
-		// TODO WPMU options: check_admin_referer('bcn_admin_options-options'); 
+		//Do a nonce check, prevent malicious link/form problems 
 		check_admin_referer('bcn_admin_upload');
 		//Update our internal settings
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options',true);
@@ -285,9 +285,13 @@ class bcn_admin
 			//Change the tag's name to that of the stored option
 			$newnode->setAttribute("name",$key);
 		}
+		//Prepair the XML for output
 		$output = $dom->saveXML();
+		//Let the browser know how long the file is
 		header("Content-Length: " . mb_strlen($output));
+		//Output the file
 		echo $output;
+		//Prevent WordPress from continuing on
 		die();
 	}
 	/**
@@ -297,39 +301,57 @@ class bcn_admin
 	 */
 	function import()
 	{
+		//Our quick and dirty error supressor
+		function error($errno, $errstr, $eerfile, $errline)
+		{
+			return true;
+		}
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_admin_upload');
 		//Create a DOM document
 		$dom = new DOMDocument("1.0");
-		//Load the user uploaded file
-		$dom->load($_FILES['bcn_admin_import_file']['tmp_name']);
-		//Have to use an xpath query otherwise we run into problems
-		$xpath = new DOMXPath($dom);  
-		$option_sets = $xpath->query('plugin');
-		//Loop through all of the xpath query results
-		foreach($option_sets as $options)
+		//We want to catch errors ourselves
+		set_error_handler("error");
+		//Load the user uploaded file, handle failure gracefully
+		if($dom->load($_FILES['bcn_admin_import_file']['tmp_name']))
 		{
-			//We only want to import options for Breadcrumb NavXT
-			if($options->getAttribute('name') === "breadcrumb_navxt")
+			//Have to use an xpath query otherwise we run into problems
+			$xpath = new DOMXPath($dom);  
+			$option_sets = $xpath->query('plugin');
+			//Loop through all of the xpath query results
+			foreach($option_sets as $options)
 			{
-				//Do a quick version check
-				list($plug_major, $plug_minor, $plug_release) = explode('.', $this->version);
-				list($major, $minor, $release) = explode(".",$options->getAttribute('version'));
-				//We don't support using newer versioned option files in older releases
-				if($plug_major == $major && $plug_minor >= $minor)
+				//We only want to import options for Breadcrumb NavXT
+				if($options->getAttribute('name') === "breadcrumb_navxt")
 				{
-					//Loop around all of the options
-					foreach($options->getelementsByTagName("option") as $child)
+					//Do a quick version check
+					list($plug_major, $plug_minor, $plug_release) = explode('.', $this->version);
+					list($major, $minor, $release) = explode(".",$options->getAttribute('version'));
+					//We don't support using newer versioned option files in older releases
+					if($plug_major == $major && $plug_minor >= $minor)
 					{
-						//Place the option into the option array, decode html entities
-						$this->breadcrumb_trail->opt[$child->getAttribute("name")] = html_entity_decode($child->nodeValue);
+						//Loop around all of the options
+						foreach($options->getelementsByTagName("option") as $child)
+						{
+							//Place the option into the option array, decode html entities
+							$this->breadcrumb_trail->opt[$child->getAttribute("name")] = html_entity_decode($child->nodeValue);
+						}
 					}
 				}
 			}
+			//Commit the loaded options to the database
+			$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
+			//Everything was successful, let the user know
+			add_action('admin_notices', array($this, 'notify_import_success'));
 		}
-		//Commit the loaded options to the database
-		$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
+		else
+		{
+			//Throw an error since we could not load the file for various reasons
+			add_action('admin_notices', array($this, 'notify_import_failure'));
+		}
+		//Reset to the default error handler after we're done
+		restore_error_handler();
 	}
 	/**
 	 * update
@@ -1278,7 +1300,40 @@ class bcn_admin
 			}
 		}
 		return $db_data;
-	}	
+	}
+	/**
+	 * notify
+	 * 
+	 * Output a 'notify' box with a message after an event occurs
+	 * 
+	 * @param $message string the message to deliver
+	 * @param $error bool[optional] is the message an error?
+	 */
+	function notify($message, $error = false)
+	{
+		//If the message is an error use the appropriate class
+		if($error)
+		{
+			echo '<div class="error"><p>' . $message . '</p></div>';
+		}
+		//Otherwise we just have a normal message
+		else
+		{
+			echo '<div class="updated fade"><p>' . $message . '</p></div>';
+		}
+	}
+	function notify_import_failure()
+	{
+		$this->notify(__('Importing settings from file failed.', 'breadcrumb_navxt'));
+	}
+	function notify_import_success()
+	{
+		$this->notify(__('The Breadcrumb NavXT settings were successfully imported from file.', 'breadcrumb_navxt'));
+	}
+	function notify_reset()
+	{
+		$this->notify(__('The Breadcrumb NavXT settings were reset to the default values.', 'breadcrumb_navxt'));
+	}
 }
 //Let's make an instance of our object takes care of everything
 $bcn_admin = new bcn_admin;
