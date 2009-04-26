@@ -288,7 +288,7 @@ class bcn_admin
 		//Prepair the XML for output
 		$output = $dom->saveXML();
 		//Let the browser know how long the file is
-		header("Content-Length: " . mb_strlen($output));
+		header("Content-Length: " . strlen($output)); // binary length
 		//Output the file
 		echo $output;
 		//Prevent WordPress from continuing on
@@ -310,7 +310,7 @@ class bcn_admin
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_admin_upload');
 		//Create a DOM document
-		$dom = new DOMDocument("1.0");
+		$dom = new DOMDocument('1.0');
 		//We want to catch errors ourselves
 		set_error_handler("error");
 		//Load the user uploaded file, handle failure gracefully
@@ -323,19 +323,19 @@ class bcn_admin
 			foreach($option_sets as $options)
 			{
 				//We only want to import options for Breadcrumb NavXT
-				if($options->getAttribute('name') === "breadcrumb_navxt")
+				if($options->getAttribute('name') === 'breadcrumb_navxt')
 				{
 					//Do a quick version check
 					list($plug_major, $plug_minor, $plug_release) = explode('.', $this->version);
-					list($major, $minor, $release) = explode(".",$options->getAttribute('version'));
+					list($major, $minor, $release) = explode('.', $options->getAttribute('version'));
 					//We don't support using newer versioned option files in older releases
 					if($plug_major == $major && $plug_minor >= $minor)
 					{
 						//Loop around all of the options
-						foreach($options->getelementsByTagName("option") as $child)
+						foreach($options->getelementsByTagName('option') as $child)
 						{
 							//Place the option into the option array, decode html entities
-							$this->breadcrumb_trail->opt[$child->getAttribute("name")] = html_entity_decode($child->nodeValue);
+							$this->breadcrumb_trail->opt[$child->getAttribute('name')] = html_entity_decode($child->nodeValue);
 						}
 					}
 				}
@@ -659,18 +659,27 @@ class bcn_admin
 	    });
 		
 		/* init the tabs plugin */
-	    jQuery("#hasadmintabs").tabs(); // tabs plugin has been fixed to work on the parent element again.
+		var jquiver = undefined == jQuery.ui ? [0,0,0] : undefined == jQuery.ui.version ? [0,1,0] : jQuery.ui.version.split('.');
+		switch(true) {
+			// tabs plugin has been fixed to work on the parent element again.
+			case jquiver[0] >= 1 && jquiver[1] >= 7:
+				jQuery("#hasadmintabs").tabs();
+				break;
+			// tabs plugin has bug and needs to work on ul directly.
+			default:
+				jQuery("#hasadmintabs > ul").tabs(); 
+		}
 
 		/* handler for openeing the last tab after submit (compability version) */
 		jQuery('#hasadmintabs ul a').click(function(i){
 			var form   = jQuery('#bcn_admin_options');
 			var action = form.attr("action").split('#', 1) + jQuery(this).attr('href');
-			// an older bug pops up again with current jQuery version, which makes it
+			// an older bug pops up with some jQuery version(s), which makes it
 			// necessary to set the form's action attribute by standard javascript 
 			// node access:						
 			form.get(0).setAttribute("action", action);
 		});
-	}
+	}	
 /* ]]> */
 </script>
 <?php
@@ -1312,24 +1321,36 @@ class bcn_admin
 	function notify($message, $error = false)
 	{
 		//If the message is an error use the appropriate class
-		if($error)
-		{
-			echo '<div class="error"><p>' . $message . '</p></div>';
-		}
-		//Otherwise we just have a normal message
-		else
-		{
-			echo '<div class="updated fade"><p>' . $message . '</p></div>';
-		}
+		$class = $error ? 'error' : 'updated fade';
+		
+		printf('<div class="%s"><p>%s</p></div>', $class, $message);		
 	}
+	
+	/**
+	 * callback function for admin_notices
+	 * 
+	 * @return void
+	 */	
 	function notify_import_failure()
 	{
 		$this->notify(__('Importing settings from file failed.', 'breadcrumb_navxt'));
 	}
+	
+	/**
+	 * callback function for admin_notices
+	 * 
+	 * @return void
+	 */	
 	function notify_import_success()
 	{
 		$this->notify(__('The Breadcrumb NavXT settings were successfully imported from file.', 'breadcrumb_navxt'));
 	}
+
+	/**
+	 * callback function for admin_notices
+	 * 
+	 * @return void
+	 */	
 	function notify_reset()
 	{
 		$this->notify(__('The Breadcrumb NavXT settings were reset to the default values.', 'breadcrumb_navxt'));
@@ -1340,9 +1361,9 @@ $bcn_admin = new bcn_admin;
 /**
  * A wrapper for the internal function in the class
  * 
- * @param  (bool)   $return Whether to return or echo the trail.
- * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
- * @param  (bool)	$reverse Whether to reverse the output or not.
+ * @param bool $return Whether to return or echo the trail. (optional)
+ * @param bool $linked Whether to allow hyperlinks in the trail or not. (optional)
+ * @param bool$reverse Whether to reverse the output or not. (optional)
  */
 function bcn_display($return = false, $linked = true, $reverse = false)
 {
@@ -1352,13 +1373,21 @@ function bcn_display($return = false, $linked = true, $reverse = false)
 /**
  * A wrapper for the internal function in the class
  * 
- * @param  (bool)   $return Whether to return or echo the trail.
- * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
- * @param  (bool)	$reverse Whether to reverse the output or not.
+ * @param  bool $return  Whether to return or echo the trail. (optional)
+ * @param  bool $linked  Whether to allow hyperlinks in the trail or not. (optional)
+ * @param  bool $reverse Whether to reverse the output or not. (optional)
  */
 function bcn_display_list($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
 	$bcn_admin->display_list($return, $linked, $reverse);
 }
-?>
+
+/**
+ * 
+ * @param $test
+ * @return unknown_type
+ */
+function test($test){
+	
+}
