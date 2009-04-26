@@ -108,7 +108,7 @@ class bcn_breadcrumb_trail
 			'home_suffix' => '',
 			//Separator that is placed between each item in the breadcrumb trial, but not placed before
 			//the first and not after the last breadcrumb
-			'separator' => '&nbsp;&gt;&nbsp;',
+			'separator' => ' &gt; ',
 			//The maximum title lenght
 			'max_title_length' => 0,
 			//Current item options, really only applies to static pages and posts unless other current items are linked
