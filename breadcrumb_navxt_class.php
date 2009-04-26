@@ -461,7 +461,7 @@ class bcn_breadcrumb_trail
 		}
 		else
 		{
-			$bcn_breadcrumb->title = __('Untagged','breadcrumb_navxt');
+			$bcn_breadcrumb->title = __('Untagged', 'breadcrumb_navxt');
 		}
 	}
 	/**
