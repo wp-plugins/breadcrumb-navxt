@@ -100,7 +100,6 @@ class bcn_admin
 			add_action('init', array($this, 'import'));
 		}
 		//Admin Init Hook
-		// TODO WPMU options: admin-init
 		add_action('admin_init', array($this, 'admin_init'));
 		
 	}
@@ -114,7 +113,7 @@ class bcn_admin
 	 */
 	public function admin_init()
 	{
-		// TODO WPMU options: register options
+		// Register options.
 		register_setting($option_group = 'bcn_admin', $option_name = 'bcn_options', $sanitize_callback = '');
 		//Add in the nice "settings" link to the plugins page
 		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
@@ -362,9 +361,7 @@ class bcn_admin
 	{
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
-		// TODO WPMU options: check_admin_referer('bcn_admin_options-options'); 
 		check_admin_referer('bcn_admin-options');
-		// was: check_admin_referer('bcn_admin_options');
 		
 		//Grab the options from the from post
 		//Home page settings
@@ -718,9 +715,7 @@ class bcn_admin
 		?></p>
 		<form action="options-general.php?page=breadcrumb-navxt" method="post" id="bcn_admin_options">
 			<?php
-				// TODO WPMU options: settings_fields('bcn_admin_options');
 				settings_fields('bcn_admin'); 
-				// was: wp_nonce_field('bcn_admin_options');
 			?>
 			<div id="hasadmintabs">
 			<fieldset id="general" class="bcn_options">
