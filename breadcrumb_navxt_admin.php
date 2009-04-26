@@ -1382,12 +1382,3 @@ function bcn_display_list($return = false, $linked = true, $reverse = false)
 	global $bcn_admin;
 	$bcn_admin->display_list($return, $linked, $reverse);
 }
-
-/**
- * 
- * @param $test
- * @return unknown_type
- */
-function test($test){
-	
-}
