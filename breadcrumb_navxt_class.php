@@ -97,11 +97,11 @@ class bcn_breadcrumb_trail
 			//Should the home page be shown
 			'home_display' => true,
 			//Title displayed when is_home() returns true
-			'home_title' => __('Blog','breadcrumb_navxt'),
+			'home_title' => __('Blog', 'breadcrumb_navxt'),
 			//The anchor template for the home page, this is global, two keywords are available %link% and %title%
-			'home_anchor' => __('<a title="Go to %title%." href="%link%">','breadcrumb_navxt'),
+			'home_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
 			//The anchor template for the blog page only in static front page mode, this is global, two keywords are available %link% and %title%
-			'blog_anchor' => __('<a title="Go to %title%." href="%link%">','breadcrumb_navxt'),
+			'blog_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
 			//The prefix for page breadcrumbs, place on all page elements and inside of current_item prefix
 			'home_prefix' => '',
 			//The suffix for page breadcrumbs, place on all page elements and inside of current_item suffix
@@ -114,7 +114,7 @@ class bcn_breadcrumb_trail
 			//Current item options, really only applies to static pages and posts unless other current items are linked
 			'current_item_linked' => false,
 			//The anchor template for current items, this is global, two keywords are available %link% and %title%
-			'current_item_anchor' => __('<a title="Reload the current page." href="%link%">','breadcrumb_navxt'),
+			'current_item_anchor' => __('<a title="Reload the current page." href="%link%">', 'breadcrumb_navxt'),
 			//The prefix for current items allows separate styling of the current location breadcrumb
 			'current_item_prefix' => '',
 			//The suffix for current items allows separate styling of the current location breadcrumb
@@ -125,7 +125,7 @@ class bcn_breadcrumb_trail
 			//The suffix for page breadcrumbs, place on all page elements and inside of current_item suffix
 			'page_suffix' => '',
 			//The anchor template for page breadcrumbs, two keywords are available %link% and %title%
-			'page_anchor' => __('<a title="Go to %title%." href="%link%">','breadcrumb_navxt'),
+			'page_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
 			//Paged options
 			//The prefix for paged breadcrumbs, place on all page elements and inside of current_item prefix
 			'paged_prefix' => '',
@@ -139,7 +139,7 @@ class bcn_breadcrumb_trail
 			//The suffix for post breadcrumbs, place on all page elements and inside of current_item suffix
 			'post_suffix' => '',
 			//The anchor template for post breadcrumbs, two keywords are available %link% and %title%
-			'post_anchor' => __('<a title="Go to %title%." href="%link%">','breadcrumb_navxt'),
+			'post_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
 			//Should the trail include the taxonomy of the post
 			'post_taxonomy_display' => true,
 			//What taxonomy should be shown leading to the post, tag or category
@@ -155,24 +155,24 @@ class bcn_breadcrumb_trail
 			//The suffix for 404 breadcrumbs, place on all page elements and inside of current_item suffix
 			'404_suffix' => '',
 			//The text to be shown in the breadcrumb for a 404 page
-			'404_title' => __('404','breadcrumb_navxt'),
+			'404_title' => __('404', 'breadcrumb_navxt'),
 			//Search page options
 			//The prefix for search breadcrumbs, place on all page elements and inside of current_item prefix
-			'search_prefix' => __('Search results for &#39;','breadcrumb_navxt'),
+			'search_prefix' => __('Search results for &#39;', 'breadcrumb_navxt'),
 			//The suffix for search breadcrumbs, place on all page elements and inside of current_item suffix
 			'search_suffix' => '&#39;',
 			//The anchor template for search breadcrumbs, two keywords are available %link% and %title%
-			'search_anchor' => __('<a title="Go to the first page of search results for %title%." href="%link%">','breadcrumb_navxt'),
+			'search_anchor' => __('<a title="Go to the first page of search results for %title%." href="%link%">', 'breadcrumb_navxt'),
 			//Tag related stuff
 			//The prefix for tag breadcrumbs, place on all page elements and inside of current_item prefix
 			'tag_prefix' => '',
 			//The suffix for tag breadcrumbs, place on all page elements and inside of current_item suffix
 			'tag_suffix' => '',
 			//The anchor template for tag breadcrumbs, two keywords are available %link% and %title%
-			'tag_anchor' => __('<a title="Go to the %title% tag archives." href="%link%">','breadcrumb_navxt'),
+			'tag_anchor' => __('<a title="Go to the %title% tag archives." href="%link%">', 'breadcrumb_navxt'),
 			//Author page stuff
 			//The prefix for author breadcrumbs, place on all page elements and inside of current_item prefix
-			'author_prefix' => __('Articles by: ','breadcrumb_navxt'),
+			'author_prefix' => __('Articles by: ', 'breadcrumb_navxt'),
 			//The suffix for author breadcrumbs, place on all page elements and inside of current_item suffix
 			'author_suffix' => '',
 			//Which of the various WordPress display types should the author crumb display
@@ -183,17 +183,17 @@ class bcn_breadcrumb_trail
 			//The suffix for category breadcrumbs, place on all page elements and inside of current_item suffix
 			'category_suffix' => '',
 			//The anchor template for category breadcrumbs, two keywords are available %link% and %title%
-			'category_anchor' => __('<a title="Go to the %title% category archives." href="%link%">','breadcrumb_navxt'),
+			'category_anchor' => __('<a title="Go to the %title% category archives." href="%link%">', 'breadcrumb_navxt'),
 			//Archives related settings
 			//Prefix for category archives, place inside of both the current_item prefix and the category_prefix
-			'archive_category_prefix' => __('Archive by category &#39;','breadcrumb_navxt'),
+			'archive_category_prefix' => __('Archive by category &#39;', 'breadcrumb_navxt'),
 			//Suffix for category archives, place inside of both the current_item suffix and the category_suffix
 			'archive_category_suffix' => '&#39;',
 			//Prefix for tag archives, place inside of the current_item prefix
-			'archive_tag_prefix' => __('Archive by tag &#39;','breadcrumb_navxt'),
+			'archive_tag_prefix' => __('Archive by tag &#39;', 'breadcrumb_navxt'),
 			//Suffix for tag archives, place inside of the current_item suffix
 			'archive_tag_suffix' => '&#39;',
-			'date_anchor' => __('<a title="Go to the %title% archives." href="%link%">','breadcrumb_navxt'),
+			'date_anchor' => __('<a title="Go to the %title% archives." href="%link%">', 'breadcrumb_navxt'),
 			//Prefix for date archives, place inside of the current_item prefix
 			'archive_date_prefix' => '',
 			//Suffix for date archives, place inside of the current_item suffix
@@ -317,7 +317,7 @@ class bcn_breadcrumb_trail
 		if($bcn_authdisp == "display_name" || $bcn_authdisp == "nickname" || $bcn_authdisp == "first_name" || $bcn_authdisp == "last_name")
 		{
 			//Assign the title
-			$bcn_breadcrumb->title = apply_filters("the_author", $bcn_curauth->$bcn_authdisp);
+			$bcn_breadcrumb->title = apply_filters('the_author', $bcn_curauth->$bcn_authdisp);
 		}
 	}
 	/**
@@ -342,7 +342,7 @@ class bcn_breadcrumb_trail
 		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
 		$bcn_parent = get_post($id);
 		//Assign the title
-		$bcn_breadcrumb->title = apply_filters("the_title", $bcn_parent->post_title);
+		$bcn_breadcrumb->title = apply_filters('the_title', $bcn_parent->post_title);
 		//Assign the anchor properties
 		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_permalink($id), $this->opt['page_anchor']));
 		//We want this to be linked
@@ -446,7 +446,7 @@ class bcn_breadcrumb_trail
 			foreach($bcn_object as $tag)
 			{
 				//Run through a filter for good measure
-				$tag->name = apply_filters("get_tag", $tag->name);
+				$tag->name = apply_filters('get_tag', $tag->name);
 				//On the first run we don't need a separator
 				if($i)
 				{
@@ -735,7 +735,7 @@ class bcn_breadcrumb_trail
 		if(get_option('show_on_front') == "page")
 		{
 			//We'll have to check if this ID is valid, e.g. user has specified a posts page
-			$posts_id = get_option("page_for_posts");
+			$posts_id = get_option('page_for_posts');
 			//We only need the "blog" portion on members of the blog, not searches, pages or 404s
 			if((is_single() || is_archive() || is_author() || is_home()) && $posts_id != NULL)
 			{
@@ -746,7 +746,7 @@ class bcn_breadcrumb_trail
 				//Get the blog page ID
 				$post = get_post($posts_id);
 				//Setup the title
-				$bcn_breadcrumb->title = apply_filters("the_title", $post->post_title);
+				$bcn_breadcrumb->title = apply_filters('the_title', $post->post_title);
 				if(is_home() && (!is_paged() || !$this->opt['paged_display']))
 				{
 					//Assign the prefix

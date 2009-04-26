@@ -255,39 +255,39 @@ class bcn_admin
 		//Do a nonce check, prevent malicious link/form problems 
 		check_admin_referer('bcn_admin_upload');
 		//Update our internal settings
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options',true);
+		$this->breadcrumb_trail->opt = $this->get_option('bcn_options', true);
 		//Create a DOM document
-		$dom = new DOMDocument("1.0");
+		$dom = new DOMDocument('1.0');
 		//Adds in newlines and tabs to the output
 		$dom->formatOutput = true;
 		//Add an element called options
-		$node = $dom->createElement("options");
+		$node = $dom->createElement('options');
 		$parnode = $dom->appendChild($node);
 		//Add a child element named plugin
-		$node = $dom->createElement("plugin");
+		$node = $dom->createElement('plugin');
 		$plugnode = $parnode->appendChild($node);
 		//Add some attributes that identify the plugin and version for the options export
-		$plugnode->setAttribute("name", "breadcrumb_navxt");
-		$plugnode->setAttribute("version", $this->version);
+		$plugnode->setAttribute('name', 'breadcrumb_navxt');
+		$plugnode->setAttribute('version', $this->version);
 		//Change our headder to text/xml for direct save
-		header("Cache-Control: public");
+		header('Cache-Control: public');
 		//The next two will cause good browsers to download instead of displaying the file
-		header("Content-Description: File Transfer");
-		header("Content-disposition: attachemnt; filename=bcn_settings.xml");
-		header("Content-Type: text/xml");
+		header('Content-Description: File Transfer');
+		header('Content-disposition: attachemnt; filename=bcn_settings.xml');
+		header('Content-Type: text/xml');
 		//Loop through the options array
 		foreach($this->breadcrumb_trail->opt as $key=>$option)
 		{
 			//Add a option tag under the options tag, store the option value
-			$node = $dom->createElement("option",$option);
+			$node = $dom->createElement('option', $option);
 			$newnode = $plugnode->appendChild($node);
 			//Change the tag's name to that of the stored option
-			$newnode->setAttribute("name",$key);
+			$newnode->setAttribute('name', $key);
 		}
 		//Prepair the XML for output
 		$output = $dom->saveXML();
 		//Let the browser know how long the file is
-		header("Content-Length: " . strlen($output)); // binary length
+		header('Content-Length: ' . strlen($output)); // binary length
 		//Output the file
 		echo $output;
 		//Prevent WordPress from continuing on
@@ -296,7 +296,7 @@ class bcn_admin
 	/**
 	 * import
 	 * 
-	 * Imports a XML options dump
+	 * Imports a XML options document
 	 */
 	function import()
 	{
@@ -311,7 +311,7 @@ class bcn_admin
 		//Create a DOM document
 		$dom = new DOMDocument('1.0');
 		//We want to catch errors ourselves
-		set_error_handler("error");
+		set_error_handler('error');
 		//Load the user uploaded file, handle failure gracefully
 		if($dom->load($_FILES['bcn_admin_import_file']['tmp_name']))
 		{
@@ -1358,7 +1358,7 @@ $bcn_admin = new bcn_admin;
  * 
  * @param bool $return Whether to return or echo the trail. (optional)
  * @param bool $linked Whether to allow hyperlinks in the trail or not. (optional)
- * @param bool$reverse Whether to reverse the output or not. (optional)
+ * @param bool $reverse Whether to reverse the output or not. (optional)
  */
 function bcn_display($return = false, $linked = true, $reverse = false)
 {
