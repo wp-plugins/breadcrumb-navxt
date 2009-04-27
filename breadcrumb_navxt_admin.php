@@ -652,7 +652,7 @@ class bcn_admin
 	 */
 	function admin_head()
 	{	
-		// print style and script element (should to into head element) 
+		// print style and script element (should go into head element) 
 		?>
 <style type="text/css">
 	/**
@@ -670,24 +670,28 @@ class bcn_admin
 #hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%; border-bottom:1px solid #dfdfdf; display:block; float:left; line-height:28px; padding:1px 13px 0; position:relative; text-decoration:none;}
 #hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a{-moz-border-radius-topleft:4px; -moz-border-radius-topright:4px;border:1px solid #dfdfdf; border-bottom-color:#f9f9f9; color:#333333; font-weight:normal; padding:0 12px;}
 #hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color; outline-style:none; outline-width:medium; }
+
+#screen-options-wrap p.submit {margin:0; padding:0;}
 </style>
 <script type="text/javascript">
 /* <![CDATA[ */
 	/**
-	 * Tabbed Admin Page (javascript/jQuery)
+	 * Breadcrumb NavXT Admin Page (javascript/jQuery)
 	 *
 	 * unobtrusive approach to add tabbed forms into
-	 * the wordpress admin panel
+	 * the wordpress admin panel and various other 
+	 * stuff that needs javascript with the Admin Panel.
 	 *
 	 * @see Breadcrumb NavXT (Wordpress Plugin)
 	 * @author Tom Klingenberg
+	 * @author John Havlik
 	 * @uses jQuery
-	 * @uses ui.core
-	 * @uses ui.tabs
-	 */
+	 * @uses jQuery.ui.tabs
+	 */		
 	jQuery(function() 
 	{
-		bcn_tabulator_init();
+		bcn_context_init();
+		bcn_tabulator_init();		
 	 });
 	function bcn_confirm(type)
 	{
@@ -743,7 +747,58 @@ class bcn_admin
 			// node access:						
 			form.get(0).setAttribute("action", action);
 		});
-	}	
+	}
+
+	/**
+	 * context screen options for import/export
+	 */
+	 function bcn_context_init() {
+
+		if (!jQuery("#bcn_import_export_relocate").length) return;
+
+		var jqver = undefined == jQuery.fn.jquery ? [0,0,0] : jQuery.fn.jquery.split('.');
+
+		jQuery('#screen-meta').prepend(
+				'<div id="screen-options-wrap" class="hidden"></div>'
+		);
+
+		jQuery('#screen-meta-links').append(
+				'<div id="screen-options-link-wrap" class="hide-if-no-js screen-meta-toggle">' +
+				'<a class="show-settings" id="show-settings-link" href="#screen-options"><?php printf('%s/%s/%s', __('Import', 'breadcrumb_navxt'), __('Export', 'breadcrumb_navxt'), __('Reset', 'breadcrumb_navxt')); ?></a>' + 
+				'</div>'
+		);
+
+		// jQuery Version below 1.3 (common for WP 2.7) needs some other style-classes
+		// and jQuery events
+		if (jqver[0] <= 1 && jqver[1] < 3)
+		{
+			// hide-if-no-js for WP 2.8, not for WP 2.7
+			jQuery('#screen-options-link-wrap').removeClass('hide-if-no-js');
+			// screen settings tab (WP 2.7 legacy)
+			jQuery('#show-settings-link').click(function () {
+				if ( ! jQuery('#screen-options-wrap').hasClass('screen-options-open') ) {
+					jQuery('#contextual-help-link-wrap').addClass('invisible');
+				}
+				jQuery('#screen-options-wrap').slideToggle('fast', function(){
+					if ( jQuery(this).hasClass('screen-options-open') ) {
+						jQuery('#show-settings-link').css({'backgroundImage':'url("images/screen-options-right.gif")'});
+						jQuery('#contextual-help-link-wrap').removeClass('invisible');
+						jQuery(this).removeClass('screen-options-open');
+					} else {
+						jQuery('#show-settings-link').css({'backgroundImage':'url("images/screen-options-right-up.gif")'});
+						jQuery(this).addClass('screen-options-open');
+					}
+				});
+				return false;
+			});			
+		}
+
+		var code = jQuery('#bcn_import_export_relocate').html();
+		jQuery('#bcn_import_export_relocate').html('');
+		code = code.replace('h3>', 'h5>');
+		jQuery('#screen-options-wrap').prepend(code);		
+	 }
+	
 /* ]]> */
 </script>
 <?php
@@ -1246,29 +1301,31 @@ class bcn_admin
 			</div>
 			<p class="submit"><input type="submit" class="button-primary" name="bcn_admin_options" value="<?php _e('Save Changes') ?>" /></p>
 		</form>
-		<form action="options-general.php?page=breadcrumb-navxt" method="post" enctype="multipart/form-data" id="bcn_admin_upload">
-			<?php wp_nonce_field('bcn_admin_upload');?>
-				<fieldset id="import_export" class="bcn_options">
-					<h3><?php _e('Import/Export/Reset Settings', 'breadcrumb_navxt'); ?></h3>
-					<p><?php _e('Import Breadcrumb NavXT settings from a XML file, export the current settings to a XML file, or reset to the default Breadcrumb NavXT settings.', 'breadcrumb_navxt');?></p>
-					<table class="form-table">
-						<tr valign="top">
-							<th scope="row">
-								<label for="bcn_admin_import_file"><?php _e('Settings File', 'breadcrumb_navxt'); ?></label>
-							</th>
-							<td>
-								<input type="file" name="bcn_admin_import_file" id="bcn_admin_import_file" size="32"/><br />
-								<span class="setting-description"><?php _e('Select a XML settings file to upload and import settings from.', 'breadcrumb_navxt'); ?></span>
-							</td>
-						</tr>
-					</table>
-					<p class="submit">
-						<input type="submit" class="button" name="bcn_admin_import" value="<?php _e('Import') ?>" onclick="return bcn_confirm('import')" />
-						<input type="submit" class="button" name="bcn_admin_export" value="<?php _e('Export') ?>" />
-						<input type="submit" class="button" name="bcn_admin_reset" value="<?php _e('Reset') ?>" onclick="return bcn_confirm('reset')" />
-					</p>
-				</fieldset>
-		</form>
+		<div id="bcn_import_export_relocate">
+			<form action="options-general.php?page=breadcrumb-navxt" method="post" enctype="multipart/form-data" id="bcn_admin_upload">
+				<?php wp_nonce_field('bcn_admin_upload');?>
+					<fieldset id="import_export" class="bcn_options">
+						<h3><?php _e('Import/Export/Reset Settings', 'breadcrumb_navxt'); ?></h3>
+						<p><?php _e('Import Breadcrumb NavXT settings from a XML file, export the current settings to a XML file, or reset to the default Breadcrumb NavXT settings.', 'breadcrumb_navxt');?></p>
+						<table class="form-table">
+							<tr valign="top">
+								<th scope="row">
+									<label for="bcn_admin_import_file"><?php _e('Settings File', 'breadcrumb_navxt'); ?></label>
+								</th>
+								<td>
+									<input type="file" name="bcn_admin_import_file" id="bcn_admin_import_file" size="32"/><br />
+									<span class="setting-description"><?php _e('Select a XML settings file to upload and import settings from.', 'breadcrumb_navxt'); ?></span>
+								</td>
+							</tr>
+						</table>
+						<p class="submit">
+							<input type="submit" class="button" name="bcn_admin_import" value="<?php _e('Import', 'breadcrumb_navxt') ?>" onclick="return bcn_confirm('import')" />
+							<input type="submit" class="button" name="bcn_admin_export" value="<?php _e('Export', 'breadcrumb_navxt') ?>" />
+							<input type="submit" class="button" name="bcn_admin_reset" value="<?php _e('Reset', 'breadcrumb_navxt') ?>" onclick="return bcn_confirm('reset')" />
+						</p>
+					</fieldset>
+			</form>
+		</div>
 		</div>
 		<?php
 	}
