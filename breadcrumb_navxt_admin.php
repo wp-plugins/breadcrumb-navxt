@@ -66,11 +66,18 @@ class bcn_admin
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
 		add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php', array($this, 'install'));
+		
 		//Uninstallation Script hook
-		if(function_exists('register_uninstall_hook'))
-		{
-			register_uninstall_hook(__FILE__, array($this, 'uninstall'));
-		}
+		//		
+		// uncommented 2009-04-27 09:49 GMT+1 because this code is replaced 
+		// by new uninstall.php file.
+		//
+		// TODO remove uncommented code if unstall.php has been tested for a while		
+		//		if(function_exists('register_uninstall_hook'))
+		//		{
+		//		register_uninstall_hook(__FILE__, array($this, 'uninstall'));
+		//		}
+		
 		//WordPress Admin interface hook
 		add_action('admin_menu', array($this, 'add_page'));
 		//WordPress Hook for the widget
