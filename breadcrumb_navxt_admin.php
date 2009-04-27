@@ -795,8 +795,7 @@ class bcn_admin
 
 		var code = jQuery('#bcn_import_export_relocate').html();
 		jQuery('#bcn_import_export_relocate').html('');
-		code = code.replace(/h3>/gi, 'h5>');
-		alert(code);
+		code = code.replace(/h3>/gi, 'h5>');		
 		jQuery('#screen-options-wrap').prepend(code);		
 	 }
 	
