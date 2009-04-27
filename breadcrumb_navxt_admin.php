@@ -47,6 +47,15 @@ class bcn_admin
 	 * @since 3.1.0
 	 */
 	private $version = '3.1.200';
+	
+	/**
+	 * wether or not this administration page has contextual help
+	 * 
+	 * @var bool
+	 * @since 3.2
+	 */
+	private $_hasContextualHelp = false;	
+	
 	/**
 	 * local store for the breadcrumb object
 	 * 
@@ -578,11 +587,62 @@ class bcn_admin
 		if(current_user_can('manage_options'))
 		{
 			//Add the submenu page to "settings" menu
-			$hookname = add_submenu_page('options-general.php', 'Breadcrumb NavXT Settings', 'Breadcrumb NavXT', 'manage_options', 'breadcrumb-navxt', array($this, 'admin_panel'));		
+			$hookname = add_submenu_page('options-general.php', __('Breadcrumb NavXT Settings', 'breadcrumb_navxt'), 'Breadcrumb NavXT', 'manage_options', 'breadcrumb-navxt', array($this, 'admin_panel'));		
 			//Register admin_head-$hookname callback
-			add_action('admin_head-'.$hookname, array($this, 'admin_head'));
+			add_action('admin_head-'.$hookname, array($this, 'admin_head'));			
+			//Register Help Output
+			add_action('contextual_help', array($this, 'contextual_help'), 10, 2);
 		}
 	}
+	
+	/**
+	 * contextual_help action hook function
+	 * 
+	 * @param  string $contextual_help
+	 * @param  string $screen
+	 * @return string
+	 */
+	function contextual_help($contextual_help, $screen)
+	{
+		// add contextual help on current screen		
+		if ($screen == 'settings_page_breadcrumb-navxt')
+		{
+			$contextual_help          = $this->_getContextualHelp();
+			$this->_hasContextualHelp = true;			
+		}
+		
+		return $contextual_help;
+	}
+	
+	/**
+	 * get contextual help
+	 * 
+	 * @return string
+	 */
+	private function _getContextualHelp()
+	{
+		$t = $this->_getHelpText();		
+		
+		$t = sprintf('<div class="metabox-prefs">%s</div>', $t);
+		
+		$title = __('Breadcrumb NavXT Settings', 'breadcrumb_navxt');
+		
+		$t = sprintf('<h5>%s</h5>%s', sprintf(__('Get help with "%s"'), $title), $t);
+		
+		return $t;
+	}	
+	
+	/**
+	 * get help text
+	 * 
+	 * @return string
+	 */
+	private function _getHelpText()
+	{
+		return sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
+			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>');
+	}
+	
 	/**
 	 * admin_head
 	 *
@@ -715,10 +775,9 @@ class bcn_admin
 			</div>
 			<?php 
 		} ?>
-		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>
-		<p><?php 
-			printf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
-			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>'); 
+		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
+		<p<?php if ($this->_hasContextualHelp): ?> class="hide-if-js"<?php endif; ?>><?php 
+			print $this->_getHelpText();			 
 		?></p>
 		<form action="options-general.php?page=breadcrumb-navxt" method="post" id="bcn_admin_options">
 			<?php
