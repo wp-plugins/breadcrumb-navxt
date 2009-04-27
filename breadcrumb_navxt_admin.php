@@ -54,7 +54,7 @@ class bcn_admin
 	 * @var bool
 	 * @since 3.2
 	 */
-	private $_hasContextualHelp = false;	
+	private $_has_contextual_help = false;	
 	
 	/**
 	 * local store for the breadcrumb object
@@ -607,10 +607,9 @@ class bcn_admin
 		// add contextual help on current screen		
 		if ($screen == 'settings_page_breadcrumb-navxt')
 		{
-			$contextual_help          = $this->_getContextualHelp();
-			$this->_hasContextualHelp = true;			
+			$contextual_help = $this->_get_contextual_help();
+			$this->_has_contextual_help = true;
 		}
-		
 		return $contextual_help;
 	}
 	
@@ -619,9 +618,9 @@ class bcn_admin
 	 * 
 	 * @return string
 	 */
-	private function _getContextualHelp()
+	private function _get_contextual_help()
 	{
-		$t = $this->_getHelpText();		
+		$t = $this->_get_help_text();
 		
 		$t = sprintf('<div class="metabox-prefs">%s</div>', $t);
 		
@@ -637,7 +636,7 @@ class bcn_admin
 	 * 
 	 * @return string
 	 */
-	private function _getHelpText()
+	private function _get_help_text()
 	{
 		return sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
 			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>');
@@ -831,8 +830,8 @@ class bcn_admin
 			<?php 
 		} ?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
-		<p<?php if ($this->_hasContextualHelp): ?> class="hide-if-js"<?php endif; ?>><?php 
-			print $this->_getHelpText();			 
+		<p<?php if ($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
+			print $this->_get_help_text();			 
 		?></p>
 		<form action="options-general.php?page=breadcrumb-navxt" method="post" id="bcn_admin_options">
 			<?php
