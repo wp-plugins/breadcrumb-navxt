@@ -62,6 +62,32 @@ class bcn_uninstaller {
 	}
 	
 	/**
+	 * get plugin path
+	 * 
+	 * @return string full path to plugin file
+	 */
+	private function _getPluginPath()
+	{
+		return sprintf('%s/%s/%s', WP_PLUGIN_DIR, $this->_base, $this->_plugin);		
+	}
+	
+	/**
+	 * uninstall breadcrumb navxt admin plugin
+	 * 
+	 * @return bool
+	 */
+	private function _uninstallAdmin()
+	{	
+		// load dependencies if applicable
+		
+		if(!class_exists('bcn_admin'))									
+			require_once($this->_getPluginPath());
+			
+		// uninstall		
+		$bcn_admin->uninstall();
+	}	
+	
+	/**
 	 * Result Getter
 	 * 
 	 * @return bool wether or not uninstall did run successfull.
@@ -120,7 +146,7 @@ class bcn_uninstaller {
 		switch($this->_plugin)
 		{
 			case 'breadcrumb_navxt_admin.php':
-				return $this->uninstallAdmin();
+				return $this->_uninstallAdmin();
 			case 'breadcrumb_navxt_class.php':
 				return true;											
 			default:
@@ -133,29 +159,4 @@ class bcn_uninstaller {
 		$this->_uninstalled = true;		
 	}
 	
-	/**
-	 * uninstall breadcrumb navxt admin plugin
-	 * 
-	 * @return bool
-	 */
-	private function uninstallAdmin()
-	{	
-		// load dependencies if applicable
-		
-		if(!class_exists('bcn_admin'))									
-			require_once($this->getPluginPath());
-			
-		// uninstall		
-		$bcn_admin->uninstall();
-	}
-	
-	/**
-	 * get plugin path
-	 * 
-	 * @return string full path to plugin file
-	 */
-	private function getPluginPath()
-	{
-		return sprintf('%s/%s/%s', WP_PLUGIN_DIR, $this->_base, $this->_plugin);		
-	}
 }
