@@ -1,12 +1,4 @@
 <?php
-/*
-Plugin Name: Breadcrumb NavXT - Core
-Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
-Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb_trail class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.1.200
-Author: John Havlik
-Author URI: http://mtekk.weblogs.us/
-*/
 /*  Copyright 2007-2009  John Havlik  (email : mtekkmonkey@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
@@ -28,22 +20,39 @@ class bcn_breadcrumb
 {
 	//Our member variables
 	//The main text that will be shown
-	var $title;
+	public $title;
 	//Boolean, is this element linked
-	var $linked;
+	public $linked;
 	//Linked anchor contents, null if $linked == false
-	var $anchor;
+	public $anchor;
 	//Global prefix, outside of link tags
-	var $prefix;
+	public $prefix;
 	//Global suffix, outside of link tags
-	var $suffix;
-	//Default constructor
-	function breadcrumb()
+	public $suffix;
+	/**
+	 * bcn_breadcrumb
+	 * 
+	 * The enhanced default constructor
+	 * 
+	 * @return 
+	 * @param $title String[optional]
+	 * @param $prefix String[optional]
+	 * @param $suffix String[optional]
+	 * @param $anchor String[optional]
+	 * @param $linked Bool[optional]
+	 */
+	function bcn_breadcrumb($title = "", $prefix = "", $suffix = "", $anchor = NULL, $linked = false)
 	{
+		//Set the title
+		$this->title = $title;
+		//Set the prefix
+		$this->prefix = $prefix;
+		//Set the suffix
+		$this->suffix = $suffix;
 		//Default state of unlinked
-		$this->linked = false;
+		$this->linked = $linked;
 		//Always NULL if unlinked
-		$this->anchor = NULL;
+		$this->anchor = $anchor;
 	}
 	/**
 	 * title_trim
@@ -72,23 +81,45 @@ class bcn_breadcrumb
 			$this->title = rtrim($this->title) . '&hellip;';
 		}
 	}
+	/**
+	 * assemble
+	 * 
+	 * Assembles the parts of the breadcrumb into a html string
+	 * 
+	 * @return String The compiled breadcrumb string
+	 * @param $linked Bool[optional] Allow the output to contain anchors?
+	 */
+	function assemble($linked = true)
+	{
+		//Place in the breadcrumb's elements
+		$breadcrumb_str .= $this->prefix;
+		//If we are linked we'll need to do up the link
+		if($this->linked && $linked)
+		{
+			$breadcrumb_str .= $this->anchor . $this->title . "</a>";
+		}
+		//Otherwise we just slip in the title
+		else
+		{
+			$breadcrumb_str .= $this->title;
+		}
+		//Return the assembled string
+		return $breadcrumb_str . $this->suffix;
+	}
 }
 
 //The trail class
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	var $version;
+	public $version = '3.2.100';
 	//An array of breadcrumbs
-	var $trail;
+	public $trail = array();
 	//The options
-	var $opt;
+	public $opt;
 	//Default constructor
 	function bcn_breadcrumb_trail()
 	{
-		$this->version = "3.1.200";
-		//Initilize the trail as an array
-		$this->trail = array();
 		//Load the translation domain as the next part needs it
 		load_plugin_textdomain($domain = 'breadcrumb_navxt', $path = PLUGINDIR . '/breadcrumb-navxt');
 		//Initilize with default option values
@@ -200,7 +231,19 @@ class bcn_breadcrumb_trail
 			'archive_date_suffix' => ''
 		);
 	}
-	//The do filling functions
+	/**
+	 * add
+	 * 
+	 * Adds a breadcrumb to the breadcrumb trail
+	 * 
+	 * @return pointer to the just added Breadcrumb
+	 * @param $object bcn_breadcrumb Breadcrumb to add to the trail
+	 */
+	function &add($object)
+	{
+		$this->trail[] = $object;
+		return $this->trail[count($this->trail) - 1];
+	}
 	/**
 	 * do_search
 	 * 
@@ -211,25 +254,18 @@ class bcn_breadcrumb_trail
 	function do_search()
 	{
 		global $s;
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['search_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['search_suffix'] . $this->opt['current_item_suffix'];
-		//Assign the title
-		$bcn_breadcrumb->title = wp_specialchars($s, 1);
+		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb(wp_specialchars($s, 1), $this->opt['current_item_prefix'] . $this->opt['search_prefix'],
+			$this->opt['search_suffix'] . $this->opt['current_item_suffix']));
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Figure out the hyperlink for the anchor
 			$url = get_settings('home'). "?s=" . str_replace(" ", "+", wp_specialchars($s, 1));
 			//Figure out the anchor for the search
-			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", $url, $this->opt['search_anchor']));
+			$breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", $url, $this->opt['search_anchor']));
 			//We want this to be linked
-			$bcn_breadcrumb->linked = true;
+			$breadcrumb->linked = true;
 		}
 	}
 	/**
@@ -242,16 +278,9 @@ class bcn_breadcrumb_trail
 	function do_attachment()
 	{
 		global $post;
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['attachment_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['attachment_suffix'] . $this->opt['current_item_suffix'];
-		//Addign the title, using a better method
-		$bcn_breadcrumb->title = get_the_title();
+		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+		$this->trail[] = new bcn_breadcrumb(get_the_title(), $this->opt['current_item_prefix'] . $this->opt['attachment_prefix'],
+			$this->opt['attachment_suffix'] . $this->opt['current_item_suffix']);
 		//Get the parent page/post of the attachment
 		$bcn_parent_id = $post->post_parent;
 		//Get the parent's information
@@ -284,11 +313,6 @@ class bcn_breadcrumb_trail
 			$bcn_breadcrumb->linked = true;
 			//Handle the post's taxonomy
 			$this->post_taxonomy($bcn_parent_id);
-			//If our max title length is greater than 0 we should do something
-			if($this->opt['max_title_length'] > 0)
-			{
-				$bcn_breadcrumb->title_trim($this->opt['max_title_length']);
-			}
 		}
 	}
 	/**
@@ -364,16 +388,9 @@ class bcn_breadcrumb_trail
 	function do_page()
 	{
 		global $post;
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['page_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['page_suffix'] . $this->opt['current_item_suffix'];
-		//Assign the title, using our older method to replace in the future
-		$bcn_breadcrumb->title = get_the_title();
+		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, prefix, and suffix
+		$this->trail[] = new bcn_breadcrumb(get_the_title(), $this->opt['current_item_prefix'] . $this->opt['page_prefix'],
+			$this->opt['page_suffix'] . $this->opt['current_item_suffix']);
 		//Done with the current item, now on to the parents
 		$bcn_frontpage = get_option('page_on_front');
 		//If there is a parent page let's find it
@@ -475,27 +492,19 @@ class bcn_breadcrumb_trail
 	function category_parents($id)
 	{
 		global $post;
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['category_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['category_suffix'];
 		//Get the current category object, filter applied within this call
-		$bcn_category = get_category($id);
-		//Setup the title
-		$bcn_breadcrumb->title = $bcn_category->cat_name;
+		$category = get_category($id);
+		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb($category->cat_name, $this->opt['category_prefix'], $this->opt['category_suffix']));
 		//Figure out the anchor for the first category
-		$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
+		$breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
 		//We want this to be linked
-		$bcn_breadcrumb->linked = true;
+		$breadcrumb->linked = true;
 		//Make sure the id is valid, and that we won't end up spinning in a loop
-		if($bcn_category->category_parent && $bcn_category->category_parent != $id)
+		if($category->category_parent && $category->category_parent != $id)
 		{
 			//Figure out the rest of the category hiearchy via recursion
-			$this->category_parents($bcn_category->category_parent);
+			$this->category_parents($category->category_parent);
 		}
 	}
 	/**
@@ -508,25 +517,18 @@ class bcn_breadcrumb_trail
 	function do_archive_by_category()
 	{
 		global $wp_query;
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['category_prefix'] . $this->opt['archive_category_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['archive_category_suffix'] . $this->opt['category_suffix'] . $this->opt['current_item_suffix'];
-		//Assign the title
-		$bcn_breadcrumb->title = single_cat_title("", false);	
+		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb(single_cat_title("", false), $this->opt['current_item_prefix'] . $this->opt['category_prefix'] . $this->opt['archive_category_prefix'],
+			$this->opt['archive_category_suffix'] . $this->opt['category_suffix'] . $this->opt['current_item_suffix']));
 		//Simmilar to using $post, but for things $post doesn't cover
 		$bcn_category = $wp_query->get_queried_object();
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Figure out the anchor for current category
-			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
+			$breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_category_link($bcn_category->cat_ID), $this->opt['category_anchor']));
 			//We want this to be linked
-			$bcn_breadcrumb->linked = true;
+			$breadcrumb->linked = true;
 		}
 		//Get parents of current category
 		if($bcn_category->category_parent)
@@ -544,25 +546,18 @@ class bcn_breadcrumb_trail
 	function do_archive_by_tag()
 	{
 		global $wp_query;
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_tag_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['archive_tag_suffix'] . $this->opt['current_item_suffix'];
-		//Assign the title
-		$bcn_breadcrumb->title = single_tag_title("", false);
+		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb(single_tag_title("", false), $this->opt['current_item_prefix'] . $this->opt['archive_tag_prefix'],
+			$this->opt['archive_tag_suffix'] . $this->opt['current_item_suffix']));
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Simmilar to using $post, but for things $post doesn't cover
 			$bcn_tag = $wp_query->get_queried_object();
 			//Figure out the anchor for current category
-			$bcn_breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_tag_link($bcn_tag->term_id), $this->opt['tag_anchor']));
+			$breadcrumb->anchor = str_replace("%title%", $bcn_breadcrumb->title, str_replace("%link%", get_tag_link($bcn_tag->term_id), $this->opt['tag_anchor']));
 			//We want this to be linked
-			$bcn_breadcrumb->linked = true;
+			$breadcrumb->linked = true;
 		}
 	}
 	/**
@@ -575,94 +570,55 @@ class bcn_breadcrumb_trail
 	function do_archive_by_date()
 	{
 		global $wp_query;
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
+		//First deal with the day breadcrumb
 		if(is_day())
 		{
-			//First deal with the day breadcrumb
-			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'];
-			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'] . $this->opt['current_item_suffix'];
-			//Assign the title
-			$bcn_breadcrumb->title = get_the_time('d');
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('d'), $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'],
+				$this->opt['archive_date_suffix'] . $this->opt['current_item_suffix']));
 			//If we're paged, let's link to the first page
 			if(is_paged() && $this->opt['paged_display'])
 			{
 				//Deal with the anchor
-				$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('F') . " " . $bcn_breadcrumb->title . ", " . get_the_time('Y'), str_replace("%link%", get_day_link(get_the_time('Y'), get_the_time('m'), $bcn_breadcrumb->title), $this->opt['date_anchor']));
+				$breadcrumb->anchor = str_replace("%title%", get_the_time('F') . " " . $bcn_breadcrumb->title . ", " . get_the_time('Y'), str_replace("%link%", get_day_link(get_the_time('Y'), get_the_time('m'), $bcn_breadcrumb->title), $this->opt['date_anchor']));
 				//Yes we want this linked
-				$bcn_breadcrumb->linked = true;
+				$breadcrumb->linked = true;
 			}
-			//Next add in the month breadcrumb
-			//Add new breadcrumb to the trail
-			$this->trail[] = new bcn_breadcrumb();
-			//Figure out where we placed the crumb, make a nice pointer to it
-			$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['archive_date_prefix'];
-			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'];
-			//Assign the title
-			$bcn_breadcrumb->title = get_the_time('F');
-			//Deal with the anchor
-			$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('F') . " " . get_the_time('Y'), str_replace("%link%", get_month_link(get_the_time('Y'), get_the_time('m')), $this->opt['date_anchor']));
-			//Yes we want this linked
-			$bcn_breadcrumb->linked = true;
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('F'), $this->opt['archive_date_prefix'], $this->opt['archive_date_suffix']));
 		}
 		else if(is_month())
 		{
-			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'];
-			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'] . $this->opt['current_item_suffix'];
-			//Assign the title
-			$bcn_breadcrumb->title = get_the_time('F');
-			//If we're paged, let's link to the first page
-			if(is_paged() && $this->opt['paged_display'])
-			{
-				//Deal with the anchor
-				$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('F') . " " . get_the_time('Y'), str_replace("%link%", get_month_link(get_the_time('Y'), get_the_time('m')), $this->opt['date_anchor']));
-				//Yes we want this linked
-				$bcn_breadcrumb->linked = true;
-			}
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('F'), $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'],
+				$this->opt['archive_date_suffix'] . $this->opt['current_item_suffix']));
 		}
-		//Next add in the year breadcrumb
+		//If we're paged, or not in the archive by month let's link to the first archive by year page
+		if(is_day() || (is_month() && is_paged() && $this->opt['paged_display']))
+		{
+			//Deal with the anchor
+			$breadcrumb->anchor = str_replace("%title%", get_the_time('F') . " " . get_the_time('Y'), str_replace("%link%", get_month_link(get_the_time('Y'), get_the_time('m')), $this->opt['date_anchor']));
+			//Yes we want this linked
+			$breadcrumb->linked = true;
+		}
 		if(is_year())
 		{	
-			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'];
-			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'] . $this->opt['current_item_suffix'];
-			//Assign the title
-			$bcn_breadcrumb->title = get_the_time('Y');
-			//If we're paged, let's link to the first page
-			if(is_paged() && $this->opt['paged_display'])
-			{
-				//Deal with the anchor
-				$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('Y'), str_replace("%link%", get_year_link(get_the_time('Y')), $this->opt['date_anchor']));
-				//Yes we want this linked
-				$bcn_breadcrumb->linked = true;
-			}
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('Y'), $this->opt['current_item_prefix'] . $this->opt['archive_date_prefix'],
+				$this->opt['archive_date_suffix'] . $this->opt['current_item_suffix']));
 		}
 		else
 		{
-			//Add new breadcrumb to the trail
-			$this->trail[] = new bcn_breadcrumb();
-			//Figure out where we placed the crumb, make a nice pointer to it
-			$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-			//Assign the prefix
-			$bcn_breadcrumb->prefix = $this->opt['archive_date_prefix'];
-			//Assign the suffix
-			$bcn_breadcrumb->suffix = $this->opt['archive_date_suffix'];
-			//Assign the title
-			$bcn_breadcrumb->title = get_the_time('Y');
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('Y'), $this->opt['archive_date_prefix'], $this->opt['archive_date_suffix']));
+		}
+		//If we're paged, or not in the archive by year let's link to the first archive by year page
+		if(is_day() || is_month() || (is_paged() && $this->opt['paged_display']))
+		{
 			//Deal with the anchor
-			$bcn_breadcrumb->anchor = str_replace("%title%", get_the_time('Y'), str_replace("%link%", get_year_link(get_the_time('Y')), $this->opt['date_anchor']));
+			$breadcrumb->anchor = str_replace("%title%", get_the_time('Y'), str_replace("%link%", get_year_link(get_the_time('Y')), $this->opt['date_anchor']));
 			//Yes we want this linked
-			$bcn_breadcrumb->linked = true;
+			$breadcrumb->linked = true;
 		}
 	}
 	/**
@@ -675,23 +631,11 @@ class bcn_breadcrumb_trail
 	function do_post()
 	{
 		global $post;
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['post_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['post_suffix'] . $this->opt['current_item_suffix'];
-		//Assign the title
-		$bcn_breadcrumb->title = get_the_title();
+		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, prefix, and suffix
+		$this->trail[] = new bcn_breadcrumb(get_the_title(), $this->opt['current_item_prefix'] . $this->opt['post_prefix'],
+			$this->opt['post_suffix'] . $this->opt['current_item_suffix']);
 		//Handle the post's taxonomy
 		$this->post_taxonomy($post->ID);
-		//If our max title length is greater than 0 we should do something
-		if($this->opt['max_title_length'] > 0)
-		{
-			$bcn_breadcrumb->title_trim($this->opt['max_title_length']);
-		}
 	}
 	/**
 	 * do_front_page
@@ -703,23 +647,16 @@ class bcn_breadcrumb_trail
 	function do_front_page()
 	{
 		global $post;
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the title 
-		$bcn_breadcrumb->title = $this->opt['home_title'];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['home_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['home_suffix'] . $this->opt['current_item_suffix'];
+		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['current_item_prefix'] . $this->opt['home_prefix'],
+			$this->opt['home_suffix'] . $this->opt['current_item_suffix']));
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Figure out the anchor for home page
-			$bcn_breadcrumb->anchor = str_replace("%title%", $this->opt['home_title'], str_replace("%link%", get_option('home'), $this->opt['home_anchor']));
+			$breadcrumb->anchor = str_replace("%title%", $this->opt['home_title'], str_replace("%link%", get_option('home'), $this->opt['home_anchor']));
 			//We want this to be linked
-			$bcn_breadcrumb->linked = true;
+			$breadcrumb->linked = true;
 		}
 	}
 	/**
@@ -820,16 +757,9 @@ class bcn_breadcrumb_trail
 	 */
 	function do_404()
 	{
-		global $post;
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['current_item_prefix'] . $this->opt['404_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['404_suffix'] . $this->opt['current_item_suffix'];
-		//Assign the title
-		$bcn_breadcrumb->title = $this->opt['404_title'];
+		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, prefix, and suffix
+		$this->trail[] = new bcn_breadcrumb($this->opt['404_title'], $this->opt['current_item_prefix'] . $this->opt['404_prefix'], 
+			$this->opt['404_suffix'] . $this->opt['current_item_suffix']);
 	}
 	/**
 	 * do_paged
@@ -841,15 +771,8 @@ class bcn_breadcrumb_trail
 	function do_paged()
 	{
 		global $paged;
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Assign the prefix
-		$bcn_breadcrumb->prefix = $this->opt['paged_prefix'];
-		//Assign the suffix
-		$bcn_breadcrumb->suffix = $this->opt['paged_suffix'];
-		//Assign the title
-		$bcn_breadcrumb->title = $paged;
+		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, prefix, and suffix
+		$this->trail[] = new bcn_breadcrumb($paged, $this->opt['paged_prefix'], $this->opt['paged_suffix']);
 	}
 	/**
 	 * fill
@@ -860,7 +783,7 @@ class bcn_breadcrumb_trail
 	 */
 	function fill()
 	{
-		global $wpdb, $post, $wp_query, $bcn_version, $paged;
+		global $wpdb, $post, $wp_query, $paged;
 		if(count($this->trail) > 0)
 		{
 			return null;
@@ -932,6 +855,27 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
+	 * order
+	 * 
+	 * This function will either set the order of the trail to reverse key 
+	 * order, or make sure it is forward key ordered.
+	 * 
+	 * @param $reverse Bool[optional] Whether to reverse the trail or not.
+	 */
+	function order($reverse = false)
+	{
+		if($reverse)
+		{
+			//Since there may be multiple calls our trail may be in a non-standard order
+			ksort($this->trail);
+		}
+		else
+		{
+			//For normal opperation we must reverse the array by key
+			krsort($this->trail);
+		}
+	}
+	/**
 	 * display
 	 * 
 	 * Breadcrumb Creation Function
@@ -948,18 +892,9 @@ class bcn_breadcrumb_trail
 	function display($return = false, $linked = true, $reverse = false)
 	{
 		global $bcn_version;
-		//Sort based on reverse flag
-		if($reverse)
-		{
-			//Since there may be multiple calls our trail may be in a non-standard order
-			ksort($this->trail);
-		}
-		else
-		{
-			//For normal opperation we must reverse the array by key
-			krsort($this->trail);
-		}
-		//Initilize the string which will hold the compiled trail
+		//Set trail order based on reverse flag
+		$this->order($reverse);
+		//Initilize the string which will hold the assembled trail
 		$bcn_trail_str = "";
 		//The main compiling loop
 		foreach($this->trail as $key=>$breadcrumb)
@@ -981,27 +916,22 @@ class bcn_breadcrumb_trail
 					$bcn_trail_str .= $this->opt['separator'];
 				}
 			}
+			//Trim titles, if needed
+			if($this->opt['max_title_length'] > 0)
+			{
+				//Trim the breadcrumb's title
+				$breadcrumb->title_trim($this->opt['max_title_length']);
+			}
 			//If we are on the current item, we better check if we need to link it
 			if($key === 0 && $this->opt['current_item_linked'])
 			{
 				$breadcrumb->linked = true;
 				$breadcrumb->anchor = str_replace("%title%", $breadcrumb->title, str_replace("%link%", "", $this->opt['current_item_anchor']));	
 			}
-			//Place in the breadcrumb's elements
-			$bcn_trail_str .= $breadcrumb->prefix;
-			//If we are linked we'll need to do up the link
-			if($breadcrumb->linked && $linked)
-			{
-				$bcn_trail_str .= $breadcrumb->anchor . $breadcrumb->title . "</a>";
-			}
-			//Otherwise we just slip in the title
-			else
-			{
-				$bcn_trail_str .= $breadcrumb->title;
-			}
-			$bcn_trail_str .= $breadcrumb->suffix;
+			//Place in the breadcrumb's assembled elements
+			$bcn_trail_str .= $breadcrumb->assemble($linked);
 		}
-		//Should we return or echo the compiled trail?
+		//Should we return or echo the assembled trail?
 		if($return)
 		{
 			return $bcn_trail_str;
@@ -1030,44 +960,31 @@ class bcn_breadcrumb_trail
 	function display_list($return = false, $linked = true, $reverse = false)
 	{
 		global $bcn_version;
-		//Sort based on reverse flag
-		if($reverse)
-		{
-			//Since there may be multiple calls our trail may be in a non-standard order
-			ksort($this->trail);
-		}
-		else
-		{
-			//For normal opperation we must reverse the array by key
-			krsort($this->trail);
-		}
-		//Initilize the string which will hold the compiled trail
+		//Set trail order based on reverse flag
+		$this->order($reverse);
+		//Initilize the string which will hold the assembled trail
 		$bcn_trail_str = "";
 		//The main compiling loop
 		foreach($this->trail as $key=>$breadcrumb)
 		{
 			$bcn_trail_str .= "<li>";
+			//Trim titles, if needed
+			if($this->opt['max_title_length'] > 0)
+			{
+				//Trim the breadcrumb's title
+				$breadcrumb->title_trim($this->opt['max_title_length']);
+			}
 			//If we are on the current item, we better check if we need to link it
 			if($key === 0 && $this->opt['current_item_linked'])
 			{
 				$breadcrumb->linked = true;
 				$breadcrumb->anchor = str_replace("%title%", $breadcrumb->title, str_replace("%link%", "", $this->opt['current_item_anchor']));	
 			}
-			//Place in the breadcrumb's elements
-			$bcn_trail_str .= $breadcrumb->prefix;
-			//If we are linked we'll need to do up the link
-			if($breadcrumb->linked && $linked)
-			{
-				$bcn_trail_str .= $breadcrumb->anchor . $breadcrumb->title . "</a>";
-			}
-			//Otherwise we just slip in the title
-			else
-			{
-				$bcn_trail_str .= $breadcrumb->title;
-			}
-			$bcn_trail_str .= $breadcrumb->suffix . "</li>\n";
+			//Place in the breadcrumb's assembled elements
+			$bcn_trail_str .= $breadcrumb->assemble($linked);
+			$bcn_trail_str .= "</li>\n";
 		}
-		//Should we return or echo the compiled trail?
+		//Should we return or echo the assembled trail?
 		if($return)
 		{
 			return $bcn_trail_str;
