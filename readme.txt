@@ -1,7 +1,7 @@
 === Breadcrumb NavXT ===
 Contributors: mtekk, hakre
 Tags: breadcrumb, navigation
-Requires at least: 2.5
+Requires at least: 2.7
 Tested up to: 2.8
 Stable tag: 3.2.0
 Adds breadcrumb navigation showing the visitor's path to their current location.
