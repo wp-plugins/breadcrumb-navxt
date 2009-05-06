@@ -1485,7 +1485,15 @@ $bcn_admin = new bcn_admin;
 function bcn_display($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
-	$bcn_admin->display($return, $linked, $reverse);
+	if($return)
+	{
+		//Return the breadcrumb trail
+		return $bcn_admin->display($return, $linked, $reverse);
+	}
+	else
+	{
+		$bcn_admin->display($return, $linked, $reverse);
+	}
 }
 /**
  * A wrapper for the internal function in the class
@@ -1497,5 +1505,13 @@ function bcn_display($return = false, $linked = true, $reverse = false)
 function bcn_display_list($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
-	$bcn_admin->display_list($return, $linked, $reverse);
+	if($return)
+	{
+		//Return the breadcrumb trail
+		return $bcn_admin->display_list($return, $linked, $reverse);
+	}
+	else
+	{
+		$bcn_admin->display_list($return, $linked, $reverse);
+	}
 }
