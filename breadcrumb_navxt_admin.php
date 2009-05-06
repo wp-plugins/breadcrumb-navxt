@@ -458,16 +458,7 @@ class bcn_admin
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
-		if($return)
-		{
-			//Return the breadcrumb trail
-			return $this->breadcrumb_trail->display($return, $linked, $reverse);
-		}
-		else
-		{
-			//Display the breadcrumb trail
-			$this->breadcrumb_trail->display($return, $linked, $reverse);
-		}
+		return $this->breadcrumb_trail->display($return, $linked, $reverse);
 	}
 	/**
 	 * display_list
@@ -485,16 +476,7 @@ class bcn_admin
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
-		if($return)
-		{
-			//Return the breadcrumb trail
-			return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
-		}
-		else
-		{
-			//Display the breadcrumb trail
-			$this->breadcrumb_trail->display_list($return, $linked, $reverse);
-		}
+		return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
 	}
 	/**
 	 * widget
@@ -1485,15 +1467,7 @@ $bcn_admin = new bcn_admin;
 function bcn_display($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
-	if($return)
-	{
-		//Return the breadcrumb trail
-		return $bcn_admin->display($return, $linked, $reverse);
-	}
-	else
-	{
-		$bcn_admin->display($return, $linked, $reverse);
-	}
+	return $bcn_admin->display($return, $linked, $reverse);
 }
 /**
  * A wrapper for the internal function in the class
@@ -1505,13 +1479,5 @@ function bcn_display($return = false, $linked = true, $reverse = false)
 function bcn_display_list($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
-	if($return)
-	{
-		//Return the breadcrumb trail
-		return $bcn_admin->display_list($return, $linked, $reverse);
-	}
-	else
-	{
-		$bcn_admin->display_list($return, $linked, $reverse);
-	}
+	return $bcn_admin->display_list($return, $linked, $reverse);
 }
