@@ -130,7 +130,10 @@ class bcn_admin
 	public function admin_init()
 	{
 		// Register options.
-		register_setting($option_group = 'bcn_admin', $option_name = 'bcn_options', $sanitize_callback = '');
+		if(function_exists('register_setting'))
+		{
+			register_setting($option_group = 'bcn_admin', $option_name = 'bcn_options', $sanitize_callback = '');
+		}
 		//Add in the nice "settings" link to the plugins page
 		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
 		//Add javascript enqeueing callback
