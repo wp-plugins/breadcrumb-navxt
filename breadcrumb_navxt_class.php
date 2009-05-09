@@ -59,7 +59,7 @@ class bcn_breadcrumb
 	 * 
 	 * Sets the anchor attribute for the breadcrumb, will set $linked to true
 	 * 
-	 * @param $template the anchor template to use
+	 * @param $template String the anchor template to use
 	 * @param $url String the url to replace the %link% tag in the anchor
 	 */
 	function set_anchor($template, $url)
@@ -502,11 +502,11 @@ class bcn_breadcrumb_trail
 	{
 		global $post;
 		//Get the current category object, filter applied within this call
-		$category = get_category($id);
+		$category = &get_category($id);
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 		$breadcrumb = $this->add(new bcn_breadcrumb($category->cat_name, $this->opt['category_prefix'], $this->opt['category_suffix']));
 		//Figure out the anchor for the first category
-		$breadcrumb->set_anchor($this->opt['category_anchor'], get_category_link($bcn_category->cat_ID));
+		$breadcrumb->set_anchor($this->opt['category_anchor'], get_category_link($id));
 		//Make sure the id is valid, and that we won't end up spinning in a loop
 		if($category->category_parent && $category->category_parent != $id)
 		{
