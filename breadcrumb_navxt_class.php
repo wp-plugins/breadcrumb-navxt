@@ -501,7 +501,7 @@ class bcn_breadcrumb_trail
 		//Setup the title
 		$bcn_breadcrumb->title = $bcn_category->cat_name;
 		//Figure out the anchor for the first category
-		$bcn_breadcrumb->set_anchor($this->opt['category_anchor'], get_category_link($bcn_category->cat_ID));
+		$bcn_breadcrumb->set_anchor($this->opt['category_anchor'], get_category_link($id));
 		//We want this to be linked
 		$bcn_breadcrumb->linked = true;
 		//Make sure the id is valid, and that we won't end up spinning in a loop
