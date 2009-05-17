@@ -530,8 +530,8 @@ class bcn_admin
 		{
 			//Setup the link string
 			$settings_link = '<a href="options-general.php?page=breadcrumb-navxt">' . __('Settings') . '</a>';
-			//Add it to the beginning of the array
-			array_unshift($links, $settings_link);
+			//Add it to the end of the array to better integrate into the WP 2.8 plugins page
+			$links[] = $settings_link;
 		}
 		return $links;
 	}
