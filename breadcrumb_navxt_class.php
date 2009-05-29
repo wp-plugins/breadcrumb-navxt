@@ -690,7 +690,7 @@ class bcn_breadcrumb_trail
 				//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 				$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['home_prefix'], $this->opt['home_suffix']));
 				//Deal with the anchor
-				$bcn_breadcrumb->set_anchor($this->opt['home_anchor'], get_option('home'));
+				$breadcrumb->set_anchor($this->opt['home_anchor'], get_option('home'));
 			}
 		}
 		//On everything else we need to link, but no current item (pre/suf)fixes
