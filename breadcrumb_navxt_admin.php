@@ -104,13 +104,13 @@ class bcn_admin
 			add_action('init', array($this, 'reset'));
 		}
 		//Admin Options export hook
-		if(isset($_POST['bcn_admin_export']))
+		else if(isset($_POST['bcn_admin_export']))
 		{
 			//Temporarily add update function on init if form has been submitted
 			add_action('init', array($this, 'export'));
 		}
 		//Admin Options import hook
-		if(isset($_FILES['bcn_admin_import_file']) && !empty($_FILES['bcn_admin_import_file']['name']))
+		else if(isset($_FILES['bcn_admin_import_file']) && !empty($_FILES['bcn_admin_import_file']['name']))
 		{
 			//Temporarily add update function on init if form has been submitted
 			add_action('init', array($this, 'import'));
@@ -352,8 +352,8 @@ class bcn_admin
 						//Loop around all of the options
 						foreach($options->getelementsByTagName('option') as $child)
 						{
-							//Place the option into the option array, decode html entities
-							$this->breadcrumb_trail->opt[$child->getAttribute('name')] = html_entity_decode($child->nodeValue);
+							//Place the option into the option array, DOMDocument decodes html entities for us
+							$this->breadcrumb_trail->opt[$child->getAttribute('name')] = $child->nodeValue;
 						}
 					}
 				}
@@ -1409,7 +1409,7 @@ class bcn_admin
 			}
 			else
 			{
-				$db_data = htmlentities($item, ENT_COMPAT, "UTF-8");
+				$db_data = htmlentities($db_data, ENT_COMPAT, "UTF-8");
 			}
 		}
 		return $db_data;
