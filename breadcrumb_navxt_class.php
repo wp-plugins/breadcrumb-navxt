@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT - Core
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. This plug-in provides direct access to the bcn_breadcrumb_trail class without using the administrative interface. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.2.0
+Version: 3.2.1
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -99,7 +99,7 @@ class bcn_breadcrumb_trail
 	//Default constructor
 	function bcn_breadcrumb_trail()
 	{
-		$this->version = "3.2.0";
+		$this->version = "3.2.1";
 		//Initilize the trail as an array
 		$this->trail = array();
 		//Load the translation domain as the next part needs it
