@@ -350,7 +350,7 @@ class bcn_admin
 						foreach($options->getelementsByTagName('option') as $child)
 						{
 							//Place the option into the option array, decode html entities
-							$this->breadcrumb_trail->opt[$child->getAttribute('name')] = html_entity_decode($child->nodeValue);
+							$this->breadcrumb_trail->opt[$child->getAttribute('name')] = html_entity_decode($child->nodeValue, ENT_COMPAT, "UTF-8");
 						}
 					}
 				}
@@ -1404,7 +1404,7 @@ class bcn_admin
 			}
 			else
 			{
-				$db_data = htmlentities($item, ENT_COMPAT, "UTF-8");
+				$db_data = htmlentities($db_data, ENT_COMPAT, "UTF-8");
 			}
 		}
 		return $db_data;
