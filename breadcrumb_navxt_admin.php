@@ -349,7 +349,7 @@ class bcn_admin
 						//Loop around all of the options
 						foreach($options->getelementsByTagName('option') as $child)
 						{
-							//Place the option into the option array, decode html entities
+							//Place the option into the option array, DOMDocument decodes html entities for us
 							$this->breadcrumb_trail->opt[$child->getAttribute('name')] = $child->nodeValue;
 						}
 					}
