@@ -802,7 +802,7 @@ class bcn_admin
 		list($bcn_plugin_major, $bcn_plugin_minor, $bcn_plugin_bugfix) = explode('.', $this->breadcrumb_trail->version);	
 		list($bcn_admin_major,  $bcn_admin_minor,  $bcn_admin_bugfix)  = explode('.', $this->version);		
 		if($bcn_plugin_major != $bcn_admin_major || $bcn_plugin_minor != $bcn_admin_minor)
-		{			
+		{	
 			?>
 			<div id="message" class="updated fade">
 				<p><?php _e('Warning, your version of Breadcrumb NavXT does not match the version supported by this administrative interface. As a result, settings may not work as expected.', 'breadcrumb_navxt'); ?></p>
@@ -1432,7 +1432,7 @@ class bcn_admin
 	 */	
 	function notify_import_failure()
 	{
-		$this->notify(__('Importing settings from file failed.', 'breadcrumb_navxt'));
+		$this->notify(__('Importing settings from file failed.', 'breadcrumb_navxt'), true);
 	}
 	
 	/**
