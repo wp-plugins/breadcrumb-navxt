@@ -257,7 +257,7 @@ class bcn_breadcrumb_trail
 	 * @return pointer to the just added Breadcrumb
 	 * @param $object bcn_breadcrumb Breadcrumb to add to the trail
 	 */
-	function &add($object)
+	function &add(bcn_breadcrumb $object)
 	{
 		$this->trail[] = $object;
 		return $this->trail[count($this->trail) - 1];
@@ -657,7 +657,7 @@ class bcn_breadcrumb_trail
 			//We only need the "blog" portion on members of the blog, not searches, pages or 404s
 			if((is_single() || is_archive() || is_author() || is_home()) && $posts_id != NULL)
 			{
-				//Get the blog page ID
+				//Get the blog page
 				$bcn_post = get_post($posts_id);
 				//Place the breadcrumb in the trail, uses the constructor to set the title, get a pointer to it in return
 				$breadcrumb = $this->add(new bcn_breadcrumb(apply_filters('the_title', $bcn_post->post_title)));
@@ -684,17 +684,9 @@ class bcn_breadcrumb_trail
 					$this->page_parents($bcn_post->post_parent, $frontpage_id);
 				}
 			}
-			//Sometimes we don't have a blog breadcrumb in the trail
-			if($this->opt['home_display'])
-			{
-				//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-				$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['home_prefix'], $this->opt['home_suffix']));
-				//Deal with the anchor
-				$breadcrumb->set_anchor($this->opt['home_anchor'], get_option('home'));
-			}
 		}
 		//On everything else we need to link, but no current item (pre/suf)fixes
-		else if($this->opt['home_display'])
+		if($this->opt['home_display'])
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['home_prefix'], $this->opt['home_suffix']));
