@@ -555,7 +555,7 @@ class bcn_admin
 	function local()
 	{
 		//Load breadcrumb-navxt translation
-		load_plugin_textdomain($domain = 'breadcrumb_navxt', $path = PLUGINDIR . '/breadcrumb-navxt');
+		load_plugin_textdomain($domain = 'breadcrumb_navxt', $path = WP_PLUGIN_URL . '/breadcrumb-navxt');
 	}
 	/**
 	 * add_page
