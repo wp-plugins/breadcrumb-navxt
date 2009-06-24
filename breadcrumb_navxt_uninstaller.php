@@ -11,81 +11,67 @@
 
 
 /**
- * Breadcrumb NavXT uninstaller class
+ * Breadcrumb NavXT abstract plugin uninstaller class
  * 
  * @author Tom Klingenberg
  */
-class bcn_uninstaller {
+abstract class bcn_uninstaller_abstract {
 
 	/**
 	 * plugin base
 	 * 
-	 * @var string
+	 * @var string plugin dirname
 	 */
-	private $_base = 'breadcrumb-navxt';
+	protected $_base = '';
 	
 	/**
-	 * full plugin
+	 * plugin name
 	 *
-	 * @var string 	 
+	 * @var string plugin basename (the php-file including the .php suffix)
 	 */
-	private $_plugin = '';
-	
+	protected $_plugin = '';
+
 	/**
 	 * uninstalled flag
+	 * 
+	 * @var bool uninstall flag, true if uninstall allready run, false on init
 	 */
-	private $_uninstalled = false;
+	protected $_uninstalled = false;
 	
 	/**
+	 * uninstall result
 	 * 
 	 * @var bool wether or not uninstall worked
 	 */
-	private $_uninstallResult = null;
-
-	 /**
-	  * constructor 
-	  * 
-	  * @param  array $options
-	  */
-	public function __construct(array $options = null)
-	{
-		/* plugin setter */
-				
-		if (isset($options['plugin']))
-		{
-			$this->setPlugin($options['plugin']);
-		}
-		
-		/* init */
-		
-		$this->_uninstallResult = $this->uninstall();				
-	}
+	protected $_uninstallResult = null;
 	
 	/**
 	 * get plugin path
 	 * 
 	 * @return string full path to plugin file
 	 */
-	private function _getPluginPath()
+	protected function _getPluginPath()
 	{
 		return sprintf('%s/%s/%s', WP_PLUGIN_DIR, $this->_base, $this->_plugin);		
 	}
-	
+
 	/**
-	 * uninstall breadcrumb navxt admin plugin
+	 * constructor 
 	 * 
-	 * @return bool
+	 * @param  array $options class options
+	 * 				plugin => 
 	 */
-	private function _uninstallAdmin()
-	{	
-		// load dependencies if applicable
+	public function __construct(array $options = null)
+	{
+		/* plugin setter */				
+		if (isset($options['plugin']))
+		{
+			$this->setPlugin($options['plugin']);
+		}
 		
-		if(!class_exists('bcn_admin'))									
-			require_once($this->_getPluginPath());
-			
-		// uninstall		
-		$bcn_admin->uninstall();
-	}	
+		/* init */		
+		$this->_uninstallResult = $this->uninstall();				
+	}
 	
 	/**
 	 * Result Getter
@@ -100,7 +86,8 @@ class bcn_uninstaller {
 	/**
 	 * plugin setter
 	 * 
-	 * @param  string $plugin
+	 * @param  string $plugin plugin name as common with wordpress as 'dir/file.php' 
+	 * 				          e.g. 'breadcrumb-navxt/breadcrumb_navxt_admin.php'.
 	 * @return this 
 	 */
 	public function setPlugin($plugin)
@@ -128,7 +115,38 @@ class bcn_uninstaller {
 		
 		return $this;
 	}
+
+} /// class bcn_uninstaller_abstract
+
+/**
+ * Breadcrumb NavXT uninstaller class
+ * 
+ * @author Tom Klingenberg
+ */
+class bcn_uninstaller extends bcn_uninstaller_abstract {
+
+	/**
+	 * plugin base
+	 * 
+	 * @var string plugin dirname
+	 */
+	protected $_base = 'breadcrumb-navxt';
 	
+	/**
+	 * uninstall breadcrumb navxt admin plugin
+	 * 
+	 * @return bool
+	 */
+	private function _uninstallAdmin()
+	{	
+		// load dependencies if applicable
+		
+		if(!class_exists('bcn_admin'))									
+			require_once($this->_getPluginPath());
+			
+		// uninstall		
+		$bcn_admin->uninstall();
+	}	
 	
 	/**
 	 * uninstall method
@@ -147,11 +165,12 @@ class bcn_uninstaller {
 		{
 			case 'breadcrumb_navxt_admin.php':
 				return $this->_uninstallAdmin();
-			case 'breadcrumb_navxt_class.php':
-				return true;											
-			default:
-				throw new BadMethodCallException(sprintf('Invalid Plugin ("%s") in %s::uninstall().', $this->_plugin , get_class($this)), 30102);
 				
+			case 'breadcrumb_navxt_class.php':
+				return true;
+															
+			default:
+				throw new BadMethodCallException(sprintf('Invalid Plugin ("%s") in %s::uninstall().', $this->_plugin , get_class($this)), 30102);				
 		}
 		
 		// flag object as uninstalled
@@ -159,4 +178,4 @@ class bcn_uninstaller {
 		$this->_uninstalled = true;		
 	}
 	
-}
+} /// class bcn_uninstaller
