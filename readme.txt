@@ -12,7 +12,7 @@ Breadcrumb NavXT, the successor to the popular WordPress plugin Breadcrumb Navig
 
 == Installation ==
 
-Please visit [Breadcrumb NavXT's](http://mtekk.weblogs.us/code/breadcrumb-navxt/#installation "Go to Breadcrumb NavXT's project page's installation section.") project page for intallation and usage instructions.
+Please visit [Breadcrumb NavXT's](http://mtekk.weblogs.us/code/breadcrumb-navxt/#installation "Go to Breadcrumb NavXT's project page's installation section.") project page for installation and usage instructions.
 
 == Changelog ==
 
@@ -20,9 +20,9 @@ Please visit [Breadcrumb NavXT's](http://mtekk.weblogs.us/code/breadcrumb-navxt/
 * New feature: Translations for Belorussian now included thanks to "Fat Cow".
 * Bug fix: The `bcn_display()` and `bcn_display_list()` wrapper functions obey the
 `$return parameter`.
-* Bug fix: Anchors now will be valid html even when a page/category/post title has html tags in it.
+* Bug fix: Anchors now will be valid HTML even when a page/category/post title has HTML tags in it.
 * Bug fix: Revised `bcn_breadcrumb_trail::category_parents` to work around a bug in `get_category` that causes a WP_Error to be thrown.
-* Bug fix: Importing settings XML files should no longer corrupt html entities.
+* Bug fix: Importing settings XML files should no longer corrupt HTML entities.
 * Bug fix: Can no longer import and reset options at the same time.
 * Bug fix: WordPress 2.6 should be supported again.
 = 3.2.0 =
