@@ -453,21 +453,19 @@ class bcn_breadcrumb_trail
 		//Only process if we have tags
 		if(is_array($bcn_object))
 		{
-			$i = true;
+			$is_first = true;
+			$bcn_breadcrumb->title = '';
+
 			foreach($bcn_object as $tag)
 			{
 				//Run through a filter for good measure
 				$tag->name = apply_filters('get_tag', $tag->name);
-				//On the first run we don't need a separator
-				if($i)
-				{
-					$bcn_breadcrumb->title = $this->opt['tag_prefix'] . str_replace('%title%',  $tag->name, str_replace('%link%', get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $tag->name . '</a>' . $this->opt['tag_suffix'];
-					$i = false;
-				}
-				else
-				{
-					$bcn_breadcrumb->title .= ', ' . $this->opt['tag_prefix'] . str_replace('%title%', $tag->name, str_replace('%link%', get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $tag->name . '</a>' . $this->opt['tag_suffix'];
-				}
+
+				if ($is_first == false)
+					$bcn_breadcrumb->title .= ', ';
+
+				$bcn_breadcrumb->title .= $this->opt['tag_prefix'] . str_replace('%title%', $tag->name, str_replace('%link%', get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $tag->name . '</a>' . $this->opt['tag_suffix'];
+				$is_first = false;
 			}
 		}
 		else
