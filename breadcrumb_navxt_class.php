@@ -454,22 +454,24 @@ class bcn_breadcrumb_trail
 		if(is_array($bcn_object))
 		{
 			$is_first = true;
-			$bcn_breadcrumb->title = '';
-
+			//Loop through all of the tag results
 			foreach($bcn_object as $tag)
 			{
 				//Run through a filter for good measure
 				$tag->name = apply_filters('get_tag', $tag->name);
-
-				if ($is_first == false)
+				//Everything but the first tag needs a comma separator
+				if($is_first == false)
+				{
 					$bcn_breadcrumb->title .= ', ';
-
+				}
+				//This is a bit hackish, but it compiles the tag anchor and appends it to the current breadcrumb title
 				$bcn_breadcrumb->title .= $this->opt['tag_prefix'] . str_replace('%title%', $tag->name, str_replace('%link%', get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $tag->name . '</a>' . $this->opt['tag_suffix'];
 				$is_first = false;
 			}
 		}
 		else
 		{
+			//If there are no tags, then we set the title to "Untagged"
 			$bcn_breadcrumb->title = __('Untagged', 'breadcrumb_navxt');
 		}
 	}
