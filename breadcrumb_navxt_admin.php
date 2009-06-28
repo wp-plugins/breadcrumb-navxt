@@ -100,19 +100,19 @@ class bcn_admin
 		//Admin Options reset hook
 		if(isset($_POST['bcn_admin_reset']))
 		{
-			//Temporarily add update function on init if form has been submitted
+			//Temporarily add reset function on init if reset form has been submitted
 			add_action('init', array($this, 'reset'));
 		}
 		//Admin Options export hook
 		else if(isset($_POST['bcn_admin_export']))
 		{
-			//Temporarily add update function on init if form has been submitted
+			//Temporarily add export function on init if export form has been submitted
 			add_action('init', array($this, 'export'));
 		}
 		//Admin Options import hook
 		else if(isset($_FILES['bcn_admin_import_file']) && !empty($_FILES['bcn_admin_import_file']['name']))
 		{
-			//Temporarily add update function on init if form has been submitted
+			//Temporarily add import function on init if import form has been submitted
 			add_action('init', array($this, 'import'));
 		}
 		//Admin Init Hook
@@ -541,6 +541,7 @@ class bcn_admin
 	 * Enqueues JS dependencies (jquery) for the tabs
 	 * 
 	 * @see admin_init()
+	 * @return void
 	 */
 	function javascript()
 	{
@@ -550,18 +551,20 @@ class bcn_admin
 	/**
 	 * local
 	 *
-	 * Initilizes localization domain
+	 * Initilizes localization textdomain for translations
+	 * 
+	 * @return void
 	 */
 	function local()
 	{
-		//Load breadcrumb-navxt translation
-		load_plugin_textdomain($domain = 'breadcrumb_navxt', $path = WP_PLUGIN_URL . '/breadcrumb-navxt/languages');
+		load_plugin_textdomain($domain = 'breadcrumb_navxt', false, 'breadcrumb-navxt/languages');
 	}
 	/**
 	 * add_page
 	 * 
 	 * Adds the adminpage the menue and the nice little settings link
-	 * 
+	 *
+	 * @return void
 	 */
 	function add_page()
 	{
