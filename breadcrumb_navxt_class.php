@@ -147,6 +147,8 @@ class bcn_breadcrumb_trail
 			'home_title' => __('Blog', 'breadcrumb_navxt'),
 			//The anchor template for the home page, this is global, two keywords are available %link% and %title%
 			'home_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
+			//Should the home page be shown
+			'blog_display' => true,
 			//The anchor template for the blog page only in static front page mode, this is global, two keywords are available %link% and %title%
 			'blog_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
 			//The prefix for page breadcrumbs, place on all page elements and inside of current_item prefix
@@ -632,13 +634,13 @@ class bcn_breadcrumb_trail
 	function do_home()
 	{
 		global $post;
-		if(get_option('show_on_front') == 'page')
+		//We only need the "blog" portion on members of the blog, and only if we're in a static frontpage environment
+		if($this->opt['blog_display'] && get_option('show_on_front') == 'page' && (is_single() || is_archive() || is_author() || is_home()))
 		{
 			//We'll have to check if this ID is valid, e.g. user has specified a posts page
 			$posts_id = get_option('page_for_posts');
 			$frontpage_id = get_option('page_on_front');
-			//We only need the "blog" portion on members of the blog, not searches, pages or 404s
-			if((is_single() || is_archive() || is_author() || is_home()) && $posts_id != NULL)
+			if($posts_id != NULL)
 			{
 				//Get the blog page
 				$bcn_post = get_post($posts_id);

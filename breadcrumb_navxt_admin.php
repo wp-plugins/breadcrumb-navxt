@@ -204,6 +204,12 @@ class bcn_admin
 				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 				$this->breadcrumb_trail->opt['search_anchor'] = __('<a title="Go to the first page of search results for %title%." href="%link%">','breadcrumb_navxt');
 			}
+			else if($major == 3 && $minor < 3)
+			{
+				//Update our internal settings
+				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+				$this->breadcrumb_trail->opt['blog_display'] = true;
+			}
 			//Always have to update the version
 			$this->update_option('bcn_version', $this->version);
 			//Store the options
@@ -382,6 +388,7 @@ class bcn_admin
 		//Grab the options from the from post
 		//Home page settings
 		$this->breadcrumb_trail->opt['home_display'] = str2bool(bcn_get('home_display', 'false'));
+		$this->breadcrumb_trail->opt['blog_display'] = str2bool(bcn_get('blog_display', 'false'));
 		$this->breadcrumb_trail->opt['home_title'] = bcn_get('home_title');
 		$this->breadcrumb_trail->opt['home_anchor'] = bcn_get('home_anchor', $this->breadcrumb_trail->opt['home_anchor']);
 		$this->breadcrumb_trail->opt['blog_anchor'] = bcn_get('blog_anchor', $this->breadcrumb_trail->opt['blog_anchor']);
@@ -862,6 +869,17 @@ class bcn_admin
 							</ul>							
 						</td>
 					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="blog_anchor"><?php _e('Blog Breadcrumb', 'breadcrumb_navxt'); ?></label>
+						</th>
+						<td>	
+							<label>
+								<input name="blog_display" <?php if($this->get_option('show_on_front') !== "page"){echo 'disabled="disabled" class="disabled"';} ?> type="checkbox" id="blog_display" value="true" <?php checked(true, $this->breadcrumb_trail->opt['blog_display']); ?> />
+								<?php _e('Place the blog breadcrumb in the trail.', 'breadcrumb_navxt'); ?>				
+							</label>				
+						</td>
+					</tr> 
 					<tr valign="top">
 						<th scope="row">
 							<label for="home_prefix"><?php _e('Home Prefix', 'breadcrumb_navxt'); ?></label>
