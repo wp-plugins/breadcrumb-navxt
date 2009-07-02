@@ -424,6 +424,8 @@ class bcn_breadcrumb_trail
 					if($object->category_parent > 0 && $bcn_use_category == 0)
 					{
 						$bcn_use_category = $i;
+						//We found our first category hiearchy, can exit loop now
+						break;
 					}
 					$i++;
 				}
