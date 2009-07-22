@@ -128,7 +128,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	public $version = '3.2.100';
+	public $version = '3.2.200';
 	//An array of breadcrumbs
 	public $trail = array();
 	//The options
@@ -407,11 +407,7 @@ class bcn_breadcrumb_trail
 		if($this->opt['post_taxonomy_display'])
 		{
 			//Figure out which taxonomy is desired
-			if($this->opt['post_taxonomy_type'] == 'tag')
-			{
-				$this->post_tags($id);
-			}
-			else
+			if($this->opt['post_taxonomy_type'] == 'category')
 			{
 				//Fills the temp object to get the categories 
 				$bcn_object = get_the_category($id);
@@ -430,7 +426,11 @@ class bcn_breadcrumb_trail
 					$i++;
 				}
 				//Fill out the category hiearchy
-				$this->category_parents($bcn_object[$bcn_use_category]->term_id);
+				$this->category_parents($bcn_object[$bcn_use_category]->term_id);	
+			}
+			else
+			{
+				$this->post_tags($id);
 			}
 		}
 	}

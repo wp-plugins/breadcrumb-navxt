@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.2.100
+Version: 3.2.200
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -46,7 +46,7 @@ class bcn_admin
 	 * @var   string
 	 * @since 3.1.0
 	 */
-	private $version = '3.2.100';
+	private $version = '3.2.200';
 	
 	/**
 	 * wether or not this administration page has contextual help
@@ -117,7 +117,6 @@ class bcn_admin
 		}
 		//Admin Init Hook
 		add_action('admin_init', array($this, 'admin_init'));
-		
 	}
 	/**
 	 * admin initialisation callback function
@@ -660,8 +659,7 @@ class bcn_admin
 #hasadmintabs ul.ui-tabs-nav li {display:block; float:left; line-height:200%; list-style-image:none; list-style-position:outside; list-style-type:none; margin:0; padding:0; position:relative; text-align:center; white-space:nowrap; width:auto;}
 #hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%; border-bottom:1px solid #dfdfdf; display:block; float:left; line-height:28px; padding:1px 13px 0; position:relative; text-decoration:none;}
 #hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a{-moz-border-radius-topleft:4px; -moz-border-radius-topright:4px;border:1px solid #dfdfdf; border-bottom-color:#f9f9f9; color:#333333; font-weight:normal; padding:0 12px;}
-#hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color; outline-style:none; outline-width:medium; }
-
+#hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color; outline-style:none; outline-width:medium;}
 #screen-options-wrap p.submit {margin:0; padding:0;}
 </style>
 <script type="text/javascript">
@@ -679,19 +677,17 @@ class bcn_admin
 	 * @uses jQuery
 	 * @uses jQuery.ui.tabs
 	 */		
-	jQuery(function() 
+	jQuery(function()
 	{
 		bcn_context_init();
 		bcn_tabulator_init();		
 	 });
 	function bcn_confirm(type)
 	{
-		if(type == 'reset')
-		{
+		if(type == 'reset'){
 			var answer = confirm("<?php _e('All of your current Breadcrumb NavXT settings will be overwritten with the default values. Are you sure you want to continue?', 'breadcrumb_navxt'); ?>");
 		}
-		else
-		{
+		else{
 			var answer = confirm("<?php _e('All of your current Breadcrumb NavXT settings will be overwritten with the imported values. Are you sure you want to continue?', 'breadcrumb_navxt'); ?>");
 		}
 		if(answer)
@@ -702,24 +698,20 @@ class bcn_admin
 	/**
 	 * Tabulator Bootup
 	 */
-	function bcn_tabulator_init()
-	{
+	function bcn_tabulator_init(){
 		/* if this is not the breadcrumb admin page, quit */
 		if (!jQuery("#hasadmintabs").length) return;		
-
 		/* init markup for tabs */
 		jQuery('#hasadmintabs').prepend("<ul><\/ul>");
-		jQuery('#hasadmintabs > fieldset').each(function(i)
-		{
+		jQuery('#hasadmintabs > fieldset').each(function(i){
 		    id      = jQuery(this).attr('id');
 		    caption = jQuery(this).find('h3').text();
 		    jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
 		    jQuery(this).find('h3').hide();					    
-	    });
-		
+	    });	
 		/* init the tabs plugin */
 		var jquiver = undefined == jQuery.ui ? [0,0,0] : undefined == jQuery.ui.version ? [0,1,0] : jQuery.ui.version.split('.');
-		switch(true) {
+		switch(true){
 			// tabs plugin has been fixed to work on the parent element again.
 			case jquiver[0] >= 1 && jquiver[1] >= 7:
 				jQuery("#hasadmintabs").tabs();
@@ -728,8 +720,7 @@ class bcn_admin
 			default:
 				jQuery("#hasadmintabs > ul").tabs(); 
 		}
-
-		/* handler for openeing the last tab after submit (compability version) */
+		/* handler for opening the last tab after submit (compability version) */
 		jQuery('#hasadmintabs ul a').click(function(i){
 			var form   = jQuery('#bcn_admin_options');
 			var action = form.attr("action").split('#', 1) + jQuery(this).attr('href');
@@ -739,30 +730,23 @@ class bcn_admin
 			form.get(0).setAttribute("action", action);
 		});
 	}
-
 	/**
 	 * context screen options for import/export
 	 */
-	 function bcn_context_init() {
-
+	 function bcn_context_init(){
 		if (!jQuery("#bcn_import_export_relocate").length) return;
-
 		var jqver = undefined == jQuery.fn.jquery ? [0,0,0] : jQuery.fn.jquery.split('.');
-
 		jQuery('#screen-meta').prepend(
 				'<div id="screen-options-wrap" class="hidden"></div>'
 		);
-
 		jQuery('#screen-meta-links').append(
 				'<div id="screen-options-link-wrap" class="hide-if-no-js screen-meta-toggle">' +
 				'<a class="show-settings" id="show-settings-link" href="#screen-options"><?php printf('%s/%s/%s', __('Import', 'breadcrumb_navxt'), __('Export', 'breadcrumb_navxt'), __('Reset', 'breadcrumb_navxt')); ?></a>' + 
 				'</div>'
 		);
-
 		// jQuery Version below 1.3 (common for WP 2.7) needs some other style-classes
 		// and jQuery events
-		if (jqver[0] <= 1 && jqver[1] < 3)
-		{
+		if (jqver[0] <= 1 && jqver[1] < 3){
 			// hide-if-no-js for WP 2.8, not for WP 2.7
 			jQuery('#screen-options-link-wrap').removeClass('hide-if-no-js');
 			// screen settings tab (WP 2.7 legacy)
@@ -783,18 +767,16 @@ class bcn_admin
 				return false;
 			});			
 		}
-
 		var code = jQuery('#bcn_import_export_relocate').html();
 		jQuery('#bcn_import_export_relocate').html('');
 		code = code.replace(/h3>/gi, 'h5>');		
 		jQuery('#screen-options-wrap').prepend(code);		
 	 }
-	
 /* ]]> */
 </script>
 <?php
 	} //function admin_head()
-		
+
 	/**
 	 * admin_panel
 	 * 
@@ -808,19 +790,7 @@ class bcn_admin
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options', true);
 		//Initilizes l10n domain	
 		$this->local();
-		//See if the administrative interface matches versions with the class, if not then warn the user		
-		list($bcn_plugin_major, $bcn_plugin_minor, $bcn_plugin_bugfix) = explode('.', $this->breadcrumb_trail->version);	
-		list($bcn_admin_major,  $bcn_admin_minor,  $bcn_admin_bugfix)  = explode('.', $this->version);		
-		if($bcn_plugin_major != $bcn_admin_major || $bcn_plugin_minor != $bcn_admin_minor)
-		{	
-			?>
-			<div id="message" class="updated fade">
-				<p><?php _e('Warning, your version of Breadcrumb NavXT does not match the version supported by this administrative interface. As a result, settings may not work as expected.', 'breadcrumb_navxt'); ?></p>
-				<p><?php _e('Your Breadcrumb NavXT Administration interface version is ', 'breadcrumb_navxt'); echo $this->version; ?>.</p>
-				<p><?php _e('Your Breadcrumb NavXT version is ', 'breadcrumb_navxt'); echo $this->breadcrumb_trail->version; ?>.</p>
-			</div>
-			<?php 
-		} ?>
+		?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
 		<p<?php if ($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
 			print $this->_get_help_text();			 
@@ -1442,7 +1412,6 @@ class bcn_admin
 	{
 		//If the message is an error use the appropriate class
 		$class = $error ? 'error' : 'updated fade';
-		
 		printf('<div class="%s"><p>%s</p></div>', $class, $message);		
 	}
 	
