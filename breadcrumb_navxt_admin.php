@@ -278,9 +278,11 @@ class bcn_admin
 		//Update our internal settings
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options', true);
 		//Create a DOM document
-		$dom = new DOMDocument('1.0');
+		$dom = new DOMDocument('1.0', 'UTF-8');
 		//Adds in newlines and tabs to the output
 		$dom->formatOutput = true;
+		//We're not using a DTD therefore we need to specify it as a standalone document
+		$dom->xmlStandalone = true;
 		//Add an element called options
 		$node = $dom->createElement('options');
 		$parnode = $dom->appendChild($node);
@@ -330,7 +332,7 @@ class bcn_admin
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_admin_upload');
 		//Create a DOM document
-		$dom = new DOMDocument('1.0');
+		$dom = new DOMDocument('1.0', 'UTF-8');
 		//We want to catch errors ourselves
 		set_error_handler('error');
 		//Load the user uploaded file, handle failure gracefully
