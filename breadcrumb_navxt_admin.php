@@ -23,11 +23,8 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-//Include the breadcrumb class (if needed)
-if(!class_exists('bcn_breadcrumb'))
-{
-	require_once(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
-}
+//Include the breadcrumb class
+require_once(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
 //Include the supplemental functions
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
 
@@ -843,7 +840,7 @@ class bcn_admin
 					</tr>
 					<tr valign="top">
 						<th scope="row">
-							<label for="blog_anchor"><?php _e('Blog Breadcrumb', 'breadcrumb_navxt'); ?></label>
+							<label for="blog_display"><?php _e('Blog Breadcrumb', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>	
 							<label>
@@ -1391,13 +1388,13 @@ class bcn_admin
 					//We ignore anything but strings
 					if(is_string($item))
 					{
-						$db_data[$key] = htmlentities($item, ENT_COMPAT, "UTF-8");
+						$db_data[$key] = htmlentities($item, ENT_COMPAT, 'UTF-8');
 					}
 				}
 			}
 			else
 			{
-				$db_data = htmlentities($db_data, ENT_COMPAT, "UTF-8");
+				$db_data = htmlentities($db_data, ENT_COMPAT, 'UTF-8');
 			}
 		}
 		return $db_data;
