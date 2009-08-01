@@ -136,8 +136,8 @@ class bcn_breadcrumb_trail
 	//Default constructor
 	function bcn_breadcrumb_trail()
 	{
-		//Load the translation domain as the next part needs it
-		load_plugin_textdomain($domain = 'breadcrumb_navxt', $path = PLUGINDIR . '/breadcrumb-navxt');
+		//Load the translation domain as the next part needs it		
+		load_plugin_textdomain($domain = 'breadcrumb_navxt', false, 'breadcrumb-navxt/languages');
 		//Initilize with default option values
 		$this->opt = array
 		(

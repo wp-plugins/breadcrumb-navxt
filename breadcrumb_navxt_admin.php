@@ -84,6 +84,8 @@ class bcn_admin
 		//		register_uninstall_hook(__FILE__, array($this, 'uninstall'));
 		//		}
 		
+		//Initilizes l10n domain	
+		$this->local();		
 		//WordPress Admin interface hook
 		add_action('admin_menu', array($this, 'add_page'));
 		//WordPress Hook for the widget
@@ -556,13 +558,19 @@ class bcn_admin
 	/**
 	 * local
 	 *
-	 * Initilizes localization textdomain for translations
+	 * Initilizes localization textdomain for translations (if applicable)
+	 * 
+	 * normally there is no need to load it because it is already loaded with 
+	 * the breadcrumb class. if not, then it will be loaded.
 	 * 
 	 * @return void
 	 */
 	function local()
 	{
-		load_plugin_textdomain($domain = 'breadcrumb_navxt', false, 'breadcrumb-navxt/languages');
+		global $l10n;		
+		$domain = 'breadcrumb_navxt';				
+		if (!isset( $l10n[$domain] ))		
+			load_plugin_textdomain($domain, false, 'breadcrumb-navxt/languages');
 	}
 	/**
 	 * add_page
@@ -787,8 +795,6 @@ class bcn_admin
 		$this->security();
 		//Update our internal options array, use form safe function
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options', true);
-		//Initilizes l10n domain	
-		$this->local();
 		?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
 		<p<?php if ($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
