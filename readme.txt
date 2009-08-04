@@ -14,13 +14,13 @@ Breadcrumb NavXT, the successor to the popular WordPress plugin Breadcrumb Navig
 
 Breadcrumb NavXT distributes with translations for the following languages:
 
-*English - default -
-*German by Tom Klingenberg
-*French by Laurent Grabielle
-*Spanish by Karin Sequen
-*Dutch by Stan Lenssen
-*Russian by Yuri Gribov
-*Swedish by Patrik Spathon
+* English - default -
+* German by Tom Klingenberg
+* French by Laurent Grabielle
+* Spanish by Karin Sequen
+* Dutch by Stan Lenssen
+* Russian by Yuri Gribov
+* Swedish by Patrik Spathon
 
 Don't see your language on the list? Feel free to translate Breadcrumb NavXT and send John Havlik the translations.
 
@@ -31,13 +31,13 @@ Please visit [Breadcrumb NavXT's](http://mtekk.weblogs.us/code/breadcrumb-navxt/
 == Changelog ==
 
 = 3.3.0 =
-*Behavior change: The core plugin was removed, and administrative plugin renamed, direct class access still possible.
-*New feature: Ability to trim the title length for all breadcrumbs in the trail.
-*New feature: Ability to selectively include the "Blog" in addition to the "Home" breadcrumb in the trail (for static frontpage setups).
-*New feature: Translations for Russian now included thanks to Yuri Gribov.
-*New feature: Translations for Swedish now included thanks to Patrik Spathon.
-*Bug fix: Minor tweaks to the settings link in the plugins listing page so that it fits better in WordPress 2.8.
-*Bug fix: Now selects the first category hierarchy of a post instead of the last.
+* Behavior change: The core plugin was removed, and administrative plugin renamed, direct class access still possible.
+* New feature: Ability to trim the title length for all breadcrumbs in the trail.
+* New feature: Ability to selectively include the "Blog" in addition to the "Home" breadcrumb in the trail (for static frontpage setups).
+* New feature: Translations for Russian now included thanks to Yuri Gribov.
+* New feature: Translations for Swedish now included thanks to Patrik Spathon.
+* Bug fix: Minor tweaks to the settings link in the plugins listing page so that it fits better in WordPress 2.8.
+* Bug fix: Now selects the first category hierarchy of a post instead of the last.
 = 3.2.1 =
 * New feature: Translations for Belorussian now included thanks to "Fat Cow".
 * Bug fix: The `bcn_display()` and `bcn_display_list()` wrapper functions obey the
