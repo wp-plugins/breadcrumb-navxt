@@ -567,6 +567,9 @@ class bcn_admin
 	 */
 	function local()
 	{
+		// the global and the check might become obsolete in
+		// further wordpress versions
+		// @see https://core.trac.wordpress.org/ticket/10527
 		global $l10n;		
 		$domain = 'breadcrumb_navxt';				
 		if (!isset( $l10n[$domain] ))

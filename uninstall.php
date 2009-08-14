@@ -13,8 +13,8 @@
  * @see http://codex.wordpress.org/Migrating_Plugins_and_Themes_to_2.7#Uninstall_Plugin_API
  * @see http://trac.mu.wordpress.org/ticket/967
  *
- * this uninstall.php file is executed multiple times because 
- * breadcrumb navxt (still) constsists of two plugins:
+ * this uninstall.php file was executed multiple times because 
+ * breadcrumb navxt (until 3.3) constsisted of two plugins:
  *
  *	1.) breadcrumb_navxt_class.php / Core
  *  2.) breadcrumb_navxt_admin.php / Adminstration Interface
