@@ -421,7 +421,7 @@ class bcn_breadcrumb_trail
 				foreach($bcn_object as $key=>$object)
 				{
 					//We want the first term hiearchy
-					if($object->parent > 0 && $bcn_use_term == 0)
+					if($object->parent > 0)
 					{
 						$bcn_use_term = $key;
 						//We found our first term hiearchy, can exit loop now
@@ -434,74 +434,45 @@ class bcn_breadcrumb_trail
 			//Handle the rest of the taxonomies, including tags
 			else
 			{
-				
+				$this->post_terms($id, $this->opt['post_taxonomy_type']);
 			}
-			
-			
-			
-			//Figure out which taxonomy is desired
-/*			if($this->opt['post_taxonomy_type'] == 'category')
-			{
-				//Fills the temp object to get the categories 
-				$bcn_object = get_the_category($id);
-				//Now find which one has a parent, pick the first one that does
-				$i = 0;
-				$bcn_use_category = 0;
-				foreach($bcn_object as $object)
-				{
-					//We want the first category hiearchy
-					if($object->category_parent > 0 && $bcn_use_category == 0)
-					{
-						$bcn_use_category = $i;
-						//We found our first category hiearchy, can exit loop now
-						break;
-					}
-					$i++;
-				}
-				//Fill out the category hiearchy
-				$this->category_parents($bcn_object[$bcn_use_category]->term_id);	
-			}
-			else
-			{
-				$this->post_tags($id);
-			}
-			*/
 		}
 	}
 	/**
-	 * post_tag
+	 * post_terms
 	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
-	 * This functions fills a breadcrumb for the tags of a post
-	 * @param int $id The id of the post to find the tags for.
+	 * This functions fills a breadcrumb for the terms of a post
+	 * @param int $id The id of the post to find the terms for.
+	 * @param string $taxonomy The name of the taxonomy that the term belongs to
 	 * 
-	 * @TODO	Need to implement this cleaner, possibly a recursive object
+	 * @TODO	Need to implement this cleaner, fix up the entire tag_ thing, as this is now generic
 	 */
-	function post_tags($id)
+	function post_terms($id, $taxonomy)
 	{
 		//Add new breadcrumb to the trail
 		$this->trail[] = new bcn_breadcrumb();
 		//Figure out where we placed the crumb, make a nice pointer to it
 		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
-		//Fills a temporary object with the tags for the post
-		$bcn_object = get_the_tags($id);
+		//Fills a temporary object with the terms for the post
+		$bcn_object = get_the_terms($id, $taxonomy);
 		//Only process if we have tags
 		if(is_array($bcn_object))
 		{
 			$is_first = true;
-			//Loop through all of the tag results
-			foreach($bcn_object as $tag)
+			//Loop through all of the term results
+			foreach($bcn_object as $term)
 			{
 				//Run through a filter for good measure
-				$tag->name = apply_filters('get_tag', $tag->name);
-				//Everything but the first tag needs a comma separator
+				$tag->name = apply_filters("get_$taxonomy", $term->name);
+				//Everything but the first term needs a comma separator
 				if($is_first == false)
 				{
 					$bcn_breadcrumb->title .= ', ';
 				}
 				//This is a bit hackish, but it compiles the tag anchor and appends it to the current breadcrumb title
-				$bcn_breadcrumb->title .= $this->opt['tag_prefix'] . str_replace('%title%', $tag->name, str_replace('%link%', get_tag_link($tag->term_id), $this->opt['tag_anchor'])) . $tag->name . '</a>' . $this->opt['tag_suffix'];
+				$bcn_breadcrumb->title .= $this->opt['tag_prefix'] . str_replace('%title%', $term->name, str_replace('%link%', get_term_link($term, $taxonomy), $this->opt['tag_anchor'])) . $term->name . '</a>' . $this->opt['tag_suffix'];
 				$is_first = false;
 			}
 		}
@@ -525,8 +496,6 @@ class bcn_breadcrumb_trail
 		global $post;
 		//Get the current category object, filter applied within this call
 		$term = &get_term($id, $taxonomy);
-		//$link = get_term_link($id, $taxonomy);
-		//var_dump($link);
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['category_prefix'], $this->opt['category_suffix']));
 		//Figure out the anchor for the term
@@ -538,30 +507,6 @@ class bcn_breadcrumb_trail
 			$this->term_parents($term->parent, $taxonomy);
 		}
 	}
-	/**
-	 * category_parents
-	 * 
-	 * A Breadcrumb Trail Filling Function
-	 * 
-	 * This recursive functions fills the trail with breadcrumbs for parent categories.
-	 * @param int $id The id of the parent category.
-	 */
-/*	function category_parents($id)
-	{
-		global $post;
-		//Get the current category object, filter applied within this call
-		$category = &get_category($id);
-		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($category->cat_name, $this->opt['category_prefix'], $this->opt['category_suffix']));
-		//Figure out the anchor for the first category
-		$breadcrumb->set_anchor($this->opt['category_anchor'], get_category_link($id));
-		//Make sure the id is valid, and that we won't end up spinning in a loop
-		if($category->category_parent && $category->category_parent != $id)
-		{
-			//Figure out the rest of the category hiearchy via recursion
-			$this->category_parents($category->category_parent);
-		}
-	}*/
 	/**
 	 * do_archive_by_category
 	 * 
@@ -814,17 +759,35 @@ class bcn_breadcrumb_trail
 		{
 			$this->do_author();
 		}
-		//For category based archives
+		//For archives
+		else if(is_archive())
+		{
+			//For taxonomy based archives, had to add the two specifics in to overcome WordPress bug
+			if(is_tax() || is_category() || is_tag())
+			{
+				$term = $wp_query->get_queried_object();
+				//For hierarchical taxonomy based archives
+				if(is_taxonomy_hierarchical($term->taxonomy))
+				{
+					$this->do_archive_by_category();
+				}
+				//For flat taxonomy based archives
+				else
+				{
+					$this->do_archive_by_tag();
+				}
+			}
+			//For date based archives
+			else
+			{
+				$this->do_archive_by_date();
+			}
+		}
 		else if(is_archive() && is_category())
 		{
 			$this->do_archive_by_category();
 		}
-		//For date based archives
-		else if(is_archive() && is_date())
-		{
-			$this->do_archive_by_date();
-		}
-		//For tag based archives
+		
 		else if(is_archive() && is_tag())
 		{
 			$this->do_archive_by_tag();
