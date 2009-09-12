@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.3.0
+Version: 3.3.98
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -27,7 +27,6 @@ Author URI: http://mtekk.weblogs.us/
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
 //Include the supplemental functions
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
-
 /**
  * The administrative interface class 
  * 
@@ -43,7 +42,7 @@ class bcn_admin
 	 * @var   string
 	 * @since 3.1.0
 	 */
-	private $version = '3.3.0';
+	private $version = '3.3.98';
 	
 	/**
 	 * wether or not this administration page has contextual help
@@ -72,18 +71,6 @@ class bcn_admin
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Installation Script hook
 		add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php', array($this, 'install'));
-		
-		//Uninstallation Script hook
-		//		
-		// uncommented 2009-04-27 09:49 GMT+1 because this code is replaced 
-		// by new uninstall.php file.
-		//
-		// TODO remove uncommented code if unstall.php has been tested for a while		
-		//		if(function_exists('register_uninstall_hook'))
-		//		{
-		//		register_uninstall_hook(__FILE__, array($this, 'uninstall'));
-		//		}
-		
 		//Initilizes l10n domain	
 		$this->local();		
 		//WordPress Admin interface hook
@@ -234,20 +221,6 @@ class bcn_admin
 				$this->add_option('bcn_options', $this->breadcrumb_trail->opt);
 			}
 		}
-	}
-	/**
-	 * uninstall
-	 * 
-	 * This removes database settings upon deletion of the plugin from WordPress
-	 */
-	function uninstall()
-	{
-		//Call our little security function
-		$this->security();
-		//Remove the option array setting
-		$this->delete_option('bcn_options');
-		//Remove the version setting
-		$this->delete_option('bcn_version');
 	}
 	/**
 	 * reset
@@ -1014,6 +987,11 @@ class bcn_admin
 							<label>
 								<input name="post_taxonomy_type" type="radio" value="category" class="togx" <?php checked('category', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
 								<?php _e('Categories'); ?>
+							</label>
+							<br/>
+							<label>
+								<input name="post_taxonomy_type" type="radio" value="date" class="togx" <?php checked('date', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
+								<?php _e('Dates'); ?>								
 							</label>
 							<br/>
 							<label>

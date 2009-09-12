@@ -128,7 +128,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	public $version = '3.3.0';
+	public $version = '3.3.98';
 	//An array of breadcrumbs
 	public $trail = array();
 	//The options
@@ -406,8 +406,41 @@ class bcn_breadcrumb_trail
 		//Check to see if breadcrumbs for the taxonomy of the post needs to be generated
 		if($this->opt['post_taxonomy_display'])
 		{
+			//Check if we have a date 'taxonomy' request
+			if($this->opt['post_taxonomy_type'] == 'date')
+			{
+				$this->do_archive_by_date();
+			}
+			//Handle all hierarchical taxonomies, including categories
+			else if(is_taxonomy_hierarchical($this->opt['post_taxonomy_type']))
+			{
+				//Fill a temporary object with the terms
+				$bcn_object = get_the_terms($id, $this->opt['post_taxonomy_type']);
+				//Now find which one has a parent, pick the first one that does
+				$bcn_use_term = key($bcn_object);
+				foreach($bcn_object as $key=>$object)
+				{
+					//We want the first term hiearchy
+					if($object->parent > 0 && $bcn_use_term == 0)
+					{
+						$bcn_use_term = $key;
+						//We found our first term hiearchy, can exit loop now
+						break;
+					}
+				}
+				//Fill out the term hiearchy
+				$this->term_parents($bcn_object[$bcn_use_term]->term_id, $this->opt['post_taxonomy_type']);
+			}
+			//Handle the rest of the taxonomies, including tags
+			else
+			{
+				
+			}
+			
+			
+			
 			//Figure out which taxonomy is desired
-			if($this->opt['post_taxonomy_type'] == 'category')
+/*			if($this->opt['post_taxonomy_type'] == 'category')
 			{
 				//Fills the temp object to get the categories 
 				$bcn_object = get_the_category($id);
@@ -432,6 +465,7 @@ class bcn_breadcrumb_trail
 			{
 				$this->post_tags($id);
 			}
+			*/
 		}
 	}
 	/**
@@ -478,6 +512,33 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
+	 * term_parents
+	 * 
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This recursive functions fills the trail with breadcrumbs for parent terms.
+	 * @param int $id The id of the term.
+	 * @param string $taxonomy The name of the taxonomy that the term belongs to
+	 */
+	function term_parents($id, $taxonomy)
+	{
+		global $post;
+		//Get the current category object, filter applied within this call
+		$term = &get_term($id, $taxonomy);
+		//$link = get_term_link($id, $taxonomy);
+		//var_dump($link);
+		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['category_prefix'], $this->opt['category_suffix']));
+		//Figure out the anchor for the term
+		$breadcrumb->set_anchor($this->opt['category_anchor'], get_term_link($term, $taxonomy));
+		//Make sure the id is valid, and that we won't end up spinning in a loop
+		if($term->parent && $term->parent != $id)
+		{
+			//Figure out the rest of the term hiearchy via recursion
+			$this->term_parents($term->parent, $taxonomy);
+		}
+	}
+	/**
 	 * category_parents
 	 * 
 	 * A Breadcrumb Trail Filling Function
@@ -485,7 +546,7 @@ class bcn_breadcrumb_trail
 	 * This recursive functions fills the trail with breadcrumbs for parent categories.
 	 * @param int $id The id of the parent category.
 	 */
-	function category_parents($id)
+/*	function category_parents($id)
 	{
 		global $post;
 		//Get the current category object, filter applied within this call
@@ -500,7 +561,7 @@ class bcn_breadcrumb_trail
 			//Figure out the rest of the category hiearchy via recursion
 			$this->category_parents($category->category_parent);
 		}
-	}
+	}*/
 	/**
 	 * do_archive_by_category
 	 * 
@@ -525,7 +586,7 @@ class bcn_breadcrumb_trail
 		//Get parents of current category
 		if($category->category_parent)
 		{
-			$this->category_parents($category->category_parent);
+			$this->term_parents($category->category_parent, 'category');
 		}
 	}
 	/**
@@ -560,24 +621,24 @@ class bcn_breadcrumb_trail
 	{
 		global $wp_query;
 		//First deal with the day breadcrumb
-		if(is_day())
+		if(is_day() || is_single())
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('d'), $this->opt['archive_date_prefix'], $this->opt['archive_date_suffix']));
 			//If we're paged, let's link to the first page
-			if(is_paged() && $this->opt['paged_display'])
+			if(is_paged() && $this->opt['paged_display'] || is_single())
 			{
 				//Deal with the anchor
 				$breadcrumb->set_anchor($this->opt['date_anchor'], get_day_link(get_the_time('Y'), get_the_time('m'), $bcn_breadcrumb->title));
 			}
 		}
 		//Now deal with the month breadcrumb
-		if(is_month() || is_day())
+		if(is_month() || is_day() || is_single())
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('F'), $this->opt['archive_date_prefix'], $this->opt['archive_date_suffix']));
 			//If we're paged, or not in the archive by month let's link to the first archive by month page
-			if(is_day() || (is_month() && is_paged() && $this->opt['paged_display']))
+			if(is_day() || is_single() || (is_month() && is_paged() && $this->opt['paged_display']))
 			{
 				//Deal with the anchor
 				$breadcrumb->set_anchor($this->opt['date_anchor'], get_month_link(get_the_time('Y'), get_the_time('m')));
@@ -586,7 +647,7 @@ class bcn_breadcrumb_trail
 		//Place the year breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('Y'), $this->opt['archive_date_prefix'], $this->opt['archive_date_suffix']));
 		//If we're paged, or not in the archive by year let's link to the first archive by year page
-		if(is_day() || is_month() || (is_paged() && $this->opt['paged_display']))
+		if(is_day() || is_month() || is_single() || (is_paged() && $this->opt['paged_display']))
 		{
 			//Deal with the anchor
 			$breadcrumb->set_anchor($this->opt['date_anchor'], get_year_link(get_the_time('Y')));
