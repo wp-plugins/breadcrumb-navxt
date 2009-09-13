@@ -574,7 +574,7 @@ class bcn_breadcrumb_trail
 			if(is_paged() && $this->opt['paged_display'] || is_single())
 			{
 				//Deal with the anchor
-				$breadcrumb->set_anchor($this->opt['date_anchor'], get_day_link(get_the_time('Y'), get_the_time('m'), $bcn_breadcrumb->title));
+				$breadcrumb->set_anchor($this->opt['date_anchor'], get_day_link(get_the_time('Y'), get_the_time('m'), get_the_time('d')));
 			}
 		}
 		//Now deal with the month breadcrumb
