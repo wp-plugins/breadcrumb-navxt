@@ -195,6 +195,14 @@ class bcn_admin
 				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 				$this->breadcrumb_trail->opt['blog_display'] = true;
 			}
+			else if($major == 3 && $minor < 4)
+			{
+				//Inline upgrade of the tag setting
+				if($this->breadcrumb_trail->opt['post_taxonomy_type'] === 'tag')
+				{
+					$this->breadcrumb_trail->opt['post_taxonomy_type'] = 'post_tag';
+				}
+			}
 			//Always have to update the version
 			$this->update_option('bcn_version', $this->version);
 			//Store the options
@@ -596,14 +604,10 @@ class bcn_admin
 	 */
 	private function _get_contextual_help()
 	{
-		$t = $this->_get_help_text();
-		
-		$t = sprintf('<div class="metabox-prefs">%s</div>', $t);
-		
-		$title = __('Breadcrumb NavXT Settings', 'breadcrumb_navxt');
-		
+		$t = $this->_get_help_text();	
+		$t = sprintf('<div class="metabox-prefs">%s</div>', $t);	
+		$title = __('Breadcrumb NavXT Settings', 'breadcrumb_navxt');	
 		$t = sprintf('<h5>%s</h5>%s', sprintf(__('Get help with "%s"'), $title), $t);
-		
 		return $t;
 	}	
 	
@@ -995,7 +999,7 @@ class bcn_admin
 							</label>
 							<br/>
 							<label>
-								<input name="post_taxonomy_type" type="radio" value="tag" class="togx" <?php checked('tag', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
+								<input name="post_taxonomy_type" type="radio" value="post_tag" class="togx" <?php checked('post_tag', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
 								<?php _e('Tags'); ?>								
 							</label>
 							<br/>
