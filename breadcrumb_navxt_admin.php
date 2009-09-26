@@ -774,6 +774,7 @@ class bcn_admin
 	 */
 	function admin_panel()
 	{
+		global $wp_taxonomies;
 		$this->security();
 		//Update our internal options array, use form safe function
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options', true);
@@ -1003,6 +1004,23 @@ class bcn_admin
 								<?php _e('Tags'); ?>								
 							</label>
 							<br/>
+							<?php
+								//Loop through all of the taxonomies in the array
+								foreach($wp_taxonomies as $taxonomy)
+								{
+									//We only want custom taxonomies
+									if($taxonomy->object_type == 'post' && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+									{
+										?>
+							<label>
+								<input name="post_taxonomy_type" type="radio" value="<?php echo $taxonomy->name; ?>" class="togx" <?php checked($taxonomy->name, $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
+								<?php _e($taxonomy->label); ?>							
+							</label>
+							<br/>
+										<?
+									}
+								}
+							?>
 							<span class="setting-description"><?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
@@ -1298,14 +1316,15 @@ class bcn_admin
 	 *
 	 * Displays wordpress options as <seclect> options defaults to true/false
 	 *
-	 * @param (string) optionname name of wordpress options store
-	 * @param (array) options array of names of options that can be selected
+	 * @param string $optionname name of wordpress options store
+	 * @param array $options array of names of options that can be selected
+	 * @param array $exclude[optional] array of names in $options array to be excluded
 	 */
-	function select_options($optionname, $options)
+	function select_options($optionname, $options, $exclude = array())
 	{
 		$value = $this->breadcrumb_trail->opt[$optionname];
 		//First output the current value
-		if ($value)
+		if($value)
 		{
 			printf('<option>%s</option>', $value);
 		}
@@ -1313,7 +1332,7 @@ class bcn_admin
 		foreach($options as $option)
 		{
 			//Don't want multiple occurance of the current value
-			if($option != $value)
+			if($option != $value && !in_array($option, $exclude))
 			{
 				printf('<option>%s</option>', $option);
 			}
