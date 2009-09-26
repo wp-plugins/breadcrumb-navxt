@@ -465,7 +465,7 @@ class bcn_breadcrumb_trail
 			foreach($bcn_object as $term)
 			{
 				//Run through a filter for good measure
-				$tag->name = apply_filters("get_$taxonomy", $term->name);
+				$term->name = apply_filters("get_$taxonomy", $term->name);
 				//Everything but the first term needs a comma separator
 				if($is_first == false)
 				{
@@ -535,24 +535,26 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_archive_by_tag
+	 * do_archive_by_term
 	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
-	 * This functions fills a breadcrumb for a tag archive.
+	 * This functions fills a breadcrumb for a flat taxonomy (e.g. tag) archive.
 	 */
-	function do_archive_by_tag()
+	function do_archive_by_term()
 	{
 		global $wp_query;
+		//Simmilar to using $post, but for things $post doesn't cover
+		$term = $wp_query->get_queried_object();
+		//Run through a filter for good measure
+		$term->name = apply_filters("get_$taxonomy", $term->name);
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb(single_tag_title('', false), $this->opt['archive_tag_prefix'], $this->opt['archive_tag_suffix']));
+		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['archive_tag_prefix'], $this->opt['archive_tag_suffix']));
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
-			//Simmilar to using $post, but for things $post doesn't cover
-			$tag = $wp_query->get_queried_object();
 			//Figure out the anchor for current category
-			$breadcrumb->set_anchor($this->opt['tag_anchor'], get_tag_link($tag->term_id));
+			$breadcrumb->set_anchor($this->opt['tag_anchor'], get_term_link($term->term_id, $term->taxonomy));
 		}
 	}
 	/**
@@ -774,7 +776,7 @@ class bcn_breadcrumb_trail
 				//For flat taxonomy based archives
 				else
 				{
-					$this->do_archive_by_tag();
+					$this->do_archive_by_term();
 				}
 			}
 			//For date based archives
