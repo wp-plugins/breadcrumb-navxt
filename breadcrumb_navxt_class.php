@@ -16,6 +16,391 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+/**
+ * Breadcrumb
+ * 
+ * @since 3.4
+ */
+Interface NXT_IBreadcrumb
+{
+	public function isLinked();
+	public function SetLinked($linked);	
+	public function getTrail();
+	public function setTrail(NXT_ITrail $trail);		
+	public function getPrefix();
+	public function setPrefix($prefix);	
+	public function getSuffix();
+	public function setSuffix($suffix);
+	public function getTitle();
+	public function setTitle($title);
+	public function getTemplate();
+	public function setTemplate($template);
+	public function getURI();
+	public function setURI($URI);	
+}
+
+/**
+ * Trail
+ * 
+ * @since 3.4
+ */
+Interface NXT_ITrail {}
+
+/**
+ * Breadcrumb Class
+ * 
+ * @since 3.4
+ */
+class NXT_CBreadcrumb implements NXT_IBreadcrumb {		
+	/**
+	 * Linked local store
+	 * @var bool
+	 */
+	private $_linked = false;
+	
+	/**
+	 * Prefix local store
+	 * @var string
+	 */
+	private $_prefix = '';
+	
+	/**
+	 * Suffix local store
+	 * @var string
+	 */
+	private $_suffix = '';
+	
+	/**
+	 * Title local store
+	 * @var string
+	 */
+	private $_title = '';
+	
+	/**
+	 * Template local store
+	 * @var string
+	 */
+	private $_template = '';
+	
+	/**
+	 * trail local store
+	 * 
+	 * @var bcn_breadcrumb_trail
+	 */
+	private $_trail = null;
+	
+	/**
+	 * URI local store
+	 * @var string
+	 */
+	private $_uri = '';
+	
+	/**
+	 * constructor
+	 * 
+	 * @param array $options (optional)
+	 * @return
+	 */	
+	function __construct(array $options = array()) {					
+		if ( isset($options['prefix']) )
+			$this->setPrefix($options['prefix']);
+			
+		if ( isset($options['suffix']) )
+			$this->setSuffix($options['suffix']);
+
+		if ( isset($options['template']) )
+			$this->setTemplate($options['template']);
+			
+		if ( isset($options['title']) )
+			$this->setTitle($options['title']);
+			
+		if ( isset($options['trail']) )
+			$this->setTrail($options['trail']);
+
+		if ( isset($options['uri']) )
+			$this->setURI($options['uri']);
+			
+		// linked must be set at the end to be able to overwrite after URI
+		if ( isset($options['linked']) )
+			$this->isLinked($options['linked']);
+	}
+	
+	/**
+	 * isLinked getter
+	 *
+	 * @return bool
+	 */
+	public function isLinked() {
+		return $this->_isLinked;
+	}
+	 
+	/**
+	 * Linked setter
+	 *
+	 * @param bool $isLinked wether this breadcrumb is linked or not
+	 */
+	public function setLinked($linked) {
+		$this->_linked = (bool) $linked;
+	}
+	
+	/**
+	 * Anchor getter
+	 * 
+	 * Get this breadcrumbs anchor (defined by it's template) if it is linked or
+	 * the title as text.
+	 * 
+	 * Anchor has nothing to do with Prefix or Suffix.
+	 *
+	 * @return string
+	 */
+	public function getAnchor() {		
+		$anchor = '';
+
+		if ( $this->_linked ) {			
+			$anchor = str_replace(array('%title%', '%link%'), array(esc_attr(strip_tags($this->_title)), $this->_uri ), $this->_template);				
+		} else {
+			$anchor = $this->_title;
+		}
+		 
+		return $anchor; 
+	}
+	
+	/**
+	 * Prefix getter
+	 *
+	 * @return string
+	 */
+	public function getPrefix() {
+		return $this->_prefix;
+	}
+	 
+	/**
+	 * Prefix setter
+	 *
+	 * @param string $prefix Prefix
+	 */
+	public function setPrefix($prefix) {
+		$this->_prefix = (string) $prefix;
+	}
+	
+	/**
+	 * Suffix getter
+	 *
+	 * @return string
+	 */
+	public function getSuffix() {
+		return $this->_suffix;
+	}
+	 
+	/**
+	 * Suffix setter
+	 *
+	 * @param string $suffix Suffix
+	 */
+	public function setSuffix($suffix) {
+		$this->_suffix = (string) $suffix;
+	}
+	
+	/**
+	 * Title getter
+	 *
+	 * @return string
+	 */
+	public function getTitle() {
+		return $this->_title;
+	}
+	 
+	/**
+	 * Title setter
+	 *
+	 * @param string $title Title
+	 */
+	public function setTitle($title) {
+		$this->_title = (string) $title;
+	}
+	
+	/**
+	 * Template getter
+	 *
+	 * @return string
+	 */
+	public function getTemplate() {
+		return $this->_template;
+	}
+	 
+	/**
+	 * Template setter
+	 *
+	 * @param string $template Template
+	 */
+	public function setTemplate($template) {
+		$this->_template = (string) $template;
+	}
+	
+	public function getTrail() {
+		return $this->_trail;		
+	}
+
+	/**
+	 * Trail setter
+	 * 
+	 * @param NXT_ITrail $trail Bind this Breadcrumb to a trail.
+	 */
+	public function setTrail(NXT_ITrail $trail) {
+		$this->_trail = $trail;
+	}
+	
+	/**
+	 * URI getter
+	 *
+	 * @return string
+	 */
+	public function getURI() {
+		return $this->_uri;
+	}
+	 
+	/**
+	 * URI setter
+	 *
+	 * @param string $uri URI
+	 */
+	public function setURI($uri) {
+		$uri 		   = (string) $uri;				
+		$this->_uri    = $uri;
+		$this->_linked = !empty($uri);
+	}
+}
+
+/**
+ * Trail Exception Class
+ * 
+ * @since 3.4
+ */
+class NXT_CTrail_Exception extends Exception {}
+
+/**
+ * Trail Class
+ * 
+ * @since 3.0
+ */
+class NXT_CTrail implements NXT_ITrail, IteratorAggregate, Countable {
+	/**
+	 * Trail local store
+	 * @var array
+	 */
+	private $_trail = array();
+	
+	/**
+	 * @param NXT_IBreadcrumb $breadcrumb breadcrumb to insert
+	 * @param int $index (optional) index before which the breadcrumb should be inserted 
+	 * @return unknown_type
+	 * @throws NXT_CTrail_Exception If parameter do mismatch
+	 */
+	private function _insert(NXT_IBreadcrumb $breadcrumb, $index = false) {
+		if ($this->_contains($breadcrumb)) {
+			throw new NXT_CTrail_Exception(sprintf('Breadcrumb already exists in trail ("%s").', $breadcrumb->getTitle()));
+		}
+		
+		if (null != $breadcrumb->getTrail()) {
+			throw new NXT_CTrail_Exception(sprintf('Breadcrumb is assigned to some trail ("%s").', $breadcrumb->getTitle()));
+		}
+		
+		$breadcrumb->setTrail($this);
+		
+		if (false == $index || $index >= count($this)) {
+			$this->_trail[] = $breadcrumb;	
+		} else {
+			$this->_trail = array_splice($this->_trail, $index, 0, array($breadcrumb));
+		}		
+	}
+	
+	/**
+	 * Add Breadcrumb to Trail
+	 * 
+	 * @param NXT_IBreadcrumb $breadcrumb
+	 * @throws NXT_CTrail_Exception If parameter do mismatch
+	 */
+	public function Add(NXT_IBreadcrumb $breadcrumb) {
+		$this->_insert($breadcrumb);
+	}
+	
+	/**
+	 * Insert Breadcrumb to Trail before a specific Breadcrumb
+	 * 
+	 * @param NXT_IBreadcrumb $breadcrumb
+	 * @param int $index zero-based index of an existing breadcrumb before insertion takes place
+	 * @throws NXT_CTrail_Exception If parameter do mismatch
+	 */
+	public function insertBefore(NXT_IBreadcrumb $breadcrumb, $index) {
+		$index = (int) $index;
+		
+		if ( $index < 0 )
+			throw new NXT_CTrail_Exception(sprintf('Index out of boundardies ("%d").', $index));				
+			
+		$index = min($index, count($this));
+								
+		$this->_insert($breadcrumb, $index);
+	}
+	
+	/**
+	 * @param $obj
+	 * @return bool
+	 */
+	private function _contains($obj) {
+		if (is_object($obj))
+		{
+			foreach($this->_trail as $object)
+             {
+                 if ($object === $obj)
+                 {
+                     return true;
+                 }
+             }
+        }
+		return false;		
+	}
+	
+	/**
+	 * get all breadcrumbs as array
+	 *
+	 * @return array
+	 */
+	public function toArray() {
+		return $this->_trail;
+	}
+	
+	/**
+	 * IteratorAggregate implementation
+	 * 
+	 * @return Traverseable
+	 */
+ 	public function getIterator () {
+ 		return new ArrayIterator($this->_trail);
+ 	}
+ 	
+ 	/**
+ 	 * Countable implementation
+ 	 * 
+ 	 * @return int
+ 	 */
+	public function count () {
+		return count($this->_trail);
+	}
+ 	
+	/**
+	 * 
+	 * @return unknown_type
+	 */
+ 	public function clear() {
+ 		
+ 		$this->_trail = array();
+ 	}
+ 	
+ 	
+ 	
+}
+
 //The breadcrumb class
 class bcn_breadcrumb
 {
