@@ -512,30 +512,32 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_archive_by_category
+	 * do_archive_by_term_hierarchical
 	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
-	 * This functions fills a breadcrumb for a category archive.
+	 * This functions fills a breadcrumb for a hierarchical taxonomy (e.g. category) archive.
 	 */
-	function do_archive_by_category()
+	function do_archive_by_term_hierarchical()
 	{
 		global $wp_query;
-		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb(single_cat_title('', false), $this->opt['category_prefix'] . $this->opt['archive_category_prefix'],
-			$this->opt['archive_category_suffix'] . $this->opt['category_suffix']));
 		//Simmilar to using $post, but for things $post doesn't cover
-		$category = $wp_query->get_queried_object();
+		$term = $wp_query->get_queried_object();
+		//Run through a filter for good measure
+		$term->name = apply_filters("get_$taxonomy", $term->name);
+		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['category_prefix'] . $this->opt['archive_category_prefix'],
+			$this->opt['archive_category_suffix'] . $this->opt['category_suffix']));
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Figure out the anchor for current category
-			$breadcrumb->set_anchor($this->opt['category_anchor'], get_category_link($category->cat_ID));
+			$breadcrumb->set_anchor($this->opt['category_anchor'], get_term_link($term->term_id, $term->taxonomy));
 		}
 		//Get parents of current category
-		if($category->category_parent)
+		if($term->parent)
 		{
-			$this->term_parents($category->category_parent, 'category');
+			$this->term_parents($term->parent, $term->taxonomy);
 		}
 	}
 	/**
@@ -545,7 +547,7 @@ class bcn_breadcrumb_trail
 	 * 
 	 * This functions fills a breadcrumb for a flat taxonomy (e.g. tag) archive.
 	 */
-	function do_archive_by_term()
+	function do_archive_by_term_flat()
 	{
 		global $wp_query;
 		//Simmilar to using $post, but for things $post doesn't cover
@@ -775,12 +777,12 @@ class bcn_breadcrumb_trail
 				//For hierarchical taxonomy based archives
 				if(is_taxonomy_hierarchical($term->taxonomy))
 				{
-					$this->do_archive_by_category();
+					$this->do_archive_by_term_hierarchical();
 				}
 				//For flat taxonomy based archives
 				else
 				{
-					$this->do_archive_by_term();
+					$this->do_archive_by_term_flat();
 				}
 			}
 			//For date based archives
@@ -788,15 +790,6 @@ class bcn_breadcrumb_trail
 			{
 				$this->do_archive_by_date();
 			}
-		}
-		else if(is_archive() && is_category())
-		{
-			$this->do_archive_by_category();
-		}
-		
-		else if(is_archive() && is_tag())
-		{
-			$this->do_archive_by_tag();
 		}
 		//For 404 pages
 		else if(is_404())
