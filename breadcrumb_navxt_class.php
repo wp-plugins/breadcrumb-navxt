@@ -63,11 +63,13 @@ class bcn_breadcrumb
 	 * 
 	 * @param string $template the anchor template to use
 	 * @param string $url the url to replace the %link% tag in the anchor
+	 * @param string $term the term to replace the %taxonomy% tag in the anchor
+	 * 
 	 */
-	function set_anchor($template, $url)
+	function set_anchor($template, $url, $taxonomy = '')
 	{
 		//Set the anchor, we strip tangs from the title to prevent html validation problems
-		$this->anchor = str_replace('%title%', strip_tags($this->title), str_replace('%link%', $url, $template));
+		$this->anchor = str_replace('%taxonomy%', $taxonomy, str_replace('%title%', strip_tags($this->title), str_replace('%link%', $url, $template)));
 		//Set linked to true since we called this function
 		$this->linked = true;
 	}
@@ -476,7 +478,9 @@ class bcn_breadcrumb_trail
 					$bcn_breadcrumb->title .= ', ';
 				}
 				//This is a bit hackish, but it compiles the tag anchor and appends it to the current breadcrumb title
-				$bcn_breadcrumb->title .= $this->opt['tag_prefix'] . str_replace('%title%', $term->name, str_replace('%link%', get_term_link($term, $taxonomy), $this->opt['tag_anchor'])) . $term->name . '</a>' . $this->opt['tag_suffix'];
+				$bcn_breadcrumb->title .= str_replace('%taxonomy%', bcn_taxonomy_title($taxonomy), $this->opt['tag_prefix'] . 
+					str_replace('%title%', $term->name, str_replace('%link%', get_term_link($term, $taxonomy), $this->opt['tag_anchor'])) . 
+					$term->name . '</a>' . $this->opt['tag_suffix']);
 				$is_first = false;
 			}
 		}
@@ -501,9 +505,9 @@ class bcn_breadcrumb_trail
 		//Get the current category object, filter applied within this call
 		$term = &get_term($id, $taxonomy);
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['category_prefix'], $this->opt['category_suffix']));
+		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, str_replace('%taxonomy%', bcn_taxonomy_title($taxonomy), $this->opt['category_prefix']), $this->opt['category_suffix']));
 		//Figure out the anchor for the term
-		$breadcrumb->set_anchor($this->opt['category_anchor'], get_term_link($term, $taxonomy));
+		$breadcrumb->set_anchor($this->opt['category_anchor'], get_term_link($term, $taxonomy), bcn_taxonomy_title($taxonomy));
 		//Make sure the id is valid, and that we won't end up spinning in a loop
 		if($term->parent && $term->parent != $id)
 		{
@@ -524,15 +528,16 @@ class bcn_breadcrumb_trail
 		//Simmilar to using $post, but for things $post doesn't cover
 		$term = $wp_query->get_queried_object();
 		//Run through a filter for good measure
-		$term->name = apply_filters("get_$taxonomy", $term->name);
+		$term->name = apply_filters('get_' . $term->taxonomy, $term->name);
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['category_prefix'] . $this->opt['archive_category_prefix'],
+		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, str_replace('%taxonomy%', bcn_taxonomy_title($term->taxonomy), $this->opt['category_prefix']) . 
+			str_replace('%taxonomy%', bcn_taxonomy_title($term->taxonomy), $this->opt['archive_category_prefix']),
 			$this->opt['archive_category_suffix'] . $this->opt['category_suffix']));
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Figure out the anchor for current category
-			$breadcrumb->set_anchor($this->opt['category_anchor'], get_term_link($term->term_id, $term->taxonomy));
+			$breadcrumb->set_anchor($this->opt['category_anchor'], get_term_link($term->term_id, $term->taxonomy), bcn_taxonomy_title($term->taxonomy));
 		}
 		//Get parents of current category
 		if($term->parent)
@@ -553,14 +558,14 @@ class bcn_breadcrumb_trail
 		//Simmilar to using $post, but for things $post doesn't cover
 		$term = $wp_query->get_queried_object();
 		//Run through a filter for good measure
-		$term->name = apply_filters("get_$taxonomy", $term->name);
+		$term->name = apply_filters('get_' . $term->taxonomy, $term->name);
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['archive_tag_prefix'], $this->opt['archive_tag_suffix']));
+		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, str_replace('%taxonomy%', bcn_taxonomy_title($term->taxonomy), $this->opt['archive_tag_prefix']), $this->opt['archive_tag_suffix']));
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Figure out the anchor for current category
-			$breadcrumb->set_anchor($this->opt['tag_anchor'], get_term_link($term->term_id, $term->taxonomy));
+			$breadcrumb->set_anchor($this->opt['tag_anchor'], get_term_link($term->term_id, $term->taxonomy), bcn_taxonomy_title($term->taxonomy));
 		}
 	}
 	/**
