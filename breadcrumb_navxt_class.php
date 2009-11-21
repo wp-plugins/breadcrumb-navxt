@@ -937,20 +937,27 @@ class bcn_breadcrumb_trail
 		//The main compiling loop
 		foreach($this->trail as $key=>$breadcrumb)
 		{
-			$trail_str .= '<li>';
+			$trail_str .= '<li';
 			//Trim titles, if needed
 			if($this->opt['max_title_length'] > 0)
 			{
 				//Trim the breadcrumb's title
 				$breadcrumb->title_trim($this->opt['max_title_length']);
 			}
+			//On the first run we need to add in a class for the home breadcrumb
+			if($trail_str === '<li')
+			{
+				$trail_str .= ' class="home" ';
+			}
 			//If we are on the current item there are some things that must be done
 			if($key === 0)
 			{
 				$this->current_item($breadcrumb);
+				//Add in a class for current_item
+				$trail_str .= ' class="current_item" ';
 			}
 			//Place in the breadcrumb's assembled elements
-			$trail_str .= $breadcrumb->assemble($linked);
+			$trail_str .= '>' . $breadcrumb->assemble($linked);
 			$trail_str .= "</li>\n";
 		}
 		//Should we return or echo the assembled trail?
