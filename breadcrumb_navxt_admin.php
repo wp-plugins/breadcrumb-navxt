@@ -202,6 +202,12 @@ class bcn_admin
 				{
 					$this->breadcrumb_trail->opt['post_taxonomy_type'] = 'post_tag';
 				}
+				//Fix our tag settings
+				$this->breadcrumb_trail->opt['archive_post_tag_prefix'] = $this->breadcrumb_trail->opt['archive_tag_prefix'];
+				$this->breadcrumb_trail->opt['archive_post_tag_suffix'] = $this->breadcrumb_trail->opt['archive_tag_suffix'];
+				$this->breadcrumb_trail->opt['post_tag_prefix'] = $this->breadcrumb_trail->opt['tag_prefix'];
+				$this->breadcrumb_trail->opt['post_tag_suffix'] = $this->breadcrumb_trail->opt['tag_suffix'];
+				$this->breadcrumb_trail->opt['post_tag_anchor'] = $this->breadcrumb_trail->opt['tag_anchor'];
 			}
 			//Always have to update the version
 			$this->update_option('bcn_version', $this->version);
@@ -408,9 +414,9 @@ class bcn_admin
 		$this->breadcrumb_trail->opt['search_suffix'] = bcn_get('search_suffix');
 		$this->breadcrumb_trail->opt['search_anchor'] = bcn_get('search_anchor', $this->breadcrumb_trail->opt['search_anchor']);
 		//Tag settings
-		$this->breadcrumb_trail->opt['tag_prefix'] = bcn_get('tag_prefix');
-		$this->breadcrumb_trail->opt['tag_suffix'] = bcn_get('tag_suffix');
-		$this->breadcrumb_trail->opt['tag_anchor'] = bcn_get('tag_anchor', $this->breadcrumb_trail->opt['tag_anchor']);
+		$this->breadcrumb_trail->opt['post_tag_prefix'] = bcn_get('post_tag_prefix');
+		$this->breadcrumb_trail->opt['post_tag_suffix'] = bcn_get('post_tag_suffix');
+		$this->breadcrumb_trail->opt['post_tag_anchor'] = bcn_get('post_tag_anchor', $this->breadcrumb_trail->opt['post_tag_anchor']);
 		//Author page settings
 		$this->breadcrumb_trail->opt['author_prefix'] = bcn_get('author_prefix');
 		$this->breadcrumb_trail->opt['author_suffix'] = bcn_get('author_suffix');
@@ -422,8 +428,8 @@ class bcn_admin
 		//Archive settings
 		$this->breadcrumb_trail->opt['archive_category_prefix'] = bcn_get('archive_category_prefix');
 		$this->breadcrumb_trail->opt['archive_category_suffix'] = bcn_get('archive_category_suffix');
-		$this->breadcrumb_trail->opt['archive_tag_prefix'] = bcn_get('archive_tag_prefix');
-		$this->breadcrumb_trail->opt['archive_tag_suffix'] = bcn_get('archive_tag_suffix');
+		$this->breadcrumb_trail->opt['archive_post_tag_prefix'] = bcn_get('archive_post_tag_prefix');
+		$this->breadcrumb_trail->opt['archive_post_tag_suffix'] = bcn_get('archive_post_tag_suffix');
 		//Archive by date settings
 		$this->breadcrumb_trail->opt['date_anchor'] = bcn_get('date_anchor', $this->breadcrumb_trail->opt['date_anchor']);
 		$this->breadcrumb_trail->opt['archive_date_prefix'] = bcn_get('archive_date_prefix');
@@ -1014,7 +1020,7 @@ class bcn_admin
 										?>
 							<label>
 								<input name="post_taxonomy_type" type="radio" value="<?php echo $taxonomy->name; ?>" class="togx" <?php checked($taxonomy->name, $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
-								<?php _e($taxonomy->label); ?>							
+								<?php echo ucwords(__($taxonomy->label)); ?>							
 							</label>
 							<br/>
 										<?
@@ -1122,51 +1128,113 @@ class bcn_admin
 				<table class="form-table">
 					<tr valign="top">
 						<th scope="row">
-							<label for="tag_prefix"><?php _e('Tag Prefix', 'breadcrumb_navxt'); ?></label>
+							<label for="post_tag_prefix"><?php _e('Tag Prefix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="tag_prefix" id="tag_prefix" value="<?php echo $this->breadcrumb_trail->opt['tag_prefix']; ?>" size="32" /><br />
+							<input type="text" name="post_tag_prefix" id="post_tag_prefix" value="<?php echo $this->breadcrumb_trail->opt['post_tag_prefix']; ?>" size="32" /><br />
 							<span class="setting-description"><?php _e('Applied before the anchor on all tag breadcrumbs.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
 						<th scope="row">
-							<label for="tag_suffix"><?php _e('Tag Suffix', 'breadcrumb_navxt'); ?></label>
+							<label for="post_tag_suffix"><?php _e('Tag Suffix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="tag_suffix" id="tag_suffix" value="<?php echo $this->breadcrumb_trail->opt['tag_suffix']; ?>" size="32" /><br />
+							<input type="text" name="post_tag_suffix" id="post_tag_suffix" value="<?php echo $this->breadcrumb_trail->opt['post_tag_suffix']; ?>" size="32" /><br />
 							<span class="setting-description"><?php _e('Applied after the anchor on all tag breadcrumbs.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
 						<th scope="row">
-							<label for="tag_anchor"><?php _e('Tag Anchor', 'breadcrumb_navxt'); ?></label>
+							<label for="post_tag_anchor"><?php _e('Tag Anchor', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="tag_anchor" id="tag_anchor" value="<?php echo $this->breadcrumb_trail->opt['tag_anchor']; ?>" size="60" /><br />
+							<input type="text" name="post_tag_anchor" id="post_tag_anchor" value="<?php echo $this->breadcrumb_trail->opt['post_tag_anchor']; ?>" size="60" /><br />
 							<span class="setting-description"><?php _e('The anchor template for tag breadcrumbs.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
 						<th scope="row">
-							<label for="archive_tag_prefix"><?php _e('Archive by Tag Prefix', 'breadcrumb_navxt'); ?></label>
+							<label for="archive_post_tag_prefix"><?php _e('Archive by Tag Prefix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="archive_tag_prefix" id="archive_tag_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_tag_prefix']; ?>" size="32" /><br />
+							<input type="text" name="archive_post_tag_prefix" id="archive_post_tag_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_post_tag_prefix']; ?>" size="32" /><br />
 							<span class="setting-description"><?php _e('Applied before the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
 						<th scope="row">
-							<label for="archive_tag_suffix"><?php _e('Archive by Tag Suffix', 'breadcrumb_navxt'); ?></label>
+							<label for="archive_post_tag_suffix"><?php _e('Archive by Tag Suffix', 'breadcrumb_navxt'); ?></label>
 						</th>
 						<td>
-							<input type="text" name="archive_tag_suffix" id="archive_tag_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_tag_suffix']; ?>" size="32" /><br />
+							<input type="text" name="archive_post_tag_suffix" id="archive_post_tag_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_post_tag_suffix']; ?>" size="32" /><br />
 							<span class="setting-description"><?php _e('Applied after the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
 				</table>
 			</fieldset>
+			<?php 
+			//Loop through all of the taxonomies in the array
+			foreach($wp_taxonomies as $taxonomy)
+			{
+				//We only want custom taxonomies
+				if($taxonomy->object_type == 'post' && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+				{
+				?>
+			<fieldset id="<?php echo $taxonomy->name; ?>" class="bcn_options">
+				<h3><?php echo ucwords(__($taxonomy->label)); ?></h3>
+				<table class="form-table">
+					<tr valign="top">
+						<th scope="row">
+							<label for="<?php echo $taxonomy->name; ?>_prefix"><?php printf(__('%s Prefix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))); ?></label>
+						</th>
+						<td>
+							<input type="text" name="<?php echo $taxonomy->name; ?>_prefix" id="<?php echo $taxonomy->name; ?>_prefix" value="<?php echo $this->breadcrumb_trail->opt[$taxonomy->name . '_prefix']; ?>" size="32" /><br />
+							<span class="setting-description"><?php printf(__('Applied before the anchor on all %s breadcrumbs.', 'breadcrumb_navxt'), __($taxonomy->label)); ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="<?php echo $taxonomy->name; ?>_suffix"><?php printf(__('%s Suffix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))); ?></label>
+						</th>
+						<td>
+							<input type="text" name="<?php echo $taxonomy->name; ?>_suffix" id="<?php echo $taxonomy->name; ?>_suffix" value="<?php echo $this->breadcrumb_trail->opt[$taxonomy->name . '_suffix']; ?>" size="32" /><br />
+							<span class="setting-description"><?php printf(__('Applied after the anchor on all %s breadcrumbs.', 'breadcrumb_navxt'), __($taxonomy->label)); ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="<?php echo $taxonomy->name; ?>_anchor"><?php printf(__('%s Anchor', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))); ?></label>
+						</th>
+						<td>
+							<input type="text" name="<?php echo $taxonomy->name; ?>_anchor" id="<?php echo $taxonomy->name; ?>_anchor" value="<?php echo $this->breadcrumb_trail->opt[$taxonomy->name . '_anchor']; ?>" size="60" /><br />
+							<span class="setting-description"><?php printf(__('The anchor template for %s breadcrumbs.', 'breadcrumb_navxt'), __($taxonomy->label)); ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="archive_<?php echo $taxonomy->name; ?>_prefix"><?php printf(__('Archive by %s Prefix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))); ?></label>
+						</th>
+						<td>
+							<input type="text" name="archive_<?php echo $taxonomy->name; ?>_prefix" id="archive_<?php echo $taxonomy->name; ?>_prefix" value="<?php echo $this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_prefix']; ?>" size="32" /><br />
+							<span class="setting-description"><?php printf(__('Applied before the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), __($taxonomy->label)); ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<label for="archive_<?php echo $taxonomy->name; ?>_suffix"><?php printf(__('Archive by %s Suffix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))); ?></label>
+						</th>
+						<td>
+							<input type="text" name="archive_<?php echo $taxonomy->name; ?>_suffix" id="archive_<?php echo $taxonomy->name; ?>_suffix" value="<?php echo $this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_suffix']; ?>" size="32" /><br />
+							<span class="setting-description"><?php printf(__('Applied after the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), __($taxonomy->label)); ?></span>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+				<?
+				}
+			}
+			?>
 			<fieldset id="date" class="bcn_options">
 				<h3><?php _e('Date Archives', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">

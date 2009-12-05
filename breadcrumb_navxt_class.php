@@ -557,7 +557,8 @@ class bcn_breadcrumb_trail
 		//Run through a filter for good measure
 		$term->name = apply_filters('get_' . $term->taxonomy, $term->name);
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['archive_' . $term->taxonomy . '_prefix'], $this->opt['archive_' . $term->taxonomy . '_suffix']));
+		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['archive_' . $term->taxonomy . '_prefix'] . $this->opt[$term->taxonomy . '_prefix'], 
+			$this->opt[$term->taxonomy . '_suffix'] . $this->opt['archive_' . $term->taxonomy . '_suffix']));
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
