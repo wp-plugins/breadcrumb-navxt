@@ -69,11 +69,5 @@ function bcn_get($varname, $default = "")
 	
 	//Return unslashed value
 	return $bcn_value;
-}/*
-function bcn_taxonomy_title($taxonomy)
-{
-	global $wp_taxonomies;
-	$tax = $wp_taxonomies[$taxonomy];
-	return $tax->label;
-}*/
+}
 ?>
