@@ -2,8 +2,8 @@
 Contributors: mtekk, hakre
 Tags: breadcrumb, navigation
 Requires at least: 2.6
-Tested up to: 2.8
-Stable tag: 3.3.0
+Tested up to: 2.9
+Stable tag: 3.4.0
 Adds breadcrumb navigation showing the visitor's path to their current location.
 
 == Description ==
@@ -21,6 +21,8 @@ Breadcrumb NavXT distributes with translations for the following languages:
 * Dutch by Stan Lenssen
 * Russian by Yuri Gribov
 * Swedish by Patrik Spathon
+* Italian by Luca Camellini
+
 
 Don't see your language on the list? Feel free to translate Breadcrumb NavXT and send John Havlik the translations.
 
@@ -30,6 +32,12 @@ Please visit [Breadcrumb NavXT's](http://mtekk.weblogs.us/code/breadcrumb-navxt/
 
 == Changelog ==
 
+= 3.4.0 =
+* New feature: Proper support of custom taxonomies. category_parents and post_tags replaced with term_parents and post_terms.
+* New feature: Ability to use date as post “taxonomy”.
+* New feature: Translations for Italian now included thanks to Luca Camellini.
+* Bug fix: Fixed permalink for day breadcrumbs.
+* Bug fix: Flat taxonomy archive breadcrumbs now are surrounded by both the standard and archive prefix/suffix combination.
 = 3.3.0 =
 * Behavior change: The core plugin was removed, and administrative plugin renamed, direct class access still possible.
 * New feature: Ability to trim the title length for all breadcrumbs in the trail.
