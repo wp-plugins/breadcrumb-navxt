@@ -1245,7 +1245,7 @@ class bcn_admin
 					</tr>
 				</table>
 			</fieldset>
-				<?
+				<?php
 				}
 			}
 			?>
