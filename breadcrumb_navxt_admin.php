@@ -1037,7 +1037,7 @@ class bcn_admin
 								<?php echo ucwords(__($taxonomy->label)); ?>							
 							</label>
 							<br/>
-										<?
+										<?php
 									}
 								}
 							?>
