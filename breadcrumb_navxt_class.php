@@ -477,7 +477,7 @@ class bcn_breadcrumb_trail
 					$bcn_breadcrumb->title .= ', ';
 				}
 				//This is a bit hackish, but it compiles the tag anchor and appends it to the current breadcrumb title
-				$bcn_breadcrumb->title .= $this->opt[$taxonomy . '_prefix'] . str_replace('%title%', $term->name, $this->opt[$taxonomy . '_anchor']) .
+				$bcn_breadcrumb->title .= $this->opt[$taxonomy . '_prefix'] . str_replace('%title%', $term->name, str_replace('%link%', get_term_link($term, $taxonomy), $this->opt[$taxonomy . '_anchor'])) .
 					$term->name . '</a>' . $this->opt[$taxonomy . '_suffix'];
 				$is_first = false;
 			}
