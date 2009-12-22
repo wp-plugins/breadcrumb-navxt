@@ -534,7 +534,7 @@ class bcn_breadcrumb_trail
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Figure out the anchor for current category
-			$breadcrumb->set_anchor($this->opt[$term->taxonomy . '_anchor'], get_term_link($term->term_id, $term->taxonomy));
+			$breadcrumb->set_anchor($this->opt[$term->taxonomy . '_anchor'], get_term_link($term, $term->taxonomy));
 		}
 		//Get parents of current category
 		if($term->parent)
@@ -563,7 +563,7 @@ class bcn_breadcrumb_trail
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Figure out the anchor for current category
-			$breadcrumb->set_anchor($this->opt[$term->taxonomy . '_anchor'], get_term_link($term->term_id, $term->taxonomy));
+			$breadcrumb->set_anchor($this->opt[$term->taxonomy . '_anchor'], get_term_link($term, $term->taxonomy));
 		}
 	}
 	/**
