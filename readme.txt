@@ -3,7 +3,7 @@ Contributors: mtekk, hakre
 Tags: breadcrumb, navigation
 Requires at least: 2.6
 Tested up to: 2.9
-Stable tag: 3.4.0
+Stable tag: 3.4.1
 Adds breadcrumb navigation showing the visitor's path to their current location.
 
 == Description ==
@@ -31,10 +31,13 @@ Don't see your language on the list? Feel free to translate Breadcrumb NavXT and
 Please visit [Breadcrumb NavXT's](http://mtekk.weblogs.us/code/breadcrumb-navxt/#installation "Go to Breadcrumb NavXT's project page's installation section.") project page for installation and usage instructions.
 
 == Changelog ==
-
+= 3.4.1 =
+* Bug fix: Fixed issue with PHP unexpected $end on line 1567 in breadcrumb_navxt_admin.php.
+* Bug fix: Fixed issue where the %link% anchor tag would not be replaced with a URI for flat taxonomies (e.g. tags).
+* Bug fix: Fixed issue where paged breadcrumbs would cause WP_Error objects to be thrown.
 = 3.4.0 =
 * New feature: Proper support of custom taxonomies. category_parents and post_tags replaced with term_parents and post_terms.
-* New feature: Ability to use date as post “taxonomy”.
+* New feature: Ability to use date as post "taxonomy".
 * New feature: Translations for Italian now included thanks to Luca Camellini.
 * Bug fix: Fixed permalink for day breadcrumbs.
 * Bug fix: Flat taxonomy archive breadcrumbs now are surrounded by both the standard and archive prefix/suffix combination.
