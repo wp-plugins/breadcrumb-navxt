@@ -151,6 +151,8 @@ class bcn_admin
 		//If our version is not the same as in the db, time to update
 		if($db_version !== $this->version)
 		{
+			//Update our internal settings
+			$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 			//Split up the db version into it's components
 			list($major, $minor, $release) = explode('.', $db_version);
 			//For upgrading from 2.x.x
