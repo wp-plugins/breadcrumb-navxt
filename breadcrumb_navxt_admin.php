@@ -151,8 +151,6 @@ class bcn_admin
 		//If our version is not the same as in the db, time to update
 		if($db_version !== $this->version)
 		{
-			//Update our internal settings
-			$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 			//Split up the db version into it's components
 			list($major, $minor, $release) = explode('.', $db_version);
 			//For upgrading from 2.x.x
@@ -189,16 +187,22 @@ class bcn_admin
 			{
 				//Update our internal settings
 				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+				//Update our internal settings
+				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 				$this->breadcrumb_trail->opt['search_anchor'] = __('<a title="Go to the first page of search results for %title%." href="%link%">','breadcrumb_navxt');
 			}
 			else if($major == 3 && $minor < 3)
 			{
 				//Update our internal settings
 				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+				//Update our internal settings
+				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 				$this->breadcrumb_trail->opt['blog_display'] = true;
 			}
 			else if($major == 3 && $minor < 4)
 			{
+				//Update our internal settings
+				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 				//Inline upgrade of the tag setting
 				if($this->breadcrumb_trail->opt['post_taxonomy_type'] === 'tag')
 				{
