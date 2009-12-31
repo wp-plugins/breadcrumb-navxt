@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.4.1
+Version: 3.4.90
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -25,30 +25,37 @@ Author URI: http://mtekk.weblogs.us/
 */
 //Include the breadcrumb class
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
+//Include the WP 2.8+ widget class
+require_once(dirname(__FILE__) . '/breadcrumb_navxt_widget.php');
+//Include admin base class
+if(!class_exists('mtekk_admin'))
+{
+	require_once(dirname(__FILE__) . '/mtekk_admin_class.php');
+}
 //Include the supplemental functions
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
 /**
  * The administrative interface class 
  * 
- * @since 3.0.0
  */
-class bcn_admin
+class bcn_admin extends mtekk_admin
 {
 	/**
 	 * local store for breadcrumb version
 	 * 
-	 * Example: String '3.1.0' 
-	 * 
 	 * @var   string
-	 * @since 3.1.0
 	 */
-	private $version = '3.4.1';
-	
+	private $version = '3.4.90';
+	private $full_name = 'Breadcrumb NavXT';
+	private $short_name = 'Breadcrumb NavXT';
+	private $access_level = 'manage_options';
+	private $identifier = 'breadcrumb_navxt';
+	private $unique_prefix = 'bcn';
+	private $plugin_basename = 'breadcrumb-navxt/breadcrumb_navxt_admin.php';
 	/**
 	 * wether or not this administration page has contextual help
 	 * 
 	 * @var bool
-	 * @since 3.2
 	 */
 	private $_has_contextual_help = false;	
 	
@@ -57,7 +64,6 @@ class bcn_admin
 	 * 
 	 * @see   bcn_admin()
 	 * @var   bcn_breadcrumb
-	 * @since 3.0
 	 */
 	public $breadcrumb_trail;
 	/**
@@ -69,40 +75,10 @@ class bcn_admin
 	{
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
-		//Installation Script hook
-		add_action('activate_breadcrumb-navxt/breadcrumb_navxt_admin.php', array($this, 'install'));
-		//Initilizes l10n domain	
-		$this->local();		
-		//WordPress Admin interface hook
-		add_action('admin_menu', array($this, 'add_page'));
-		//WordPress Hook for the widget
-		add_action('plugins_loaded', array($this, 'register_widget'));
-		//Admin Options update hook
-		if(isset($_POST['bcn_admin_options']))
-		{
-			//Temporarily add update function on init if form has been submitted
-			add_action('init', array($this, 'update'));
-		}
-		//Admin Options reset hook
-		if(isset($_POST['bcn_admin_reset']))
-		{
-			//Temporarily add reset function on init if reset form has been submitted
-			add_action('init', array($this, 'reset'));
-		}
-		//Admin Options export hook
-		else if(isset($_POST['bcn_admin_export']))
-		{
-			//Temporarily add export function on init if export form has been submitted
-			add_action('init', array($this, 'export'));
-		}
-		//Admin Options import hook
-		else if(isset($_FILES['bcn_admin_import_file']) && !empty($_FILES['bcn_admin_import_file']['name']))
-		{
-			//Temporarily add import function on init if import form has been submitted
-			add_action('init', array($this, 'import'));
-		}
-		//Admin Init Hook
-		add_action('admin_init', array($this, 'admin_init'));
+		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
+		//$this->plugin_base = plugin_basename(__FILE__);
+		//We're going to make sure we load the parent's constructor
+		parent::__construct('bcn_widget', 'Breadcrumb NavXT', $ops);
 	}
 	/**
 	 * admin initialisation callback function
@@ -114,10 +90,10 @@ class bcn_admin
 	 */
 	public function admin_init()
 	{
+		//We're going to make sure we run the parent's version of this function as well
+		parent::init();	
 		// Register options.
 		register_setting($option_group = 'bcn_admin', $option_name = 'bcn_options', $sanitize_callback = '');
-		//Add in the nice "settings" link to the plugins page
-		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
 		//Add javascript enqeueing callback
 		add_action('wp_print_scripts', array($this, 'javascript'));
 	}
@@ -235,131 +211,6 @@ class bcn_admin
 				$this->add_option('bcn_options', $this->breadcrumb_trail->opt);
 			}
 		}
-	}
-	/**
-	 * reset
-	 * 
-	 * Resets the options to the default values
-	 */
-	function reset()
-	{
-		$this->security();
-		//Do a nonce check, prevent malicious link/form problems
-		check_admin_referer('bcn_admin_upload');
-		//Only needs this one line, will load in the hard coded default option values
-		$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
-		//Reset successful, let the user know
-		add_action('admin_notices', array($this, 'notify_reset'));
-	}
-	/**
-	 * export
-	 * 
-	 * Exports the database settings to a XML document
-	 */
-	function export()
-	{
-		$this->security();
-		//Do a nonce check, prevent malicious link/form problems 
-		check_admin_referer('bcn_admin_upload');
-		//Update our internal settings
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options', true);
-		//Create a DOM document
-		$dom = new DOMDocument('1.0', 'UTF-8');
-		//Adds in newlines and tabs to the output
-		$dom->formatOutput = true;
-		//We're not using a DTD therefore we need to specify it as a standalone document
-		$dom->xmlStandalone = true;
-		//Add an element called options
-		$node = $dom->createElement('options');
-		$parnode = $dom->appendChild($node);
-		//Add a child element named plugin
-		$node = $dom->createElement('plugin');
-		$plugnode = $parnode->appendChild($node);
-		//Add some attributes that identify the plugin and version for the options export
-		$plugnode->setAttribute('name', 'breadcrumb_navxt');
-		$plugnode->setAttribute('version', $this->version);
-		//Change our headder to text/xml for direct save
-		header('Cache-Control: public');
-		//The next two will cause good browsers to download instead of displaying the file
-		header('Content-Description: File Transfer');
-		header('Content-disposition: attachemnt; filename=bcn_settings.xml');
-		header('Content-Type: text/xml');
-		//Loop through the options array
-		foreach($this->breadcrumb_trail->opt as $key=>$option)
-		{
-			//Add a option tag under the options tag, store the option value
-			$node = $dom->createElement('option', $option);
-			$newnode = $plugnode->appendChild($node);
-			//Change the tag's name to that of the stored option
-			$newnode->setAttribute('name', $key);
-		}
-		//Prepair the XML for output
-		$output = $dom->saveXML();
-		//Let the browser know how long the file is
-		header('Content-Length: ' . strlen($output)); // binary length
-		//Output the file
-		echo $output;
-		//Prevent WordPress from continuing on
-		die();
-	}
-	/**
-	 * import
-	 * 
-	 * Imports a XML options document
-	 */
-	function import()
-	{
-		//Our quick and dirty error supressor
-		function error($errno, $errstr, $eerfile, $errline)
-		{
-			return true;
-		}
-		$this->security();
-		//Do a nonce check, prevent malicious link/form problems
-		check_admin_referer('bcn_admin_upload');
-		//Create a DOM document
-		$dom = new DOMDocument('1.0', 'UTF-8');
-		//We want to catch errors ourselves
-		set_error_handler('error');
-		//Load the user uploaded file, handle failure gracefully
-		if($dom->load($_FILES['bcn_admin_import_file']['tmp_name']))
-		{
-			//Have to use an xpath query otherwise we run into problems
-			$xpath = new DOMXPath($dom);  
-			$option_sets = $xpath->query('plugin');
-			//Loop through all of the xpath query results
-			foreach($option_sets as $options)
-			{
-				//We only want to import options for Breadcrumb NavXT
-				if($options->getAttribute('name') === 'breadcrumb_navxt')
-				{
-					//Do a quick version check
-					list($plug_major, $plug_minor, $plug_release) = explode('.', $this->version);
-					list($major, $minor, $release) = explode('.', $options->getAttribute('version'));
-					//We don't support using newer versioned option files in older releases
-					if($plug_major == $major && $plug_minor >= $minor)
-					{
-						//Loop around all of the options
-						foreach($options->getelementsByTagName('option') as $child)
-						{
-							//Place the option into the option array, DOMDocument decodes html entities for us
-							$this->breadcrumb_trail->opt[$child->getAttribute('name')] = $child->nodeValue;
-						}
-					}
-				}
-			}
-			//Commit the loaded options to the database
-			$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
-			//Everything was successful, let the user know
-			add_action('admin_notices', array($this, 'notify_import_success'));
-		}
-		else
-		{
-			//Throw an error since we could not load the file for various reasons
-			add_action('admin_notices', array($this, 'notify_import_failure'));
-		}
-		//Reset to the default error handler after we're done
-		restore_error_handler();
 	}
 	/**
 	 * update
@@ -487,37 +338,6 @@ class bcn_admin
 		return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
 	}
 	/**
-	 * widget
-	 *
-	 * The sidebar widget 
-	 */
-	function widget($args)
-	{
-		extract($args);
-		//Manditory before widget junk
-		echo $before_widget;
-		//Display the breadcrumb trial
-		if($this->breadcrumb_trail->trail[0] != NULL)
-		{
-			$this->breadcrumb_trail->display();
-		}
-		else
-		{
-			$this->display();
-		}
-		//Manditory after widget junk
-		echo $after_widget;
-	}
-	/**
-	 * register_widget
-	 *
-	 * Registers the sidebar widget 
-	 */
-	function register_widget()
-	{
-		register_sidebar_widget('Breadcrumb NavXT', array($this, 'widget'));
-	}
-	/**
 	 * filter_plugin_actions
 	 * 
 	 * Places in a link to the settings page in the plugins listing entry
@@ -557,28 +377,6 @@ class bcn_admin
 		wp_enqueue_script('jquery-ui-tabs');
 	}
 	/**
-	 * local
-	 *
-	 * Initilizes localization textdomain for translations (if applicable)
-	 * 
-	 * normally there is no need to load it because it is already loaded with 
-	 * the breadcrumb class. if not, then it will be loaded.
-	 * 
-	 * @return void
-	 */
-	function local()
-	{
-		// the global and the check might become obsolete in
-		// further wordpress versions
-		// @see https://core.trac.wordpress.org/ticket/10527
-		global $l10n;		
-		$domain = 'breadcrumb_navxt';				
-		if (!isset( $l10n[$domain] ))
-		{
-			load_plugin_textdomain($domain, false, 'breadcrumb-navxt/languages');
-		}	
-	}
-	/**
 	 * add_page
 	 * 
 	 * Adds the adminpage the menue and the nice little settings link
@@ -597,24 +395,6 @@ class bcn_admin
 			//Register Help Output
 			add_action('contextual_help', array($this, 'contextual_help'), 10, 2);
 		}
-	}
-	
-	/**
-	 * contextual_help action hook function
-	 * 
-	 * @param  string $contextual_help
-	 * @param  string $screen
-	 * @return string
-	 */
-	function contextual_help($contextual_help, $screen)
-	{
-		// add contextual help on current screen		
-		if ($screen == 'settings_page_breadcrumb-navxt')
-		{
-			$contextual_help = $this->_get_contextual_help();
-			$this->_has_contextual_help = true;
-		}
-		return $contextual_help;
 	}
 	
 	/**
@@ -1392,33 +1172,6 @@ class bcn_admin
 		</div>
 		</div>
 		<?php
-	}
-	/**
-	 * select_options
-	 *
-	 * Displays wordpress options as <seclect> options defaults to true/false
-	 *
-	 * @param string $optionname name of wordpress options store
-	 * @param array $options array of names of options that can be selected
-	 * @param array $exclude[optional] array of names in $options array to be excluded
-	 */
-	function select_options($optionname, $options, $exclude = array())
-	{
-		$value = $this->breadcrumb_trail->opt[$optionname];
-		//First output the current value
-		if($value)
-		{
-			printf('<option>%s</option>', $value);
-		}
-		//Now do the rest
-		foreach($options as $option)
-		{
-			//Don't want multiple occurance of the current value
-			if($option != $value && !in_array($option, $exclude))
-			{
-				printf('<option>%s</option>', $option);
-			}
-		}
 	}
 	/**
 	 * add_option
