@@ -46,7 +46,7 @@ class bcn_admin extends mtekk_admin
 	 * @var   string
 	 */
 	private $version = '3.4.90';
-	private $full_name = 'Breadcrumb NavXT';
+	private $full_name = 'Breadcrumb NavXT Settings';
 	private $short_name = 'Breadcrumb NavXT';
 	private $access_level = 'manage_options';
 	private $identifier = 'breadcrumb_navxt';
@@ -338,32 +338,6 @@ class bcn_admin extends mtekk_admin
 		return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
 	}
 	/**
-	 * filter_plugin_actions
-	 * 
-	 * Places in a link to the settings page in the plugins listing entry
-	 * 
-	 * @param  (array)  $links An array of links that are output in the listing
-	 * @param  (string) $file The file that is currently in processing
-	 * @return (array)  Array of links that are output in the listing.
-	 */
-	function filter_plugin_actions($links, $file)
-	{
-		static $this_plugin;
-		if(!$this_plugin)
-		{
-			$this_plugin = plugin_basename(__FILE__);
-		}
-		//Make sure we are adding only for Breadcrumb NavXT
-		if($file == $this_plugin)
-		{
-			//Setup the link string
-			$settings_link = '<a href="options-general.php?page=breadcrumb-navxt">' . __('Settings') . '</a>';
-			//Add it to the end of the array to better integrate into the WP 2.8 plugins page
-			$links[] = $settings_link;
-		}
-		return $links;
-	}
-	/**
 	 * javascript
 	 *
 	 * Enqueues JS dependencies (jquery) for the tabs
@@ -376,13 +350,7 @@ class bcn_admin extends mtekk_admin
 		//Enqueue ui-tabs
 		wp_enqueue_script('jquery-ui-tabs');
 	}
-	/**
-	 * add_page
-	 * 
-	 * Adds the adminpage the menue and the nice little settings link
-	 *
-	 * @return void
-	 */
+
 	function add_page()
 	{
 		// check capability of user to manage options (access control)
@@ -396,21 +364,6 @@ class bcn_admin extends mtekk_admin
 			add_action('contextual_help', array($this, 'contextual_help'), 10, 2);
 		}
 	}
-	
-	/**
-	 * get contextual help
-	 * 
-	 * @return string
-	 */
-	private function _get_contextual_help()
-	{
-		$t = $this->_get_help_text();	
-		$t = sprintf('<div class="metabox-prefs">%s</div>', $t);	
-		$title = __('Breadcrumb NavXT Settings', 'breadcrumb_navxt');	
-		$t = sprintf('<h5>%s</h5>%s', sprintf(__('Get help with "%s"'), $title), $t);
-		return $t;
-	}	
-	
 	/**
 	 * get help text
 	 * 
