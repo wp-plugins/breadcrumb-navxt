@@ -31,18 +31,18 @@ class bcn_widget extends WP_Widget
 		//Manditory before widget junk
 		echo $before_widget;
 		//We'll want to switch between the two breadcrumb output types
-		if($instance['list'] = true)
+		if($instance['list'] == true)
 		{
 			//Display the list output breadcrumb
 			echo '<ul class="breadcrumb_trail">';
-			bcn_display_list(true, $instance['linked'], $instance['reverse']);
+			bcn_display_list(false, $instance['linked'], $instance['reverse']);
 			echo '</ul>';
 		}
 		else
 		{
 			//Display the regular output breadcrumb
 			echo '<div class="breadcrumb_trail">';
-			bcn_display(true, $instance['linked'], $instance['reverse']);
+			bcn_display(false, $instance['linked'], $instance['reverse']);
 			echo '</div>';
 		}
 		//Manditory after widget junk
@@ -52,27 +52,27 @@ class bcn_widget extends WP_Widget
 	{
 		$instance = $old_instance;
 		//Filter out anything that could be invalid
-		$instance['list'] = (bool) esc_attr($new_instance['list']);
-		$instance['linked'] = (bool) esc_attr($new_instance['linked']);
-		$instance['reverse'] = (bool) esc_attr($new_instance['reverse']);
+		$instance['list'] = esc_attr($new_instance['list']);
+		$instance['linked'] = esc_attr($new_instance['linked']);
+		$instance['reverse'] = esc_attr($new_instance['reverse']);
 		return $instance;
 	}
 	function form($instance)
 	{
 		//Filter out anything that could be invalid
-		$list = (bool) esc_attr($instance['list']);
-		$linked = (bool) esc_attr($instance['linked']);
-		$reverse = (bool) esc_attr($instance['reverse']);?>
+		$list = esc_attr($instance['list']);
+		$linked = esc_attr($instance['linked']);
+		$reverse = esc_attr($instance['reverse']);?>
 		<p>
-			<input class="widefat" type="checkbox" name="<?php $this->get_feild_name('list'); ?>" id="<?php $this->get_feild_id('list'); ?>" value="true" <?php checked(true, $list);?> />
+			<input class="widefat" type="checkbox" name="<?php $this->get_field_name('list'); ?>" id="<?php $this->get_field_id('list'); ?>" value="true" <?php checked(true, $list);?> />
 			<label for="<?php echo $this->get_field_id('list'); ?>"> <?php _e('Output trail as a list.'); ?></label>
 		</p>
 		<p>
-			<input class="widefat" type="checkbox" name="<?php $this->get_feild_name('linked'); ?>" id="<?php $this->get_feild_id('linked'); ?>" value="true" <?php checked(true, $linked);?> />
+			<input class="widefat" type="checkbox" name="<?php $this->get_field_name('linked'); ?>" id="<?php $this->get_field_id('linked'); ?>" value="true" <?php checked(true, $linked);?> />
 			<label for="<?php echo $this->get_field_id('linked'); ?>"> <?php _e('Allow the breadcrumbs to be linked.'); ?></label>
 		</p>
 		<p>
-			<input class="widefat" type="checkbox" name="<?php $this->get_feild_name('reverse'); ?>" id="<?php $this->get_feild_id('reverse'); ?>" value="true" <?php checked(true, $reverse);?> />
+			<input class="widefat" type="checkbox" name="<?php $this->get_field_name('reverse'); ?>" id="<?php $this->get_field_id('reverse'); ?>" value="true" <?php checked(true, $reverse);?> />
 			<label for="<?php echo $this->get_field_id('reverse'); ?>"> <?php _e('Reverse the order of the trail.'); ?></label>
 		</p>
 		<?php
