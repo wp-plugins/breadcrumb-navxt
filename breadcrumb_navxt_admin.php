@@ -350,20 +350,6 @@ class bcn_admin extends mtekk_admin
 		//Enqueue ui-tabs
 		wp_enqueue_script('jquery-ui-tabs');
 	}
-
-	function add_page()
-	{
-		// check capability of user to manage options (access control)
-		if(current_user_can('manage_options'))
-		{
-			//Add the submenu page to "settings" menu
-			$hookname = add_submenu_page('options-general.php', __('Breadcrumb NavXT Settings', 'breadcrumb_navxt'), 'Breadcrumb NavXT', 'manage_options', 'breadcrumb-navxt', array($this, 'admin_panel'));		
-			//Register admin_head-$hookname callback
-			add_action('admin_head-'.$hookname, array($this, 'admin_head'));			
-			//Register Help Output
-			add_action('contextual_help', array($this, 'contextual_help'), 10, 2);
-		}
-	}
 	/**
 	 * get help text
 	 * 
@@ -1198,50 +1184,6 @@ class bcn_admin extends mtekk_admin
 			}
 		}
 		return $db_data;
-	}
-	/**
-	 * notify
-	 * 
-	 * Output a 'notify' box with a message after an event occurs
-	 * 
-	 * @param $message string the message to deliver
-	 * @param $error bool[optional] is the message an error?
-	 */
-	function notify($message, $error = false)
-	{
-		//If the message is an error use the appropriate class
-		$class = $error ? 'error' : 'updated fade';
-		printf('<div class="%s"><p>%s</p></div>', $class, $message);		
-	}
-	
-	/**
-	 * callback function for admin_notices
-	 * 
-	 * @return void
-	 */	
-	function notify_import_failure()
-	{
-		$this->notify(__('Importing settings from file failed.', 'breadcrumb_navxt'), true);
-	}
-	
-	/**
-	 * callback function for admin_notices
-	 * 
-	 * @return void
-	 */	
-	function notify_import_success()
-	{
-		$this->notify(__('The Breadcrumb NavXT settings were successfully imported from file.', 'breadcrumb_navxt'));
-	}
-
-	/**
-	 * callback function for admin_notices
-	 * 
-	 * @return void
-	 */	
-	function notify_reset()
-	{
-		$this->notify(__('The Breadcrumb NavXT settings were reset to the default values.', 'breadcrumb_navxt'));
 	}
 }
 //Let's make an instance of our object takes care of everything

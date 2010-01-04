@@ -87,7 +87,7 @@ class mtekk_admin
 			//Add the submenu page to "settings" menu
 			$hookname = add_submenu_page('options-general.php', __($this->full_name, $this->identifier), $this->short_name, $this->access_level, $this->identifier, array($this, 'admin_page'));		
 			//Register admin_head-$hookname callback
-			add_action('admin_head-'.$hookname, array($this, 'admin_head'));			
+			add_action('admin_head-' . $hookname, array($this, 'admin_head'));			
 			//Register Help Output
 			add_action('contextual_help', array($this, 'contextual_help'), 10, 2);
 		}
@@ -319,6 +319,10 @@ class mtekk_admin
 	 * Function prototype to prevent errors
 	 */
 	function install()
+	{
+		
+	}
+	function admin_head()
 	{
 		
 	}
