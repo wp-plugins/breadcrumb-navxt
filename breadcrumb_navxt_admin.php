@@ -45,13 +45,13 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	private $version = '3.4.90';
-	private $full_name = 'Breadcrumb NavXT Settings';
-	private $short_name = 'Breadcrumb NavXT';
-	private $access_level = 'manage_options';
-	private $identifier = 'breadcrumb_navxt';
-	private $unique_prefix = 'bcn';
-	private $plugin_basename = 'breadcrumb-navxt/breadcrumb_navxt_admin.php';
+	protected $version = '3.4.90';
+	protected $full_name = 'Breadcrumb NavXT Settings';
+	protected $short_name = 'Breadcrumb NavXT';
+	protected $access_level = 'manage_options';
+	protected $identifier = 'breadcrumb_navxt';
+	protected $unique_prefix = 'bcn';
+	protected $plugin_basename = 'breadcrumb-navxt/breadcrumb_navxt_admin.php';
 	/**
 	 * wether or not this administration page has contextual help
 	 * 

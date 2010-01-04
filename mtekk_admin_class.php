@@ -18,15 +18,15 @@
 */
 class mtekk_admin
 {
-	private $version;
-	private $full_name;
-	private $short_name;
-	private $plugin_basename;
-	private $access_level = 'manage_options';
-	private $identifier;
-	private $unique_prefix;
-	private $opt = array();
-	private $message;
+	protected $version;
+	protected $full_name;
+	protected $short_name;
+	protected $plugin_basename;
+	protected $access_level = 'manage_options';
+	protected $identifier;
+	protected $unique_prefix;
+	protected $opt = array();
+	protected $message;
 	function __construct()
 	{
 		//Admin Init Hook
@@ -38,7 +38,7 @@ class mtekk_admin
 		//Initilizes l10n domain
 		$this->local();
 		//Register the WordPress 2.8 Widget
-		add_action('widgets_init', create_function('', 'return register_widget("'.$this->identifier . '_widget");'));
+		add_action('widgets_init', create_function('', 'return register_widget("'. $this->identifier . '_widget");'));
 	}
 	function admin_url()
 	{
