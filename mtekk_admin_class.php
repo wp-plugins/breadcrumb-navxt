@@ -44,35 +44,34 @@ abstract class mtekk_admin
 	{
 		return admin_url('options-general.php?page=' .$this->identifier);
 	}
-	public function init()
+	function init()
 	{
 		//Admin Options update hook
 		if(isset($_POST[$this->unique_prefix . '_admin_options']))
 		{
 			//Temporarily add update function on init if form has been submitted
-			$this->opts_update;
+			$this->opts_update();
 		}	
 		//Admin Options reset hook
 		if(isset($_POST[$this->unique_prefix . '_admin_reset']))
 		{
 			//Run the reset function on init if reset form has been submitted
-			$this->opts_reset;
+			$this->opts_reset();
 		}
 		//Admin Options export hook
 		else if(isset($_POST[$this->unique_prefix . '_admin_export']))
 		{
 			//Run the export function on init if export form has been submitted
-			$this->opts_export;
+			$this->opts_export();
 		}
 		//Admin Options import hook
 		else if(isset($_FILES[$this->unique_prefix . '_admin_import_file']) && !empty($_FILES[$this->unique_prefix . '_admin_import_file']['name']))
 		{
 			//Run the import function on init if import form has been submitted
-			$this->opts_import;
+			$this->opts_import();
 		}
 		//Add in the nice "settings" link to the plugins page
 		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
-		add_action('wp_print_scripts', array($this, 'javascript'));
 	}
 	/**
 	 * add_page
@@ -150,7 +149,7 @@ abstract class mtekk_admin
 	function opts_export()
 	{
 		//Do a nonce check, prevent malicious link/form problems 
-		check_admin_referer($this->unique_prefix . 'admin_import_export');
+		check_admin_referer($this->unique_prefix . '_admin_import_export');
 		//Update our internal settings
 		$this->opt = get_option($this->unique_prefix . '_options');
 		//Create a DOM document
@@ -205,7 +204,7 @@ abstract class mtekk_admin
 			return true;
 		}
 		//Do a nonce check, prevent malicious link/form problems
-		check_admin_referer($this->unique_prefix . 'admin_import_export');
+		check_admin_referer($this->unique_prefix . '_admin_import_export');
 		//Create a DOM document
 		$dom = new DOMDocument('1.0', 'UTF-8');
 		//We want to catch errors ourselves
@@ -260,7 +259,7 @@ abstract class mtekk_admin
 	function opts_reset()
 	{
 		//Do a nonce check, prevent malicious link/form problems
-		check_admin_referer($this->unique_prefix . 'admin_import_export');
+		check_admin_referer($this->unique_prefix . '_admin_import_export');
 		//Only needs this one line, will load in the hard coded default option values
 		$this->update_option($this->unique_prefix . '_options', $this->opt);
 		//Reset successful, let the user know
@@ -305,12 +304,12 @@ abstract class mtekk_admin
 	function message()
 	{
 		//Loop through our message classes
-		foreach($this->message as $class)
+		foreach($this->message as $key => $class)
 		{
 			//Loop through the messages in the current class
 			foreach($class as $message)
 			{
-				printf('<div class="%s"><p>%s</p></div>', $class, $message);	
+				printf('<div class="%s"><p>%s</p></div>', $key, $message);	
 			}
 		}	
 	}
@@ -339,7 +338,21 @@ abstract class mtekk_admin
 	{
 		printf('<div id="%s_import_export_relocate">', $this->unique_prefix);
 		printf('<form action="options-general.php?page=%s" method="post" enctype="multipart/form-data" id="%s_admin_upload">', $this->identifier, $this->unique_prefix);
-		wp_nonce_field($this->unique_prefix . '_admin_upload');
+		wp_nonce_field($this->unique_prefix . '_admin_import_export');
+		printf('<fieldset id="import_export" class="%s_options">', $this->unique_prefix);
+		echo '<h3>' . __('Import/Export/Reset Settings', $this->identifier) . '</h3>';
+		echo '<p>' . __('Import settings from a XML file, export the current settings to a XML file, or reset to the default settings.', $this->identifier) . '</p>';
+		echo '<table class="form-table"><tr valign="top"><th scope="row">';
+		printf('<label for="%s_admin_import_file">', $this->unique_prefix);
+		_e('Settings File', $this->identifier);
+		echo '</label></th><td>';
+		printf('<input type="file" name="%s_admin_import_file" id="%s_admin_import_file" size="32" /><br /><span class="setting-description">', $this->unique_prefix, $this->unique_prefix);
+		_e('Select a XML settings file to upload and import settings from.', 'breadcrumb_navxt');
+		echo '</span></td></tr></table><p class="submit">';
+		printf('<input type="submit" class="button" name="%s_admin_import" value="' . __('Import', $this->identifier) . '" onclick="return %s_confirm(\'import\')" />', $this->unique_prefix, $this->unique_prefix);
+		printf('<input type="submit" class="button" name="%s_admin_export" value="' . __('Export', $this->identifier) . '" />', $this->unique_prefix);
+		printf('<input type="submit" class="button" name="%s_admin_reset" value="' . __('Reset', $this->identifier) . '" onclick="return %s_confirm(\'reset\')" />', $this->unique_prefix, $this->unique_prefix);
+		echo '</p></fieldset></form></div>';
 	}
 	/**
 	 * input_text

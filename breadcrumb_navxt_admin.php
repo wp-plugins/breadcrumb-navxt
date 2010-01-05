@@ -75,6 +75,7 @@ class bcn_admin extends mtekk_admin
 	{
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
+		$this->opt = $this->breadcrumb_trail->opt;
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
 		//$this->plugin_base = plugin_basename(__FILE__);
 		//We're going to make sure we load the parent's constructor
@@ -88,7 +89,7 @@ class bcn_admin extends mtekk_admin
 	 * @since  3.2.0
 	 * @return void
 	 */
-	public function admin_init()
+	function init()
 	{
 		//We're going to make sure we run the parent's version of this function as well
 		parent::init();	
@@ -105,7 +106,7 @@ class bcn_admin extends mtekk_admin
 	function security()
 	{
 		//If the user can not manage options we will die on them
-		if(!current_user_can('manage_options'))
+		if(!current_user_can($this->access_level))
 		{
 			_e('Insufficient privileges to proceed.', 'breadcrumb_navxt');
 			die();
@@ -1048,31 +1049,7 @@ class bcn_admin extends mtekk_admin
 			</div>
 			<p class="submit"><input type="submit" class="button-primary" name="bcn_admin_options" value="<?php _e('Save Changes') ?>" /></p>
 		</form>
-		<div id="bcn_import_export_relocate">
-			<form action="options-general.php?page=breadcrumb-navxt" method="post" enctype="multipart/form-data" id="bcn_admin_upload">
-				<?php wp_nonce_field('bcn_admin_upload');?>
-					<fieldset id="import_export" class="bcn_options">
-						<h3><?php _e('Import/Export/Reset Settings', 'breadcrumb_navxt'); ?></h3>
-						<p><?php _e('Import Breadcrumb NavXT settings from a XML file, export the current settings to a XML file, or reset to the default Breadcrumb NavXT settings.', 'breadcrumb_navxt');?></p>
-						<table class="form-table">
-							<tr valign="top">
-								<th scope="row">
-									<label for="bcn_admin_import_file"><?php _e('Settings File', 'breadcrumb_navxt'); ?></label>
-								</th>
-								<td>
-									<input type="file" name="bcn_admin_import_file" id="bcn_admin_import_file" size="32"/><br />
-									<span class="setting-description"><?php _e('Select a XML settings file to upload and import settings from.', 'breadcrumb_navxt'); ?></span>
-								</td>
-							</tr>
-						</table>
-						<p class="submit">
-							<input type="submit" class="button" name="bcn_admin_import" value="<?php _e('Import', 'breadcrumb_navxt') ?>" onclick="return bcn_confirm('import')" />
-							<input type="submit" class="button" name="bcn_admin_export" value="<?php _e('Export', 'breadcrumb_navxt') ?>" />
-							<input type="submit" class="button" name="bcn_admin_reset" value="<?php _e('Reset', 'breadcrumb_navxt') ?>" onclick="return bcn_confirm('reset')" />
-						</p>
-					</fieldset>
-			</form>
-		</div>
+		<?php $this->import_form(); ?>
 		</div>
 		<?php
 	}
