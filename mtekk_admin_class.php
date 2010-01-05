@@ -44,7 +44,7 @@ abstract class mtekk_admin
 	{
 		return admin_url('options-general.php?page=' .$this->identifier);
 	}
-	function init()
+	public function init()
 	{
 		//Admin Options update hook
 		if(isset($_POST[$this->unique_prefix . '_admin_options']))
@@ -72,6 +72,7 @@ abstract class mtekk_admin
 		}
 		//Add in the nice "settings" link to the plugins page
 		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
+		add_action('wp_print_scripts', array($this, 'javascript'));
 	}
 	/**
 	 * add_page
@@ -288,7 +289,7 @@ abstract class mtekk_admin
 	 * 
 	 * @return string
 	 */
-	private function _get_contextual_help()
+	protected function _get_contextual_help()
 	{
 		$t = $this->_get_help_text();	
 		$t = sprintf('<div class="metabox-prefs">%s</div>', $t);	

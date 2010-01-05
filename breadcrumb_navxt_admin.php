@@ -57,7 +57,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var bool
 	 */
-	private $_has_contextual_help = false;	
+	protected $_has_contextual_help = false;	
 	
 	/**
 	 * local store for the breadcrumb object
@@ -78,7 +78,7 @@ class bcn_admin extends mtekk_admin
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
 		//$this->plugin_base = plugin_basename(__FILE__);
 		//We're going to make sure we load the parent's constructor
-		parent::__construct('bcn_widget', 'Breadcrumb NavXT', $ops);
+		parent::__construct();
 	}
 	/**
 	 * admin initialisation callback function
@@ -303,41 +303,6 @@ class bcn_admin extends mtekk_admin
 		$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
 	}
 	/**
-	 * display
-	 * 
-	 * Outputs the breadcrumb trail
-	 * 
-	 * @param  (bool)   $return Whether to return or echo the trail.
-	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
-	 * @param  (bool)	$reverse Whether to reverse the output or not.
-	 */
-	function display($return = false, $linked = true, $reverse = false)
-	{
-		//Update our internal settings
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
-		//Generate the breadcrumb trail
-		$this->breadcrumb_trail->fill();
-		return $this->breadcrumb_trail->display($return, $linked, $reverse);
-	}
-	/**
-	 * display_list
-	 * 
-	 * Outputs the breadcrumb trail
-	 * 
-	 * @since  3.2.0
-	 * @param  (bool)   $return Whether to return or echo the trail.
-	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
-	 * @param  (bool)	$reverse Whether to reverse the output or not.
-	 */
-	function display_list($return = false, $linked = true, $reverse = false)
-	{
-		//Update our internal settings
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
-		//Generate the breadcrumb trail
-		$this->breadcrumb_trail->fill();
-		return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
-	}
-	/**
 	 * javascript
 	 *
 	 * Enqueues JS dependencies (jquery) for the tabs
@@ -355,12 +320,11 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @return string
 	 */
-	private function _get_help_text()
+	protected function _get_help_text()
 	{
 		return sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
 			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>');
 	}
-	
 	/**
 	 * admin_head
 	 *
@@ -506,12 +470,12 @@ class bcn_admin extends mtekk_admin
 	} //function admin_head()
 
 	/**
-	 * admin_panel
+	 * admin_page
 	 * 
-	 * The administrative panel for Breadcrumb NavXT
+	 * The administrative page for Breadcrumb NavXT
 	 * 
 	 */
-	function admin_panel()
+	function admin_page()
 	{
 		global $wp_taxonomies;
 		$this->security();
@@ -1184,6 +1148,41 @@ class bcn_admin extends mtekk_admin
 			}
 		}
 		return $db_data;
+	}
+	/**
+	 * display
+	 * 
+	 * Outputs the breadcrumb trail
+	 * 
+	 * @param  (bool)   $return Whether to return or echo the trail.
+	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
+	 * @param  (bool)	$reverse Whether to reverse the output or not.
+	 */
+	function display($return = false, $linked = true, $reverse = false)
+	{
+		//Update our internal settings
+		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+		//Generate the breadcrumb trail
+		$this->breadcrumb_trail->fill();
+		return $this->breadcrumb_trail->display($return, $linked, $reverse);
+	}
+	/**
+	 * display_list
+	 * 
+	 * Outputs the breadcrumb trail
+	 * 
+	 * @since  3.2.0
+	 * @param  (bool)   $return Whether to return or echo the trail.
+	 * @param  (bool)   $linked Whether to allow hyperlinks in the trail or not.
+	 * @param  (bool)	$reverse Whether to reverse the output or not.
+	 */
+	function display_list($return = false, $linked = true, $reverse = false)
+	{
+		//Update our internal settings
+		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+		//Generate the breadcrumb trail
+		$this->breadcrumb_trail->fill();
+		return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
 	}
 }
 //Let's make an instance of our object takes care of everything
