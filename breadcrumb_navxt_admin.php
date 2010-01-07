@@ -243,6 +243,20 @@ class bcn_admin
 		}
 	}
 	/**
+	 * uninstall
+	 * 
+	 * This removes database settings upon deletion of the plugin from WordPress
+	 */
+	function uninstall()
+	{
+		//Call our little security function
+		$this->security();
+		//Remove the option array setting
+		$this->delete_option('bcn_options');
+		//Remove the version setting
+		$this->delete_option('bcn_version');
+	}
+	/**
 	 * reset
 	 * 
 	 * Resets the options to the default values
