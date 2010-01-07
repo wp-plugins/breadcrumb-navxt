@@ -133,6 +133,18 @@ abstract class mtekk_admin
 		return $links;
 	}
 	/**
+	 * uninstall
+	 * 
+	 * This removes database settings upon deletion of the plugin from WordPress
+	 */
+	function uninstall()
+	{
+		//Remove the option array setting
+		$this->delete_option($this->unique_prefix . '_options');
+		//Remove the version setting
+		$this->delete_option($this->unique_prefix . '_version');
+	}
+	/**
 	 * opts_update
 	 * 
 	 * Function prototype to prevent errors
