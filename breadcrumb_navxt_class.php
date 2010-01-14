@@ -405,6 +405,7 @@ class bcn_breadcrumb_trail
 	 */
 	function post_taxonomy($id)
 	{
+		global $post;
 		//Check to see if breadcrumbs for the taxonomy of the post needs to be generated
 		if($this->opt['post_taxonomy_display'])
 		{
@@ -434,6 +435,17 @@ class bcn_breadcrumb_trail
 					}
 					//Fill out the term hiearchy
 					$this->term_parents($bcn_object[$bcn_use_term]->term_id, $this->opt['post_taxonomy_type']);
+				}
+			}
+			//Handle the use of pages as the 'taxonomy'
+			else if($this->opt['post_taxonomy_type'] == 'page')
+			{
+				//Done with the current item, now on to the parents
+				$bcn_frontpage = get_option('page_on_front');
+				//If there is a parent page let's find it
+				if($post->post_parent && $id != $post->post_parent && $bcn_frontpage != $post->post_parent)
+				{
+					$this->page_parents($post->post_parent, $bcn_frontpage);
 				}
 			}
 			//Handle the rest of the taxonomies, including tags
