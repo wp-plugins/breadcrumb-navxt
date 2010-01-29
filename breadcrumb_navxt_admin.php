@@ -7,7 +7,7 @@ Version: 3.4.90
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
-/*  Copyright 2007-2009  John Havlik  (email : mtekkmonkey@gmail.com)
+/*  Copyright 2007-2010  John Havlik  (email : mtekkmonkey@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -214,11 +214,11 @@ class bcn_admin extends mtekk_admin
 		}
 	}
 	/**
-	 * update
+	 * ops_update
 	 * 
 	 * Updates the database settings from the webform
 	 */
-	function update()
+	function ops_update()
 	{
 		global $wp_taxonomies;
 		$this->security();
@@ -227,8 +227,8 @@ class bcn_admin extends mtekk_admin
 		
 		//Grab the options from the from post
 		//Home page settings
-		$this->breadcrumb_trail->opt['home_display'] = str2bool(bcn_get('home_display', 'false'));
-		$this->breadcrumb_trail->opt['blog_display'] = str2bool(bcn_get('blog_display', 'false'));
+		$this->breadcrumb_trail->opt['home_display'] = bcn_get('home_display', false);
+		$this->breadcrumb_trail->opt['blog_display'] = bcn_get('blog_display', false);
 		$this->breadcrumb_trail->opt['home_title'] = bcn_get('home_title');
 		$this->breadcrumb_trail->opt['home_anchor'] = bcn_get('home_anchor', $this->breadcrumb_trail->opt['home_anchor']);
 		$this->breadcrumb_trail->opt['blog_anchor'] = bcn_get('blog_anchor', $this->breadcrumb_trail->opt['blog_anchor']);
@@ -237,14 +237,14 @@ class bcn_admin extends mtekk_admin
 		$this->breadcrumb_trail->opt['separator'] = bcn_get('separator');
 		$this->breadcrumb_trail->opt['max_title_length'] = (int) bcn_get('max_title_length');
 		//Current item settings
-		$this->breadcrumb_trail->opt['current_item_linked'] = str2bool(bcn_get('current_item_linked', 'false'));
+		$this->breadcrumb_trail->opt['current_item_linked'] = bcn_get('current_item_linked', false);
 		$this->breadcrumb_trail->opt['current_item_anchor'] = bcn_get('current_item_anchor', $this->breadcrumb_trail->opt['current_item_anchor']);
 		$this->breadcrumb_trail->opt['current_item_prefix'] = bcn_get('current_item_prefix');
 		$this->breadcrumb_trail->opt['current_item_suffix'] = bcn_get('current_item_suffix');
 		//Paged settings
 		$this->breadcrumb_trail->opt['paged_prefix'] = bcn_get('paged_prefix');
 		$this->breadcrumb_trail->opt['paged_suffix'] = bcn_get('paged_suffix');
-		$this->breadcrumb_trail->opt['paged_display'] = str2bool(bcn_get('paged_display', 'false'));
+		$this->breadcrumb_trail->opt['paged_display'] = bcn_get('paged_display', false);
 		//Page settings
 		$this->breadcrumb_trail->opt['page_prefix'] = bcn_get('page_prefix');
 		$this->breadcrumb_trail->opt['page_suffix'] = bcn_get('page_suffix');
@@ -253,7 +253,7 @@ class bcn_admin extends mtekk_admin
 		$this->breadcrumb_trail->opt['post_prefix'] = bcn_get('post_prefix');
 		$this->breadcrumb_trail->opt['post_suffix'] = bcn_get('post_suffix');
 		$this->breadcrumb_trail->opt['post_anchor'] = bcn_get('post_anchor', $this->breadcrumb_trail->opt['post_anchor']);
-		$this->breadcrumb_trail->opt['post_taxonomy_display'] = str2bool(bcn_get('post_taxonomy_display', 'false'));
+		$this->breadcrumb_trail->opt['post_taxonomy_display'] = bcn_get('post_taxonomy_display', false);
 		$this->breadcrumb_trail->opt['post_taxonomy_type'] = bcn_get('post_taxonomy_type');
 		//Attachment settings
 		$this->breadcrumb_trail->opt['attachment_prefix'] = bcn_get('attachment_prefix');
@@ -495,23 +495,10 @@ class bcn_admin extends mtekk_admin
 			<fieldset id="general" class="bcn_options">
 				<h3><?php _e('General', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
-					<tr valign="top">
-						<th scope="row">
-							<label for="separator"><?php _e('Breadcrumb Separator', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="separator" id="separator" value="<?php echo $this->breadcrumb_trail->opt['separator']; ?>" size="32" /><br />
-							<span class="setting-description"><?php _e('Placed in between each breadcrumb.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="max_title_length"><?php _e('Breadcrumb Max Title Length', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="max_title_length" id="max_title_length" value="<?php echo $this->breadcrumb_trail->opt['max_title_length'];?>" size="10" />
-						</td>
-					</tr>
+					<?php
+						$this->input_text(__('Breadcrumb Separator', 'breadcrumb_navxt'), 'separator', '32', false, __('Placed in between each breadcrumb.', 'breadcrumb_navxt'));
+						$this->input_text(__('Breadcrumb Max Title Length', 'breadcrumb_navxt'), 'max_title_length', '10');
+					?>
 					<tr valign="top">
 						<th scope="row">
 							<?php _e('Home Breadcrumb', 'breadcrumb_navxt'); ?>						

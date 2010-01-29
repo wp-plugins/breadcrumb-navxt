@@ -2,7 +2,7 @@
 Contributors: mtekk, hakre
 Tags: breadcrumb, navigation
 Requires at least: 2.6
-Tested up to: 2.9
+Tested up to: 2.9.1
 Stable tag: 3.4.1
 Adds breadcrumb navigation showing the visitor's path to their current location.
 

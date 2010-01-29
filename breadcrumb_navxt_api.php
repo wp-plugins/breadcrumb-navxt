@@ -53,21 +53,18 @@ if(!function_exists('str2bool'))
  * @return (string) unescaped post data
  * @note   WP-Version 2.3.3, wp-settings.php #259ff
  */
-function bcn_get($varname, $default = "")
+function bcn_get($varname, $default = null)
 {	
 	//Import variable from post-request
 	$bcn_value = $_POST[$varname];
-	
 	//If null kick out early (handle default values as well)
-	if($bcn_value == "")
+	if(isset($bcn_value))
+	{
+		return stripslashes($bcn_value);
+	}
+	else
 	{
 		return $default;
 	}
-	
-	//Remove by faulty-wordpress-code added slashes
-	$bcn_value = stripslashes($bcn_value);
-	
-	//Return unslashed value
-	return $bcn_value;
 }
 ?>
