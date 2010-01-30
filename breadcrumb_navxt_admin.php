@@ -93,8 +93,6 @@ class bcn_admin extends mtekk_admin
 	{
 		//We're going to make sure we run the parent's version of this function as well
 		parent::init();	
-		// Register options.
-		register_setting($option_group = 'bcn_admin', $option_name = 'bcn_options', $sanitize_callback = '');
 		//Add javascript enqeueing callback
 		add_action('wp_print_scripts', array($this, 'javascript'));
 	}
@@ -218,12 +216,12 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * Updates the database settings from the webform
 	 */
-	function ops_update()
+	function opts_update()
 	{
 		global $wp_taxonomies;
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
-		check_admin_referer('bcn_admin-options');
+		check_admin_referer('bcn_options-options');
 		
 		//Grab the options from the from post
 		//Home page settings
@@ -302,6 +300,8 @@ class bcn_admin extends mtekk_admin
 		}
 		//Commit the option changes
 		$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
+		$this->message['updated fade'][] = __('Settings successfully saved.', $this->identifier);
+		add_action('admin_notices', array($this, 'message'));
 	}
 	/**
 	 * javascript
@@ -487,9 +487,9 @@ class bcn_admin extends mtekk_admin
 		<p<?php if ($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
 			print $this->_get_help_text();			 
 		?></p>
-		<form action="options-general.php?page=breadcrumb-navxt" method="post" id="bcn_admin_options">
+		<form action="options-general.php?page=breadcrumb_navxt" method="post" id="bcn_admin-options">
 			<?php
-				settings_fields('bcn_admin'); 
+				settings_fields('bcn_options'); 
 			?>
 			<div id="hasadmintabs">
 			<fieldset id="general" class="bcn_options">
@@ -1034,7 +1034,7 @@ class bcn_admin extends mtekk_admin
 				</table>
 			</fieldset>
 			</div>
-			<p class="submit"><input type="submit" class="button-primary" name="bcn_admin_options" value="<?php _e('Save Changes') ?>" /></p>
+			<p class="submit"><input type="submit" class="button-primary" name="bcn_admin-options" value="<?php esc_attr_e('Save Changes') ?>" /></p>
 		</form>
 		<?php $this->import_form(); ?>
 		</div>

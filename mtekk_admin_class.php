@@ -34,7 +34,7 @@ abstract class mtekk_admin
 		//WordPress Admin interface hook
 		add_action('admin_menu', array($this, 'add_page'));
 		//Installation Script hook
-		add_action('activate_' . $this->plugin_base, array($this, 'install'));
+		add_action('activate_' . $this->plugin_basename, array($this, 'install'));
 		//Initilizes l10n domain
 		$this->local();
 		//Register the WordPress 2.8 Widget
@@ -47,7 +47,7 @@ abstract class mtekk_admin
 	function init()
 	{
 		//Admin Options update hook
-		if(isset($_POST[$this->unique_prefix . '_admin_options']))
+		if(isset($_POST[$this->unique_prefix . '_admin-options']))
 		{
 			//Temporarily add update function on init if form has been submitted
 			$this->opts_update();
@@ -72,6 +72,8 @@ abstract class mtekk_admin
 		}
 		//Add in the nice "settings" link to the plugins page
 		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
+		//Register options
+		register_setting($this->unique_prefix . '_options', $this->unique_prefix . '_options', '');
 	}
 	/**
 	 * add_page
@@ -81,11 +83,11 @@ abstract class mtekk_admin
 	 */
 	function add_page()
 	{
+		//Add the submenu page to "settings" menu
+		$hookname = add_submenu_page('options-general.php', __($this->full_name, $this->identifier), $this->short_name, $this->access_level, $this->identifier, array($this, 'admin_page'));
 		// check capability of user to manage options (access control)
-		if(current_user_can('manage_options'))
+		if(current_user_can($this->access_level))
 		{
-			//Add the submenu page to "settings" menu
-			$hookname = add_submenu_page('options-general.php', __($this->full_name, $this->identifier), $this->short_name, $this->access_level, $this->identifier, array($this, 'admin_page'));		
 			//Register admin_head-$hookname callback
 			add_action('admin_head-' . $hookname, array($this, 'admin_head'));			
 			//Register Help Output
@@ -323,7 +325,7 @@ abstract class mtekk_admin
 			{
 				printf('<div class="%s"><p>%s</p></div>', $key, $message);	
 			}
-		}	
+		}
 	}
 	/**
 	 * install
@@ -385,7 +387,7 @@ abstract class mtekk_admin
 				<label for="<?php echo $option;?>"><?php echo $label;?></label>
 			</th>
 			<td>
-				<input type="text" name="<?php echo $option;?>" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="<?php echo $this->opt[$option];?>" size="<?php echo $width;?>" /><br />
+				<input type="text" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="<?php echo $this->opt[$option];?>" size="<?php echo $width;?>" /><br />
 					<?php if($description !== ""){?><span class="setting-description"><?php echo $description;?></span><?php } ?>
 			</td>
 		</tr><?php
@@ -410,7 +412,7 @@ abstract class mtekk_admin
 			</th>
 			<td>	
 				<label>
-					<input type="checkbox" name="<?php echo $option;?>" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="true" <?php checked(true, $this->opt[$option]);?> />
+					<input type="checkbox" name="name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="true" <?php checked(true, $this->opt[$option]);?> />
 						<?php echo $instruction;?>				
 				</label><br />
 				<?php if($description !== ""){?><span class="setting-description"><?php echo $description;?></span><?php } ?>
@@ -436,7 +438,7 @@ abstract class mtekk_admin
 				<label for="<?php echo $option;?>"><?php echo $label;?></label>
 			</th>
 			<td>
-				<select name="<?php echo $option;?>" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?>>
+				<select name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?>>
 					<?php $this->select_options($option, $values); ?>
 				</select><br />
 				<?php if($description !== ""){?><span class="setting-description"><?php echo $description;?></span><?php } ?>
