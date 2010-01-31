@@ -47,7 +47,7 @@ abstract class mtekk_admin
 	function init()
 	{
 		//Admin Options update hook
-		if(isset($_POST[$this->unique_prefix . '_admin-options']))
+		if(isset($_POST[$this->unique_prefix . '_admin_options']))
 		{
 			//Temporarily add update function on init if form has been submitted
 			$this->opts_update();
@@ -387,10 +387,11 @@ abstract class mtekk_admin
 				<label for="<?php echo $option;?>"><?php echo $label;?></label>
 			</th>
 			<td>
-				<input type="text" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="<?php echo $this->opt[$option];?>" size="<?php echo $width;?>" /><br />
+				<input type="text" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="<?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?>" size="<?php echo $width;?>" /><br />
 					<?php if($description !== ""){?><span class="setting-description"><?php echo $description;?></span><?php } ?>
 			</td>
-		</tr><?php
+		</tr>
+	<?php
 	}
 	/**
 	 * input_check
@@ -412,12 +413,32 @@ abstract class mtekk_admin
 			</th>
 			<td>	
 				<label>
-					<input type="checkbox" name="name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="true" <?php checked(true, $this->opt[$option]);?> />
-						<?php echo $instruction;?>				
+					<input type="checkbox" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="true" <?php checked(true, $this->opt[$option]);?> />
+						<?php echo $instruction; ?>				
 				</label><br />
 				<?php if($description !== ""){?><span class="setting-description"><?php echo $description;?></span><?php } ?>
 			</td>
-		</tr><?php
+		</tr>
+	<?php
+	}
+	/**
+	 * input_radio
+	 * 
+	 * This will output a singular radio type form input field
+	 * 
+	 * @param string $label
+	 * @param string $option
+	 * @param string $instruction
+	 * @param object $disable [optional]
+	 * @return 
+	 */
+	function input_radio($option, $value, $instruction, $disable = false)
+	{?>
+		<label>
+			<input name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" type="radio" <?php if($disable){echo 'disabled="disabled" class="disabled togx"';}else{echo 'class="togx"';}?> value="<?php echo $value;?>" <?php checked($value, $this->opt[$option]);?> />
+			<?php echo $instruction; ?>
+		</label><br/>
+	<?php
 	}
 	/**
 	 * input_select
@@ -443,7 +464,8 @@ abstract class mtekk_admin
 				</select><br />
 				<?php if($description !== ""){?><span class="setting-description"><?php echo $description;?></span><?php } ?>
 			</td>
-		</tr><?php
+		</tr>
+	<?php
 	}
 	/**
 	 * select_options

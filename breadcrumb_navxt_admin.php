@@ -518,244 +518,68 @@ class bcn_admin extends mtekk_admin
 							</ul>							
 						</td>
 					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="blog_display"><?php _e('Blog Breadcrumb', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>	
-							<label>
-								<input name="blog_display" <?php if($this->get_option('show_on_front') !== "page"){echo 'disabled="disabled" class="disabled"';} ?> type="checkbox" id="blog_display" value="true" <?php checked(true, $this->breadcrumb_trail->opt['blog_display']); ?> />
-								<?php _e('Place the blog breadcrumb in the trail.', 'breadcrumb_navxt'); ?>				
-							</label>				
-						</td>
-					</tr> 
-					<tr valign="top">
-						<th scope="row">
-							<label for="home_prefix"><?php _e('Home Prefix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="home_prefix" id="home_prefix" value="<?php echo $this->breadcrumb_trail->opt['home_prefix']; ?>" size="32" />
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="home_suffix"><?php _e('Home Suffix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="home_suffix" id="home_suffix" value="<?php echo $this->breadcrumb_trail->opt['home_suffix']; ?>" size="32" />
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="home_anchor"><?php _e('Home Anchor', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="home_anchor" id="home_anchor" value="<?php echo $this->breadcrumb_trail->opt['home_anchor']; ?>" size="60" /><br />
-							<span class="setting-description"><?php _e('The anchor template for the home breadcrumb.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="blog_anchor"><?php _e('Blog Anchor', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>				
-							<input type="text" <?php if($this->get_option('show_on_front') !== "page"){echo 'disabled="disabled" class="disabled"';} ?> name="blog_anchor" id="blog_anchor" value="<?php echo $this->breadcrumb_trail->opt['blog_anchor']; ?>" size="60" /><br />
-							<span class="setting-description"><?php _e('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'); ?></span>			
-						</td>
-					</tr> 
+					<?php
+						$this->input_check(__('Blog Breadcrumb', 'breadcrumb_navxt'), 'blog_display', __('Place the blog breadcrumb in the trail.', 'breadcrumb_navxt'), ($this->get_option('show_on_front') !== "page"));
+						$this->input_text(__('Home Prefix', 'breadcrumb_navxt'), 'home_prefix', '32');
+						$this->input_text(__('Home Suffix', 'breadcrumb_navxt'), 'home_suffix', '32');
+						$this->input_text(__('Home Anchor', 'breadcrumb_navxt'), 'home_anchor', '60', false, __('The anchor template for the home breadcrumb.', 'breadcrumb_navxt'));
+						$this->input_text(__('Blog Anchor', 'breadcrumb_navxt'), 'blog_anchor', '60', ($this->get_option('show_on_front') !== "page"), __('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'));
+					?>
 				</table>
 			</fieldset>
 			<fieldset id="current" class="bcn_options">
 				<h3><?php _e('Current Item', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
-					<tr valign="top">
-						<th scope="row">
-							<label for="current_item_linked"><?php _e('Link Current Item', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<label>
-								<input name="current_item_linked" type="checkbox" id="current_item_linked" value="true" <?php checked(true, $this->breadcrumb_trail->opt['current_item_linked']); ?> />
-								<?php _e('Yes'); ?>							
-							</label>					
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="current_item_prefix"><?php _e('Current Item Prefix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="current_item_prefix" id="current_item_prefix" value="<?php echo $this->breadcrumb_trail->opt['current_item_prefix']; ?>" size="32" /><br />
-							<span class="setting-description"><?php _e('This is always placed in front of the last breadcrumb in the trail, before any other prefixes for that breadcrumb.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="current_item_suffix"><?php _e('Current Item Suffix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="current_item_suffix" id="current_item_suffix" value="<?php echo $this->breadcrumb_trail->opt['current_item_suffix']; ?>" size="32" /><br />
-							<span class="setting-description"><?php _e('This is always placed after the last breadcrumb in the trail, and after any other prefixes for that breadcrumb.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="current_item_anchor"><?php _e('Current Item Anchor', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="current_item_anchor" id="current_item_anchor" value="<?php echo $this->breadcrumb_trail->opt['current_item_anchor']; ?>" size="60" /><br />
-							<span class="setting-description"><?php _e('The anchor template for current item breadcrumbs.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="paged_display"><?php _e('Paged Breadcrumb', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<label>
-								<input name="paged_display" type="checkbox" id="paged_display" value="true" <?php checked(true, $this->breadcrumb_trail->opt['paged_display']); ?> />
-								<?php _e('Include the paged breadcrumb in the breadcrumb trail.', 'breadcrumb_navxt'); ?>
-							</label><br />
-							<span class="setting-description"><?php _e('Indicates that the user is on a page other than the first on paginated posts/pages.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="paged_prefix"><?php _e('Paged Prefix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="paged_prefix" id="paged_prefix" value="<?php echo $this->breadcrumb_trail->opt['paged_prefix']; ?>" size="32" />
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="paged_suffix"><?php _e('Paged Suffix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="paged_suffix" id="paged_suffix" value="<?php echo $this->breadcrumb_trail->opt['paged_suffix']; ?>" size="32" />
-						</td>
-					</tr>
+					<?php
+						$this->input_check(__('Link Current Item', 'breadcrumb_navxt'), 'current_item_linked', __('Yes'));
+						$this->input_text(__('Current Item Prefix', 'breadcrumb_navxt'), 'current_item_prefix', '32', false, __('This is always placed in front of the last breadcrumb in the trail, before any other prefixes for that breadcrumb.', 'breadcrumb_navxt'));
+						$this->input_text(__('Current Item Suffix', 'breadcrumb_navxt'), 'current_item_suffix', '32', false, __('This is always placed after the last breadcrumb in the trail, and after any other prefixes for that breadcrumb.', 'breadcrumb_navxt'));
+						$this->input_text(__('Current Item Anchor', 'breadcrumb_navxt'), 'current_item_anchor', '60', false, __('The anchor template for current item breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_check(__('Paged Breadcrumb', 'breadcrumb_navxt'), 'paged_display', __('Include the paged breadcrumb in the breadcrumb trail.', 'breadcrumb_navxt'), false, __('Indicates that the user is on a page other than the first on paginated posts/pages.', 'breadcrumb_navxt'));
+						$this->input_text(__('Paged Prefix', 'breadcrumb_navxt'), 'paged_prefix', '32');
+						$this->input_text(__('Paged Suffix', 'breadcrumb_navxt'), 'paged_suffix', '32');
+					?>
 				</table>
 			</fieldset>
 			<fieldset id="single" class="bcn_options">
 				<h3><?php _e('Posts &amp; Pages', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
-					<tr valign="top">
-						<th scope="row">
-							<label for="post_prefix"><?php _e('Post Prefix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="post_prefix" id="post_prefix" value="<?php echo $this->breadcrumb_trail->opt['post_prefix']; ?>" size="32" />
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="post_suffix"><?php _e('Post Suffix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="post_suffix" id="post_suffix" value="<?php echo $this->breadcrumb_trail->opt['post_suffix']; ?>" size="32" />
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="post_anchor"><?php _e('Post Anchor', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="post_anchor" id="post_anchor" value="<?php echo $this->breadcrumb_trail->opt['post_anchor']; ?>" size="60" /><br />
-							<span class="setting-description"><?php _e('The anchor template for post breadcrumbs.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<?php _e('Post Taxonomy Display', 'breadcrumb_navxt'); ?>
-						</th>
-						<td>
-							<label for="post_taxonomy_display">
-								<input name="post_taxonomy_display" type="checkbox" id="post_taxonomy_display" value="true" <?php checked(true, $this->breadcrumb_trail->opt['post_taxonomy_display']); ?> />
-								<?php _e('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'); ?>
-							</label>							
-						</td>
-					</tr>
+					<?php
+						$this->input_text(__('Post Prefix', 'breadcrumb_navxt'), 'post_prefix', '32');
+						$this->input_text(__('Post Suffix', 'breadcrumb_navxt'), 'post_suffix', '32');
+						$this->input_text(__('Post Anchor', 'breadcrumb_navxt'), 'post_anchor', '60', false, __('The anchor template for post breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_check(__('Post Taxonomy Display', 'breadcrumb_navxt'), 'post_taxonomy_display', __('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'));
+					?>
 					<tr valign="top">
 						<th scope="row">
 							<?php _e('Post Taxonomy', 'breadcrumb_navxt'); ?>
 						</th>
 						<td>
-							<label>
-								<input name="post_taxonomy_type" type="radio" value="category" class="togx" <?php checked('category', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
-								<?php _e('Categories'); ?>
-							</label>
-							<br/>
-							<label>
-								<input name="post_taxonomy_type" type="radio" value="date" class="togx" <?php checked('date', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
-								<?php _e('Dates'); ?>								
-							</label>
-							<br/>
-							<label>
-								<input name="post_taxonomy_type" type="radio" value="post_tag" class="togx" <?php checked('post_tag', $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
-								<?php _e('Tags'); ?>								
-							</label>
-							<br/>
 							<?php
+								$this->input_radio('post_taxonomy_type', 'category', __('Categories'));
+								$this->input_radio('post_taxonomy_type', 'date', __('Dates'));
+								$this->input_radio('post_taxonomy_type', 'post_tag', __('Tags'));
+								$this->input_radio('post_taxonomy_type', 'page', __('Pages'));
 								//Loop through all of the taxonomies in the array
 								foreach($wp_taxonomies as $taxonomy)
 								{
 									//We only want custom taxonomies
 									if($taxonomy->object_type == 'post' && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
 									{
-										?>
-							<label>
-								<input name="post_taxonomy_type" type="radio" value="<?php echo $taxonomy->name; ?>" class="togx" <?php checked($taxonomy->name, $this->breadcrumb_trail->opt['post_taxonomy_type']); ?> />
-								<?php echo ucwords(__($taxonomy->label)); ?>							
-							</label>
-							<br/>
-										<?php
+										$this->input_radio('post_taxonomy_type', $taxonomy->name, ucwords(__($taxonomy->label)));
 									}
 								}
 							?>
 							<span class="setting-description"><?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="page_prefix"><?php _e('Page Prefix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="page_prefix" id="page_prefix" value="<?php echo $this->breadcrumb_trail->opt['page_prefix']; ?>" size="32" />
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="page_suffix"><?php _e('Page Suffix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="page_suffix" id="page_suffix" value="<?php echo $this->breadcrumb_trail->opt['page_suffix']; ?>" size="32" />
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="page_anchor"><?php _e('Page Anchor', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="page_anchor" id="page_anchor" value="<?php echo $this->breadcrumb_trail->opt['page_anchor']; ?>" size="60" /><br />
-							<span class="setting-description"><?php _e('The anchor template for page breadcrumbs.', 'breadcrumb_navxt'); ?></span>
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="attachment_prefix"><?php _e('Attachment Prefix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="attachment_prefix" id="attachment_prefix" value="<?php echo $this->breadcrumb_trail->opt['attachment_prefix']; ?>" size="32" />
-						</td>
-					</tr>
-					<tr valign="top">
-						<th scope="row">
-							<label for="attachment_suffix"><?php _e('Attachment Suffix', 'breadcrumb_navxt'); ?></label>
-						</th>
-						<td>
-							<input type="text" name="attachment_suffix" id="attachment_suffix" value="<?php echo $this->breadcrumb_trail->opt['attachment_suffix']; ?>" size="32" />
-						</td>
-					</tr>
+					<?php
+						$this->input_text(__('Page Prefix', 'breadcrumb_navxt'), 'page_prefix', '32');
+						$this->input_text(__('Page Suffix', 'breadcrumb_navxt'), 'page_suffix', '32');
+						$this->input_text(__('Page Anchor', 'breadcrumb_navxt'), 'page_anchor', '60', false, __('The anchor template for page breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_text(__('Attachment Prefix', 'breadcrumb_navxt'), 'attachment_prefix', '32');
+						$this->input_text(__('Attachment Suffix', 'breadcrumb_navxt'), 'attachment_suffix', '32');
+					?>
 				</table>
 			</fieldset>
 			<fieldset id="category" class="bcn_options">
@@ -1034,7 +858,7 @@ class bcn_admin extends mtekk_admin
 				</table>
 			</fieldset>
 			</div>
-			<p class="submit"><input type="submit" class="button-primary" name="bcn_admin-options" value="<?php esc_attr_e('Save Changes') ?>" /></p>
+			<p class="submit"><input type="submit" class="button-primary" name="bcn_admin_options" value="<?php esc_attr_e('Save Changes') ?>" /></p>
 		</form>
 		<?php $this->import_form(); ?>
 		</div>
