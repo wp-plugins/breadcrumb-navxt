@@ -51,7 +51,7 @@ abstract class mtekk_admin
 		{
 			//Temporarily add update function on init if form has been submitted
 			$this->opts_update();
-		}	
+		}
 		//Admin Options reset hook
 		if(isset($_POST[$this->unique_prefix . '_admin_reset']))
 		{
@@ -153,7 +153,6 @@ abstract class mtekk_admin
 	 */
 	function opts_update()
 	{
-		
 	}
 	/**
 	 * opts_export
@@ -336,17 +335,42 @@ abstract class mtekk_admin
 	{
 		
 	}
+	/**
+	 * admin_head
+	 * 
+	 * Function prototype to prevent errors
+	 */
 	function admin_head()
 	{
 		
 	}
+	/**
+	 * admin_page
+	 * 
+	 * Function prototype to prevent errors
+	 */
 	function admin_page()
 	{
 		
 	}
-	function settings_form()
+	/**
+	 * get_valid_id
+	 * 
+	 * Returns a valid xHTML element ID
+	 * 
+	 * @param object $option
+	 * @return 
+	 */
+	function get_valid_id($option)
 	{
-		
+		if(is_numeric($option[0]))
+		{
+			return 'p' . $option;
+		}
+		else
+		{
+			return $option;
+		}
 	}
 	function import_form()
 	{
@@ -380,15 +404,16 @@ abstract class mtekk_admin
 	 * @param string $description [optional]
 	 * @return 
 	 */
-	function input_text($label, $option, $width = '32', $disable = false, $description = "")
-	{?>
+	function input_text($label, $option, $width = '32', $disable = false, $description = '')
+	{
+		$optid = $this->get_valid_id($option);?>
 		<tr valign="top">
 			<th scope="row">
-				<label for="<?php echo $option;?>"><?php echo $label;?></label>
+				<label for="<?php echo $optid;?>"><?php echo $label;?></label>
 			</th>
 			<td>
-				<input type="text" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="<?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?>" size="<?php echo $width;?>" /><br />
-					<?php if($description !== ""){?><span class="setting-description"><?php echo $description;?></span><?php } ?>
+				<input type="text" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $optid;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="<?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?>" size="<?php echo $width;?>" /><br />
+					<?php if($description !== ''){?><span class="setting-description"><?php echo $description;?></span><?php }?>
 			</td>
 		</tr>
 	<?php
@@ -405,18 +430,19 @@ abstract class mtekk_admin
 	 * @param string $description [optional]
 	 * @return 
 	 */
-	function input_check($label, $option, $instruction, $disable = false, $description = "")
-	{?>
+	function input_check($label, $option, $instruction, $disable = false, $description = '')
+	{
+		$optid = $this->get_valid_id($option);?>
 		<tr valign="top">
 			<th scope="row">
-				<label for="<?php echo $option;?>"><?php echo $label;?></label>
+				<label for="<?php echo $optid;?>"><?php echo $label;?></label>
 			</th>
 			<td>	
 				<label>
-					<input type="checkbox" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="true" <?php checked(true, $this->opt[$option]);?> />
+					<input type="checkbox" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $optid;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?> value="true" <?php checked(true, $this->opt[$option]);?> />
 						<?php echo $instruction; ?>				
 				</label><br />
-				<?php if($description !== ""){?><span class="setting-description"><?php echo $description;?></span><?php } ?>
+				<?php if($description !== ''){?><span class="setting-description"><?php echo $description;?></span><?php }?>
 			</td>
 		</tr>
 	<?php
@@ -452,17 +478,18 @@ abstract class mtekk_admin
 	 * @param string $description [optional]
 	 * @return 
 	 */
-	function input_select($label, $option, $values, $disable = false, $description = "")
-	{?>
+	function input_select($label, $option, $values, $disable = false, $description = '')
+	{
+		$optid = $this->get_valid_id($option);?>
 		<tr valign="top">
 			<th scope="row">
-				<label for="<?php echo $option;?>"><?php echo $label;?></label>
+				<label for="<?php echo $optid;?>"><?php echo $label;?></label>
 			</th>
 			<td>
-				<select name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $option;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?>>
+				<select name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $optid;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?>>
 					<?php $this->select_options($option, $values); ?>
 				</select><br />
-				<?php if($description !== ""){?><span class="setting-description"><?php echo $description;?></span><?php } ?>
+				<?php if($description !== ''){?><span class="setting-description"><?php echo $description;?></span><?php }?>
 			</td>
 		</tr>
 	<?php

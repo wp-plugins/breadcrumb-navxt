@@ -117,6 +117,7 @@ class bcn_admin extends mtekk_admin
 	 */
 	function install()
 	{
+		global $wp_taxonomies;
 		//Call our little security function
 		$this->security();
 		//Initilize the options
@@ -184,6 +185,19 @@ class bcn_admin extends mtekk_admin
 				$this->breadcrumb_trail->opt['post_tag_suffix'] = $this->breadcrumb_trail->opt['tag_suffix'];
 				$this->breadcrumb_trail->opt['post_tag_anchor'] = $this->breadcrumb_trail->opt['tag_anchor'];
 			}
+			//We'll add our custom taxonomy stuff at this time
+			foreach($wp_taxonomies as $taxonomy)
+			{
+				//We only want custom taxonomies
+				if($taxonomy->object_type == 'post' && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+				{
+					$this->breadcrumb_trail->opt[$taxonomy->name . '_prefix'] = '';
+					$this->breadcrumb_trail->opt[$taxonomy->name . '_suffix'] = '';
+					$this->breadcrumb_trail->opt[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">'), 'breadcrumb_navxt');
+					$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_prefix'] = '';
+					$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_suffix'] = '';
+				}
+			}
 			//Always have to update the version
 			$this->update_option('bcn_version', $this->version);
 			//Store the options
@@ -219,13 +233,43 @@ class bcn_admin extends mtekk_admin
 	function opts_update()
 	{
 		global $wp_taxonomies;
+		//Do some security related thigns as we are not using the normal WP settings API
 		$this->security();
-		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_options-options');
+		//Grab our incomming array (the data is dirty)
+		$input = $_POST['bcn_options'];
+		//Loop through all of the existing options (avoids setting injection)
+		foreach($this->opt as $option => $value)
+		{
+			//Handle all of our boolean options first
+			if(strpos($option, 'display') > 0 || $option == 'current_item_linked')
+			{
+				$this->opt[$option] = isset($input[$option]);
+			}
+			//Now handle anything that can't be blank
+			else if(strpos($option, 'anchor') > 0)
+			{
+				//Only save a new anchor if not blank
+				if(isset($input[$option]))
+				{
+					//Do excess slash removal sanitation
+					$this->opt[$option] = stripslashes($input[$option]);
+				}
+			}
+			//Now everything else
+			else
+			{
+				$this->opt[$option] = stripslashes($input[$option]);
+			}
+			//$this->opt[$option] =
+		}
+		//
+		//Do a nonce check, prevent malicious link/form problems
+		//
 		
 		//Grab the options from the from post
 		//Home page settings
-		$this->breadcrumb_trail->opt['home_display'] = bcn_get('home_display', false);
+		/*$this->breadcrumb_trail->opt['home_display'] = bcn_get('home_display', false);
 		$this->breadcrumb_trail->opt['blog_display'] = bcn_get('blog_display', false);
 		$this->breadcrumb_trail->opt['home_title'] = bcn_get('home_title');
 		$this->breadcrumb_trail->opt['home_anchor'] = bcn_get('home_anchor', $this->breadcrumb_trail->opt['home_anchor']);
@@ -297,9 +341,9 @@ class bcn_admin extends mtekk_admin
 				$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_prefix'] = bcn_get('archive_' . $taxonomy->name . '_prefix');
 				$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_suffix'] = bcn_get('archive_' . $taxonomy->name . '_suffix');
 			}
-		}
+		}*/
 		//Commit the option changes
-		$this->update_option('bcn_options', $this->breadcrumb_trail->opt);
+		$this->update_option('bcn_options', $this->opt);
 		$this->message['updated fade'][] = __('Settings successfully saved.', $this->identifier);
 		add_action('admin_notices', array($this, 'message'));
 	}
