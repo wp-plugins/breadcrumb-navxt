@@ -32,8 +32,6 @@ if(!class_exists('mtekk_admin'))
 {
 	require_once(dirname(__FILE__) . '/mtekk_admin_class.php');
 }
-//Include the supplemental functions
-require_once(dirname(__FILE__) . '/breadcrumb_navxt_api.php');
 /**
  * The administrative interface class 
  * 
@@ -549,14 +547,14 @@ class bcn_admin extends mtekk_admin
 						</th>
 						<td>
 							<label>
-								<input name="home_display" type="checkbox" id="home_display" value="true" <?php checked(true, $this->breadcrumb_trail->opt['home_display']); ?> />
+								<input name="bcn_options[home_display]" type="checkbox" id="home_display" value="true" <?php checked(true, $this->opt['home_display']); ?> />
 								<?php _e('Place the home breadcrumb in the trail.', 'breadcrumb_navxt'); ?>				
 							</label><br />
 							<ul>
 								<li>
 									<label for="home_title">
 										<?php _e('Home Title: ','breadcrumb_navxt');?>
-										<input type="text" name="home_title" id="home_title" value="<?php echo $this->breadcrumb_trail->opt['home_title']; ?>" size="20" />
+										<input type="text" name="bcn_options[home_title]" id="home_title" value="<?php echo htmlentities($this->opt['home_title'], ENT_COMPAT, 'UTF-8'); ?>" size="20" />
 									</label>
 								</li>
 							</ul>							
