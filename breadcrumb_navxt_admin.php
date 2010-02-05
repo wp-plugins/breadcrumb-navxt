@@ -133,23 +133,15 @@ class bcn_admin extends mtekk_admin
 				//Delete old options
 				$delete_options = array
 				(
-					'bcn_preserve', 'bcn_static_frontpage', 'bcn_url_blog', 
-					'bcn_home_display', 'bcn_home_link', 'bcn_title_home', 
-					'bcn_title_blog', 'bcn_separator', 'bcn_search_prefix', 
-					'bcn_search_suffix', 'bcn_author_prefix', 'bcn_author_suffix', 
-					'bcn_author_display', 'bcn_singleblogpost_prefix', 
-					'bcn_singleblogpost_suffix', 'bcn_page_prefix', 'bcn_page_suffix', 
-					'bcn_urltitle_prefix', 'bcn_urltitle_suffix', 
-					'bcn_archive_category_prefix', 'bcn_archive_category_suffix', 
-					'bcn_archive_date_prefix', 'bcn_archive_date_suffix', 
-					'bcn_archive_date_format', 'bcn_attachment_prefix', 
-					'bcn_attachment_suffix', 'bcn_archive_tag_prefix', 
-					'bcn_archive_tag_suffix', 'bcn_title_404', 'bcn_link_current_item', 
-					'bcn_current_item_urltitle', 'bcn_current_item_style_prefix', 
-					'bcn_current_item_style_suffix', 'bcn_posttitle_maxlen', 
-					'bcn_paged_display', 'bcn_paged_prefix', 'bcn_paged_suffix', 
-					'bcn_singleblogpost_taxonomy', 'bcn_singleblogpost_taxonomy_display', 
-					'bcn_singleblogpost_category_prefix', 'bcn_singleblogpost_category_suffix', 
+					'bcn_preserve', 'bcn_static_frontpage', 'bcn_url_blog', 'bcn_home_display', 'bcn_home_link', 'bcn_title_home', 
+					'bcn_title_blog', 'bcn_separator', 'bcn_search_prefix', 'bcn_search_suffix', 'bcn_author_prefix', 'bcn_author_suffix', 
+					'bcn_author_display', 'bcn_singleblogpost_prefix', 'bcn_singleblogpost_suffix', 'bcn_page_prefix', 'bcn_page_suffix', 
+					'bcn_urltitle_prefix', 'bcn_urltitle_suffix', 'bcn_archive_category_prefix', 'bcn_archive_category_suffix', 
+					'bcn_archive_date_prefix', 'bcn_archive_date_suffix', 'bcn_archive_date_format', 'bcn_attachment_prefix', 
+					'bcn_attachment_suffix', 'bcn_archive_tag_prefix', 'bcn_archive_tag_suffix', 'bcn_title_404', 'bcn_link_current_item', 
+					'bcn_current_item_urltitle', 'bcn_current_item_style_prefix', 'bcn_current_item_style_suffix', 'bcn_posttitle_maxlen', 
+					'bcn_paged_display', 'bcn_paged_prefix', 'bcn_paged_suffix', 'bcn_singleblogpost_taxonomy',
+					'bcn_singleblogpost_taxonomy_display', 'bcn_singleblogpost_category_prefix', 'bcn_singleblogpost_category_suffix', 
 					'bcn_singleblogpost_tag_prefix', 'bcn_singleblogpost_tag_suffix'
 				);
 				foreach ($delete_options as $option)
@@ -183,17 +175,25 @@ class bcn_admin extends mtekk_admin
 				$this->breadcrumb_trail->opt['post_tag_suffix'] = $this->breadcrumb_trail->opt['tag_suffix'];
 				$this->breadcrumb_trail->opt['post_tag_anchor'] = $this->breadcrumb_trail->opt['tag_anchor'];
 			}
+			else if($major == 3 && $minor < 5)
+			{
+				
+			}
 			//We'll add our custom taxonomy stuff at this time
 			foreach($wp_taxonomies as $taxonomy)
 			{
 				//We only want custom taxonomies
-				if($taxonomy->object_type == 'post' && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+				if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
 				{
-					$this->breadcrumb_trail->opt[$taxonomy->name . '_prefix'] = '';
-					$this->breadcrumb_trail->opt[$taxonomy->name . '_suffix'] = '';
-					$this->breadcrumb_trail->opt[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">'), 'breadcrumb_navxt');
-					$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_prefix'] = '';
-					$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_suffix'] = '';
+					//If the taxonomy does not have settings in the options array yet, we need to load some defaults
+					if(!array_key_exists($taxonomy->name . '_anchor', $this->opt))
+					{
+						$this->breadcrumb_trail->opt[$taxonomy->name . '_prefix'] = '';
+						$this->breadcrumb_trail->opt[$taxonomy->name . '_suffix'] = '';
+						$this->breadcrumb_trail->opt[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">'), 'breadcrumb_navxt');
+						$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_prefix'] = '';
+						$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_suffix'] = '';
+					}
 				}
 			}
 			//Always have to update the version
@@ -233,10 +233,11 @@ class bcn_admin extends mtekk_admin
 		global $wp_taxonomies;
 		//Do some security related thigns as we are not using the normal WP settings API
 		$this->security();
+		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_options-options');
 		//Grab our incomming array (the data is dirty)
 		$input = $_POST['bcn_options'];
-		//Loop through all of the existing options (avoids setting injection)
+		//Loop through all of the existing options (avoids random setting injection)
 		foreach($this->opt as $option => $value)
 		{
 			//Handle all of our boolean options first
@@ -259,89 +260,10 @@ class bcn_admin extends mtekk_admin
 			{
 				$this->opt[$option] = stripslashes($input[$option]);
 			}
-			//$this->opt[$option] =
 		}
-		//
-		//Do a nonce check, prevent malicious link/form problems
-		//
-		
-		//Grab the options from the from post
-		//Home page settings
-		/*$this->breadcrumb_trail->opt['home_display'] = bcn_get('home_display', false);
-		$this->breadcrumb_trail->opt['blog_display'] = bcn_get('blog_display', false);
-		$this->breadcrumb_trail->opt['home_title'] = bcn_get('home_title');
-		$this->breadcrumb_trail->opt['home_anchor'] = bcn_get('home_anchor', $this->breadcrumb_trail->opt['home_anchor']);
-		$this->breadcrumb_trail->opt['blog_anchor'] = bcn_get('blog_anchor', $this->breadcrumb_trail->opt['blog_anchor']);
-		$this->breadcrumb_trail->opt['home_prefix'] = bcn_get('home_prefix');
-		$this->breadcrumb_trail->opt['home_suffix'] = bcn_get('home_suffix');
-		$this->breadcrumb_trail->opt['separator'] = bcn_get('separator');
-		$this->breadcrumb_trail->opt['max_title_length'] = (int) bcn_get('max_title_length');
-		//Current item settings
-		$this->breadcrumb_trail->opt['current_item_linked'] = bcn_get('current_item_linked', false);
-		$this->breadcrumb_trail->opt['current_item_anchor'] = bcn_get('current_item_anchor', $this->breadcrumb_trail->opt['current_item_anchor']);
-		$this->breadcrumb_trail->opt['current_item_prefix'] = bcn_get('current_item_prefix');
-		$this->breadcrumb_trail->opt['current_item_suffix'] = bcn_get('current_item_suffix');
-		//Paged settings
-		$this->breadcrumb_trail->opt['paged_prefix'] = bcn_get('paged_prefix');
-		$this->breadcrumb_trail->opt['paged_suffix'] = bcn_get('paged_suffix');
-		$this->breadcrumb_trail->opt['paged_display'] = bcn_get('paged_display', false);
-		//Page settings
-		$this->breadcrumb_trail->opt['page_prefix'] = bcn_get('page_prefix');
-		$this->breadcrumb_trail->opt['page_suffix'] = bcn_get('page_suffix');
-		$this->breadcrumb_trail->opt['page_anchor'] = bcn_get('page_anchor', $this->breadcrumb_trail->opt['page_anchor']);
-		//Post related options
-		$this->breadcrumb_trail->opt['post_prefix'] = bcn_get('post_prefix');
-		$this->breadcrumb_trail->opt['post_suffix'] = bcn_get('post_suffix');
-		$this->breadcrumb_trail->opt['post_anchor'] = bcn_get('post_anchor', $this->breadcrumb_trail->opt['post_anchor']);
-		$this->breadcrumb_trail->opt['post_taxonomy_display'] = bcn_get('post_taxonomy_display', false);
-		$this->breadcrumb_trail->opt['post_taxonomy_type'] = bcn_get('post_taxonomy_type');
-		//Attachment settings
-		$this->breadcrumb_trail->opt['attachment_prefix'] = bcn_get('attachment_prefix');
-		$this->breadcrumb_trail->opt['attachment_suffix'] = bcn_get('attachment_suffix');
-		//404 page settings
-		$this->breadcrumb_trail->opt['404_prefix'] = bcn_get('404_prefix');
-		$this->breadcrumb_trail->opt['404_suffix'] = bcn_get('404_suffix');
-		$this->breadcrumb_trail->opt['404_title'] = bcn_get('404_title');
-		//Search page settings
-		$this->breadcrumb_trail->opt['search_prefix'] = bcn_get('search_prefix');
-		$this->breadcrumb_trail->opt['search_suffix'] = bcn_get('search_suffix');
-		$this->breadcrumb_trail->opt['search_anchor'] = bcn_get('search_anchor', $this->breadcrumb_trail->opt['search_anchor']);
-		//Tag settings
-		$this->breadcrumb_trail->opt['post_tag_prefix'] = bcn_get('post_tag_prefix');
-		$this->breadcrumb_trail->opt['post_tag_suffix'] = bcn_get('post_tag_suffix');
-		$this->breadcrumb_trail->opt['post_tag_anchor'] = bcn_get('post_tag_anchor', $this->breadcrumb_trail->opt['post_tag_anchor']);
-		//Author page settings
-		$this->breadcrumb_trail->opt['author_prefix'] = bcn_get('author_prefix');
-		$this->breadcrumb_trail->opt['author_suffix'] = bcn_get('author_suffix');
-		$this->breadcrumb_trail->opt['author_display'] = bcn_get('author_display');
-		//Category settings
-		$this->breadcrumb_trail->opt['category_prefix'] = bcn_get('category_prefix');
-		$this->breadcrumb_trail->opt['category_suffix'] = bcn_get('category_suffix');
-		$this->breadcrumb_trail->opt['category_anchor'] = bcn_get('category_anchor', $this->breadcrumb_trail->opt['category_anchor']);
-		//Archive settings
-		$this->breadcrumb_trail->opt['archive_category_prefix'] = bcn_get('archive_category_prefix');
-		$this->breadcrumb_trail->opt['archive_category_suffix'] = bcn_get('archive_category_suffix');
-		$this->breadcrumb_trail->opt['archive_post_tag_prefix'] = bcn_get('archive_post_tag_prefix');
-		$this->breadcrumb_trail->opt['archive_post_tag_suffix'] = bcn_get('archive_post_tag_suffix');
-		//Archive by date settings
-		$this->breadcrumb_trail->opt['date_anchor'] = bcn_get('date_anchor', $this->breadcrumb_trail->opt['date_anchor']);
-		$this->breadcrumb_trail->opt['archive_date_prefix'] = bcn_get('archive_date_prefix');
-		$this->breadcrumb_trail->opt['archive_date_suffix'] = bcn_get('archive_date_suffix');
-		//Loop through all of the taxonomies in the array
-		foreach($wp_taxonomies as $taxonomy)
-		{
-			//We only want custom taxonomies
-			if($taxonomy->object_type == 'post' && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
-			{
-				$this->breadcrumb_trail->opt[$taxonomy->name . '_prefix'] = bcn_get($taxonomy->name . '_prefix');
-				$this->breadcrumb_trail->opt[$taxonomy->name . '_suffix'] = bcn_get($taxonomy->name . '_suffix');
-				$this->breadcrumb_trail->opt[$taxonomy->name . '_anchor'] = bcn_get($taxonomy->name . '_anchor', $this->breadcrumb_trail->opt['post_tag_anchor']);
-				$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_prefix'] = bcn_get('archive_' . $taxonomy->name . '_prefix');
-				$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_suffix'] = bcn_get('archive_' . $taxonomy->name . '_suffix');
-			}
-		}*/
 		//Commit the option changes
 		$this->update_option('bcn_options', $this->opt);
+		//Let the user know everything went ok
 		$this->message['updated fade'][] = __('Settings successfully saved.', $this->identifier);
 		add_action('admin_notices', array($this, 'message'));
 	}
@@ -434,7 +356,6 @@ class bcn_admin extends mtekk_admin
 	 * Tabulator Bootup
 	 */
 	function bcn_tabulator_init(){
-		/* if this is not the breadcrumb admin page, quit */
 		if (!jQuery("#hasadmintabs").length) return;		
 		/* init markup for tabs */
 		jQuery('#hasadmintabs').prepend("<ul><\/ul>");
@@ -470,7 +391,6 @@ class bcn_admin extends mtekk_admin
 	 */
 	 function bcn_context_init(){
 		if (!jQuery("#bcn_import_export_relocate").length) return;
-		var jqver = undefined == jQuery.fn.jquery ? [0,0,0] : jQuery.fn.jquery.split('.');
 		jQuery('#screen-meta').prepend(
 				'<div id="screen-options-wrap" class="hidden"></div>'
 		);
@@ -479,29 +399,6 @@ class bcn_admin extends mtekk_admin
 				'<a class="show-settings" id="show-settings-link" href="#screen-options"><?php printf('%s/%s/%s', __('Import', 'breadcrumb_navxt'), __('Export', 'breadcrumb_navxt'), __('Reset', 'breadcrumb_navxt')); ?></a>' + 
 				'</div>'
 		);
-		// jQuery Version below 1.3 (common for WP 2.7) needs some other style-classes
-		// and jQuery events
-		if (jqver[0] <= 1 && jqver[1] < 3){
-			// hide-if-no-js for WP 2.8, not for WP 2.7
-			jQuery('#screen-options-link-wrap').removeClass('hide-if-no-js');
-			// screen settings tab (WP 2.7 legacy)
-			jQuery('#show-settings-link').click(function () {
-				if ( ! jQuery('#screen-options-wrap').hasClass('screen-options-open') ) {
-					jQuery('#contextual-help-link-wrap').addClass('invisible');
-				}
-				jQuery('#screen-options-wrap').slideToggle('fast', function(){
-					if ( jQuery(this).hasClass('screen-options-open') ) {
-						jQuery('#show-settings-link').css({'backgroundImage':'url("images/screen-options-right.gif")'});
-						jQuery('#contextual-help-link-wrap').removeClass('invisible');
-						jQuery(this).removeClass('screen-options-open');
-					} else {
-						jQuery('#show-settings-link').css({'backgroundImage':'url("images/screen-options-right-up.gif")'});
-						jQuery(this).addClass('screen-options-open');
-					}
-				});
-				return false;
-			});			
-		}
 		var code = jQuery('#bcn_import_export_relocate').html();
 		jQuery('#bcn_import_export_relocate').html('');
 		code = code.replace(/h3>/gi, 'h5>');		
@@ -600,7 +497,7 @@ class bcn_admin extends mtekk_admin
 								foreach($wp_taxonomies as $taxonomy)
 								{
 									//We only want custom taxonomies
-									if($taxonomy->object_type == 'post' && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+									if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
 									{
 										$this->input_radio('post_taxonomy_type', $taxonomy->name, ucwords(__($taxonomy->label)));
 									}
@@ -647,8 +544,20 @@ class bcn_admin extends mtekk_admin
 			foreach($wp_taxonomies as $taxonomy)
 			{
 				//We only want custom taxonomies
-				if($taxonomy->object_type == 'post' && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+				if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
 				{
+					//If the taxonomy does not have settings in the options array yet, we need to load some defaults
+					if(!array_key_exists($taxonomy->name . '_anchor', $this->opt))
+					{
+						//Add the necessary option array members
+						$this->opt[$taxonomy->name . '_prefix'] = '';
+						$this->opt[$taxonomy->name . '_suffix'] = '';
+						$this->opt[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">', ucwords(__($taxonomy->label))), 'breadcrumb_navxt');
+						$this->opt['archive_' . $taxonomy->name . '_prefix'] = '';
+						$this->opt['archive_' . $taxonomy->name . '_suffix'] = '';
+						//Let's make sure that the newly available options are "registered" in our db
+						$this->update_option('bcn_options', $this->opt);
+					}
 				?>
 			<fieldset id="<?php echo $taxonomy->name; ?>" class="bcn_options">
 				<h3><?php echo ucwords(__($taxonomy->label)); ?></h3>
@@ -762,8 +671,6 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display($return = false, $linked = true, $reverse = false)
 	{
-		//Update our internal settings
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display($return, $linked, $reverse);
@@ -780,8 +687,6 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display_list($return = false, $linked = true, $reverse = false)
 	{
-		//Update our internal settings
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
