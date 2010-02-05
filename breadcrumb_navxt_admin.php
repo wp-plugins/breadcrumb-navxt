@@ -511,7 +511,6 @@ class bcn_admin extends mtekk_admin
 </script>
 <?php
 	} //function admin_head()
-
 	/**
 	 * admin_page
 	 * 
@@ -521,18 +520,13 @@ class bcn_admin extends mtekk_admin
 	function admin_page()
 	{
 		global $wp_taxonomies;
-		$this->security();
-		//Update our internal options array, use form safe function
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options', true);
-		?>
+		$this->security();?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
 		<p<?php if ($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
 			print $this->_get_help_text();			 
 		?></p>
 		<form action="options-general.php?page=breadcrumb_navxt" method="post" id="bcn_admin-options">
-			<?php
-				settings_fields('bcn_options'); 
-			?>
+			<?php settings_fields('bcn_options');?>
 			<div id="hasadmintabs">
 			<fieldset id="general" class="bcn_options">
 				<h3><?php _e('General', 'breadcrumb_navxt'); ?></h3>
@@ -689,7 +683,7 @@ class bcn_admin extends mtekk_admin
 						$this->input_text(__('Author Prefix', 'breadcrumb_navxt'), 'author_prefix', '32');
 						$this->input_text(__('Author Suffix', 'breadcrumb_navxt'), 'author_suffix', '32');
 						$this->input_text(__('Archive by Date Suffix', 'breadcrumb_navxt'), 'archive_date_suffix', '32', false, __('Applied after the anchor on all date breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_select(__('Author Display Format', 'breadcrumb_navxt'), 'author_display', array("display_name", "nickname", "first_name", "last_name"), false, __('display_name uses the name specified in "Display name publicly as" under the user profile the others correspond to options in the user profile.', 'breadcrumb_navxt'));
+						$this->input_select(__('Author Display Format', 'breadcrumb_navxt'), 'author_name', array("display_name", "nickname", "first_name", "last_name"), false, __('display_name uses the name specified in "Display name publicly as" under the user profile the others correspond to options in the user profile.', 'breadcrumb_navxt'));
 						$this->input_text(__('Search Prefix', 'breadcrumb_navxt'), 'search_prefix', '32');
 						$this->input_text(__('Search Suffix', 'breadcrumb_navxt'), 'search_suffix', '32');
 						$this->input_text(__('Search Anchor', 'breadcrumb_navxt'), 'search_anchor', '60', false, __('The anchor template for search breadcrumbs, used only when the search results span several pages.', 'breadcrumb_navxt'));
@@ -751,33 +745,11 @@ class bcn_admin extends mtekk_admin
 	 * in a HTML form safe manner.
 	 *
 	 * @param  (string) key name of the wordpress option to get
-	 * @param  (bool)   safe output for HTML forms (default: false)
 	 * @return (mixed)  value of option
 	 */
-	function get_option($key, $safe = false)
+	function get_option($key)
 	{
-		$db_data = get_option($key);
-		if($safe)
-		{
-			//If we get an array, we should loop through all of its members
-			if(is_array($db_data))
-			{
-				//Loop through all the members
-				foreach($db_data as $key=>$item)
-				{
-					//We ignore anything but strings
-					if(is_string($item))
-					{
-						$db_data[$key] = htmlentities($item, ENT_COMPAT, 'UTF-8');
-					}
-				}
-			}
-			else
-			{
-				$db_data = htmlentities($db_data, ENT_COMPAT, 'UTF-8');
-			}
-		}
-		return $db_data;
+		return get_option($key);
 	}
 	/**
 	 * display

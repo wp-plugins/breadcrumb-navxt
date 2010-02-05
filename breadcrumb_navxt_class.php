@@ -228,8 +228,8 @@ class bcn_breadcrumb_trail
 			'author_suffix' => '',
 			//The anchor template for author breadcrumbs, two keywords are available %link% and %title%
 			'author_anchor' => __('<a title="Go to the first page of posts by %title%." href="%link%">', 'breadcrumb_navxt'),
-			//Which of the various WordPress display types should the author crumb display
-			'author_display' => 'display_name',
+			//Which of the various WordPress display types should the author breadcrumb display
+			'author_name' => 'display_name',
 			//Category stuff
 			//The prefix for category breadcrumbs, place on all page elements and inside of current_item prefix
 			'category_prefix' => '',
@@ -334,15 +334,15 @@ class bcn_breadcrumb_trail
 		global $author;
 		//Get the Author name, note it is an object
 		$curauth = (isset($_GET['author_name'])) ? get_userdatabylogin($author_name) : get_userdata(intval($author));
-		//Setup array of valid author_display values
-		$valid_author_display = array('display_name', 'nickname', 'first_name', 'last_name');
+		//Setup array of valid author_name values
+		$valid_author_name = array('display_name', 'nickname', 'first_name', 'last_name');
 		//This translation allows us to easily select the display type later on
-		$author_display = $this->opt['author_display'];
+		$author_name = $this->opt['author_name'];
 		//Make sure user picks only safe values
-		if(in_array($author_display, $valid_author_display))
+		if(in_array($author_name, $valid_author_name))
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb(apply_filters('the_author', $curauth->$author_display),
+			$breadcrumb = $this->add(new bcn_breadcrumb(apply_filters('the_author', $curauth->$author_name),
 				$this->opt['author_prefix'], $this->opt['author_suffix']));
 			if(is_paged() && $this->opt['paged_display'])
 			{
