@@ -379,7 +379,7 @@ class bcn_admin extends mtekk_admin
 		}
 		/* handler for opening the last tab after submit (compability version) */
 		jQuery('#hasadmintabs ul a').click(function(i){
-			var form   = jQuery('#bcn_admin_options');
+			var form   = jQuery('#bcn_admin-options');
 			var action = form.attr("action").split('#', 1) + jQuery(this).attr('href');
 			// an older bug pops up with some jQuery version(s), which makes it
 			// necessary to set the form's action attribute by standard javascript 
