@@ -74,6 +74,7 @@ class bcn_admin extends mtekk_admin
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		$this->opt = $this->breadcrumb_trail->opt;
+		$this->opt = $this->get_option('bcn_options');
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
 		//$this->plugin_base = plugin_basename(__FILE__);
 		//We're going to make sure we load the parent's constructor
