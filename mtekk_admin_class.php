@@ -27,6 +27,12 @@ abstract class mtekk_admin
 	protected $unique_prefix;
 	protected $opt = array();
 	protected $message;
+	/**
+	 * wether or not this administration page has contextual help
+	 * 
+	 * @var bool
+	 */
+	protected $_has_contextual_help = false;
 	function __construct()
 	{
 		//Admin Init Hook
@@ -288,8 +294,8 @@ abstract class mtekk_admin
 	 */
 	function contextual_help($contextual_help, $screen)
 	{
-		// add contextual help on current screen		
-		if ($screen == 'settings_page_' . $this->identifier)
+		//Add contextual help on current screen, keep compatibility with 2.8, 2.9 and 3.0
+		if($screen->base == 'settings_page_' . $this->identifier || $screen == 'settings_page_' . $this->identifier)
 		{
 			$contextual_help = $this->_get_contextual_help();
 			$this->_has_contextual_help = true;
@@ -350,6 +356,15 @@ abstract class mtekk_admin
 	 * Function prototype to prevent errors
 	 */
 	function admin_page()
+	{
+		
+	}
+	/**
+	 * get help text
+	 * 
+	 * Function prototype to prevent errors
+	 */
+	protected function _get_help_text()
 	{
 		
 	}

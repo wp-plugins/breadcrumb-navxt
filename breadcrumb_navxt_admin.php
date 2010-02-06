@@ -51,13 +51,6 @@ class bcn_admin extends mtekk_admin
 	protected $unique_prefix = 'bcn';
 	protected $plugin_basename = 'breadcrumb-navxt/breadcrumb_navxt_admin.php';
 	/**
-	 * wether or not this administration page has contextual help
-	 * 
-	 * @var bool
-	 */
-	protected $_has_contextual_help = false;	
-	
-	/**
 	 * local store for the breadcrumb object
 	 * 
 	 * @see   bcn_admin()
@@ -420,7 +413,7 @@ class bcn_admin extends mtekk_admin
 		global $wp_taxonomies;
 		$this->security();?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
-		<p<?php if ($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
+		<p<?php if($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
 			print $this->_get_help_text();			 
 		?></p>
 		<form action="options-general.php?page=breadcrumb_navxt" method="post" id="bcn_admin-options">
