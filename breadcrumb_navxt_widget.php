@@ -30,6 +30,10 @@ class bcn_widget extends WP_Widget
 		extract($args);
 		//Manditory before widget junk
 		echo $before_widget;
+		if(!empty($instance['title']))
+		{
+			echo $before_title . $instance['title'] . $after_title;
+		}
 		//We'll want to switch between the two breadcrumb output types
 		if($instance['list'] == true)
 		{
@@ -41,25 +45,27 @@ class bcn_widget extends WP_Widget
 		else
 		{
 			//Display the regular output breadcrumb
-			echo '<div class="breadcrumb_trail">';
 			bcn_display(false, $instance['linked'], $instance['reverse']);
-			echo '</div>';
 		}
 		//Manditory after widget junk
 		echo $after_widget;
 	}
 	function update($new_instance, $old_instance)
 	{
-		$instance = $old_instance;
 		//Filter out anything that could be invalid
-		$instance['list'] = isset($new_instance['list']);
-		$instance['linked'] = isset($new_instance['linked']);
-		$instance['reverse'] = isset($new_instance['reverse']);
-		return $instance;
+		$old_instance['title'] = strip_tags($new_instance['title']);
+		$old_instance['list'] = isset($new_instance['list']);
+		$old_instance['linked'] = isset($new_instance['linked']);
+		$old_instance['reverse'] = isset($new_instance['reverse']);
+		return $old_instance;
 	}
 	function form($instance)
 	{
-		$instance = wp_parse_args((array) $instance, array('list' => false, 'linked' => true, 'reverse' => false));?>
+		$instance = wp_parse_args((array) $instance, array('title' => '', 'list' => false, 'linked' => true, 'reverse' => false));?>
+		<p>
+			<label for="<?php echo $this->get_field_id('title'); ?>"> <?php _e('Title:'); ?></label>
+			<input class="widefat" type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" value="<?php echo esc_attr($instance['title']);?>" />
+		</p>
 		<p>
 			<input class="checkbox" type="checkbox" name="<?php echo $this->get_field_name('list'); ?>" id="<?php echo $this->get_field_id('list'); ?>" value="true" <?php checked(true, $instance['list']);?> />
 			<label for="<?php echo $this->get_field_id('list'); ?>"> <?php _e('Output trail as a list'); ?></label><br />
