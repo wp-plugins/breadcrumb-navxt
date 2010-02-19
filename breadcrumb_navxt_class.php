@@ -957,14 +957,18 @@ class bcn_breadcrumb_trail
 			//On the first run we need to add in a class for the home breadcrumb
 			if($trail_str === '<li')
 			{
-				$trail_str .= ' class="home" ';
+				$trail_str .= ' class="home';
+				if($key === 0)
+				{
+					$trail_str .= ' current_item"';
+				}
 			}
 			//If we are on the current item there are some things that must be done
-			if($key === 0)
+			else if($key === 0)
 			{
 				$this->current_item($breadcrumb);
 				//Add in a class for current_item
-				$trail_str .= ' class="current_item" ';
+				$trail_str .= ' class="current_item"';
 			}
 			//Place in the breadcrumb's assembled elements
 			$trail_str .= '>' . $breadcrumb->assemble($linked);
