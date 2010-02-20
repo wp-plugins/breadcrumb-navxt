@@ -43,8 +43,6 @@ abstract class mtekk_admin
 		add_action('activate_' . $this->plugin_basename, array($this, 'install'));
 		//Initilizes l10n domain
 		$this->local();
-		//Register the WordPress 2.8 Widget
-		add_action('widgets_init', create_function('', 'return register_widget("'. $this->unique_prefix . '_widget");'));
 	}
 	function admin_url()
 	{
