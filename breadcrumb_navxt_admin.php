@@ -451,8 +451,8 @@ class bcn_admin extends mtekk_admin
 						$this->input_check(__('Blog Breadcrumb', 'breadcrumb_navxt'), 'blog_display', __('Place the blog breadcrumb in the trail.', 'breadcrumb_navxt'), ($this->get_option('show_on_front') !== "page"));
 						$this->input_text(__('Home Prefix', 'breadcrumb_navxt'), 'home_prefix', '32');
 						$this->input_text(__('Home Suffix', 'breadcrumb_navxt'), 'home_suffix', '32');
-						$this->input_text(__('Home Anchor', 'breadcrumb_navxt'), 'home_anchor', '60', false, __('The anchor template for the home breadcrumb.', 'breadcrumb_navxt'));
-						$this->input_text(__('Blog Anchor', 'breadcrumb_navxt'), 'blog_anchor', '60', ($this->get_option('show_on_front') !== "page"), __('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'));
+						$this->input_text(__('Home Anchor', 'breadcrumb_navxt'), 'home_anchor', '64', false, __('The anchor template for the home breadcrumb.', 'breadcrumb_navxt'));
+						$this->input_text(__('Blog Anchor', 'breadcrumb_navxt'), 'blog_anchor', '64', ($this->get_option('show_on_front') !== "page"), __('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'));
 					?>
 				</table>
 			</fieldset>
@@ -463,7 +463,7 @@ class bcn_admin extends mtekk_admin
 						$this->input_check(__('Link Current Item', 'breadcrumb_navxt'), 'current_item_linked', __('Yes'));
 						$this->input_text(__('Current Item Prefix', 'breadcrumb_navxt'), 'current_item_prefix', '32', false, __('This is always placed in front of the last breadcrumb in the trail, before any other prefixes for that breadcrumb.', 'breadcrumb_navxt'));
 						$this->input_text(__('Current Item Suffix', 'breadcrumb_navxt'), 'current_item_suffix', '32', false, __('This is always placed after the last breadcrumb in the trail, and after any other prefixes for that breadcrumb.', 'breadcrumb_navxt'));
-						$this->input_text(__('Current Item Anchor', 'breadcrumb_navxt'), 'current_item_anchor', '60', false, __('The anchor template for current item breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_text(__('Current Item Anchor', 'breadcrumb_navxt'), 'current_item_anchor', '64', false, __('The anchor template for current item breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_check(__('Paged Breadcrumb', 'breadcrumb_navxt'), 'paged_display', __('Include the paged breadcrumb in the breadcrumb trail.', 'breadcrumb_navxt'), false, __('Indicates that the user is on a page other than the first on paginated posts/pages.', 'breadcrumb_navxt'));
 						$this->input_text(__('Paged Prefix', 'breadcrumb_navxt'), 'paged_prefix', '32');
 						$this->input_text(__('Paged Suffix', 'breadcrumb_navxt'), 'paged_suffix', '32');
@@ -476,7 +476,7 @@ class bcn_admin extends mtekk_admin
 					<?php
 						$this->input_text(__('Post Prefix', 'breadcrumb_navxt'), 'post_prefix', '32');
 						$this->input_text(__('Post Suffix', 'breadcrumb_navxt'), 'post_suffix', '32');
-						$this->input_text(__('Post Anchor', 'breadcrumb_navxt'), 'post_anchor', '60', false, __('The anchor template for post breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_text(__('Post Anchor', 'breadcrumb_navxt'), 'post_anchor', '64', false, __('The anchor template for post breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_check(__('Post Taxonomy Display', 'breadcrumb_navxt'), 'post_taxonomy_display', __('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'));
 					?>
 					<tr valign="top">
@@ -505,7 +505,7 @@ class bcn_admin extends mtekk_admin
 					<?php
 						$this->input_text(__('Page Prefix', 'breadcrumb_navxt'), 'page_prefix', '32');
 						$this->input_text(__('Page Suffix', 'breadcrumb_navxt'), 'page_suffix', '32');
-						$this->input_text(__('Page Anchor', 'breadcrumb_navxt'), 'page_anchor', '60', false, __('The anchor template for page breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_text(__('Page Anchor', 'breadcrumb_navxt'), 'page_anchor', '64', false, __('The anchor template for page breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Attachment Prefix', 'breadcrumb_navxt'), 'attachment_prefix', '32');
 						$this->input_text(__('Attachment Suffix', 'breadcrumb_navxt'), 'attachment_suffix', '32');
 					?>
@@ -517,7 +517,7 @@ class bcn_admin extends mtekk_admin
 					<?php
 						$this->input_text(__('Category Prefix', 'breadcrumb_navxt'), 'category_prefix', '32', false, __('Applied before the anchor on all category breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Category Suffix', 'breadcrumb_navxt'), 'category_suffix', '32', false, __('Applied after the anchor on all category breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_text(__('Category Anchor', 'breadcrumb_navxt'), 'category_anchor', '60', false, __('The anchor template for category breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_text(__('Category Anchor', 'breadcrumb_navxt'), 'category_anchor', '64', false, __('The anchor template for category breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Archive by Category Prefix', 'breadcrumb_navxt'), 'archive_category_prefix', '32', false, __('Applied before the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'));
 						$this->input_text(__('Archive by Category Suffix', 'breadcrumb_navxt'), 'archive_category_suffix', '32', false, __('Applied after the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'));
 					?>
@@ -529,7 +529,7 @@ class bcn_admin extends mtekk_admin
 					<?php
 						$this->input_text(__('Tag Prefix', 'breadcrumb_navxt'), 'post_tag_prefix', '32', false, __('Applied before the anchor on all tag breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Tag Suffix', 'breadcrumb_navxt'), 'post_tag_suffix', '32', false, __('Applied after the anchor on all tag breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_text(__('Tag Anchor', 'breadcrumb_navxt'), 'post_tag_anchor', '60', false, __('The anchor template for tag breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_text(__('Tag Anchor', 'breadcrumb_navxt'), 'post_tag_anchor', '64', false, __('The anchor template for tag breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Archive by Tag Prefix', 'breadcrumb_navxt'), 'archive_post_tag_prefix', '32', false, __('Applied before the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'));
 						$this->input_text(__('Archive by Tag Suffix', 'breadcrumb_navxt'), 'archive_post_tag_suffix', '32', false, __('Applied after the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'));
 					?>
@@ -561,7 +561,7 @@ class bcn_admin extends mtekk_admin
 					<?php
 						$this->input_text(sprintf(__('%s Prefix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), $taxonomy->name . '_prefix', '32', false, sprintf(__('Applied before the anchor on all %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
 						$this->input_text(sprintf(__('%s Suffix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), $taxonomy->name . '_suffix', '32', false, sprintf(__('Applied after the anchor on all %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
-						$this->input_text(sprintf(__('%s Anchor', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), $taxonomy->name . '_anchor', '60', false, sprintf(__('The anchor template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
+						$this->input_text(sprintf(__('%s Anchor', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), $taxonomy->name . '_anchor', '64', false, sprintf(__('The anchor template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
 						$this->input_text(sprintf(__('Archive by %s Prefix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), 'archive_' . $taxonomy->name . '_prefix', '32', false, sprintf(__('Applied before the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
 						$this->input_text(sprintf(__('Archive by %s Suffix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), 'archive_' . $taxonomy->name . '_suffix', '32', false, sprintf(__('Applied after the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
 					?>
@@ -575,7 +575,7 @@ class bcn_admin extends mtekk_admin
 				<h3><?php _e('Date Archives', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
 					<?php
-						$this->input_text(__('Date Anchor', 'breadcrumb_navxt'), 'date_anchor', '60', false, __('The anchor template for date breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_text(__('Date Anchor', 'breadcrumb_navxt'), 'date_anchor', '64', false, __('The anchor template for date breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Archive by Date Prefix', 'breadcrumb_navxt'), 'archive_date_prefix', '32', false, __('Applied before the anchor on all date breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Archive by Date Suffix', 'breadcrumb_navxt'), 'archive_date_suffix', '32', false, __('Applied after the anchor on all date breadcrumbs.', 'breadcrumb_navxt'));
 					?>
@@ -591,7 +591,7 @@ class bcn_admin extends mtekk_admin
 						$this->input_select(__('Author Display Format', 'breadcrumb_navxt'), 'author_name', array("display_name", "nickname", "first_name", "last_name"), false, __('display_name uses the name specified in "Display name publicly as" under the user profile the others correspond to options in the user profile.', 'breadcrumb_navxt'));
 						$this->input_text(__('Search Prefix', 'breadcrumb_navxt'), 'search_prefix', '32');
 						$this->input_text(__('Search Suffix', 'breadcrumb_navxt'), 'search_suffix', '32');
-						$this->input_text(__('Search Anchor', 'breadcrumb_navxt'), 'search_anchor', '60', false, __('The anchor template for search breadcrumbs, used only when the search results span several pages.', 'breadcrumb_navxt'));
+						$this->input_text(__('Search Anchor', 'breadcrumb_navxt'), 'search_anchor', '64', false, __('The anchor template for search breadcrumbs, used only when the search results span several pages.', 'breadcrumb_navxt'));
 						$this->input_text(__('404 Title', 'breadcrumb_navxt'), '404_title', '32');
 						$this->input_text(__('404 Prefix', 'breadcrumb_navxt'), '404_prefix', '32');
 						$this->input_text(__('404 Suffix', 'breadcrumb_navxt'), '404_suffix', '32');
