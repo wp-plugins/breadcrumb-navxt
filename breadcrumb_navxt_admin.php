@@ -66,8 +66,8 @@ class bcn_admin extends mtekk_admin
 	{
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
+		//Sync up our option array (not with db however)
 		$this->opt = $this->breadcrumb_trail->opt;
-		$this->opt = $this->get_option('bcn_options');
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
 		//$this->plugin_base = plugin_basename(__FILE__);
 		//Register the WordPress 2.8 Widget
@@ -413,7 +413,9 @@ class bcn_admin extends mtekk_admin
 	function admin_page()
 	{
 		global $wp_taxonomies;
-		$this->security();?>
+		$this->security();
+		//Grab the current settings from the DB
+		$this->opt = $this->get_option('bcn_options');?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
 		<p<?php if($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
 			print $this->_get_help_text();			 
@@ -667,6 +669,8 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display($return = false, $linked = true, $reverse = false)
 	{
+		//Grab the current settings from the DB
+		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display($return, $linked, $reverse);
@@ -683,6 +687,8 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display_list($return = false, $linked = true, $reverse = false)
 	{
+		//Grab the current settings from the DB
+		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
