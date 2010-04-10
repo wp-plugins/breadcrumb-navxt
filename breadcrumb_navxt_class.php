@@ -742,6 +742,8 @@ class bcn_breadcrumb_trail
 			//Exit early since we have breadcrumbs in the trail
 			return null;
 		}
+		//Do any actions if necessary, we past through the current object instance to keep life simple
+		do_action('bcn_before_fill', $this);
 		//Do specific opperations for the various page types
 		//Check if this isn't the first of a multi paged item
 		if(is_paged() && $this->opt['paged_display'])
@@ -816,6 +818,8 @@ class bcn_breadcrumb_trail
 		{
 			$this->do_home();
 		}
+		//Do any actions if necessary, we past through the current object instance to keep life simple
+		do_action('bcn_after_fill', $this);
 	}
 	/**
 	 * order
