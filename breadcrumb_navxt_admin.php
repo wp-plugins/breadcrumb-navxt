@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.4.90
+Version: 3.4.98
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -23,6 +23,13 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+//Do a PHP version check
+$phpVersion = explode('.', phpversion());
+if($phpVersion[0] < 5)
+{
+	sprintf(__('Your PHP version is too old, please upgrade to a newer version. Your version is %s, this plugin requires %s', 'breadcrumb_navxt'), phpversion(), '5.0.0');
+	die();
+}
 //Include the breadcrumb class
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
 //Include the WP 2.8+ widget class
@@ -43,7 +50,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.4.90';
+	protected $version = '3.4.98';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -114,8 +121,6 @@ class bcn_admin extends mtekk_admin
 		global $wp_taxonomies;
 		//Call our little security function
 		$this->security();
-		//Initilize the options
-		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Reduce db queries by saving this
 		$db_version = $this->get_option('bcn_version');
 		//If our version is not the same as in the db, time to update
@@ -123,57 +128,38 @@ class bcn_admin extends mtekk_admin
 		{
 			//Split up the db version into it's components
 			list($major, $minor, $release) = explode('.', $db_version);
-			//For upgrading from 2.x.x
-			if($major == 2)
+			$opts = $this->get_option('bcn_options');
+			//Upgrading from 3.0
+			if($major == 3 && $minor == 0)
 			{
-				//Delete old options
-				$delete_options = array
-				(
-					'bcn_preserve', 'bcn_static_frontpage', 'bcn_url_blog', 'bcn_home_display', 'bcn_home_link', 'bcn_title_home', 
-					'bcn_title_blog', 'bcn_separator', 'bcn_search_prefix', 'bcn_search_suffix', 'bcn_author_prefix', 'bcn_author_suffix', 
-					'bcn_author_display', 'bcn_singleblogpost_prefix', 'bcn_singleblogpost_suffix', 'bcn_page_prefix', 'bcn_page_suffix', 
-					'bcn_urltitle_prefix', 'bcn_urltitle_suffix', 'bcn_archive_category_prefix', 'bcn_archive_category_suffix', 
-					'bcn_archive_date_prefix', 'bcn_archive_date_suffix', 'bcn_archive_date_format', 'bcn_attachment_prefix', 
-					'bcn_attachment_suffix', 'bcn_archive_tag_prefix', 'bcn_archive_tag_suffix', 'bcn_title_404', 'bcn_link_current_item', 
-					'bcn_current_item_urltitle', 'bcn_current_item_style_prefix', 'bcn_current_item_style_suffix', 'bcn_posttitle_maxlen', 
-					'bcn_paged_display', 'bcn_paged_prefix', 'bcn_paged_suffix', 'bcn_singleblogpost_taxonomy',
-					'bcn_singleblogpost_taxonomy_display', 'bcn_singleblogpost_category_prefix', 'bcn_singleblogpost_category_suffix', 
-					'bcn_singleblogpost_tag_prefix', 'bcn_singleblogpost_tag_suffix'
-				);
-				foreach ($delete_options as $option)
-				{
-					$this->delete_option($option);	
-				}
-			}
-			else if($major == 3 && $minor == 0)
-			{
-				//Update our internal settings
-				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
-				$this->breadcrumb_trail->opt['search_anchor'] = __('<a title="Go to the first page of search results for %title%." href="%link%">','breadcrumb_navxt');
+				$opts['search_anchor'] = __('<a title="Go to the first page of search results for %title%." href="%link%">','breadcrumb_navxt');
 			}
 			else if($major == 3 && $minor < 3)
 			{
-				//Update our internal settings
-				$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
-				$this->breadcrumb_trail->opt['blog_display'] = true;
+				$opts['blog_display'] = true;
 			}
 			else if($major == 3 && $minor < 4)
 			{
 				//Inline upgrade of the tag setting
-				if($this->breadcrumb_trail->opt['post_taxonomy_type'] === 'tag')
+				if($opts['post_taxonomy_type'] === 'tag')
 				{
-					$this->breadcrumb_trail->opt['post_taxonomy_type'] = 'post_tag';
+					$opts['post_taxonomy_type'] = 'post_tag';
 				}
 				//Fix our tag settings
-				$this->breadcrumb_trail->opt['archive_post_tag_prefix'] = $this->breadcrumb_trail->opt['archive_tag_prefix'];
-				$this->breadcrumb_trail->opt['archive_post_tag_suffix'] = $this->breadcrumb_trail->opt['archive_tag_suffix'];
-				$this->breadcrumb_trail->opt['post_tag_prefix'] = $this->breadcrumb_trail->opt['tag_prefix'];
-				$this->breadcrumb_trail->opt['post_tag_suffix'] = $this->breadcrumb_trail->opt['tag_suffix'];
-				$this->breadcrumb_trail->opt['post_tag_anchor'] = $this->breadcrumb_trail->opt['tag_anchor'];
+				$opts['archive_post_tag_prefix'] = $this->breadcrumb_trail->opt['archive_tag_prefix'];
+				$opts['archive_post_tag_suffix'] = $this->breadcrumb_trail->opt['archive_tag_suffix'];
+				$opts['post_tag_prefix'] = $this->breadcrumb_trail->opt['tag_prefix'];
+				$opts['post_tag_suffix'] = $this->breadcrumb_trail->opt['tag_suffix'];
+				$opts['post_tag_anchor'] = $this->breadcrumb_trail->opt['tag_anchor'];
 			}
 			else if($major == 3 && $minor < 5)
 			{
 				
+			}
+			//If it was never installed, copy over default settings
+			else
+			{
+				$opts = $this->opt;
 			}
 			//We'll add our custom taxonomy stuff at this time
 			foreach($wp_taxonomies as $taxonomy)
@@ -182,20 +168,20 @@ class bcn_admin extends mtekk_admin
 				if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
 				{
 					//If the taxonomy does not have settings in the options array yet, we need to load some defaults
-					if(!array_key_exists($taxonomy->name . '_anchor', $this->opt))
+					if(!array_key_exists($taxonomy->name . '_anchor', $opts))
 					{
-						$this->breadcrumb_trail->opt[$taxonomy->name . '_prefix'] = '';
-						$this->breadcrumb_trail->opt[$taxonomy->name . '_suffix'] = '';
-						$this->breadcrumb_trail->opt[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">'), 'breadcrumb_navxt');
-						$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_prefix'] = '';
-						$this->breadcrumb_trail->opt['archive_' . $taxonomy->name . '_suffix'] = '';
+						$opts[$taxonomy->name . '_prefix'] = '';
+						$opts[$taxonomy->name . '_suffix'] = '';
+						$opts[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">'), 'breadcrumb_navxt');
+						$opts['archive_' . $taxonomy->name . '_prefix'] = '';
+						$opts['archive_' . $taxonomy->name . '_suffix'] = '';
 					}
 				}
 			}
 			//Always have to update the version
 			$this->update_option('bcn_version', $this->version);
 			//Store the options
-			$this->add_option('bcn_options', $this->breadcrumb_trail->opt);
+			$this->add_option('bcn_options', $opts);
 		}
 		//Check if we have valid anchors
 		if($temp = $this->get_option('bcn_options'))
@@ -418,7 +404,7 @@ class bcn_admin extends mtekk_admin
 		$this->opt = $this->get_option('bcn_options');?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
 		<p<?php if($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
-			print $this->_get_help_text();			 
+			print $this->_get_help_text();
 		?></p>
 		<form action="options-general.php?page=breadcrumb_navxt" method="post" id="bcn_admin-options">
 			<?php settings_fields('bcn_options');?>
