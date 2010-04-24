@@ -277,12 +277,12 @@ class bcn_breadcrumb_trail
 	{
 		global $s;
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb(wp_specialchars($s, 1), $this->opt['search_prefix'], $this->opt['search_suffix']));
+		$breadcrumb = $this->add(new bcn_breadcrumb(esc_html($s), $this->opt['search_prefix'], $this->opt['search_suffix']));
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Figure out the hyperlink for the anchor
-			$url = get_settings('home'). '?s=' . str_replace(' ', '+', wp_specialchars($s, 1));
+			$url = get_settings('home'). '?s=' . str_replace(' ', '+', esc_html($s));
 			//Figure out the anchor for the search
 			$breadcrumb->set_anchor($this->opt['search_anchor'], $url);
 		}
