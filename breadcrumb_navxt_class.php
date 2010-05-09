@@ -299,17 +299,15 @@ class bcn_breadcrumb_trail
 		global $post;
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 		$this->trail[] = new bcn_breadcrumb(get_the_title(), $this->opt['attachment_prefix'], $this->opt['attachment_suffix']);
-		//Get the parent page/post of the attachment
-		$parent_id = $post->post_parent;
 		//Get the parent's information
-		$parent = get_post($parent_id);
+		$parent = get_post($post->post_parent);
 		//We need to treat post and page attachment hierachy differently
 		if($parent->post_type == 'page')
 		{
 			//Grab the page on front ID for page_parents
 			$frontpage = get_option('page_on_front');
 			//Place the rest of the page hierachy
-			$this->page_parents($parent_id, $frontpage);
+			$this->page_parents($post->post_parent, $frontpage);
 		}
 		else
 		{
@@ -317,9 +315,9 @@ class bcn_breadcrumb_trail
 			$breadcrumb = $this->add(new bcn_breadcrumb(apply_filters('the_title', $parent->post_title),
 				$this->opt['post_prefix'], $this->opt['post_suffix']));
 			//Assign the anchor properties
-			$breadcrumb->set_anchor($this->opt['post_anchor'], get_permalink($parent_id));
+			$breadcrumb->set_anchor($this->opt['post_anchor'], get_permalink($post->post_parent));
 			//Handle the post's taxonomy
-			$this->post_taxonomy($parent_id);
+			$this->post_taxonomy($post->post_parent);
 		}
 	}
 	/**
