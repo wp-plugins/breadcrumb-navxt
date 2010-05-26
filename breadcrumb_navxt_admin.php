@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.4.98
+Version: 3.5.0
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -50,7 +50,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.4.98';
+	protected $version = '3.5.0';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -152,12 +152,8 @@ class bcn_admin extends mtekk_admin
 				$opts['post_tag_suffix'] = $this->breadcrumb_trail->opt['tag_suffix'];
 				$opts['post_tag_anchor'] = $this->breadcrumb_trail->opt['tag_anchor'];
 			}
-			else if($major == 3 && $minor < 5)
-			{
-				
-			}
 			//If it was never installed, copy over default settings
-			else
+			else if(!$opts)
 			{
 				$opts = $this->opt;
 			}
@@ -348,16 +344,7 @@ class bcn_admin extends mtekk_admin
 		    jQuery(this).find('h3').hide();					    
 	    });	
 		/* init the tabs plugin */
-		var jquiver = undefined == jQuery.ui ? [0,0,0] : undefined == jQuery.ui.version ? [0,1,0] : jQuery.ui.version.split('.');
-		switch(true){
-			// tabs plugin has been fixed to work on the parent element again.
-			case jquiver[0] >= 1 && jquiver[1] >= 7:
-				jQuery("#hasadmintabs").tabs();
-				break;
-			// tabs plugin has bug and needs to work on ul directly.
-			default:
-				jQuery("#hasadmintabs > ul").tabs(); 
-		}
+		jQuery("#hasadmintabs").tabs();
 		/* handler for opening the last tab after submit (compability version) */
 		jQuery('#hasadmintabs ul a').click(function(i){
 			var form   = jQuery('#bcn_admin-options');

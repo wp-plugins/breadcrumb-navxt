@@ -1,9 +1,9 @@
 === Breadcrumb NavXT ===
 Contributors: mtekk, hakre
 Tags: breadcrumb, navigation
-Requires at least: 2.6
-Tested up to: 2.9.1
-Stable tag: 3.4.1
+Requires at least: 2.8
+Tested up to: 3.0
+Stable tag: 3.5.0
 Adds breadcrumb navigation showing the visitor's path to their current location.
 
 == Description ==
@@ -31,6 +31,13 @@ Don't see your language on the list? Feel free to translate Breadcrumb NavXT and
 Please visit [Breadcrumb NavXT's](http://mtekk.weblogs.us/code/breadcrumb-navxt/#installation "Go to Breadcrumb NavXT's project page's installation section.") project page for installation and usage instructions.
 
 == Changelog ==
+= 3.5.0 =
+* New feature: Added actions `bcn_before_fill` and `bcn_after_fill`, see documentation for more information.
+* New feature: Widget rewritten to use the WordPress 2.8 Widget API, now multi-widget capable.
+* New feature: Widget output can be in list form, can be in reversed order, and can be unlinked.
+* Bug fix: Fixed issue where the current tab was forgotten after a save in the settings page.
+* Bug fix: Fixed various WP API issues with WordPress 3.0.
+* Bug fix: Fixed title trimming so that it works properly with multi-byte characters.
 = 3.4.1 =
 * Bug fix: Fixed issue with PHP unexpected $end on line 1567 in breadcrumb_navxt_admin.php.
 * Bug fix: Fixed issue where the %link% anchor tag would not be replaced with a URI for flat taxonomies (e.g. tags).
