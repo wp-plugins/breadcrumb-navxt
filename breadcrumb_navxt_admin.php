@@ -192,7 +192,7 @@ class bcn_admin extends mtekk_admin
 				strlen($temp['blog_anchor']) == 0 || 
 				strlen($temp['page_anchor']) == 0 || 
 				strlen($temp['post_anchor']) == 0 || 
-				strlen($temp['tag_anchor']) == 0 ||
+				strlen($temp['post_tag_anchor']) == 0 ||
 				strlen($temp['date_anchor']) == 0 ||
 				strlen($temp['category_anchor']) == 0)
 			{
