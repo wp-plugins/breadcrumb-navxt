@@ -130,7 +130,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	public $version = '3.5.1';
+	public $version = '3.5.80';
 	//An array of breadcrumbs
 	public $trail = array();
 	//The options
@@ -742,6 +742,10 @@ class bcn_breadcrumb_trail
 		}
 		//Do any actions if necessary, we past through the current object instance to keep life simple
 		do_action('bcn_before_fill', $this);
+		//Need to grab the queried object here as multiple branches need it
+		$queried_object = $wp_query->get_queried_object();
+		//var_dump($queried_object);
+		//var_dump($post);
 		//Do specific opperations for the various page types
 		//Check if this isn't the first of a multi paged item
 		if(is_paged() && $this->opt['paged_display'])
@@ -763,7 +767,7 @@ class bcn_breadcrumb_trail
 			$this->do_search();
 		}
 		//For pages
-		else if(is_page())
+		else if(is_page() || (is_post_type_hierarchical($queried_object->post_type) && !is_home()))
 		{
 			$this->do_page();
 		}
@@ -788,9 +792,8 @@ class bcn_breadcrumb_trail
 			//For taxonomy based archives, had to add the two specifics in to overcome WordPress bug
 			if(is_tax() || is_category() || is_tag())
 			{
-				$term = $wp_query->get_queried_object();
 				//For hierarchical taxonomy based archives
-				if(is_taxonomy_hierarchical($term->taxonomy))
+				if(is_taxonomy_hierarchical($queried_object->taxonomy))
 				{
 					$this->do_archive_by_term_hierarchical();
 				}
