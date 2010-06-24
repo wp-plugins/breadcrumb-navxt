@@ -769,16 +769,11 @@ class bcn_breadcrumb_trail
 		{
 			$this->do_search();
 		}
-		//For pages, seem to not hit on is_single
-		else if(is_page())
-		{
-			$this->do_post_hierarchical();
-		}
 		//For posts
-		else if(is_single())
+		else if(is_singular())
 		{
 			//For hierarchical posts
-			if(is_post_type_hierarchical($queried_object->post_type) && !is_home())
+			if(is_page() || (is_post_type_hierarchical($queried_object->post_type) && !is_home()))
 			{
 				$this->do_post_hierarchical();
 			}
@@ -977,8 +972,9 @@ class bcn_breadcrumb_trail
 				$trail_str .= ' class="home';
 				if($key === 0)
 				{
-					$trail_str .= ' current_item"';
+					$trail_str .= ' current_item';
 				}
+				$trail_str .= '"';
 			}
 			//If we are on the current item there are some things that must be done
 			else if($key === 0)

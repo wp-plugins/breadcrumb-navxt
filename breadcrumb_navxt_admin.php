@@ -118,7 +118,7 @@ class bcn_admin extends mtekk_admin
 	 */
 	function install()
 	{
-		global $wp_taxonomies;
+		global $wp_taxonomies, $wp_post_types;
 		//Call our little security function
 		$this->security();
 		//Reduce db queries by saving this
@@ -208,7 +208,7 @@ class bcn_admin extends mtekk_admin
 	 */
 	function opts_update()
 	{
-		global $wp_taxonomies;
+		global $wp_taxonomies, $wp_post_types;
 		//Do some security related thigns as we are not using the normal WP settings API
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
@@ -402,7 +402,7 @@ class bcn_admin extends mtekk_admin
 	 */
 	function admin_page()
 	{
-		global $wp_taxonomies;
+		global $wp_taxonomies, $wp_post_types;
 		$this->security();
 		//Grab the current settings from the DB
 		$this->opt = $this->get_option('bcn_options');?>
@@ -503,6 +503,77 @@ class bcn_admin extends mtekk_admin
 					?>
 				</table>
 			</fieldset>
+			<?php 
+			//Loop through all of the post types in the array
+			foreach($wp_post_types as $post_type)
+			{
+				//We only want custom post types
+				if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+				{
+					//If the post type does not have settings in the options array yet, we need to load some defaults
+					if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
+					{
+						//Add the necessary option array members
+						$this->opt['post_' . $post_type->name . '_prefix'] = '';
+						$this->opt['post_' . $post_type->name . '_suffix'] = '';
+						$this->opt['post_' . $post_type->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">', $post_type->labels->singular_name), 'breadcrumb_navxt');
+						//If it is flat, we need a taxonomy selection
+						if(!$post_type->hierarchical)
+						{
+							//Be safe and disable taxonomy display by default
+							$this->opt['post_' . $post_type->name . '_taxonomy_display'] = false;
+							//Loop through all of the possible taxonomies
+							foreach($wp_taxonomies as $taxonomy)
+							{
+								//Activate the first taxonomy valid for this post type and exit the loop
+								if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
+								{
+									$this->opt['post_' . $post_type->name . '_taxonomy_display'] = true;
+									$this->opt['post_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
+									break;
+								}
+							}
+						}
+						//Let's make sure that the newly available options are "registered" in our db
+						$this->update_option('bcn_options', $this->opt);
+					}?>
+			<fieldset id="post_<?php echo $post_type->name ?>" class="bcn_options">
+				<h3><?php echo $post_type->labels->singular_name; ?></h3>
+				<table class="form-table">
+					<?php
+						$this->input_text(sprintf(__('%s Prefix', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_prefix', '32');
+						$this->input_text(sprintf(__('%s Suffix', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_suffix', '32');
+						$this->input_text(sprintf(__('%s Anchor', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_anchor', '64', false, sprintf(__('The anchor template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($post_type->label))));
+						//If it is flat, we need a taxonomy selection
+						if(!$post_type->hierarchical)
+						{
+							$this->input_check(sprintf(__('%s Taxonomy Display', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_taxonomy_display', sprintf(__('Show the taxonomy leading to a %s in the breadcrumb trail.', 'breadcrumb_navxt'), strtolower(__($post_type->label))));
+					?>
+					<tr valign="top">
+						<th scope="row">
+							<?php printf(__('%s Taxonomy', 'breadcrumb_navxt'), $post_type->labels->singular_name); ?>
+						</th>
+						<td>
+							<?php
+								//Loop through all of the taxonomies in the array
+								foreach($wp_taxonomies as $taxonomy)
+								{
+									//We only want custom taxonomies
+									if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
+									{
+										$this->input_radio('post_' . $post_type->name . '_taxonomy_type', $taxonomy->name, $taxonomy->labels->singular_name);
+									}
+								}
+							?>
+							<span class="setting-description"><?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb_navxt'); ?></span>
+						</td>
+					</tr>
+					<?php } ?>
+				</table>
+			</fieldset>
+					<?php
+				}
+			}?>
 			<fieldset id="category" class="bcn_options">
 				<h3><?php _e('Categories', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
@@ -528,6 +599,8 @@ class bcn_admin extends mtekk_admin
 				</table>
 			</fieldset>
 			<?php 
+			//var_dump($wp_taxonomies);
+			//var_dump($wp_post_types);
 			//Loop through all of the taxonomies in the array
 			foreach($wp_taxonomies as $taxonomy)
 			{
@@ -540,7 +613,7 @@ class bcn_admin extends mtekk_admin
 						//Add the necessary option array members
 						$this->opt[$taxonomy->name . '_prefix'] = '';
 						$this->opt[$taxonomy->name . '_suffix'] = '';
-						$this->opt[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">', ucwords(__($taxonomy->label))), 'breadcrumb_navxt');
+						$this->opt[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
 						$this->opt['archive_' . $taxonomy->name . '_prefix'] = '';
 						$this->opt['archive_' . $taxonomy->name . '_suffix'] = '';
 						//Let's make sure that the newly available options are "registered" in our db
@@ -551,11 +624,11 @@ class bcn_admin extends mtekk_admin
 				<h3><?php echo ucwords(__($taxonomy->label)); ?></h3>
 				<table class="form-table">
 					<?php
-						$this->input_text(sprintf(__('%s Prefix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), $taxonomy->name . '_prefix', '32', false, sprintf(__('Applied before the anchor on all %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
-						$this->input_text(sprintf(__('%s Suffix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), $taxonomy->name . '_suffix', '32', false, sprintf(__('Applied after the anchor on all %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
-						$this->input_text(sprintf(__('%s Anchor', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), $taxonomy->name . '_anchor', '64', false, sprintf(__('The anchor template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
-						$this->input_text(sprintf(__('Archive by %s Prefix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), 'archive_' . $taxonomy->name . '_prefix', '32', false, sprintf(__('Applied before the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
-						$this->input_text(sprintf(__('Archive by %s Suffix', 'breadcrumb_navxt'), ucwords(__($taxonomy->label))), 'archive_' . $taxonomy->name . '_suffix', '32', false, sprintf(__('Applied after the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
+						$this->input_text(sprintf(__('%s Prefix', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), $taxonomy->name . '_prefix', '32', false, sprintf(__('Applied before the anchor on all %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
+						$this->input_text(sprintf(__('%s Suffix', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), $taxonomy->name . '_suffix', '32', false, sprintf(__('Applied after the anchor on all %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
+						$this->input_text(sprintf(__('%s Anchor', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), $taxonomy->name . '_anchor', '64', false, sprintf(__('The anchor template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
+						$this->input_text(sprintf(__('Archive by %s Prefix', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'archive_' . $taxonomy->name . '_prefix', '32', false, sprintf(__('Applied before the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
+						$this->input_text(sprintf(__('Archive by %s Suffix', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'archive_' . $taxonomy->name . '_suffix', '32', false, sprintf(__('Applied after the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
 					?>
 				</table>
 			</fieldset>
