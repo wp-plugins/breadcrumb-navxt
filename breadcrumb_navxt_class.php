@@ -962,8 +962,9 @@ class bcn_breadcrumb_trail
 				$trail_str .= ' class="home';
 				if($key === 0)
 				{
-					$trail_str .= ' current_item"';
+					$trail_str .= ' current_item';
 				}
+				$trail_str .= '"';
 			}
 			//If we are on the current item there are some things that must be done
 			else if($key === 0)
