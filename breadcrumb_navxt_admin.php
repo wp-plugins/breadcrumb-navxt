@@ -152,10 +152,55 @@ class bcn_admin extends mtekk_admin
 				$opts['post_tag_suffix'] = $this->breadcrumb_trail->opt['tag_suffix'];
 				$opts['post_tag_anchor'] = $this->breadcrumb_trail->opt['tag_anchor'];
 			}
+			else if($major == 3 && $minor < 6)
+			{
+				//Added post_ prefix to avoid conflicts with custom taxonomies
+				$opts['post_page_prefix'] = $opts['page_prefix'];
+				$opts['post_page_suffix'] = $opts['page_suffix'];
+				$opts['post_page_anchor'] = $opts['page_anchor'];
+				$opts['post_post_prefix'] = $opts['post_prefix'];
+				$opts['post_post_suffix'] = $opts['post_suffix'];
+				$opts['post_post_anchor'] = $opts['post_anchor'];
+				$opts['post_post_taxonomy_display'] = $opts['post_taxonomy_display'];
+				$opts['post_post_taxonomy_type'] = $opts['post_taxonomy_type'];
+			}
 			//If it was never installed, copy over default settings
 			else if(!$opts)
 			{
 				$opts = $this->opt;
+			}
+			//Loop through all of the post types in the array
+			foreach($wp_post_types as $post_type)
+			{
+				//We only want custom post types
+				if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+				{
+					//If the post type does not have settings in the options array yet, we need to load some defaults
+					if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
+					{
+						//Add the necessary option array members
+						$this->opt['post_' . $post_type->name . '_prefix'] = '';
+						$this->opt['post_' . $post_type->name . '_suffix'] = '';
+						$this->opt['post_' . $post_type->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">', $post_type->labels->singular_name), 'breadcrumb_navxt');
+						//If it is flat, we need a taxonomy selection
+						if(!$post_type->hierarchical)
+						{
+							//Be safe and disable taxonomy display by default
+							$this->opt['post_' . $post_type->name . '_taxonomy_display'] = false;
+							//Loop through all of the possible taxonomies
+							foreach($wp_taxonomies as $taxonomy)
+							{
+								//Activate the first taxonomy valid for this post type and exit the loop
+								if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
+								{
+									$this->opt['post_' . $post_type->name . '_taxonomy_display'] = true;
+									$this->opt['post_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
+									break;
+								}
+							}
+						}
+					}
+				}
 			}
 			//We'll add our custom taxonomy stuff at this time
 			foreach($wp_taxonomies as $taxonomy)
@@ -213,6 +258,39 @@ class bcn_admin extends mtekk_admin
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_options-options');
+		//Loop through all of the post types in the array
+		foreach($wp_post_types as $post_type)
+		{
+			//We only want custom post types
+			if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+			{
+				//If the post type does not have settings in the options array yet, we need to load some defaults
+				if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
+				{
+					//Add the necessary option array members
+					$this->opt['post_' . $post_type->name . '_prefix'] = '';
+					$this->opt['post_' . $post_type->name . '_suffix'] = '';
+					$this->opt['post_' . $post_type->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">', $post_type->labels->singular_name), 'breadcrumb_navxt');
+					//If it is flat, we need a taxonomy selection
+					if(!$post_type->hierarchical)
+					{
+						//Be safe and disable taxonomy display by default
+						$this->opt['post_' . $post_type->name . '_taxonomy_display'] = false;
+						//Loop through all of the possible taxonomies
+						foreach($wp_taxonomies as $taxonomy)
+						{
+							//Activate the first taxonomy valid for this post type and exit the loop
+							if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
+							{
+								$this->opt['post_' . $post_type->name . '_taxonomy_display'] = true;
+								$this->opt['post_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
 		//We'll add our custom taxonomy stuff at this time
 		foreach($wp_taxonomies as $taxonomy)
 		{
