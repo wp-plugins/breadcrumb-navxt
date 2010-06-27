@@ -544,10 +544,10 @@ class bcn_admin extends mtekk_admin
 				<h3><?php _e('Posts &amp; Pages', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
 					<?php
-						$this->input_text(__('Post Prefix', 'breadcrumb_navxt'), 'post_prefix', '32');
-						$this->input_text(__('Post Suffix', 'breadcrumb_navxt'), 'post_suffix', '32');
-						$this->input_text(__('Post Anchor', 'breadcrumb_navxt'), 'post_anchor', '64', false, __('The anchor template for post breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_check(__('Post Taxonomy Display', 'breadcrumb_navxt'), 'post_taxonomy_display', __('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'));
+						$this->input_text(__('Post Prefix', 'breadcrumb_navxt'), 'post_post_prefix', '32');
+						$this->input_text(__('Post Suffix', 'breadcrumb_navxt'), 'post_post_suffix', '32');
+						$this->input_text(__('Post Anchor', 'breadcrumb_navxt'), 'post_post_anchor', '64', false, __('The anchor template for post breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_check(__('Post Taxonomy Display', 'breadcrumb_navxt'), 'post_post_taxonomy_display', __('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'));
 					?>
 					<tr valign="top">
 						<th scope="row">
@@ -555,17 +555,17 @@ class bcn_admin extends mtekk_admin
 						</th>
 						<td>
 							<?php
-								$this->input_radio('post_taxonomy_type', 'category', __('Categories'));
-								$this->input_radio('post_taxonomy_type', 'date', __('Dates'));
-								$this->input_radio('post_taxonomy_type', 'post_tag', __('Tags'));
-								$this->input_radio('post_taxonomy_type', 'page', __('Pages'));
+								$this->input_radio('post_post_taxonomy_type', 'category', __('Categories'));
+								$this->input_radio('post_post_taxonomy_type', 'date', __('Dates'));
+								$this->input_radio('post_post_taxonomy_type', 'post_tag', __('Tags'));
+								$this->input_radio('post_post_taxonomy_type', 'page', __('Pages'));
 								//Loop through all of the taxonomies in the array
 								foreach($wp_taxonomies as $taxonomy)
 								{
 									//We only want custom taxonomies
 									if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
 									{
-										$this->input_radio('post_taxonomy_type', $taxonomy->name, ucwords(__($taxonomy->label)));
+										$this->input_radio('post_post_taxonomy_type', $taxonomy->name, ucwords(__($taxonomy->label)));
 									}
 								}
 							?>
@@ -573,9 +573,9 @@ class bcn_admin extends mtekk_admin
 						</td>
 					</tr>
 					<?php
-						$this->input_text(__('Page Prefix', 'breadcrumb_navxt'), 'page_prefix', '32');
-						$this->input_text(__('Page Suffix', 'breadcrumb_navxt'), 'page_suffix', '32');
-						$this->input_text(__('Page Anchor', 'breadcrumb_navxt'), 'page_anchor', '64', false, __('The anchor template for page breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_text(__('Page Prefix', 'breadcrumb_navxt'), 'post_page_prefix', '32');
+						$this->input_text(__('Page Suffix', 'breadcrumb_navxt'), 'post_page_suffix', '32');
+						$this->input_text(__('Page Anchor', 'breadcrumb_navxt'), 'post_page_anchor', '64', false, __('The anchor template for page breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Attachment Prefix', 'breadcrumb_navxt'), 'attachment_prefix', '32');
 						$this->input_text(__('Attachment Suffix', 'breadcrumb_navxt'), 'attachment_suffix', '32');
 					?>
