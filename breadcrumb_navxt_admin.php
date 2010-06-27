@@ -181,7 +181,7 @@ class bcn_admin extends mtekk_admin
 						//Add the necessary option array members
 						$this->opt['post_' . $post_type->name . '_prefix'] = '';
 						$this->opt['post_' . $post_type->name . '_suffix'] = '';
-						$this->opt['post_' . $post_type->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">', $post_type->labels->singular_name), 'breadcrumb_navxt');
+						$this->opt['post_' . $post_type->name . '_anchor'] = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
 						//If it is flat, we need a taxonomy selection
 						if(!$post_type->hierarchical)
 						{
@@ -270,7 +270,7 @@ class bcn_admin extends mtekk_admin
 					//Add the necessary option array members
 					$this->opt['post_' . $post_type->name . '_prefix'] = '';
 					$this->opt['post_' . $post_type->name . '_suffix'] = '';
-					$this->opt['post_' . $post_type->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">', $post_type->labels->singular_name), 'breadcrumb_navxt');
+					$this->opt['post_' . $post_type->name . '_anchor'] = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
 					//If it is flat, we need a taxonomy selection
 					if(!$post_type->hierarchical)
 					{
@@ -594,7 +594,7 @@ class bcn_admin extends mtekk_admin
 						//Add the necessary option array members
 						$this->opt['post_' . $post_type->name . '_prefix'] = '';
 						$this->opt['post_' . $post_type->name . '_suffix'] = '';
-						$this->opt['post_' . $post_type->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">', $post_type->labels->singular_name), 'breadcrumb_navxt');
+						$this->opt['post_' . $post_type->name . '_anchor'] = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
 						//If it is flat, we need a taxonomy selection
 						if(!$post_type->hierarchical)
 						{
