@@ -135,7 +135,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	public $version = '3.5.85';
+	public $version = '3.5.86';
 	//An array of breadcrumbs
 	public $trail = array();
 	//The options
@@ -764,11 +764,6 @@ class bcn_breadcrumb_trail
 				$this->do_front_page();
 			}
 		}
-		//For searches
-		else if(is_search())
-		{
-			$this->do_search();
-		}
 		//For posts
 		else if(is_singular())
 		{
@@ -787,6 +782,11 @@ class bcn_breadcrumb_trail
 			{
 				$this->do_post_flat();
 			}
+		}
+		//For searches
+		else if(is_search())
+		{
+			$this->do_search();
 		}
 		//For author pages
 		else if(is_author())
