@@ -22,6 +22,7 @@ Breadcrumb NavXT distributes with translations for the following languages:
 * Russian by Yuri Gribov
 * Swedish by Patrik Spathon
 * Italian by Luca Camellini
+* Japanese by Kazuhiro Terada
 
 
 Don't see your language on the list? Feel free to translate Breadcrumb NavXT and send John Havlik the translations.
