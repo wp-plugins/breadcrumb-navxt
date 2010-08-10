@@ -53,7 +53,7 @@ abstract class mtekk_admin
 		//Assemble our url, nonce and all
 		$url = wp_nonce_url($this->admin_url() . '&' . $this->unique_prefix . 'admin_undo=true', $this->unique_prefix . '_undo');
 		//Return a valid Undo anchor
-		return '<a title="' . $title . '" href="' . $this->undo_url() . '">' . _('Undo', $this->identifier) . '</a>';
+		return ' <a title="' . $title . '" href="' . $url . '">' . __('Undo', $this->identifier) . '</a>';
 	}
 	function init()
 	{
@@ -281,7 +281,7 @@ abstract class mtekk_admin
 			//Commit the loaded options to the database
 			update_option($this->unique_prefix . '_options', $this->opt);
 			//Everything was successful, let the user know
-			$this->message['updated fade'][] = __('Settings successfully imported from the uploaded file.', $this->identifier) . $this->undo_anchor(_('Undo the options import.', $this->identifier));
+			$this->message['updated fade'][] = __('Settings successfully imported from the uploaded file.', $this->identifier) . $this->undo_anchor(__('Undo the options import.', $this->identifier));
 		}
 		else
 		{
@@ -307,7 +307,7 @@ abstract class mtekk_admin
 		//Load in the hard coded default option values
 		update_option($this->unique_prefix . '_options', $this->opt);
 		//Reset successful, let the user know
-		$this->message['updated fade'][] = __('Settings successfully reset to the default values.', $this->identifier) . $this->undo_anchor(_('Undo the options reset.', $this->identifier));
+		$this->message['updated fade'][] = __('Settings successfully reset to the default values.', $this->identifier) . $this->undo_anchor(__('Undo the options reset.', $this->identifier));
 		add_action('admin_notices', array($this, 'message'));
 	}
 	function opts_undo()
@@ -321,7 +321,7 @@ abstract class mtekk_admin
 		//Set the backup options to the undid options
 		update_option($this->unique_prefix . 'options_bk', $this->opt);
 		//Send the success/undo message
-		$this->message['updated fade'][] = __('Settings successfully undid the last operation.', $this->identifier) . $this->undo_anchor(_('Undo the last undo operation.', $this->identifier));
+		$this->message['updated fade'][] = __('Settings successfully undid the last operation.', $this->identifier) . $this->undo_anchor(__('Undo the last undo operation.', $this->identifier));
 		add_action('admin_notices', array($this, 'message'));
 	}
 	/**

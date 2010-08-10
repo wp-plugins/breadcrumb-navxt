@@ -351,7 +351,7 @@ class bcn_admin extends mtekk_admin
 		//Commit the option changes
 		$this->update_option('bcn_options', $this->opt);
 		//Let the user know everything went ok
-		$this->message['updated fade'][] = __('Settings successfully saved.', $this->identifier) . $this->undo_anchor(_('Undo the options save.', $this->identifier));
+		$this->message['updated fade'][] = __('Settings successfully saved.', $this->identifier) . $this->undo_anchor(__('Undo the options save.', $this->identifier));
 		add_action('admin_notices', array($this, 'message'));
 	}
 	/**
