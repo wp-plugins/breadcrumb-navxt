@@ -171,7 +171,7 @@ abstract class mtekk_admin
 	function opts_backup()
 	{
 		//Set the backup options in the DB to the current options
-		update_option($this->unique_prefix . 'options_bk', get_option($this->unique_prefix . 'options'));
+		update_option($this->unique_prefix . '_options_bk', get_option($this->unique_prefix . '_options'));
 	}
 	/**
 	 * opts_update
@@ -315,11 +315,11 @@ abstract class mtekk_admin
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer($this->unique_prefix . '_admin_undo');
 		//Set the options array to the current options
-		$opt = get_option($this->unique_prefix . 'options');
+		$opt = get_option($this->unique_prefix . '_options');
 		//Set the options in the DB to the backup options
-		update_option($this->unique_prefix . 'options', get_option($this->unique_prefix . 'options_bk'));
+		update_option($this->unique_prefix . '_options', get_option($this->unique_prefix . '_options_bk'));
 		//Set the backup options to the undid options
-		update_option($this->unique_prefix . 'options_bk', $opt);
+		update_option($this->unique_prefix . '_options_bk', $opt);
 		//Send the success/undo message
 		$this->message['updated fade'][] = __('Settings successfully undid the last operation.', $this->identifier) . $this->undo_anchor(__('Undo the last undo operation.', $this->identifier));
 		add_action('admin_notices', array($this, 'message'));
