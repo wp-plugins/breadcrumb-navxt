@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.5.80
+Version: 3.5.89
 Author: John Havlik
 Author URI: http://mtekk.weblogs.us/
 */
@@ -23,11 +23,11 @@ Author URI: http://mtekk.weblogs.us/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-//Do a PHP version check
+//Do a PHP version check, require 5.2 or newer
 $phpVersion = explode('.', phpversion());
-if($phpVersion[0] < 5)
+if($phpVersion[0] < 5 ||  ($phpVersion[0] = 5 && $phpVersion[0] < 2))
 {
-	sprintf(__('Your PHP version is too old, please upgrade to a newer version. Your version is %s, this plugin requires %s', 'breadcrumb_navxt'), phpversion(), '5.0.0');
+	sprintf(__('Your PHP version is too old, please upgrade to a newer version. Your version is %s, this plugin requires %s', 'breadcrumb_navxt'), phpversion(), '5.2.0');
 	die();
 }
 //Include the breadcrumb class
@@ -50,7 +50,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.5.86';
+	protected $version = '3.5.89';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -73,8 +73,8 @@ class bcn_admin extends mtekk_admin
 	{
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
-		//Sync up our option array (not with db however)
-		$this->opt = $this->breadcrumb_trail->opt;
+		//Grab defaults from the breadcrumb_trail object
+		$this->opts = $this->breadcrumb_trail->opt;
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
 		//$this->plugin_base = plugin_basename(__FILE__);
 		//Register the WordPress 2.8 Widget
@@ -83,7 +83,7 @@ class bcn_admin extends mtekk_admin
 		parent::__construct();
 	}
 	/**
-	 * admin initialisation callback function
+	 * admin initialization callback function
 	 * 
 	 * is bound to wpordpress action 'admin_init' on instantiation
 	 * 
@@ -94,6 +94,8 @@ class bcn_admin extends mtekk_admin
 	{
 		//We're going to make sure we run the parent's version of this function as well
 		parent::init();	
+		//Grab the current settings from the DB
+		$this->opt = $this->get_option('bcn_options');
 		//Add javascript enqeueing callback
 		add_action('wp_print_scripts', array($this, 'javascript'));
 	}
@@ -163,11 +165,21 @@ class bcn_admin extends mtekk_admin
 				$opts['post_post_anchor'] = $opts['post_anchor'];
 				$opts['post_post_taxonomy_display'] = $opts['post_taxonomy_display'];
 				$opts['post_post_taxonomy_type'] = $opts['post_taxonomy_type'];
+				//Update to non-autoload db version
+				$this->delete_option('bcn_version');
+				$this->add_option('bcn_version', $this->version, false);
+				$this->add_option('bcn_options_bk', $this->opt, false);
 			}
 			//If it was never installed, copy over default settings
 			else if(!$opts)
 			{
-				$opts = $this->opt;
+				//Grab defaults from the breadcrumb_trail object
+				$opts = $this->breadcrumb_trail->opt;
+				//Add the options
+				$this->add_option('bcn_options', $this->opt);
+				$this->add_option('bcn_options_bk', $this->opt, false);
+				//Add the version, no need to autoload the db version
+				$this->add_option('bcn_version', $this->version, false);
 			}
 			//Loop through all of the post types in the array
 			foreach($wp_post_types as $post_type)
@@ -222,7 +234,7 @@ class bcn_admin extends mtekk_admin
 			//Always have to update the version
 			$this->update_option('bcn_version', $this->version);
 			//Store the options
-			$this->add_option('bcn_options', $opts);
+			$this->update_option('bcn_options', $opts);
 		}
 		//Check if we have valid anchors
 		if($temp = $this->get_option('bcn_options'))
@@ -308,6 +320,8 @@ class bcn_admin extends mtekk_admin
 				}
 			}
 		}
+		//Update our backup options
+		$this->update_option('bcn_options_bk', $this->opt);
 		//Grab our incomming array (the data is dirty)
 		$input = $_POST['bcn_options'];
 		//Loop through all of the existing options (avoids random setting injection)
@@ -337,7 +351,7 @@ class bcn_admin extends mtekk_admin
 		//Commit the option changes
 		$this->update_option('bcn_options', $this->opt);
 		//Let the user know everything went ok
-		$this->message['updated fade'][] = __('Settings successfully saved.', $this->identifier);
+		$this->message['updated fade'][] = __('Settings successfully saved.', $this->identifier) . $this->undo_anchor(_('Undo the options save.', $this->identifier));
 		add_action('admin_notices', array($this, 'message'));
 	}
 	/**
@@ -481,9 +495,7 @@ class bcn_admin extends mtekk_admin
 	function admin_page()
 	{
 		global $wp_taxonomies, $wp_post_types;
-		$this->security();
-		//Grab the current settings from the DB
-		$this->opt = $this->get_option('bcn_options');?>
+		$this->security();?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
 		<p<?php if($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
 			print $this->_get_help_text();
@@ -754,11 +766,12 @@ class bcn_admin extends mtekk_admin
 	 *
 	 * @param (string) key name where to save the value in $value
 	 * @param (mixed) value to insert into the options db
+	 * @param (bool) should WordPress autoload this option
 	 * @return (bool)
 	 */
-	function add_option($key, $value)
+	function add_option($key, $value, $autoload = true)
 	{
-		return add_option($key, $value);
+		return add_option($key, $value, '', $autoload);
 	}
 	/**
 	 * delete_option
@@ -809,7 +822,7 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display($return = false, $linked = true, $reverse = false)
 	{
-		//Grab the current settings from the DB
+		//Grab the current settings from the db
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
@@ -827,7 +840,7 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display_list($return = false, $linked = true, $reverse = false)
 	{
-		//Grab the current settings from the DB
+		//Grab the current settings from the db
 		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();

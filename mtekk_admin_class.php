@@ -48,6 +48,13 @@ abstract class mtekk_admin
 	{
 		return admin_url('options-general.php?page=' .$this->identifier);
 	}
+	function undo_anchor($title = '')
+	{
+		//Assemble our url, nonce and all
+		$url = wp_nonce_url($this->admin_url() . '&' . $this->unique_prefix . 'admin_undo=true', $this->unique_prefix . '_undo');
+		//Return a valid Undo anchor
+		return '<a title="' . $title . '" href="' . $this->undo_url() . '">' . _('Undo', $this->identifier) . '</a>';
+	}
 	function init()
 	{
 		//Admin Options update hook
@@ -73,6 +80,12 @@ abstract class mtekk_admin
 		{
 			//Run the import function on init if import form has been submitted
 			$this->opts_import();
+		}
+		//Admin Options rollback hook
+		else if(isset($_GET[$this->unique_prefix . '_admin_undo']))
+		{
+			//Run the rollback function on init if undo button has been pressed
+			$this->opts_undo();
 		}
 		//Add in the nice "settings" link to the plugins page
 		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
@@ -146,9 +159,19 @@ abstract class mtekk_admin
 	function uninstall()
 	{
 		//Remove the option array setting
-		$this->delete_option($this->unique_prefix . '_options');
+		delete_option($this->unique_prefix . '_options');
 		//Remove the version setting
-		$this->delete_option($this->unique_prefix . '_version');
+		delete_option($this->unique_prefix . '_version');
+	}
+	/**
+	 * opts_backup
+	 * 
+	 * Synchronizes the backup options entry with the current options entry
+	 */
+	function opts_backup()
+	{
+		//Set the backup options in the DB to the current options
+		update_option($this->unique_prefix . 'options_bk', get_option($this->unique_prefix . 'options'));
 	}
 	/**
 	 * opts_update
@@ -222,6 +245,8 @@ abstract class mtekk_admin
 		}
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer($this->unique_prefix . '_admin_import_export');
+		//Set the backup options in the DB to the current options
+		$this->opts_backup();
 		//Create a DOM document
 		$dom = new DOMDocument('1.0', 'UTF-8');
 		//We want to catch errors ourselves
@@ -254,9 +279,9 @@ abstract class mtekk_admin
 				}
 			}
 			//Commit the loaded options to the database
-			$this->update_option($this->unique_prefix . '_options', $this->opt);
+			update_option($this->unique_prefix . '_options', $this->opt);
 			//Everything was successful, let the user know
-			$this->message['updated fade'][] = __('Settings successfully imported from the uploaded file.', $this->identifier);
+			$this->message['updated fade'][] = __('Settings successfully imported from the uploaded file.', $this->identifier) . $this->undo_anchor(_('Undo the options import.', $this->identifier));
 		}
 		else
 		{
@@ -277,10 +302,26 @@ abstract class mtekk_admin
 	{
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer($this->unique_prefix . '_admin_import_export');
-		//Only needs this one line, will load in the hard coded default option values
-		$this->update_option($this->unique_prefix . '_options', $this->opt);
+		//Set the backup options in the DB to the current options
+		$this->opts_backup();
+		//Load in the hard coded default option values
+		update_option($this->unique_prefix . '_options', $this->opt);
 		//Reset successful, let the user know
-		$this->message['updated fade'][] = __('Settings successfully reset to the default values.', $this->identifier);
+		$this->message['updated fade'][] = __('Settings successfully reset to the default values.', $this->identifier) . $this->undo_anchor(_('Undo the options reset.', $this->identifier));
+		add_action('admin_notices', array($this, 'message'));
+	}
+	function opts_undo()
+	{
+		//Do a nonce check, prevent malicious link/form problems
+		check_admin_referer($this->unique_prefix . '_admin_undo');
+		//Set the options array to the current options
+		$this->opt = get_option($this->unique_prefix . 'options');
+		//Set the options in the DB to the backup options
+		update_option($this->unique_prefix . 'options', get_option($this->unique_prefix . 'options_bk'));
+		//Set the backup options to the undid options
+		update_option($this->unique_prefix . 'options_bk', $this->opt);
+		//Send the success/undo message
+		$this->message['updated fade'][] = __('Settings successfully undid the last operation.', $this->identifier) . $this->undo_anchor(_('Undo the last undo operation.', $this->identifier));
 		add_action('admin_notices', array($this, 'message'));
 	}
 	/**
