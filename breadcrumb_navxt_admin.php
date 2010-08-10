@@ -74,7 +74,7 @@ class bcn_admin extends mtekk_admin
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Grab defaults from the breadcrumb_trail object
-		$this->opts = $this->breadcrumb_trail->opt;
+		$this->opt = $this->breadcrumb_trail->opt;
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
 		//$this->plugin_base = plugin_basename(__FILE__);
 		//Register the WordPress 2.8 Widget
@@ -270,6 +270,8 @@ class bcn_admin extends mtekk_admin
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_options-options');
+		//Update local options from database
+		$this->opt = $this->get_option('bcn_options');
 		//Loop through all of the post types in the array
 		foreach($wp_post_types as $post_type)
 		{
