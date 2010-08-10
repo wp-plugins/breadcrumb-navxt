@@ -762,7 +762,7 @@ class bcn_admin extends mtekk_admin
 	/**
 	 * add_option
 	 *
-	 * This inserts the value into the option name, WPMU safe
+	 * This inserts the value into the option name, works around WP's stupid string bool
 	 *
 	 * @param (string) key name where to save the value in $value
 	 * @param (mixed) value to insert into the options db
@@ -771,7 +771,14 @@ class bcn_admin extends mtekk_admin
 	 */
 	function add_option($key, $value, $autoload = true)
 	{
-		return add_option($key, $value, '', $autoload);
+		if($autoload)
+		{
+			return add_option($key, $value);
+		}
+		else
+		{
+			return add_option($key, $value, '', 'no');
+		}
 	}
 	/**
 	 * delete_option
