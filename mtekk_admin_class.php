@@ -46,12 +46,12 @@ abstract class mtekk_admin
 	}
 	function admin_url()
 	{
-		return admin_url('options-general.php?page=' .$this->identifier);
+		return admin_url('options-general.php?page=' . $this->identifier);
 	}
 	function undo_anchor($title = '')
 	{
 		//Assemble our url, nonce and all
-		$url = wp_nonce_url($this->admin_url() . '&' . $this->unique_prefix . 'admin_undo=true', $this->unique_prefix . '_undo');
+		$url = wp_nonce_url($this->admin_url() . '&' . $this->unique_prefix . '_admin_undo=true', $this->unique_prefix . '_admin_undo');
 		//Return a valid Undo anchor
 		return ' <a title="' . $title . '" href="' . $url . '">' . __('Undo', $this->identifier) . '</a>';
 	}
