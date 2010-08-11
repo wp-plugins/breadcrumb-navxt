@@ -441,9 +441,9 @@ abstract class mtekk_admin
 		printf('<input type="file" name="%s_admin_import_file" id="%s_admin_import_file" size="32" /><br /><span class="setting-description">', $this->unique_prefix, $this->unique_prefix);
 		_e('Select a XML settings file to upload and import settings from.', 'breadcrumb_navxt');
 		echo '</span></td></tr></table><p class="submit">';
-		printf('<input type="submit" class="button" name="%s_admin_import" value="' . __('Import', $this->identifier) . '" onclick="return %s_confirm(\'import\')" />', $this->unique_prefix, $this->unique_prefix);
-		printf('<input type="submit" class="button" name="%s_admin_export" value="' . __('Export', $this->identifier) . '" />', $this->unique_prefix);
-		printf('<input type="submit" class="button" name="%s_admin_reset" value="' . __('Reset', $this->identifier) . '" onclick="return %s_confirm(\'reset\')" />', $this->unique_prefix, $this->unique_prefix);
+		printf('<input type="submit" class="button" name="%s_admin_import" value="' . __('Import', $this->identifier) . '"/>', $this->unique_prefix, $this->unique_prefix);
+		printf('<input type="submit" class="button" name="%s_admin_export" value="' . __('Export', $this->identifier) . '"/>', $this->unique_prefix);
+		printf('<input type="submit" class="button" name="%s_admin_reset" value="' . __('Reset', $this->identifier) . '"/>', $this->unique_prefix, $this->unique_prefix);
 		echo '</p></fieldset></form></div>';
 	}
 	/**

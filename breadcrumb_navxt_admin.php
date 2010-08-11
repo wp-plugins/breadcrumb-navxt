@@ -428,19 +428,6 @@ class bcn_admin extends mtekk_admin
 		bcn_context_init();
 		bcn_tabulator_init();		
 	 });
-	function bcn_confirm(type)
-	{
-		if(type == 'reset'){
-			var answer = confirm("<?php _e('All of your current Breadcrumb NavXT settings will be overwritten with the default values. Are you sure you want to continue?', 'breadcrumb_navxt'); ?>");
-		}
-		else{
-			var answer = confirm("<?php _e('All of your current Breadcrumb NavXT settings will be overwritten with the imported values. Are you sure you want to continue?', 'breadcrumb_navxt'); ?>");
-		}
-		if(answer)
-			return true;
-		else
-			return false;
-	}
 	/**
 	 * Tabulator Bootup
 	 */
