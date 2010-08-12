@@ -131,16 +131,8 @@ class bcn_admin extends mtekk_admin
 			//Split up the db version into it's components
 			list($major, $minor, $release) = explode('.', $db_version);
 			$opts = $this->get_option('bcn_options');
-			//Upgrading from 3.0
-			if($major == 3 && $minor == 0)
-			{
-				$opts['search_anchor'] = __('<a title="Go to the first page of search results for %title%." href="%link%">','breadcrumb_navxt');
-			}
-			else if($major == 3 && $minor < 3)
-			{
-				$opts['blog_display'] = true;
-			}
-			else if($major == 3 && $minor < 4)
+			//Upgrading from 3.4
+			if($major == 3 && $minor < 4)
 			{
 				//Inline upgrade of the tag setting
 				if($opts['post_taxonomy_type'] === 'tag')
@@ -154,7 +146,8 @@ class bcn_admin extends mtekk_admin
 				$opts['post_tag_suffix'] = $this->breadcrumb_trail->opt['tag_suffix'];
 				$opts['post_tag_anchor'] = $this->breadcrumb_trail->opt['tag_anchor'];
 			}
-			else if($major == 3 && $minor < 6)
+			//Upgrading to 3.6
+			if($major == 3 && $minor < 6)
 			{
 				//Added post_ prefix to avoid conflicts with custom taxonomies
 				$opts['post_page_prefix'] = $opts['page_prefix'];
