@@ -691,7 +691,7 @@ class bcn_breadcrumb_trail
 				//If there is a parent page let's find it
 				if($bcn_post->post_parent && $bcn_post->ID != $bcn_post->post_parent && $frontpage_id != $bcn_post->post_parent)
 				{
-					$this->page_parents($bcn_post->post_parent, $frontpage_id);
+					$this->post_parents($bcn_post->post_parent, $frontpage_id);
 				}
 			}
 		}
