@@ -164,6 +164,25 @@ abstract class mtekk_admin
 		delete_option($this->unique_prefix . '_version');
 	}
 	/**
+	 * import_hook
+	 * 
+	 * Overidable, allows plugin authors to specify what to do for version migration
+	 * 
+	 * @param  array $opts
+	 * @param  string $version
+	 */
+	function import_hook($opts, $version)
+	{
+		//Do a quick version check
+		list($plug_major, $plug_minor, $plug_release) = explode('.', $this->version);
+		list($major, $minor, $release) = explode('.', $version);
+		//We don't support using newer versioned option files in older releases
+		if($plug_major == $major && $plug_minor >= $minor)
+		{
+			$this->opt = $opts;
+		}
+	}
+	/**
 	 * opts_backup
 	 * 
 	 * Synchronizes the backup options entry with the current options entry
@@ -254,6 +273,8 @@ abstract class mtekk_admin
 		//Load the user uploaded file, handle failure gracefully
 		if($dom->load($_FILES[$this->unique_prefix . '_admin_import_file']['tmp_name']))
 		{
+			$opts_temp = array();
+			$version = '';
 			//Have to use an xpath query otherwise we run into problems
 			$xpath = new DOMXPath($dom);  
 			$option_sets = $xpath->query('plugin');
@@ -263,21 +284,17 @@ abstract class mtekk_admin
 				//We only want to import options for only this plugin
 				if($options->getAttribute('name') === $this->short_name)
 				{
-					//Do a quick version check
-					list($plug_major, $plug_minor, $plug_release) = explode('.', $this->version);
-					list($major, $minor, $release) = explode('.', $options->getAttribute('version'));
-					//We don't support using newer versioned option files in older releases
-					if($plug_major == $major && $plug_minor >= $minor)
+					//Grab the file version
+					$version = explode('.', $options->getAttribute('version'));
+					//Loop around all of the options
+					foreach($options->getelementsByTagName('option') as $child)
 					{
-						//Loop around all of the options
-						foreach($options->getelementsByTagName('option') as $child)
-						{
-							//Place the option into the option array, DOMDocument decodes html entities for us
-							$this->opt[$child->getAttribute('name')] = $child->nodeValue;
-						}
+						//Place the option into the option array, DOMDocument decodes html entities for us
+						$opts_temp[$child->getAttribute('name')] = $child->nodeValue;
 					}
 				}
 			}
+			$this->import_hook($opts_temp, $version);
 			//Commit the loaded options to the database
 			update_option($this->unique_prefix . '_options', $this->opt);
 			//Everything was successful, let the user know
