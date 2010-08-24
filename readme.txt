@@ -1,14 +1,14 @@
 === Breadcrumb NavXT ===
 Contributors: mtekk, hakre
 Tags: breadcrumb, navigation
-Requires at least: 2.8
-Tested up to: 3.0
-Stable tag: 3.5.1
+Requires at least: 3.0
+Tested up to: 3.0.1
+Stable tag: 3.6.0
 Adds breadcrumb navigation showing the visitor's path to their current location.
 
 == Description ==
 
-Breadcrumb NavXT, the successor to the popular WordPress plugin Breadcrumb Navigation XT, was written from the ground up to be better than its ancestor. This plugin generates locational breadcrumb trails for your WordPress blog. These breadcrumb trails are highly customizable to suit the needs of just about any blog. The Administrative interface makes setting options easy, while a direct class access is available for theme developers and more adventurous users. Do note that Breadcrumb NavXT requires PHP5.
+Breadcrumb NavXT, the successor to the popular WordPress plugin Breadcrumb Navigation XT, was written from the ground up to be better than its ancestor. This plugin generates locational breadcrumb trails for your WordPress powered blog or website. These breadcrumb trails are highly customizable to suit the needs of just about any website running WordPress. The Administrative interface makes setting options easy, while a direct class access is available for theme developers and more adventurous users. Do note that Breadcrumb NavXT requires PHP5.
 
 = Translations =
 
@@ -29,9 +29,17 @@ Don't see your language on the list? Feel free to translate Breadcrumb NavXT and
 
 == Installation ==
 
-Please visit [Breadcrumb NavXT's](http://mtekk.weblogs.us/code/breadcrumb-navxt/#installation "Go to Breadcrumb NavXT's project page's installation section.") project page for installation and usage instructions.
+Please visit [Breadcrumb NavXT's](http://mtekk.us/code/breadcrumb-navxt/#installation "Go to Breadcrumb NavXT's project page's installation section.") project page for installation and usage instructions.
 
 == Changelog ==
+= 3.6.0 =
+* New feature: Vastly improved support for WordPress custom post types.
+* New feature: Can now restrict breadcrumb trail output for the front page in the included Widget.
+* New feature: Can now undo setting saves, resets, and imports.
+* New feature: Translations for Japanese now included thanks to Kazuhiro Terada.
+* Bug fix: Fixed issue where the class element were not closed in a li opening tag.
+* Bug fix: Safer handling of blank anchor templates.
+* Bug fix: Fixed issue where the %title% tag in the current item anchor template would be trimmed.
 = 3.5.1 =
 * Bug fix: Fixed issue where a deactivation/activation cycle would reset all of the user specified settings.
 * Bug fix: Fixed issue where the archive by date suffix field did not save.

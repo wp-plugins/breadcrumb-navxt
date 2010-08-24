@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Breadcrumb NavXT
-Plugin URI: http://mtekk.weblogs.us/code/breadcrumb-navxt/
-Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.weblogs.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.5.90
+Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
+Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
+Version: 3.6.0
 Author: John Havlik
-Author URI: http://mtekk.weblogs.us/
+Author URI: http://mtekk.us/
 */
 /*  Copyright 2007-2010  John Havlik  (email : mtekkmonkey@gmail.com)
 
@@ -50,7 +50,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.5.90';
+	protected $version = '3.6.0';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -370,7 +370,7 @@ class bcn_admin extends mtekk_admin
 	protected function _get_help_text()
 	{
 		return sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
-			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.weblogs.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>');
+			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>');
 	}
 	/**
 	 * admin_head
@@ -615,11 +615,11 @@ class bcn_admin extends mtekk_admin
 					<?php
 						$this->input_text(sprintf(__('%s Prefix', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_prefix', '32');
 						$this->input_text(sprintf(__('%s Suffix', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_suffix', '32');
-						$this->input_text(sprintf(__('%s Anchor', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_anchor', '64', false, sprintf(__('The anchor template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($post_type->label))));
+						$this->input_text(sprintf(__('%s Anchor', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_anchor', '64', false, sprintf(__('The anchor template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($post_type->labels->singular_name))));
 						//If it is flat, we need a taxonomy selection
 						if(!$post_type->hierarchical)
 						{
-							$this->input_check(sprintf(__('%s Taxonomy Display', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_taxonomy_display', sprintf(__('Show the taxonomy leading to a %s in the breadcrumb trail.', 'breadcrumb_navxt'), strtolower(__($post_type->label))));
+							$this->input_check(sprintf(__('%s Taxonomy Display', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_taxonomy_display', sprintf(__('Show the taxonomy leading to a %s in the breadcrumb trail.', 'breadcrumb_navxt'), strtolower(__($post_type->labels->singular_name))));
 					?>
 					<tr valign="top">
 						<th scope="row">
