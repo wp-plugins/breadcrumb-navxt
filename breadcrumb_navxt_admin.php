@@ -76,7 +76,7 @@ class bcn_admin extends mtekk_admin
 		//Grab defaults from the breadcrumb_trail object
 		$this->opt = $this->breadcrumb_trail->opt;
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
-		//$this->plugin_base = plugin_basename(__FILE__);
+		//$this->plugin_basename = plugin_basename(__FILE__);
 		//Register the WordPress 2.8 Widget
 		add_action('widgets_init', create_function('', 'return register_widget("'. $this->unique_prefix . '_widget");'));
 		//We're going to make sure we load the parent's constructor

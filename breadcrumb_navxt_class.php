@@ -362,15 +362,15 @@ class bcn_breadcrumb_trail
 					$this->term_parents($bcn_object[$bcn_use_term]->term_id, $this->opt['post_' . $post->post_type . '_taxonomy_type']);
 				}
 			}
-			//Handle the use of pages as the 'taxonomy'
-			else if($this->opt['post_' . $post->post_type . '_taxonomy_type'] == 'page')
+			//Handle the use of hierarchical posts as the 'taxonomy'
+			else if(is_post_type_hierarchical($this->opt['post_' . $post->post_type . '_taxonomy_type']))
 			{
 				//Done with the current item, now on to the parents
 				$bcn_frontpage = get_option('page_on_front');
 				//If there is a parent page let's find it
 				if($post->post_parent && $id != $post->post_parent && $bcn_frontpage != $post->post_parent)
 				{
-					$this->page_parents($post->post_parent, $bcn_frontpage);
+					$this->post_parents($post->post_parent, $bcn_frontpage);
 				}
 			}
 			//Handle the rest of the taxonomies, including tags
@@ -527,7 +527,7 @@ class bcn_breadcrumb_trail
 		//We need to treat post and page attachment hierachy differently
 		if($parent->post_type == 'page')
 		{
-			//Grab the page on front ID for page_parents
+			//Grab the page on front ID for post_parents
 			$frontpage = get_option('page_on_front');
 			//Place the rest of the page hierachy
 			$this->post_parents($post->post_parent, $frontpage);

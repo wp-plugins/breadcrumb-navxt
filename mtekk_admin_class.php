@@ -40,6 +40,7 @@ abstract class mtekk_admin
 		//WordPress Admin interface hook
 		add_action('admin_menu', array($this, 'add_page'));
 		//Installation Script hook
+		//register_activation_hook($this->plugin_basename, array($this, 'install'));
 		add_action('activate_' . $this->plugin_basename, array($this, 'install'));
 		//Initilizes l10n domain
 		$this->local();
