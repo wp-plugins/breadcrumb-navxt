@@ -627,6 +627,7 @@ class bcn_admin extends mtekk_admin
 						</th>
 						<td>
 							<?php
+								$this->input_radio('post_' . $post_type->name . '_taxonomy_type', 'page', __('Pages'));
 								//Loop through all of the taxonomies in the array
 								foreach($wp_taxonomies as $taxonomy)
 								{
