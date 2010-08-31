@@ -22,15 +22,15 @@ class bcn_breadcrumb
 {
 	//Our member variables
 	//The main text that will be shown
-	public $title;
+	protected $title;
 	//Boolean, is this element linked
-	public $linked;
+	protected $linked;
 	//Linked anchor contents, null if $linked == false
-	public $anchor;
+	protected $anchor;
 	//Global prefix, outside of link tags
-	public $prefix;
+	protected $prefix;
 	//Global suffix, outside of link tags
-	public $suffix;
+	protected $suffix;
 	/**
 	 * bcn_breadcrumb
 	 * 
@@ -46,15 +46,45 @@ class bcn_breadcrumb
 	function bcn_breadcrumb($title = '', $prefix = '', $suffix = '', $anchor = NULL, $linked = false)
 	{
 		//Set the title
-		$this->title = $title;
+		$this->title = __($title, 'breadcrumb_navxt');
 		//Set the prefix
-		$this->prefix = $prefix;
+		$this->prefix = __($prefix, 'breadcrumb_navxt');
 		//Set the suffix
-		$this->suffix = $suffix;
+		$this->suffix = __($suffix, 'breadcrumb_navxt');
 		//Default state of unlinked
 		$this->linked = $linked;
 		//Always NULL if unlinked
 		$this->anchor = $anchor;
+	}
+	function set_title($title)
+	{
+		//Set the title
+		$this->title = __($title, 'breadcrumb_navxt');
+	}
+	function set_prefix($prefix)
+	{
+		//Set the prefix
+		$this->prefix = __($prefix, 'breadcrumb_navxt');
+	}
+	function set_suffix($suffix)
+	{
+		//Set the suffix
+		$this->suffix = __($suffix, 'breadcrumb_navxt');
+	}
+	function get_title()
+	{
+		//Return the title
+		return $this->title;
+	}
+	function get_prefix()
+	{
+		//Return the prefix
+		return $this->prefix;
+	}
+	function get_suffix()
+	{
+		//Return the suffix
+		return $this->suffix;
 	}
 	/**
 	 * set_anchor
@@ -73,7 +103,7 @@ class bcn_breadcrumb
 			$template = '<a title="Go to %title%." href="%link%">';
 		}
 		//Set the anchor, we strip tangs from the title to prevent html validation problems
-		$this->anchor = str_replace('%title%', strip_tags($this->title), str_replace('%link%', $url, $template));
+		$this->anchor = str_replace('%title%', strip_tags($this->title), str_replace('%link%', $url, __($template, 'breadcrumb_navxt')));
 		//Set linked to true since we called this function
 		$this->linked = true;
 	}
@@ -135,7 +165,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	public $version = '3.6.0';
+	public $version = '3.6.70';
 	//An array of breadcrumbs
 	public $trail = array();
 	//The options
@@ -863,9 +893,9 @@ class bcn_breadcrumb_trail
 	function current_item($breadcrumb)
 	{
 		//Prepend the current item prefix
-		$breadcrumb->prefix = $this->opt['current_item_prefix'] . $breadcrumb->prefix;
+		$breadcrumb->set_prefix($this->opt['current_item_prefix'] . $breadcrumb->get_prefix());
 		//Append the current item suffix
-		$breadcrumb->suffix .= $this->opt['current_item_suffix'];
+		$breadcrumb->set_suffix($breadcrumb->get_suffix() . $this->opt['current_item_suffix']);
 		//Link the current item, if required
 		if($this->opt['current_item_linked'])
 		{
