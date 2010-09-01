@@ -100,7 +100,7 @@ class bcn_breadcrumb
 		//Set a safe tempalte if none was specified
 		if($template == '')
 		{
-			$template = '<a title="Go to %title%." href="%link%">';
+			$template = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
 		}
 		//Set the anchor, we strip tangs from the title to prevent html validation problems
 		$this->anchor = str_replace('%title%', strip_tags($this->title), str_replace('%link%', $url, __($template, 'breadcrumb_navxt')));
@@ -731,7 +731,7 @@ class bcn_breadcrumb_trail
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['home_prefix'], $this->opt['home_suffix']));
 			//Deal with the anchor
-			$breadcrumb->set_anchor($this->opt['home_anchor'], get_option('home'));
+			$breadcrumb->set_anchor($this->opt['home_anchor'], get_bloginfo('url'));
 		}
 	}
 	/**
