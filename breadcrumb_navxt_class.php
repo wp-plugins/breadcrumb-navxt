@@ -37,11 +37,11 @@ class bcn_breadcrumb
 	 * The enhanced default constructor
 	 * 
 	 * @return 
-	 * @param object $title[optional]
-	 * @param object $prefix[optional]
-	 * @param object $suffix[optional]
-	 * @param object $anchor[optional]
-	 * @param object $linked[optional]
+	 * @param string $title[optional]
+	 * @param string $prefix[optional]
+	 * @param string $suffix[optional]
+	 * @param string $anchor[optional]
+	 * @param bool $linked[optional]
 	 */
 	function bcn_breadcrumb($title = '', $prefix = '', $suffix = '', $anchor = NULL, $linked = false)
 	{
@@ -56,31 +56,70 @@ class bcn_breadcrumb
 		//Always NULL if unlinked
 		$this->anchor = $anchor;
 	}
+	/**
+	 * set_title
+	 * 
+	 * Function to set the protected title member
+	 * 
+	 * @param string $title
+	 */
 	function set_title($title)
 	{
 		//Set the title
 		$this->title = __($title, 'breadcrumb_navxt');
 	}
+	/**
+	 * set_prefix
+	 * 
+	 * Function to set the protected prefix member
+	 * 
+	 * @param string $prefix
+	 */
 	function set_prefix($prefix)
 	{
 		//Set the prefix
 		$this->prefix = __($prefix, 'breadcrumb_navxt');
 	}
+	/**
+	 * set_suffix
+	 * 
+	 * Function to set the protected suffix member
+	 * 
+	 * @param string $suffix
+	 */
 	function set_suffix($suffix)
 	{
 		//Set the suffix
 		$this->suffix = __($suffix, 'breadcrumb_navxt');
 	}
+	/**
+	 * get_title
+	 * 
+	 * Function to get the protected title member
+	 * @return $this->title
+	 */
 	function get_title()
 	{
 		//Return the title
 		return $this->title;
 	}
+	/**
+	 * get_prefix
+	 * 
+	 * Function to get the protected prefix member
+	 * @return $this->prefix
+	 */
 	function get_prefix()
 	{
 		//Return the prefix
 		return $this->prefix;
 	}
+	/**
+	 * get_suffix
+	 * 
+	 * Function to get the protected suffix member
+	 * @return $this->suffix
+	 */
 	function get_suffix()
 	{
 		//Return the suffix
@@ -441,18 +480,18 @@ class bcn_breadcrumb_trail
 				//Everything but the first term needs a comma separator
 				if($is_first == false)
 				{
-					$bcn_breadcrumb->title .= ', ';
+					$bcn_breadcrumb->set_title($bcn_breadcrumb->get_title() . ', ');
 				}
 				//This is a bit hackish, but it compiles the tag anchor and appends it to the current breadcrumb title
-				$bcn_breadcrumb->title .= $this->opt[$taxonomy . '_prefix'] . str_replace('%title%', $term->name, str_replace('%link%', get_term_link($term, $taxonomy), $this->opt[$taxonomy . '_anchor'])) .
-					$term->name . '</a>' . $this->opt[$taxonomy . '_suffix'];
+				$bcn_breadcrumb->set_title($bcn_breadcrumb->get_title() . $this->opt[$taxonomy . '_prefix'] . str_replace('%title%', $term->name, str_replace('%link%', get_term_link($term, $taxonomy), $this->opt[$taxonomy . '_anchor'])) .
+					$term->name . '</a>' . $this->opt[$taxonomy . '_suffix']);
 				$is_first = false;
 			}
 		}
 		else
 		{
 			//If there are no tags, then we set the title to "Untagged"
-			$bcn_breadcrumb->title = __('Untagged', 'breadcrumb_navxt');
+			$bcn_breadcrumb->set_title(__('Untagged', 'breadcrumb_navxt'));
 		}
 	}
 	/**
