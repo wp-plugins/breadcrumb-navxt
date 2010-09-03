@@ -491,7 +491,7 @@ class bcn_breadcrumb_trail
 		else
 		{
 			//If there are no tags, then we set the title to "Untagged"
-			$bcn_breadcrumb->set_title(__('Untagged', 'breadcrumb_navxt'));
+			$bcn_breadcrumb->set_title(__('Un' . $taxonomy->name, 'breadcrumb_navxt'));
 		}
 	}
 	/**
