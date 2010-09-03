@@ -50,7 +50,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.6.0';
+	protected $version = '3.6.70';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -477,7 +477,8 @@ class bcn_admin extends mtekk_admin
 	function admin_page()
 	{
 		global $wp_taxonomies, $wp_post_types;
-		$this->security();?>
+		$this->security();
+		$this->version_check($this->get_option($this->unique_prefix . '_version'));?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
 		<p<?php if($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
 			print $this->_get_help_text();

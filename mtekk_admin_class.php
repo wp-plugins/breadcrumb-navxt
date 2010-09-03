@@ -28,7 +28,7 @@ abstract class mtekk_admin
 	protected $opt = array();
 	protected $message;
 	/**
-	 * wether or not this administration page has contextual help
+	 * whether or not this administration page has contextual help
 	 * 
 	 * @var bool
 	 */
@@ -55,6 +55,13 @@ abstract class mtekk_admin
 		$url = wp_nonce_url($this->admin_url() . '&' . $this->unique_prefix . '_admin_undo=true', $this->unique_prefix . '_admin_undo');
 		//Return a valid Undo anchor
 		return ' <a title="' . $title . '" href="' . $url . '">' . __('Undo', $this->identifier) . '</a>';
+	}
+	function upgrade_anchor($title = '')
+	{
+		//Assemble our url, nonce and all
+		$url = wp_nonce_url($this->admin_url() . '&' . $this->unique_prefix . '_admin_upgrade=true', $this->unique_prefix . '_admin_upgrade');
+		//Return a valid Undo anchor
+		return ' <a title="' . $title . '" href="' . $url . '">' . __('Migrate now.', $this->identifier) . '</a>';
 	}
 	function init()
 	{
@@ -87,6 +94,12 @@ abstract class mtekk_admin
 		{
 			//Run the rollback function on init if undo button has been pressed
 			$this->opts_undo();
+		}
+		//Admin Options rollback hook
+		else if(isset($_GET[$this->unique_prefix . '_admin_upgrade']))
+		{
+			//Run the rollback function on init if undo button has been pressed
+			$this->opts_upgrade();
 		}
 		//Add in the nice "settings" link to the plugins page
 		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
@@ -181,6 +194,25 @@ abstract class mtekk_admin
 		if($plug_major == $major && $plug_minor >= $minor)
 		{
 			$this->opt = $opts;
+		}
+	}
+	/**
+	 * version_check
+	 * 
+	 * Compairs the supplided version with the internal version, places an upgrade warning if there is a missmatch
+	 */
+	function version_check($version)
+	{
+		//Do a quick version check
+		list($plug_major, $plug_minor, $plug_release) = explode('.', $this->version);
+		list($major, $minor, $release) = explode('.', $version);
+		//Check if we have a newer version than the DB
+		if($major < $plug_major || ($major == $plug_major && $minor < $plug_minor) || ($major == $plug_major && $minor == $plug_minor && $release < $plug_release))
+		{
+			//Throw an error since we could not load the file for various reasons
+			$this->message['error'][] = __('Your settings are out of date.', $this->identifier) . $this->upgrade_anchor(__('Migrate the settings now.', $this->identifier));
+			//Output any messages that there may be
+			$this->message();
 		}
 	}
 	/**
@@ -328,6 +360,11 @@ abstract class mtekk_admin
 		$this->message['updated fade'][] = __('Settings successfully reset to the default values.', $this->identifier) . $this->undo_anchor(__('Undo the options reset.', $this->identifier));
 		add_action('admin_notices', array($this, 'message'));
 	}
+	/**
+	 * opts_undo
+	 * 
+	 * Undos the last settings save/reset/import
+	 */
 	function opts_undo()
 	{
 		//Do a nonce check, prevent malicious link/form problems
@@ -340,6 +377,21 @@ abstract class mtekk_admin
 		update_option($this->unique_prefix . '_options_bk', $opt);
 		//Send the success/undo message
 		$this->message['updated fade'][] = __('Settings successfully undid the last operation.', $this->identifier) . $this->undo_anchor(__('Undo the last undo operation.', $this->identifier));
+		add_action('admin_notices', array($this, 'message'));
+	}
+	/**
+	 * opts_upgrade
+	 * 
+	 * Forces a database settings upgrade
+	 */
+	function opts_upgrade()
+	{
+		//Do a nonce check, prevent malicious link/form problems
+		check_admin_referer($this->unique_prefix . '_admin_upgrade');
+		//Run the install script to do migration
+		$this->install();
+		//Send the success/undo message
+		$this->message['updated fade'][] = __('Settings successfully migrated.', $this->identifier);
 		add_action('admin_notices', array($this, 'message'));
 	}
 	/**
@@ -388,6 +440,7 @@ abstract class mtekk_admin
 				printf('<div class="%s"><p>%s</p></div>', $key, $message);	
 			}
 		}
+		$this->message = array();
 	}
 	/**
 	 * install
