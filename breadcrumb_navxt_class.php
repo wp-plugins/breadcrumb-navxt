@@ -223,7 +223,7 @@ class bcn_breadcrumb_trail
 			'home_title' => __('Blog', 'breadcrumb_navxt'),
 			//The anchor template for the home page, this is global, two keywords are available %link% and %title%
 			'home_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
-			//Should the home page be shown
+			//Should the blog page be shown globally
 			'blog_display' => true,
 			//The anchor template for the blog page only in static front page mode, this is global, two keywords are available %link% and %title%
 			'blog_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
@@ -251,6 +251,8 @@ class bcn_breadcrumb_trail
 			'post_page_suffix' => '',
 			//The anchor template for page breadcrumbs, two keywords are available %link% and %title%
 			'post_page_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
+			//Should the blog page be shown for pages
+			'post_page_blog_display' => false,
 			//Paged options
 			//The prefix for paged breadcrumbs, place on all page elements and inside of current_item prefix
 			'paged_prefix' => '',
@@ -265,6 +267,8 @@ class bcn_breadcrumb_trail
 			'post_post_suffix' => '',
 			//The anchor template for post breadcrumbs, two keywords are available %link% and %title%
 			'post_post_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
+			//Should the blog page be shown for posts
+			'post_post_blog_display' => true,
 			//Should the trail include the taxonomy of the post
 			'post_post_taxonomy_display' => true,
 			//What taxonomy should be shown leading to the post, tag or category
@@ -736,14 +740,16 @@ class bcn_breadcrumb_trail
 	 */
 	function do_home()
 	{
-		global $post;
+		global $post, $wp_query;
 		//We only need the "blog" portion on members of the blog, and only if we're in a static frontpage environment
-		if($this->opt['blog_display'] && get_option('show_on_front') == 'page' && (is_single() || is_archive() || is_author() || is_home()))
+		if($this->opt['blog_display'] && get_option('show_on_front') == 'page' && (is_singular() || is_archive() || is_author() || is_home()))
 		{
+			//Simmilar to using $post, but for things $post doesn't cover
+			$type = $wp_query->get_queried_object();
 			//We'll have to check if this ID is valid, e.g. user has specified a posts page
 			$posts_id = get_option('page_for_posts');
 			$frontpage_id = get_option('page_on_front');
-			if($posts_id != NULL)
+			if(((is_singular() && $this->opt['post_' . $type->post_type . '_blog_display']) || !is_singular()) && $posts_id != NULL)
 			{
 				//Get the blog page
 				$bcn_post = get_post($posts_id);
