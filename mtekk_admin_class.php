@@ -518,6 +518,20 @@ abstract class mtekk_admin
 		echo '</p></fieldset></form></div>';
 	}
 	/**
+	 * input_hidden
+	 * 
+	 * This will output a well formed hidden option
+	 * 
+	 * @param string $option
+	 * @return 
+	 */
+	function input_hidden($option)
+	{
+		$optid = $this->get_valid_id($option);?>
+		<input type="hidden" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $optid;?>" value="<?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?>"/>
+	<?php
+	}
+	/**
 	 * input_text
 	 * 
 	 * This will output a well formed table row for a text input

@@ -251,8 +251,8 @@ class bcn_breadcrumb_trail
 			'post_page_suffix' => '',
 			//The anchor template for page breadcrumbs, two keywords are available %link% and %title%
 			'post_page_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
-			//Should the blog page be shown for pages
-			'post_page_blog_display' => false,
+			//Just a link to the page on front property
+			'post_page_root' => get_option('page_on_front'),
 			//Paged options
 			//The prefix for paged breadcrumbs, place on all page elements and inside of current_item prefix
 			'paged_prefix' => '',
@@ -267,8 +267,8 @@ class bcn_breadcrumb_trail
 			'post_post_suffix' => '',
 			//The anchor template for post breadcrumbs, two keywords are available %link% and %title%
 			'post_post_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
-			//Should the blog page be shown for posts
-			'post_post_blog_display' => true,
+			//Just a link for the page for posts
+			'post_post_root' => get_option('page_for_posts'),
 			//Should the trail include the taxonomy of the post
 			'post_post_taxonomy_display' => true,
 			//What taxonomy should be shown leading to the post, tag or category
@@ -746,10 +746,18 @@ class bcn_breadcrumb_trail
 		{
 			//Simmilar to using $post, but for things $post doesn't cover
 			$type = $wp_query->get_queried_object();
-			//We'll have to check if this ID is valid, e.g. user has specified a posts page
-			$posts_id = get_option('page_for_posts');
+			
+			if((is_singular() || is_archive()) && is_numeric($this->opt['post_' . $type->post_type . '_root']))
+			{
+				$posts_id = $this->opt['post_' . $type->post_type . '_root'];
+			}
+			else
+			{
+				$posts_id = get_option('page_for_posts');
+			}
 			$frontpage_id = get_option('page_on_front');
-			if(((is_singular() && $this->opt['post_' . $type->post_type . '_blog_display']) || !is_singular()) && $posts_id != NULL)
+			//We'll have to check if this ID is valid, e.g. user has specified a posts page
+			if($posts_id != NULL && $posts_id != $frontpage_id)
 			{
 				//Get the blog page
 				$bcn_post = get_post($posts_id);

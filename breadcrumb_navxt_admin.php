@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.6.71
+Version: 3.6.73
 Author: John Havlik
 Author URI: http://mtekk.us/
 */
@@ -49,7 +49,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.6.71';
+	protected $version = '3.6.73';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -165,28 +165,25 @@ class bcn_admin extends mtekk_admin
 			//Upgrading to 3.7
 			if($major == 3 && $minor < 7)
 			{
-				//Added options, get the static ones first
-				$opts['post_page_blog_display'] = false;
-				$opts['post_post_blog_display'] = true;
-				//Now add blog_display for all of the custom types
+				//Now add post_root for all of the custom types
 				foreach($wp_post_types as $post_type)
 				{
 					//We only want custom post types
-					if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+					if($post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
 					{
 						//If the post type does not have blog_display setting, add it
-						if(!array_key_exists('post_' . $post_type->name . '_blog_display', $this->opt))
+						if(!array_key_exists('post_' . $post_type->name . '_root', $opts))
 						{
 							//Default for blog_display type dependent
 							if($post_type->hierarchical)
 							{
-								//Turn off blog_display for hierarchical types
-								$opts['post_' . $post_type->name . '_blog_display'] = false;
+								//Set post_root for hierarchical types
+								$opts['post_' . $post_type->name . '_root'] = get_option('page_on_front');
 							}
 							else
 							{
-								//Turn on blog_display for flat types
-								$opts['post_' . $post_type->name . '_blog_display'] = true;
+								//Set post_root for flat types
+								$opts['post_' . $post_type->name . '_root'] = get_option('page_for_posts');
 							}
 						}
 					}
@@ -219,14 +216,14 @@ class bcn_admin extends mtekk_admin
 						//Do type dependent tasks
 						if($post_type->hierarchical)
 						{
-							//Turn off blog_display for hierarchical types
-							$this->opt['post_' . $post_type->name . '_blog_display'] = false;
+							//Set post_root for hierarchical types
+							$this->opt['post_' . $post_type->name . '_root'] = get_option('page_on_front');
 						}
 						//If it is flat, we need a taxonomy selection
 						else
 						{
-							//Turn on blog_display for flat types
-							$this->opt['post_' . $post_type->name . '_blog_display'] = true;
+							//Set post_root for flat types
+							$this->opt['post_' . $post_type->name . '_root'] = get_option('page_for_posts');
 							//Be safe and disable taxonomy display by default
 							$this->opt['post_' . $post_type->name . '_taxonomy_display'] = false;
 							//Loop through all of the possible taxonomies
@@ -318,16 +315,14 @@ class bcn_admin extends mtekk_admin
 					//Do type dependent tasks
 					if($post_type->hierarchical)
 					{
-						//Turn off blog_display for hierarchical types
-						$this->opt['post_' . $post_type->name . '_blog_display'] = false;
+						//Set post_root for hierarchical types
+						$this->opt['post_' . $post_type->name . '_root'] = get_option('page_on_front');
 					}
 					//If it is flat, we need a taxonomy selection
 					else
 					{
-						//Turn on blog_display for flat types
-						$this->opt['post_' . $post_type->name . '_blog_display'] = true;
-						//Be safe and disable taxonomy display by default
-						$this->opt['post_' . $post_type->name . '_taxonomy_display'] = false;
+						//Set post_root for flat types
+						$this->opt['post_' . $post_type->name . '_root'] = get_option('page_for_posts');
 						//Loop through all of the possible taxonomies
 						foreach($wp_taxonomies as $taxonomy)
 						{
@@ -587,8 +582,8 @@ class bcn_admin extends mtekk_admin
 						$this->input_text(__('Post Prefix', 'breadcrumb_navxt'), 'post_post_prefix', '32');
 						$this->input_text(__('Post Suffix', 'breadcrumb_navxt'), 'post_post_suffix', '32');
 						$this->input_text(__('Post Anchor', 'breadcrumb_navxt'), 'post_post_anchor', '64', false, __('The anchor template for post breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_check(__('Post Blog Display', 'breadcrumb_navxt'), 'post_post_blog_display', __('Include the Blog breadcrumb in the breadcrumb trails for posts.', 'breadcrumb_navxt'));
 						$this->input_check(__('Post Taxonomy Display', 'breadcrumb_navxt'), 'post_post_taxonomy_display', __('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'));
+						$this->input_hidden('post_post_root');
 					?>
 					<tr valign="top">
 						<th scope="row">
@@ -616,8 +611,8 @@ class bcn_admin extends mtekk_admin
 					<?php
 						$this->input_text(__('Page Prefix', 'breadcrumb_navxt'), 'post_page_prefix', '32');
 						$this->input_text(__('Page Suffix', 'breadcrumb_navxt'), 'post_page_suffix', '32');
+						$this->input_hidden('post_page_root');
 						$this->input_text(__('Page Anchor', 'breadcrumb_navxt'), 'post_page_anchor', '64', false, __('The anchor template for page breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_check(__('Page Blog Display', 'breadcrumb_navxt'), 'post_page_blog_display', __('Include the Blog breadcrumb in the breadcrumb trails for pages.', 'breadcrumb_navxt'));
 						$this->input_text(__('Attachment Prefix', 'breadcrumb_navxt'), 'attachment_prefix', '32');
 						$this->input_text(__('Attachment Suffix', 'breadcrumb_navxt'), 'attachment_suffix', '32');
 					?>
@@ -640,16 +635,14 @@ class bcn_admin extends mtekk_admin
 						//Do type dependent tasks
 						if($post_type->hierarchical)
 						{
-							//Turn off blog_display for hierarchical types
-							$this->opt['post_' . $post_type->name . '_blog_display'] = false;
+							//Set post_root for hierarchical types
+							$this->opt['post_' . $post_type->name . '_root'] = get_option('page_on_front');
 						}
 						//If it is flat, we need a taxonomy selection
 						else
 						{
-							//Turn on blog_display for flat types
-							$this->opt['post_' . $post_type->name . '_blog_display'] = true;
-							//Be safe and disable taxonomy display by default
-							$this->opt['post_' . $post_type->name . '_taxonomy_display'] = false;
+							//Set post_root for flat types
+							$this->opt['post_' . $post_type->name . '_root'] = get_option('page_for_posts');
 							//Loop through all of the possible taxonomies
 							foreach($wp_taxonomies as $taxonomy)
 							{
@@ -672,7 +665,17 @@ class bcn_admin extends mtekk_admin
 						$this->input_text(sprintf(__('%s Prefix', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_prefix', '32');
 						$this->input_text(sprintf(__('%s Suffix', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_suffix', '32');
 						$this->input_text(sprintf(__('%s Anchor', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_anchor', '64', false, sprintf(__('The anchor template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($post_type->labels->singular_name))));
-						$this->input_check(sprintf(__('%s Blog Display', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'post_' . $post_type->name . '_blog_display', sprintf(__('Include the Blog breadcrumb in the breadcrumb trails for %s.', 'breadcrumb_navxt'), strtolower(__($post_type->labels->singular_name))));
+						$optid = $this->get_valid_id('post_' . $post_type->name . '_root');
+					?>
+					<tr valign="top">
+						<th scope="row">
+							<label for="<?php echo $optid;?>"><?php printf(__('%s Root Page', 'breadcrumb_navxt'), $post_type->labels->singular_name);?></label>
+						</th>
+						<td>
+							<?php wp_dropdown_pages(array('name' => $this->unique_prefix . '_options[post_' . $post_type->name . '_root]', 'id' => $optid, 'echo' => 1, 'show_option_none' => __( '&mdash; Select &mdash;' ), 'option_none_value' => '0', 'selected' => $this->opt['post_' . $post_type->name . '_root']));?>
+						</td>
+					</tr>
+					<?php
 						//If it is flat, we need a taxonomy selection
 						if(!$post_type->hierarchical)
 						{

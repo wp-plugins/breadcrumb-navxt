@@ -1,6 +1,6 @@
 === Breadcrumb NavXT ===
 Contributors: mtekk, hakre
-Tags: breadcrumb, navigation
+Tags: breadcrumb, navigation, widget
 Requires at least: 3.0
 Tested up to: 3.0.1
 Stable tag: 3.6.0
