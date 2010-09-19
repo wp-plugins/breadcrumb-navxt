@@ -762,8 +762,8 @@ class bcn_breadcrumb_trail
 				//Get the blog page
 				$bcn_post = get_post($posts_id);
 				//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-				$breadcrumb = $this->add(new bcn_breadcrumb(apply_filters('the_title', $bcn_post->post_title), $this->opt['page_prefix'],
-					$this->opt['page_suffix']));
+				$breadcrumb = $this->add(new bcn_breadcrumb(apply_filters('the_title', $bcn_post->post_title), $this->opt['post_page_prefix'],
+					$this->opt['post_page_suffix']));
 				//If we're not on the current item we need to setup the anchor
 				if(!is_home() || (is_paged() && $this->opt['paged_display']))
 				{
