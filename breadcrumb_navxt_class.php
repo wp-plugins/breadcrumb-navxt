@@ -746,10 +746,15 @@ class bcn_breadcrumb_trail
 		{
 			//Simmilar to using $post, but for things $post doesn't cover
 			$type = $wp_query->get_queried_object();
-			
-			if((is_singular() || is_archive()) && is_numeric($this->opt['post_' . $type->post_type . '_root']))
+			//We need to do special things for custom post types and their archives
+			if((is_singular() || is_archive()) && is_numeric($this->opt['post_' . $type->post_type . '_root']) && $type->post_type != 'post' && $type->post_type != 'page')
 			{
 				$posts_id = $this->opt['post_' . $type->post_type . '_root'];
+			}
+			//Don't want to run on pages for obvious reasons
+			else if(is_singular() && $type->post_type == 'page')
+			{
+				$posts_id = get_option('page_on_front');
 			}
 			else
 			{

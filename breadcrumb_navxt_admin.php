@@ -169,7 +169,7 @@ class bcn_admin extends mtekk_admin
 				foreach($wp_post_types as $post_type)
 				{
 					//We only want custom post types
-					if($post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+					if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
 					{
 						//If the post type does not have blog_display setting, add it
 						if(!array_key_exists('post_' . $post_type->name . '_root', $opts))
@@ -195,8 +195,8 @@ class bcn_admin extends mtekk_admin
 				//Grab defaults from the breadcrumb_trail object
 				$opts = $this->breadcrumb_trail->opt;
 				//Add the options
-				$this->add_option('bcn_options', $this->opt);
-				$this->add_option('bcn_options_bk', $this->opt, false);
+				$this->add_option('bcn_options', $opts);
+				$this->add_option('bcn_options_bk', $opts, false);
 				//Add the version, no need to autoload the db version
 				$this->add_option('bcn_version', $this->version, false);
 			}
@@ -583,7 +583,6 @@ class bcn_admin extends mtekk_admin
 						$this->input_text(__('Post Suffix', 'breadcrumb_navxt'), 'post_post_suffix', '32');
 						$this->input_text(__('Post Anchor', 'breadcrumb_navxt'), 'post_post_anchor', '64', false, __('The anchor template for post breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_check(__('Post Taxonomy Display', 'breadcrumb_navxt'), 'post_post_taxonomy_display', __('Show the taxonomy leading to a post in the breadcrumb trail.', 'breadcrumb_navxt'));
-						$this->input_hidden('post_post_root');
 					?>
 					<tr valign="top">
 						<th scope="row">
@@ -611,7 +610,6 @@ class bcn_admin extends mtekk_admin
 					<?php
 						$this->input_text(__('Page Prefix', 'breadcrumb_navxt'), 'post_page_prefix', '32');
 						$this->input_text(__('Page Suffix', 'breadcrumb_navxt'), 'post_page_suffix', '32');
-						$this->input_hidden('post_page_root');
 						$this->input_text(__('Page Anchor', 'breadcrumb_navxt'), 'post_page_anchor', '64', false, __('The anchor template for page breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Attachment Prefix', 'breadcrumb_navxt'), 'attachment_prefix', '32');
 						$this->input_text(__('Attachment Suffix', 'breadcrumb_navxt'), 'attachment_suffix', '32');
