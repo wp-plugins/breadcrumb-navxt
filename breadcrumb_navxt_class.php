@@ -748,7 +748,6 @@ class bcn_breadcrumb_trail
 		{
 			$posts_id = $this->opt['post_' . $type->post_type . '_root'];
 		}
-		
 		//We only need the "blog" portion on members of the blog, and only if we're in a static frontpage environment
 		if(isset($posts_id) || $this->opt['blog_display'] && get_option('show_on_front') == 'page' && !is_page())
 		{
@@ -761,23 +760,23 @@ class bcn_breadcrumb_trail
 			//We'll have to check if this ID is valid, e.g. user has specified a posts page
 			if($posts_id != NULL && $posts_id != $frontpage_id)
 			{
-					//Get the blog page
-					$bcn_post = get_post($posts_id);
-					//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-					$breadcrumb = $this->add(new bcn_breadcrumb(apply_filters('the_title', $bcn_post->post_title), $this->opt['post_page_prefix'],
-						$this->opt['post_page_suffix']));
-					//If we're not on the current item we need to setup the anchor
-					if(!is_home() || (is_paged() && $this->opt['paged_display']))
-					{
-						//Deal with the anchor
-						$breadcrumb->set_anchor($this->opt['blog_anchor'], get_permalink($bcn_post->ID));
-					}
-					//Done with the "root", now on to the parents
-					//If there is a parent post let's find it
-					if($bcn_post->post_parent && $bcn_post->ID != $bcn_post->post_parent && $frontpage_id != $bcn_post->post_parent)
-					{
-						$this->post_parents($bcn_post->post_parent, $frontpage_id);
-					}
+				//Get the blog page
+				$bcn_post = get_post($posts_id);
+				//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+				$breadcrumb = $this->add(new bcn_breadcrumb(apply_filters('the_title', $bcn_post->post_title), $this->opt['post_page_prefix'],
+					$this->opt['post_page_suffix']));
+				//If we're not on the current item we need to setup the anchor
+				if(!is_home() || (is_paged() && $this->opt['paged_display']))
+				{
+					//Deal with the anchor
+					$breadcrumb->set_anchor($this->opt['blog_anchor'], get_permalink($bcn_post->ID));
+				}
+				//Done with the "root", now on to the parents
+				//If there is a parent post let's find it
+				if($bcn_post->post_parent && $bcn_post->ID != $bcn_post->post_parent && $frontpage_id != $bcn_post->post_parent)
+				{
+					$this->post_parents($bcn_post->post_parent, $frontpage_id);
+				}
 			}
 		}
 		//On everything else we need to link, but no current item (pre/suf)fixes
