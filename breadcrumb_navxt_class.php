@@ -674,7 +674,7 @@ class bcn_breadcrumb_trail
 			//We'll have to check if this ID is valid, e.g. user has specified a posts page
 			$posts_id = get_option('page_for_posts');
 			$frontpage_id = get_option('page_on_front');
-			if($posts_id != NULL)
+			if($posts_id)
 			{
 				//Get the blog page
 				$bcn_post = get_post($posts_id);
