@@ -160,7 +160,7 @@ class bcn_admin extends mtekk_admin
 				//Update to non-autoload db version
 				$this->delete_option('bcn_version');
 				$this->add_option('bcn_version', $this->version, false);
-				$this->add_option('bcn_options_bk', $this->opt, false);
+				$this->add_option('bcn_options_bk', $opts, false);
 			}
 			//Upgrading to 3.7
 			if($major == 3 && $minor < 7)
@@ -262,27 +262,6 @@ class bcn_admin extends mtekk_admin
 			$this->update_option('bcn_version', $this->version);
 			//Store the options
 			$this->update_option('bcn_options', $opts);
-		}
-		//Check if we have valid anchors
-		if($temp = $this->get_option('bcn_options'))
-		{
-			//Missing the blog anchor is a bug from 3.0.0/3.0.1 so we soft error that one
-			if(strlen($temp['blog_anchor']) == 0)
-			{
-				$temp['blog_anchor'] = $this->breadcrumb_trail->opt['blog_anchor'];
-				$this->update_option('bcn_options', $temp);
-			}
-			else if(strlen($temp['home_anchor']) == 0 || 
-				strlen($temp['blog_anchor']) == 0 || 
-				strlen($temp['post_page_anchor']) == 0 || 
-				strlen($temp['post_post_anchor']) == 0 || 
-				strlen($temp['post_tag_anchor']) == 0 ||
-				strlen($temp['date_anchor']) == 0 ||
-				strlen($temp['category_anchor']) == 0)
-			{
-				$this->delete_option('bcn_options');
-				$this->add_option('bcn_options', $this->breadcrumb_trail->opt);
-			}
 		}
 	}
 	/**
@@ -479,10 +458,7 @@ class bcn_admin extends mtekk_admin
 		/* handler for opening the last tab after submit (compability version) */
 		jQuery('#hasadmintabs ul a').click(function(i){
 			var form   = jQuery('#bcn_admin-options');
-			var action = form.attr("action").split('#', 1) + jQuery(this).attr('href');
-			// an older bug pops up with some jQuery version(s), which makes it
-			// necessary to set the form's action attribute by standard javascript 
-			// node access:						
+			var action = form.attr("action").split('#', 1) + jQuery(this).attr('href');					
 			form.get(0).setAttribute("action", action);
 		});
 	}
