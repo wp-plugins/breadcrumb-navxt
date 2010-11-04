@@ -204,7 +204,8 @@ class bcn_admin extends mtekk_admin
 			foreach($wp_post_types as $post_type)
 			{
 				//We only want custom post types
-				if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+				//if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+				if(!$post_type->_builtin)
 				{
 					//If the post type does not have settings in the options array yet, we need to load some defaults
 					if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
@@ -245,7 +246,8 @@ class bcn_admin extends mtekk_admin
 			foreach($wp_taxonomies as $taxonomy)
 			{
 				//We only want custom taxonomies
-				if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+				//if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+				if(!$taxonomy->_builtin)
 				{
 					//If the taxonomy does not have settings in the options array yet, we need to load some defaults
 					if(!array_key_exists($taxonomy->name . '_anchor', $opts))
@@ -282,7 +284,8 @@ class bcn_admin extends mtekk_admin
 		foreach($wp_post_types as $post_type)
 		{
 			//We only want custom post types
-			if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+			//if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+			if(!$post_type->_builtin)
 			{
 				//If the post type does not have settings in the options array yet, we need to load some defaults
 				if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
@@ -321,7 +324,8 @@ class bcn_admin extends mtekk_admin
 		foreach($wp_taxonomies as $taxonomy)
 		{
 			//We only want custom taxonomies
-			if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+			//if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+			if(!$taxonomy->_builtin)
 			{
 				//If the taxonomy does not have settings in the options array yet, we need to load some defaults
 				if(!array_key_exists($taxonomy->name . '_anchor', $this->opt))
@@ -574,7 +578,7 @@ class bcn_admin extends mtekk_admin
 								foreach($wp_taxonomies as $taxonomy)
 								{
 									//We only want custom taxonomies
-									if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+									if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && !$taxonomy->_builtin)
 									{
 										$this->input_radio('post_post_taxonomy_type', $taxonomy->name, ucwords(__($taxonomy->label)));
 									}
@@ -592,12 +596,13 @@ class bcn_admin extends mtekk_admin
 					?>
 				</table>
 			</fieldset>
-			<?php 
+			<?php
 			//Loop through all of the post types in the array
 			foreach($wp_post_types as $post_type)
 			{
 				//We only want custom post types
-				if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+				//if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+				if(!$post_type->_builtin)
 				{
 					//If the post type does not have settings in the options array yet, we need to load some defaults
 					if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
@@ -712,7 +717,8 @@ class bcn_admin extends mtekk_admin
 			foreach($wp_taxonomies as $taxonomy)
 			{
 				//We only want custom taxonomies
-				if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+				//if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+				if(!$taxonomy->_builtin)
 				{
 					//If the taxonomy does not have settings in the options array yet, we need to load some defaults
 					if(!array_key_exists($taxonomy->name . '_anchor', $this->opt))

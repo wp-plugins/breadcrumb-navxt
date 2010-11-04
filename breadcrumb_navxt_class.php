@@ -740,16 +740,25 @@ class bcn_breadcrumb_trail
 	 */
 	function do_home()
 	{
-		global $post, $wp_query;
+		global $post, $wp_query, $wp_taxonomies;
 		//Simmilar to using $post, but for things $post doesn't cover
 		$type = $wp_query->get_queried_object();
 		//We need to do special things for custom post types and their archives
-		if((is_singular() || is_archive()) && is_numeric($this->opt['post_' . $type->post_type . '_root']) && $type->post_type != 'post' && $type->post_type != 'page')
+		if((is_singular() || is_archive()) && $type->post_type != 'post' && $type->post_type != 'page')
 		{
-			$posts_id = $this->opt['post_' . $type->post_type . '_root'];
+			//This will assign a ID for root page of a custom post
+			if(is_numeric($this->opt['post_' . $type->post_type . '_root']))
+			{
+				$posts_id = $this->opt['post_' . $type->post_type . '_root'];
+			}
+			//This will assign a ID for root page of a custom post's taxonomy archive
+			else if(is_numeric($this->opt['post_' . $wp_taxonomies[$type->taxonomy]->object_type[0] . '_root']))
+			{
+				$posts_id = $this->opt['post_' . $wp_taxonomies[$type->taxonomy]->object_type[0] . '_root'];
+			}
 		}
 		//We only need the "blog" portion on members of the blog, and only if we're in a static frontpage environment
-		if(isset($posts_id) || $this->opt['blog_display'] && get_option('show_on_front') == 'page' && !is_page())
+		if(isset($posts_id) || $this->opt['blog_display'] && get_option('show_on_front') == 'page' && (is_home() || (is_single() && !is_page()) || (is_archive() && !is_author())))
 		{
 			//If we entered here with a posts page, we need to set the id
 			if(!isset($posts_id))
