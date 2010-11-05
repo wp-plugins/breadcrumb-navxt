@@ -392,8 +392,11 @@ class bcn_admin extends mtekk_admin
 	 */
 	protected function _get_help_text()
 	{
-		return sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
-			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>');
+		return '<p>' . sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
+			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>') . '</p><h5>' .
+		__('Quick Start Information', 'breadcrumb_navxt') . '</h5><p>' . __('For the settings on this page to take effect, you must either use the included Breadcrumb NavXT widget, or place either of the code sections below into your theme.', 'breadcrumb_navxt') .
+		'</p><h5>' . __('Breadcrumb trail with separators', 'breadcrumb_navxt').'</h5><code>&lt;div class="breadcrumbs"&gt;'."&lt;?php if(function_exists('bcn_display')){ bcn_display();}?&gt;&lt;/div&gt;</code>" .
+		'<h5>' . __('Breadcrumb trail in list form', 'breadcrumb_navxt').'</h5><code>&lt;ul class="breadcrumbs"&gt;'."&lt;?php if(function_exists('bcn_display_list')){ bcn_display_list();}?&gt;&lt;/ul&gt;</code>";
 	}
 	/**
 	 * admin_head
@@ -487,7 +490,7 @@ class bcn_admin extends mtekk_admin
 /* ]]> */
 </script>
 <?php
-	} //function admin_head()
+	}
 	/**
 	 * admin_page
 	 * 
@@ -500,9 +503,9 @@ class bcn_admin extends mtekk_admin
 		$this->security();
 		$this->version_check($this->get_option($this->unique_prefix . '_version'));?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
-		<p<?php if($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
+		<div<?php if($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
 			print $this->_get_help_text();
-		?></p>
+		?></div>
 		<form action="options-general.php?page=breadcrumb_navxt" method="post" id="bcn_admin-options">
 			<?php settings_fields('bcn_options');?>
 			<div id="hasadmintabs">
