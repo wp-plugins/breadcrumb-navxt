@@ -26,8 +26,7 @@ Author URI: http://mtekk.us/
 //Do a PHP version check, require 5.2 or newer
 if(version_compare(PHP_VERSION, '5.2.0', '<'))
 {
-	sprintf(__('Your PHP version is too old, please upgrade to a newer version. Your version is %s, this plugin requires %s', 'breadcrumb_navxt'), phpversion(), '5.2.0');
-	die();
+	wp_die(sprintf(__('Your PHP version is too old, please upgrade to a newer version. Your version is %s, this plugin requires %s', 'breadcrumb_navxt'), phpversion(), '5.2.0'));
 }
 //Include the breadcrumb class
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
@@ -64,8 +63,6 @@ class bcn_admin extends mtekk_admin
 	 */
 	public $breadcrumb_trail;
 	/**
-	 * bcn_admin
-	 * 
 	 * Administrative interface class default constructor
 	 */
 	function bcn_admin()
@@ -99,8 +96,6 @@ class bcn_admin extends mtekk_admin
 		add_action('wp_print_scripts', array($this, 'javascript'));
 	}
 	/**
-	 * security
-	 * 
 	 * Makes sure the current user can manage options to proceed
 	 */
 	function security()
@@ -108,13 +103,10 @@ class bcn_admin extends mtekk_admin
 		//If the user can not manage options we will die on them
 		if(!current_user_can($this->access_level))
 		{
-			_e('Insufficient privileges to proceed.', 'breadcrumb_navxt');
-			die();
+			wp_die(__('Insufficient privileges to proceed.', 'breadcrumb_navxt'));
 		}
 	}
-	/**
-	 * install
-	 * 
+	/** 
 	 * This sets up and upgrades the database settings, runs on every activation
 	 */
 	function install()
@@ -267,8 +259,6 @@ class bcn_admin extends mtekk_admin
 		}
 	}
 	/**
-	 * ops_update
-	 * 
 	 * Updates the database settings from the webform
 	 */
 	function opts_update()
@@ -373,8 +363,6 @@ class bcn_admin extends mtekk_admin
 		add_action('admin_notices', array($this, 'message'));
 	}
 	/**
-	 * javascript
-	 *
 	 * Enqueues JS dependencies (jquery) for the tabs
 	 * 
 	 * @see admin_init()
@@ -399,8 +387,6 @@ class bcn_admin extends mtekk_admin
 		'<h5>' . __('Breadcrumb trail in list form', 'breadcrumb_navxt').'</h5><code>&lt;ul class="breadcrumbs"&gt;'."&lt;?php if(function_exists('bcn_display_list')){ bcn_display_list();}?&gt;&lt;/ul&gt;</code>";
 	}
 	/**
-	 * admin_head
-	 *
 	 * Adds in the JavaScript and CSS for the tabs in the adminsitrative 
 	 * interface
 	 * 
@@ -492,8 +478,6 @@ class bcn_admin extends mtekk_admin
 <?php
 	}
 	/**
-	 * admin_page
-	 * 
 	 * The administrative page for Breadcrumb NavXT
 	 * 
 	 */
@@ -786,8 +770,6 @@ class bcn_admin extends mtekk_admin
 		<?php
 	}
 	/**
-	 * add_option
-	 *
 	 * This inserts the value into the option name, works around WP's stupid string bool
 	 *
 	 * @param (string) key name where to save the value in $value
@@ -807,8 +789,6 @@ class bcn_admin extends mtekk_admin
 		}
 	}
 	/**
-	 * delete_option
-	 *
 	 * This removes the option name, WPMU safe
 	 *
 	 * @param (string) key name of the option to remove
@@ -819,8 +799,6 @@ class bcn_admin extends mtekk_admin
 		return delete_option($key);
 	}
 	/**
-	 * update_option
-	 *
 	 * This updates the value into the option name, WPMU safe
 	 *
 	 * @param (string) key name where to save the value in $value
@@ -832,8 +810,6 @@ class bcn_admin extends mtekk_admin
 		return update_option($key, $value);
 	}
 	/**
-	 * get_option
-	 *
 	 * This grabs the the data from the db it is WPMU safe and can place the data 
 	 * in a HTML form safe manner.
 	 *
@@ -845,8 +821,6 @@ class bcn_admin extends mtekk_admin
 		return get_option($key);
 	}
 	/**
-	 * display
-	 * 
 	 * Outputs the breadcrumb trail
 	 * 
 	 * @param  (bool)   $return Whether to return or echo the trail.
@@ -862,8 +836,6 @@ class bcn_admin extends mtekk_admin
 		return $this->breadcrumb_trail->display($return, $linked, $reverse);
 	}
 	/**
-	 * display_list
-	 * 
 	 * Outputs the breadcrumb trail
 	 * 
 	 * @since  3.2.0

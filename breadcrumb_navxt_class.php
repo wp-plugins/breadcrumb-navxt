@@ -32,8 +32,6 @@ class bcn_breadcrumb
 	//Global suffix, outside of link tags
 	protected $suffix;
 	/**
-	 * bcn_breadcrumb
-	 * 
 	 * The enhanced default constructor
 	 * 
 	 * @return 
@@ -57,8 +55,6 @@ class bcn_breadcrumb
 		$this->anchor = $anchor;
 	}
 	/**
-	 * set_title
-	 * 
 	 * Function to set the protected title member
 	 * 
 	 * @param string $title
@@ -69,8 +65,6 @@ class bcn_breadcrumb
 		$this->title = __($title, 'breadcrumb_navxt');
 	}
 	/**
-	 * set_prefix
-	 * 
 	 * Function to set the protected prefix member
 	 * 
 	 * @param string $prefix
@@ -81,8 +75,6 @@ class bcn_breadcrumb
 		$this->prefix = __($prefix, 'breadcrumb_navxt');
 	}
 	/**
-	 * set_suffix
-	 * 
 	 * Function to set the protected suffix member
 	 * 
 	 * @param string $suffix
@@ -93,8 +85,6 @@ class bcn_breadcrumb
 		$this->suffix = __($suffix, 'breadcrumb_navxt');
 	}
 	/**
-	 * get_title
-	 * 
 	 * Function to get the protected title member
 	 * @return $this->title
 	 */
@@ -104,8 +94,6 @@ class bcn_breadcrumb
 		return $this->title;
 	}
 	/**
-	 * get_prefix
-	 * 
 	 * Function to get the protected prefix member
 	 * @return $this->prefix
 	 */
@@ -115,8 +103,6 @@ class bcn_breadcrumb
 		return $this->prefix;
 	}
 	/**
-	 * get_suffix
-	 * 
 	 * Function to get the protected suffix member
 	 * @return $this->suffix
 	 */
@@ -126,8 +112,6 @@ class bcn_breadcrumb
 		return $this->suffix;
 	}
 	/**
-	 * set_anchor
-	 * 
 	 * Sets the anchor attribute for the breadcrumb, will set $linked to true
 	 * 
 	 * @param string $template the anchor template to use
@@ -147,8 +131,6 @@ class bcn_breadcrumb
 		$this->linked = true;
 	}
 	/**
-	 * title_trim
-	 * 
 	 * This function will intelligently trim the title to the value passed in through $max_length.
 	 * 
 	 * @param int $max_length of the title.
@@ -174,8 +156,6 @@ class bcn_breadcrumb
 		}
 	}
 	/**
-	 * assemble
-	 * 
 	 * Assembles the parts of the breadcrumb into a html string
 	 * 
 	 * @return string The compiled breadcrumb string
@@ -332,8 +312,6 @@ class bcn_breadcrumb_trail
 		);
 	}
 	/**
-	 * add
-	 * 
 	 * Adds a breadcrumb to the breadcrumb trail
 	 * 
 	 * @return pointer to the just added Breadcrumb
@@ -345,8 +323,6 @@ class bcn_breadcrumb_trail
 		return $this->trail[count($this->trail) - 1];
 	}
 	/**
-	 * do_search
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for a search page.
@@ -366,8 +342,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_author
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for an author page.
@@ -394,8 +368,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * post_taxonomy
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This function fills breadcrumbs for any post taxonomy.
@@ -454,8 +426,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * post_terms
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for the terms of a post
@@ -499,8 +469,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * term_parents
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This recursive functions fills the trail with breadcrumbs for parent terms.
@@ -524,8 +492,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * post_parents
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This recursive functions fills the trail with breadcrumbs for parent posts/pages.
@@ -549,8 +515,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_post_hierarchical
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for a hierarchical post/page.
@@ -569,8 +533,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_post_flat
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for a post.
@@ -584,8 +546,6 @@ class bcn_breadcrumb_trail
 		$this->post_taxonomy($post->ID);
 	}
 	/**
-	 * do_attachment
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for an attachment page.
@@ -617,8 +577,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_archive_by_term_hierarchical
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for a hierarchical taxonomy (e.g. category) archive.
@@ -646,8 +604,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_archive_by_term
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for a flat taxonomy (e.g. tag) archive.
@@ -670,8 +626,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_archive_by_date
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for a date archive.
@@ -713,8 +667,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_front_page
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for the front page.
@@ -732,8 +684,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_home
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for the home page.
@@ -798,8 +748,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * do_404
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for 404 pages.
@@ -810,8 +758,6 @@ class bcn_breadcrumb_trail
 		$this->trail[] = new bcn_breadcrumb($this->opt['404_title'], $this->opt['404_prefix'], $this->opt['404_suffix']);
 	}
 	/**
-	 * do_paged
-	 * 
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for paged pages.
@@ -823,8 +769,6 @@ class bcn_breadcrumb_trail
 		$this->trail[] = new bcn_breadcrumb($paged, $this->opt['paged_prefix'], $this->opt['paged_suffix']);
 	}
 	/**
-	 * fill
-	 * 
 	 * Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills the breadcrumb trail.
@@ -923,8 +867,6 @@ class bcn_breadcrumb_trail
 		do_action('bcn_after_fill', $this);
 	}
 	/**
-	 * order
-	 * 
 	 * This function will either set the order of the trail to reverse key 
 	 * order, or make sure it is forward key ordered.
 	 * 
@@ -944,8 +886,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * current_item
-	 * 
 	 * Performs actions specific to current item breadcrumbs. It will wrap the prefix/suffix
 	 * with the current_item_prefix and current_item_suffix. Additionally, it will link the
 	 * current item if current_item_linked is set to true.
@@ -966,8 +906,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * display
-	 * 
 	 * Breadcrumb Creation Function
 	 * 
 	 * This functions outputs or returns the breadcrumb trail in string form.
@@ -1031,8 +969,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * display_list
-	 * 
 	 * Breadcrumb Creation Function
 	 * 
 	 * This functions outputs or returns the breadcrumb trail in list form.
