@@ -697,9 +697,7 @@ class bcn_admin extends mtekk_admin
 					?>
 				</table>
 			</fieldset>
-			<?php 
-			//var_dump($wp_taxonomies);
-			//var_dump($wp_post_types);
+			<?php
 			//Loop through all of the taxonomies in the array
 			foreach($wp_taxonomies as $taxonomy)
 			{

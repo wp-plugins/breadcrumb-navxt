@@ -673,14 +673,29 @@ class bcn_breadcrumb_trail
 	 */
 	function do_front_page()
 	{
-		global $post;
-		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['home_prefix'], $this->opt['home_suffix']));
+		global $post, $current_site;
+		//If we have a multi site and are not on the main site we may need to add a breadcrumb for the main site
+		if(/*$this->opt['mainsite_display'] &&*/ !is_main_site())
+		{
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb(get_bloginfo('name')/*$this->opt['home_title']*/, $this->opt['home_prefix'], $this->opt['home_suffix']));
+			//Deal with the anchor
+			//$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url());
+			//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['mainsite_prefix'], $this->opt['mainsite_suffix']));
+			//Deal with the anchor
+			$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url($current_site->blog_id));
+		}
+		else
+		{
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['home_prefix'], $this->opt['home_suffix']));
+		}
 		//If we're paged, let's link to the first page
 		if(is_paged() && $this->opt['paged_display'])
 		{
 			//Figure out the anchor for home page
-			$breadcrumb->set_anchor($this->opt['home_anchor'], get_option('home'));
+			$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url());
 		}
 	}
 	/**
@@ -690,7 +705,7 @@ class bcn_breadcrumb_trail
 	 */
 	function do_home()
 	{
-		global $post, $wp_query, $wp_taxonomies;
+		global $post, $wp_query, $wp_taxonomies, $current_site;
 		//Simmilar to using $post, but for things $post doesn't cover
 		$type = $wp_query->get_queried_object();
 		//We need to do special things for custom post types and their archives
@@ -741,10 +756,25 @@ class bcn_breadcrumb_trail
 		//On everything else we need to link, but no current item (pre/suf)fixes
 		if($this->opt['home_display'])
 		{
-			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['home_prefix'], $this->opt['home_suffix']));
-			//Deal with the anchor
-			$breadcrumb->set_anchor($this->opt['home_anchor'], get_bloginfo('url'));
+			//If we have a multi site and are not on the main site we may need to add a breadcrumb for the main site
+			if(/*$this->opt['mainsite_display'] &&*/ !is_main_site())
+			{
+				//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+				$breadcrumb = $this->add(new bcn_breadcrumb(get_bloginfo('name')/*$this->opt['home_title']*/, $this->opt['home_prefix'], $this->opt['home_suffix']));
+				//Deal with the anchor
+				$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url());
+				//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+				$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['mainsite_prefix'], $this->opt['mainsite_suffix']));
+				//Deal with the anchor
+				$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url($current_site->blog_id));
+			}
+			else
+			{
+				//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+				$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['home_prefix'], $this->opt['home_suffix']));
+				//Deal with the anchor
+				$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url());
+			}
 		}
 	}
 	/**
