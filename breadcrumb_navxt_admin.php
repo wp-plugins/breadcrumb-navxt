@@ -111,19 +111,57 @@ class bcn_admin extends mtekk_admin
 	 */
 	function install()
 	{
-		global $wp_taxonomies, $wp_post_types;
 		//Call our little security function
 		$this->security();
-		//Reduce db queries by saving this
-		$db_version = $this->get_option('bcn_version');
+		//Try retrieving the options from the database
+		$opts = $this->get_option('bcn_options');
+		//If there are no settings, copy over the default settings
+		if(!is_array($opts))
+		{
+			//Grab defaults from the breadcrumb_trail object
+			$opts = $this->breadcrumb_trail->opt;
+			//Add custom post types
+			$this->find_posttypes($opts);
+			//Add custom taxonomy types
+			$this->find_taxonomies($opts);
+			//Add the options
+			$this->add_option('bcn_options', $opts);
+			$this->add_option('bcn_options_bk', $opts, false);
+			//Add the version, no need to autoload the db version
+			$this->add_option('bcn_version', $this->version, false);
+		}
+		else
+		{
+			//Retrieve the database version
+			$db_version = $this->get_option('bcn_version');
+			if($this->version !== $db_version)
+			{
+				//Add custom post types
+				$this->find_posttypes($opts);
+				//Add custom taxonomy types
+				$this->find_taxonomies($opts);
+				//Run the settings update script
+				$this->opts_upgrade($opts, $db_version);
+				//Always have to update the version
+				$this->update_option('bcn_version', $this->version);
+				//Store the options
+				$this->update_option('bcn_options', $this->opt);
+			}
+		}
+	}
+	/**
+	 * Upgrades input options array, sets to $this->opt
+	 * 
+	 * @param array $opts
+	 * @param string $version the version of the passed in options
+	 */
+	function opts_upgrade($opts, $version)
+	{
 		//If our version is not the same as in the db, time to update
 		if($db_version !== $this->version)
 		{
-			//Split up the db version into it's components
-			list($major, $minor, $release) = explode('.', $db_version);
-			$opts = $this->get_option('bcn_options');
 			//Upgrading from 3.4
-			if($major == 3 && $minor < 4)
+			if(version_compare($version, '3.4.0', '<'))
 			{
 				//Inline upgrade of the tag setting
 				if($opts['post_taxonomy_type'] === 'tag')
@@ -138,7 +176,7 @@ class bcn_admin extends mtekk_admin
 				$opts['post_tag_anchor'] = $this->breadcrumb_trail->opt['tag_anchor'];
 			}
 			//Upgrading to 3.6
-			if($major == 3 && $minor < 6)
+			if(version_compare($version, '3.6.0', '<'))
 			{
 				//Added post_ prefix to avoid conflicts with custom taxonomies
 				$opts['post_page_prefix'] = $opts['page_prefix'];
@@ -155,7 +193,7 @@ class bcn_admin extends mtekk_admin
 				$this->add_option('bcn_options_bk', $opts, false);
 			}
 			//Upgrading to 3.7
-			if($major == 3 && $minor < 7)
+			if(version_compare($version, '3.7.0', '<'))
 			{
 				//Now add post_root for all of the custom types
 				foreach($wp_post_types as $post_type)
@@ -181,81 +219,6 @@ class bcn_admin extends mtekk_admin
 					}
 				}
 			}
-			//If it was never installed, copy over default settings
-			if(!is_array($opts))
-			{
-				//Grab defaults from the breadcrumb_trail object
-				$opts = $this->breadcrumb_trail->opt;
-				//Add the options
-				$this->add_option('bcn_options', $opts);
-				$this->add_option('bcn_options_bk', $opts, false);
-				//Add the version, no need to autoload the db version
-				$this->add_option('bcn_version', $this->version, false);
-			}
-			//Loop through all of the post types in the array
-			foreach($wp_post_types as $post_type)
-			{
-				//We only want custom post types
-				//if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
-				if(!$post_type->_builtin)
-				{
-					//If the post type does not have settings in the options array yet, we need to load some defaults
-					if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
-					{
-						//Add the necessary option array members
-						$this->opt['post_' . $post_type->name . '_prefix'] = '';
-						$this->opt['post_' . $post_type->name . '_suffix'] = '';
-						$this->opt['post_' . $post_type->name . '_anchor'] = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
-						//Do type dependent tasks
-						if($post_type->hierarchical)
-						{
-							//Set post_root for hierarchical types
-							$this->opt['post_' . $post_type->name . '_root'] = get_option('page_on_front');
-						}
-						//If it is flat, we need a taxonomy selection
-						else
-						{
-							//Set post_root for flat types
-							$this->opt['post_' . $post_type->name . '_root'] = get_option('page_for_posts');
-							//Be safe and disable taxonomy display by default
-							$this->opt['post_' . $post_type->name . '_taxonomy_display'] = false;
-							//Loop through all of the possible taxonomies
-							foreach($wp_taxonomies as $taxonomy)
-							{
-								//Activate the first taxonomy valid for this post type and exit the loop
-								if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
-								{
-									$this->opt['post_' . $post_type->name . '_taxonomy_display'] = true;
-									$this->opt['post_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-			//We'll add our custom taxonomy stuff at this time
-			foreach($wp_taxonomies as $taxonomy)
-			{
-				//We only want custom taxonomies
-				//if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
-				if(!$taxonomy->_builtin)
-				{
-					//If the taxonomy does not have settings in the options array yet, we need to load some defaults
-					if(!array_key_exists($taxonomy->name . '_anchor', $opts))
-					{
-						$opts[$taxonomy->name . '_prefix'] = '';
-						$opts[$taxonomy->name . '_suffix'] = '';
-						$opts[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">',  ucwords(__($taxonomy->label))), 'breadcrumb_navxt');
-						$opts['archive_' . $taxonomy->name . '_prefix'] = '';
-						$opts['archive_' . $taxonomy->name . '_suffix'] = '';
-					}
-				}
-			}
-			//Always have to update the version
-			$this->update_option('bcn_version', $this->version);
-			//Store the options
-			$this->update_option('bcn_options', $opts);
 		}
 	}
 	/**
@@ -263,71 +226,17 @@ class bcn_admin extends mtekk_admin
 	 */
 	function opts_update()
 	{
-		global $wp_taxonomies, $wp_post_types;
+		//global $wp_taxonomies, $wp_post_types;
 		//Do some security related thigns as we are not using the normal WP settings API
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_options-options');
 		//Update local options from database
 		$this->opt = $this->get_option('bcn_options');
-		//Loop through all of the post types in the array
-		foreach($wp_post_types as $post_type)
-		{
-			//We only want custom post types
-			//if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
-			if(!$post_type->_builtin)
-			{
-				//If the post type does not have settings in the options array yet, we need to load some defaults
-				if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
-				{
-					//Add the necessary option array members
-					$this->opt['post_' . $post_type->name . '_prefix'] = '';
-					$this->opt['post_' . $post_type->name . '_suffix'] = '';
-					$this->opt['post_' . $post_type->name . '_anchor'] = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
-					//Do type dependent tasks
-					if($post_type->hierarchical)
-					{
-						//Set post_root for hierarchical types
-						$this->opt['post_' . $post_type->name . '_root'] = get_option('page_on_front');
-					}
-					//If it is flat, we need a taxonomy selection
-					else
-					{
-						//Set post_root for flat types
-						$this->opt['post_' . $post_type->name . '_root'] = get_option('page_for_posts');
-						//Loop through all of the possible taxonomies
-						foreach($wp_taxonomies as $taxonomy)
-						{
-							//Activate the first taxonomy valid for this post type and exit the loop
-							if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
-							{
-								$this->opt['post_' . $post_type->name . '_taxonomy_display'] = true;
-								$this->opt['post_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		//We'll add our custom taxonomy stuff at this time
-		foreach($wp_taxonomies as $taxonomy)
-		{
-			//We only want custom taxonomies
-			//if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
-			if(!$taxonomy->_builtin)
-			{
-				//If the taxonomy does not have settings in the options array yet, we need to load some defaults
-				if(!array_key_exists($taxonomy->name . '_anchor', $this->opt))
-				{
-					$this->opt[$taxonomy->name . '_prefix'] = '';
-					$this->opt[$taxonomy->name . '_suffix'] = '';
-					$this->opt[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">',  ucwords(__($taxonomy->label))), 'breadcrumb_navxt');
-					$this->opt['archive_' . $taxonomy->name . '_prefix'] = '';
-					$this->opt['archive_' . $taxonomy->name . '_suffix'] = '';
-				}
-			}
-		}
+		//Add custom post types
+		$this->find_posttypes($this->opt);
+		//Add custom taxonomy types
+		$this->find_taxonomies($this->opt);
 		//Update our backup options
 		$this->update_option('bcn_options_bk', $this->opt);
 		//Grab our incomming array (the data is dirty)
@@ -766,6 +675,84 @@ class bcn_admin extends mtekk_admin
 		<?php $this->import_form(); ?>
 		</div>
 		<?php
+	}
+	/**
+	 * Places settings into $opts array, if missing, for the registered post types
+	 * 
+	 * @param $opts
+	 */
+	function find_posttypes(&$opts)
+	{
+		global $wp_post_types;
+		//Loop through all of the post types in the array
+		foreach($wp_post_types as $post_type)
+		{
+			//We only want custom post types
+			//if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
+			if(!$post_type->_builtin)
+			{
+				//If the post type does not have settings in the options array yet, we need to load some defaults
+				if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
+				{
+					//Add the necessary option array members
+					$opts['post_' . $post_type->name . '_prefix'] = '';
+					$opts['post_' . $post_type->name . '_suffix'] = '';
+					$opts['post_' . $post_type->name . '_anchor'] = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
+					//Do type dependent tasks
+					if($post_type->hierarchical)
+					{
+						//Set post_root for hierarchical types
+						$opts['post_' . $post_type->name . '_root'] = get_option('page_on_front');
+					}
+					//If it is flat, we need a taxonomy selection
+					else
+					{
+						//Set post_root for flat types
+						$opts['post_' . $post_type->name . '_root'] = get_option('page_for_posts');
+						//Be safe and disable taxonomy display by default
+						$opts['post_' . $post_type->name . '_taxonomy_display'] = false;
+						//Loop through all of the possible taxonomies
+						foreach($wp_taxonomies as $taxonomy)
+						{
+							//Activate the first taxonomy valid for this post type and exit the loop
+							if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
+							{
+								$opts['post_' . $post_type->name . '_taxonomy_display'] = true;
+								$opts['post_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * Places settings into $opts array, if missing, for the registered taxonomies
+	 * 
+	 * @param $opts
+	 */
+	function find_taxonomies(&$opts)
+	{
+		global $wp_taxonomies;
+		//We'll add our custom taxonomy stuff at this time
+		foreach($wp_taxonomies as $taxonomy)
+		{
+			//We only want custom taxonomies
+			//if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
+			if(!$taxonomy->_builtin)
+			{
+				//If the taxonomy does not have settings in the options array yet, we need to load some defaults
+				if(!array_key_exists($taxonomy->name . '_anchor', $opts))
+				{
+					$opts[$taxonomy->name . '_prefix'] = '';
+					$opts[$taxonomy->name . '_suffix'] = '';
+					$opts[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">',  ucwords(__($taxonomy->label))), 'breadcrumb_navxt');
+					$opts['archive_' . $taxonomy->name . '_prefix'] = '';
+					$opts['archive_' . $taxonomy->name . '_suffix'] = '';
+				}
+			}
+		}
 	}
 	/**
 	 * This inserts the value into the option name, works around WP's stupid string bool
