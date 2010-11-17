@@ -219,6 +219,7 @@ class bcn_admin extends mtekk_admin
 					}
 				}
 			}
+			$this->opt = $opts;
 		}
 	}
 	/**
