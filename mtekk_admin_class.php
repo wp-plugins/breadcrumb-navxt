@@ -364,7 +364,11 @@ abstract class mtekk_admin
 		//Grab the database options
 		$opts = get_option($this->unique_prefix . '_options');
 		//Feed the just read options into the upgrade function
-		$this->opts_upgrade($opts);
+		$this->opts_upgrade($opts, get_option($this->unique_prefix . '_version'));
+		//Always have to update the version
+		update_option($this->unique_prefix . '_version', $this->version);
+		//Store the options
+		update_option($this->unique_prefix . '_options', $this->opt);
 		//Send the success/undo message
 		$this->message['updated fade'][] = __('Settings successfully migrated.', $this->identifier);
 		add_action('admin_notices', array($this, 'message'));
@@ -531,7 +535,7 @@ abstract class mtekk_admin
 		<p>
 			<label for="<?php echo $optid;?>"><?php echo $label;?></label>
 		</p>
-		<textarea rows="<?php echo $height;?>" class="large-text code" id="<?php echo $optid;?>" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]"><?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?></textarea><br />
+		<textarea rows="<?php echo $height;?>" <?php if($disable){echo 'disabled="disabled" class="large-text code disabled"';}else{echo 'class="large-text code"';}?> id="<?php echo $optid;?>" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]"><?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?></textarea><br />
 		<?php if($description !== ''){?><span class="setting-description"><?php echo $description;?></span><?php }
 	}
 	/**

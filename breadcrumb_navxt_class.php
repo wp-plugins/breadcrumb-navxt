@@ -184,7 +184,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	public $version = '3.6.74';
+	public $version = '3.6.80';
 	//An array of breadcrumbs
 	public $trail = array();
 	//The options
@@ -197,6 +197,16 @@ class bcn_breadcrumb_trail
 		//Initilize with default option values
 		$this->opt = array
 		(
+			//Should the mainsite be shown
+			'mainsite_display' => true,
+			//Title displayed when for the main site
+			'mainsite_title' => __('Home', 'breadcrumb_navxt'),
+			//The anchor template for the main site, this is global, two keywords are available %link% and %title%
+			'mainsite_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
+			//The prefix for mainsite breadcrumbs, placed inside of current_item prefix
+			'mainsite_prefix' => '',
+			//The prefix for mainsite breadcrumbs, placed inside of current_item prefix
+			'mainsite_suffix' => '',
 			//Should the home page be shown
 			'home_display' => true,
 			//Title displayed when is_home() returns true
@@ -207,9 +217,9 @@ class bcn_breadcrumb_trail
 			'blog_display' => true,
 			//The anchor template for the blog page only in static front page mode, this is global, two keywords are available %link% and %title%
 			'blog_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
-			//The prefix for page breadcrumbs, place on all page elements and inside of current_item prefix
+			//The prefix for home breadcrumbs, placed inside of current_item prefix
 			'home_prefix' => '',
-			//The suffix for page breadcrumbs, place on all page elements and inside of current_item suffix
+			//The suffix for home breadcrumbs, placed inside of current_item suffix
 			'home_suffix' => '',
 			//Separator that is placed between each item in the breadcrumb trial, but not placed before
 			//the first and not after the last breadcrumb
@@ -675,16 +685,14 @@ class bcn_breadcrumb_trail
 	{
 		global $post, $current_site;
 		//If we have a multi site and are not on the main site we may need to add a breadcrumb for the main site
-		if(/*$this->opt['mainsite_display'] &&*/ !is_main_site())
+		if($this->opt['mainsite_display'] && !is_main_site())
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb(get_bloginfo('name')/*$this->opt['home_title']*/, $this->opt['home_prefix'], $this->opt['home_suffix']));
-			//Deal with the anchor
-			//$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url());
+			$breadcrumb = $this->add(new bcn_breadcrumb(get_bloginfo('name'), $this->opt['home_prefix'], $this->opt['home_suffix']));
 			//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['mainsite_prefix'], $this->opt['mainsite_suffix']));
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['mainsite_title'], $this->opt['mainsite_prefix'], $this->opt['mainsite_suffix']));
 			//Deal with the anchor
-			$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url($current_site->blog_id));
+			$breadcrumb->set_anchor($this->opt['mainsite_anchor'], get_home_url($current_site->blog_id));
 		}
 		else
 		{
@@ -757,16 +765,16 @@ class bcn_breadcrumb_trail
 		if($this->opt['home_display'])
 		{
 			//If we have a multi site and are not on the main site we may need to add a breadcrumb for the main site
-			if(/*$this->opt['mainsite_display'] &&*/ !is_main_site())
+			if($this->opt['mainsite_display'] && !is_main_site())
 			{
 				//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-				$breadcrumb = $this->add(new bcn_breadcrumb(get_bloginfo('name')/*$this->opt['home_title']*/, $this->opt['home_prefix'], $this->opt['home_suffix']));
+				$breadcrumb = $this->add(new bcn_breadcrumb(get_bloginfo('name'), $this->opt['home_prefix'], $this->opt['home_suffix']));
 				//Deal with the anchor
 				$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url());
 				//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-				$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['mainsite_prefix'], $this->opt['mainsite_suffix']));
+				$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['mainsite_title'], $this->opt['mainsite_prefix'], $this->opt['mainsite_suffix']));
 				//Deal with the anchor
-				$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url($current_site->blog_id));
+				$breadcrumb->set_anchor($this->opt['mainsite_anchor'], get_home_url($current_site->blog_id));
 			}
 			else
 			{

@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.6.74
+Version: 3.6.80
 Author: John Havlik
 Author URI: http://mtekk.us/
 */
@@ -48,7 +48,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.6.74';
+	protected $version = '3.6.80';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -157,8 +157,9 @@ class bcn_admin extends mtekk_admin
 	 */
 	function opts_upgrade($opts, $version)
 	{
+		global $wp_post_types;
 		//If our version is not the same as in the db, time to update
-		if($db_version !== $this->version)
+		if($version !== $this->version)
 		{
 			//Upgrading from 3.4
 			if(version_compare($version, '3.4.0', '<'))
@@ -180,13 +181,21 @@ class bcn_admin extends mtekk_admin
 			{
 				//Added post_ prefix to avoid conflicts with custom taxonomies
 				$opts['post_page_prefix'] = $opts['page_prefix'];
+				unset($opts['page_prefix']);
 				$opts['post_page_suffix'] = $opts['page_suffix'];
+				unset($opts['page_suffix']);
 				$opts['post_page_anchor'] = $opts['page_anchor'];
+				unset($opts['page_anchor']);
 				$opts['post_post_prefix'] = $opts['post_prefix'];
+				unset($opts['post_prefix']);
 				$opts['post_post_suffix'] = $opts['post_suffix'];
+				unset($opts['post_suffix']);
 				$opts['post_post_anchor'] = $opts['post_anchor'];
+				unset($opts['post_anchor']);
 				$opts['post_post_taxonomy_display'] = $opts['post_taxonomy_display'];
+				unset($opts['post_taxonomy_display']);
 				$opts['post_post_taxonomy_type'] = $opts['post_taxonomy_type'];
+				unset($opts['post_taxonomy_type']);
 				//Update to non-autoload db version
 				$this->delete_option('bcn_version');
 				$this->add_option('bcn_version', $this->version, false);
@@ -195,6 +204,17 @@ class bcn_admin extends mtekk_admin
 			//Upgrading to 3.7
 			if(version_compare($version, '3.7.0', '<'))
 			{
+				//Add the new options for multisite
+				//Should the mainsite be shown
+				$opts['mainsite_display'] = true;
+				//Title displayed when for the main site
+				$opts['mainsite_title'] = __('Home', 'breadcrumb_navxt');
+				//The anchor template for the main site, this is global, two keywords are available %link% and %title%
+				$opts['mainsite_anchor'] = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
+				//The prefix for mainsite breadcrumbs, placed inside of current_item prefix
+				$opts['mainsite_prefix'] = '';
+				//The prefix for mainsite breadcrumbs, placed inside of current_item prefix
+				$opts['mainsite_suffix'] = '';
 				//Now add post_root for all of the custom types
 				foreach($wp_post_types as $post_type)
 				{
@@ -219,6 +239,7 @@ class bcn_admin extends mtekk_admin
 					}
 				}
 			}
+			//Save the passed in opts to the object's option array
 			$this->opt = $opts;
 		}
 	}
@@ -227,7 +248,6 @@ class bcn_admin extends mtekk_admin
 	 */
 	function opts_update()
 	{
-		//global $wp_taxonomies, $wp_post_types;
 		//Do some security related thigns as we are not using the normal WP settings API
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
@@ -430,12 +450,36 @@ class bcn_admin extends mtekk_admin
 						</td>
 					</tr>
 					<?php
-						$this->input_check(__('Blog Breadcrumb', 'breadcrumb_navxt'), 'blog_display', __('Place the blog breadcrumb in the trail.', 'breadcrumb_navxt'), ($this->get_option('show_on_front') !== "page"));
 						$this->input_text(__('Home Prefix', 'breadcrumb_navxt'), 'home_prefix', '32');
 						$this->input_text(__('Home Suffix', 'breadcrumb_navxt'), 'home_suffix', '32');
 						$this->input_text(__('Home Anchor', 'breadcrumb_navxt'), 'home_anchor', '64', false, __('The anchor template for the home breadcrumb.', 'breadcrumb_navxt'));
+						$this->input_check(__('Blog Breadcrumb', 'breadcrumb_navxt'), 'blog_display', __('Place the blog breadcrumb in the trail.', 'breadcrumb_navxt'), ($this->get_option('show_on_front') !== "page"));
 						$this->input_text(__('Blog Anchor', 'breadcrumb_navxt'), 'blog_anchor', '64', ($this->get_option('show_on_front') !== "page"), __('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'));
 					?>
+					<tr valign="top">
+						<th scope="row">
+							<?php _e('Main Site Breadcrumb', 'breadcrumb_navxt'); ?>						
+						</th>
+						<td>
+							<label>
+								<input name="bcn_options[mainsite_display]" type="checkbox" id="mainsite_display" <?php if(!is_multisite()){echo 'disabled="disabled" class="disabled"';}?> value="true" <?php checked(true, $this->opt['mainsite_display']); ?> />
+								<?php _e('Place the main site home breadcrumb in the trail in an multisite setup.', 'breadcrumb_navxt'); ?>				
+							</label><br />
+							<ul>
+								<li>
+									<label for="mainsite_title">
+										<?php _e('Main Site Home Title: ','breadcrumb_navxt');?>
+										<input type="text" name="bcn_options[mainsite_title]" id="mainsite_title" <?php if(!is_multisite()){echo 'disabled="disabled" class="disabled"';}?> value="<?php echo htmlentities($this->opt['mainsite_title'], ENT_COMPAT, 'UTF-8'); ?>" size="20" />
+									</label>
+								</li>
+							</ul>							
+						</td>
+					</tr>
+					<?php
+						$this->input_text(__('Main Site Home Prefix', 'breadcrumb_navxt'), 'mainsite_prefix', '32', !is_multisite(), __('Used for the main site home breadcrumb in an multisite setup', 'breadcrumb_navxt'));
+						$this->input_text(__('Main Site Home Suffix', 'breadcrumb_navxt'), 'mainsite_suffix', '32', !is_multisite(), __('Used for the main site home breadcrumb in an multisite setup', 'breadcrumb_navxt'));
+						$this->input_text(__('Main Site Home Anchor', 'breadcrumb_navxt'), 'mainsite_anchor', '64', !is_multisite(), __('The anchor template for the main site home breadcrumb, used only in multisite environments.', 'breadcrumb_navxt'));
+						?>
 				</table>
 			</fieldset>
 			<fieldset id="current" class="bcn_options">
