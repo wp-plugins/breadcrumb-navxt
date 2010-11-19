@@ -382,23 +382,23 @@ class bcn_breadcrumb_trail
 	 * 
 	 * This function fills breadcrumbs for any post taxonomy.
 	 * @param int $id The id of the post to figure out the taxonomy for.
+	 * @param sting $type The post type of the post to figure out the taxonomy for.
 	 */
-	function post_taxonomy($id)
+	function post_taxonomy($id, $type)
 	{
-		global $post;
 		//Check to see if breadcrumbs for the taxonomy of the post needs to be generated
-		if($this->opt['post_' . $post->post_type . '_taxonomy_display'])
+		if($this->opt['post_' . $type . '_taxonomy_display'])
 		{
 			//Check if we have a date 'taxonomy' request
-			if($this->opt['post_' . $post->post_type . '_taxonomy_type'] == 'date')
+			if($this->opt['post_' . $type . '_taxonomy_type'] == 'date')
 			{
 				$this->do_archive_by_date();
 			}
 			//Handle all hierarchical taxonomies, including categories
-			else if(is_taxonomy_hierarchical($this->opt['post_' . $post->post_type . '_taxonomy_type']))
+			else if(is_taxonomy_hierarchical($this->opt['post_' . $type . '_taxonomy_type']))
 			{
 				//Fill a temporary object with the terms
-				$bcn_object = get_the_terms($id, $this->opt['post_' . $post->post_type . '_taxonomy_type']);
+				$bcn_object = get_the_terms($id, $this->opt['post_' . $type . '_taxonomy_type']);
 				if(is_array($bcn_object))
 				{
 					//Now find which one has a parent, pick the first one that does
@@ -414,11 +414,11 @@ class bcn_breadcrumb_trail
 						}
 					}
 					//Fill out the term hiearchy
-					$this->term_parents($bcn_object[$bcn_use_term]->term_id, $this->opt['post_' . $post->post_type . '_taxonomy_type']);
+					$this->term_parents($bcn_object[$bcn_use_term]->term_id, $this->opt['post_' . $type . '_taxonomy_type']);
 				}
 			}
 			//Handle the use of hierarchical posts as the 'taxonomy'
-			else if(is_post_type_hierarchical($this->opt['post_' . $post->post_type . '_taxonomy_type']))
+			else if(is_post_type_hierarchical($this->opt['post_' . $type . '_taxonomy_type']))
 			{
 				//Done with the current item, now on to the parents
 				$bcn_frontpage = get_option('page_on_front');
@@ -431,7 +431,7 @@ class bcn_breadcrumb_trail
 			//Handle the rest of the taxonomies, including tags
 			else
 			{
-				$this->post_terms($id, $this->opt['post_' . $post->post_type . '_taxonomy_type']);
+				$this->post_terms($id, $this->opt['post_' . $type . '_taxonomy_type']);
 			}
 		}
 	}
@@ -553,7 +553,7 @@ class bcn_breadcrumb_trail
 		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, prefix, and suffix
 		$this->trail[] = new bcn_breadcrumb(get_the_title(), $this->opt['post_' . $post->post_type . '_prefix'], $this->opt['post_' . $post->post_type . '_suffix']);
 		//Handle the post's taxonomy
-		$this->post_taxonomy($post->ID);
+		$this->post_taxonomy($post->ID, $post->post_type);
 	}
 	/**
 	 * A Breadcrumb Trail Filling Function
@@ -567,8 +567,8 @@ class bcn_breadcrumb_trail
 		$this->trail[] = new bcn_breadcrumb(get_the_title(), $this->opt['attachment_prefix'], $this->opt['attachment_suffix']);
 		//Get the parent's information
 		$parent = get_post($post->post_parent);
-		//We need to treat post and page attachment hierachy differently
-		if($parent->post_type == 'page')
+		//We need to treat flat and hiearchical post attachment hierachies differently
+		if(is_post_type_hierarchical($parent->post_type))
 		{
 			//Grab the page on front ID for post_parents
 			$frontpage = get_option('page_on_front');
@@ -583,7 +583,7 @@ class bcn_breadcrumb_trail
 			//Assign the anchor properties
 			$breadcrumb->set_anchor($this->opt['post_post_anchor'], get_permalink($post->post_parent));
 			//Handle the post's taxonomy
-			$this->post_taxonomy($post->post_parent);
+			$this->post_taxonomy($post->post_parent, $parent->post_type);
 		}
 	}
 	/**
