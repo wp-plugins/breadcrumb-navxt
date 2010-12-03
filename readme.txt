@@ -1,9 +1,10 @@
 === Breadcrumb NavXT ===
 Contributors: mtekk, hakre
-Tags: breadcrumb, navigation, widget
+Tags: breadcrumb, breadcrumbs, trail, navigation, menu, widget
+Dontate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XEU783BR8U&lc=US&item_name=Breadcrumb%20NavXT%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Requires at least: 3.0
-Tested up to: 3.0.1
-Stable tag: 3.6.0
+Tested up to: 3.1
+Stable tag: 3.7.0
 Adds breadcrumb navigation showing the visitor's path to their current location.
 
 == Description ==
@@ -32,6 +33,16 @@ Don't see your language on the list? Feel free to translate Breadcrumb NavXT and
 Please visit [Breadcrumb NavXT's](http://mtekk.us/code/breadcrumb-navxt/#installation "Go to Breadcrumb NavXT's project page's installation section.") project page for installation and usage instructions.
 
 == Changelog ==
+= 3.7.0 =
+* New feature: Support for “global”/network wide breadcrumb trails in networked setups of WordPress 3.0.
+* New feature: Can use any hierarchical post type as a hierarchy for flat post types.
+* New feature: Users are now warned if settings are out of date, allowed to do a one click settings migration.
+* New feature: Users can now control if a post type uses the “posts page” in it’s hierarchy or not.
+* Bug fix: Breadcrumb trails for attachments work properly now for custom post types.
+* Bug fix: Users can now set custom post types to have a page hierarchy through the settings page.
+* Bug fix: Fixed issues where the PHP version check did not work correctly.
+* Bug fix: Fixed issue where all settings would get reset on “clean” 3.6.0 installs on plugin activation.
+* Bug fix: Fixed issue when a static front page is specified but the post page is not.
 = 3.6.0 =
 * New feature: Vastly improved support for WordPress custom post types.
 * New feature: Can now restrict breadcrumb trail output for the front page in the included Widget.
