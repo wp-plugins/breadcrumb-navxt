@@ -168,6 +168,8 @@ abstract class mtekk_admin
 	{
 		//Remove the option array setting
 		delete_option($this->unique_prefix . '_options');
+		//Remove the option backup array setting
+		delete_option($this->unique_prefix . '_options_bk');
 		//Remove the version setting
 		delete_option($this->unique_prefix . '_version');
 	}
@@ -377,13 +379,13 @@ abstract class mtekk_admin
 	 * contextual_help action hook function
 	 * 
 	 * @param  string $contextual_help
-	 * @param  string $screen
+	 * @param  string $screen_id
 	 * @return string
 	 */
-	function contextual_help($contextual_help, $screen)
+	function contextual_help($contextual_help, $screen_id)
 	{
-		//Add contextual help on current screen, keep compatibility with 2.8, 2.9 and 3.0
-		if($screen->base == 'settings_page_' . $this->identifier || $screen == 'settings_page_' . $this->identifier)
+		//Add contextual help on current screen
+		if($screen_id == 'settings_page_' . $this->identifier)
 		{
 			$contextual_help = $this->_get_contextual_help();
 			$this->_has_contextual_help = true;
