@@ -26,6 +26,9 @@ Author URI: http://mtekk.us/
 //Do a PHP version check, require 5.2 or newer
 if(version_compare(PHP_VERSION, '5.2.0', '<'))
 {
+	//Silently deactivate plugin, keeps admin usable
+	deactivate_plugins(plugin_basename(__FILE__), true);
+	//Spit out die messages
 	wp_die(sprintf(__('Your PHP version is too old, please upgrade to a newer version. Your version is %s, this plugin requires %s', 'breadcrumb_navxt'), phpversion(), '5.2.0'));
 }
 //Include the breadcrumb class
