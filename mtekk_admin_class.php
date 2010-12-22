@@ -56,12 +56,16 @@ abstract class mtekk_admin
 		//Return a valid Undo anchor
 		return ' <a title="' . $title . '" href="' . $url . '">' . __('Undo', $this->identifier) . '</a>';
 	}
-	function upgrade_anchor($title = '')
+	function upgrade_anchor($title = '', $text = '')
 	{
 		//Assemble our url, nonce and all
 		$url = wp_nonce_url($this->admin_url() . '&' . $this->unique_prefix . '_admin_upgrade=true', $this->unique_prefix . '_admin_upgrade');
+		if($text == '')
+		{
+			$text = __('Migrate now.', $this->identifier);
+		}
 		//Return a valid Undo anchor
-		return ' <a title="' . $title . '" href="' . $url . '">' . __('Migrate now.', $this->identifier) . '</a>';
+		return ' <a title="' . $title . '" href="' . $url . '">' . $text . '</a>';
 	}
 	function init()
 	{
@@ -179,13 +183,17 @@ abstract class mtekk_admin
 	function version_check($version)
 	{
 		//Do a quick version check
-		list($plug_major, $plug_minor, $plug_release) = explode('.', $this->version);
-		list($major, $minor, $release) = explode('.', $version);
-		//Check if we have a newer version than the DB
-		if($major < $plug_major || ($major == $plug_major && $minor < $plug_minor) || ($major == $plug_major && $minor == $plug_minor && $release < $plug_release))
+		if(version_compare($version, $this->version, '<'))
 		{
-			//Throw an error since we could not load the file for various reasons
-			$this->message['error'][] = __('Your settings are out of date.', $this->identifier) . $this->upgrade_anchor(__('Migrate the settings now.', $this->identifier));
+			//Throw an error since the DB version is out of date
+			$this->message['error'][] = __('Your settings are out of date.', $this->identifier) . $this->upgrade_anchor(__('Migrate the settings now.', $this->identifier), __('Migrate now.', $this->identifier));
+			//Output any messages that there may be
+			$this->message();
+		}
+		else if(!is_array($this->opt))
+		{
+			//Throw an error since it appears the options were never registered
+			$this->message['error'][] = __('Your plugin install is incomplete.', $this->identifier) . $this->upgrade_anchor(__('Load default settings now.', $this->identifier), __('Complete now.', $this->identifier));
 			//Output any messages that there may be
 			$this->message();
 		}
@@ -365,14 +373,24 @@ abstract class mtekk_admin
 		check_admin_referer($this->unique_prefix . '_admin_upgrade');
 		//Grab the database options
 		$opts = get_option($this->unique_prefix . '_options');
-		//Feed the just read options into the upgrade function
-		$this->opts_upgrade($opts, get_option($this->unique_prefix . '_version'));
-		//Always have to update the version
-		update_option($this->unique_prefix . '_version', $this->version);
-		//Store the options
-		update_option($this->unique_prefix . '_options', $this->opt);
-		//Send the success/undo message
-		$this->message['updated fade'][] = __('Settings successfully migrated.', $this->identifier);
+		if(is_array($opts))
+		{
+			//Feed the just read options into the upgrade function
+			$this->opts_upgrade($opts, get_option($this->unique_prefix . '_version'));
+			//Always have to update the version
+			update_option($this->unique_prefix . '_version', $this->version);
+			//Store the options
+			update_option($this->unique_prefix . '_options', $this->opt);
+			//Send the success message
+			$this->message['updated fade'][] = __('Settings successfully migrated.', $this->identifier);
+		}
+		else
+		{
+			//Run the install script
+			$this->install();
+			//Send the success message
+			$this->message['updated fade'][] = __('Default settings successfully installed.', $this->identifier);
+		}
 		add_action('admin_notices', array($this, 'message'));
 	}
 	/**

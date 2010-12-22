@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.7.0
+Version: 3.7.50
 Author: John Havlik
 Author URI: http://mtekk.us/
 */
@@ -54,7 +54,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.7.0';
+	protected $version = '3.7.50';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -167,7 +167,7 @@ class bcn_admin extends mtekk_admin
 		//If our version is not the same as in the db, time to update
 		if($version !== $this->version)
 		{
-			//Upgrading from 3.4
+			//Upgrading to 3.4
 			if(version_compare($version, '3.4.0', '<'))
 			{
 				//Inline upgrade of the tag setting
@@ -581,8 +581,6 @@ class bcn_admin extends mtekk_admin
 								}
 							}
 						}
-						//Let's make sure that the newly available options are "registered" in our db
-						$this->update_option('bcn_options', $this->opt);
 					}?>
 			<fieldset id="post_<?php echo $post_type->name ?>" class="bcn_options">
 				<h3><?php echo $post_type->labels->singular_name; ?></h3>
@@ -674,8 +672,6 @@ class bcn_admin extends mtekk_admin
 						$this->opt[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
 						$this->opt['archive_' . $taxonomy->name . '_prefix'] = '';
 						$this->opt['archive_' . $taxonomy->name . '_suffix'] = '';
-						//Let's make sure that the newly available options are "registered" in our db
-						$this->update_option('bcn_options', $this->opt);
 					}
 				?>
 			<fieldset id="<?php echo $taxonomy->name; ?>" class="bcn_options">
