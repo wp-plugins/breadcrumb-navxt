@@ -716,8 +716,8 @@ class bcn_breadcrumb_trail
 		global $post, $wp_query, $wp_taxonomies, $current_site;
 		//Simmilar to using $post, but for things $post doesn't cover
 		$type = $wp_query->get_queried_object();
-		//We need to do special things for custom post types and their archives
-		if((is_singular() || is_archive()) && $type->post_type != 'post' && $type->post_type != 'page')
+		//We need to do special things for custom post types and their archives, but not author archives
+		if((is_singular() || is_archive() && !is_author()) && $type->post_type != 'post' && $type->post_type != 'page')
 		{
 			//This will assign a ID for root page of a custom post
 			if(is_numeric($this->opt['post_' . $type->post_type . '_root']))
