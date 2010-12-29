@@ -528,7 +528,11 @@ abstract class mtekk_admin
 	 */
 	function input_text($label, $option, $width = '32', $disable = false, $description = '')
 	{
-		$optid = $this->get_valid_id($option);?>
+		$optid = $this->get_valid_id($option);
+		if($disable)
+		{?>
+			<input type="hidden" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" value="<?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?>" />
+		<?php } ?>
 		<tr valign="top">
 			<th scope="row">
 				<label for="<?php echo $optid;?>"><?php echo $label;?></label>

@@ -184,7 +184,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	public $version = '3.7.0';
+	public $version = '3.7.51';
 	//An array of breadcrumbs
 	public $trail = array();
 	//The options
@@ -707,6 +707,17 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
+	 * Determines if a post type is a built in type or not
+	 * 
+	 * @param string $post_type the name of the post type
+	 * @return bool
+	 */
+	function is_builtin($post_type)
+	{
+		$type = get_post_type_object($post_type);
+		return isset($type->_builtin);
+	}
+	/**
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for the home page.
@@ -716,16 +727,20 @@ class bcn_breadcrumb_trail
 		global $post, $wp_query, $wp_taxonomies, $current_site;
 		//Simmilar to using $post, but for things $post doesn't cover
 		$type = $wp_query->get_queried_object();
-		//We need to do special things for custom post types and their archives, but not author archives
-		if((is_singular() || is_archive() && !is_author()) && $type->post_type != 'post' && $type->post_type != 'page')
+		//We need to do special things for custom post types
+		if(is_singular() && !$this->is_builtin($type->post_type))
 		{
 			//This will assign a ID for root page of a custom post
 			if(is_numeric($this->opt['post_' . $type->post_type . '_root']))
 			{
 				$posts_id = $this->opt['post_' . $type->post_type . '_root'];
 			}
+		}
+		//We need to do special things for custom post type archives, but not author archives
+		else if(is_archive() && !is_author())
+		{
 			//This will assign a ID for root page of a custom post's taxonomy archive
-			else if(is_numeric($this->opt['post_' . $wp_taxonomies[$type->taxonomy]->object_type[0] . '_root']))
+			if(is_numeric($this->opt['post_' . $wp_taxonomies[$type->taxonomy]->object_type[0] . '_root']))
 			{
 				$posts_id = $this->opt['post_' . $wp_taxonomies[$type->taxonomy]->object_type[0] . '_root'];
 			}

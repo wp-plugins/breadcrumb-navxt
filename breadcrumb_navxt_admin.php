@@ -268,6 +268,9 @@ class bcn_admin extends mtekk_admin
 		$this->update_option('bcn_options_bk', $this->opt);
 		//Grab our incomming array (the data is dirty)
 		$input = $_POST['bcn_options'];
+		//We have two "permi" variables
+		$input['post_page_root'] = get_option('page_on_front');
+		$input['post_post_root'] = get_option('page_for_posts');
 		//Loop through all of the existing options (avoids random setting injection)
 		foreach($this->opt as $option => $value)
 		{
@@ -294,8 +297,23 @@ class bcn_admin extends mtekk_admin
 		}
 		//Commit the option changes
 		$this->update_option('bcn_options', $this->opt);
-		//Let the user know everything went ok
-		$this->message['updated fade'][] = __('Settings successfully saved.', $this->identifier) . $this->undo_anchor(__('Undo the options save.', $this->identifier));
+		//Check if known settings match attempted save
+		if(count(array_diff_key($input, $this->opt)) == 0)
+		{
+			//Let the user know everything went ok
+			$this->message['updated fade'][] = __('Settings successfully saved.', $this->identifier) . $this->undo_anchor(__('Undo the options save.', $this->identifier));
+		}
+		else
+		{
+			//Let the user know the following were not saved
+			$this->message['updated fade'][] = __('Some settings were not saved.', $this->identifier) . $this->undo_anchor(__('Undo the options save.', $this->identifier));
+			$temp = __('The following settings were not saved:', $this->identifier);
+			foreach(array_diff_key($input, $this->opt) as $setting => $value)
+			{
+				$temp .= '<br />' . $setting;
+			}
+			$this->message['updated fade'][] = $temp . '<br />' . sprintf(__('Please include this message in your %sbug report%s.', $this->identifier),'<a title="' . __('Go to the Breadcrumb NavXT support post for your version.', 'breadcrumb_navxt') . '" href="http://mtekk.us/archives/wordpress/plugins-wordpress/breadcrumb-navxt-' . $this->version . '">', '</a>');
+		}
 		add_action('admin_notices', array($this, 'message'));
 	}
 	/**
@@ -482,6 +500,7 @@ class bcn_admin extends mtekk_admin
 						</td>
 					</tr>
 					<?php
+						if(!is_multisite()){?><input type="hidden" name="bcn_options[mainsite_title]" value="<?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?>" /><?php }
 						$this->input_text(__('Main Site Home Prefix', 'breadcrumb_navxt'), 'mainsite_prefix', '32', !is_multisite(), __('Used for the main site home breadcrumb in an multisite setup', 'breadcrumb_navxt'));
 						$this->input_text(__('Main Site Home Suffix', 'breadcrumb_navxt'), 'mainsite_suffix', '32', !is_multisite(), __('Used for the main site home breadcrumb in an multisite setup', 'breadcrumb_navxt'));
 						$this->input_text(__('Main Site Home Anchor', 'breadcrumb_navxt'), 'mainsite_anchor', '64', !is_multisite(), __('The anchor template for the main site home breadcrumb, used only in multisite environments.', 'breadcrumb_navxt'));
@@ -552,7 +571,7 @@ class bcn_admin extends mtekk_admin
 				if(!$post_type->_builtin)
 				{
 					//If the post type does not have settings in the options array yet, we need to load some defaults
-					if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
+					if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt) || !$post_type->hierarchical && !array_key_exists('post_' . $post_type->name . '_taxonomy_type', $this->opt))
 					{
 						//Add the necessary option array members
 						$this->opt['post_' . $post_type->name . '_prefix'] = '';
@@ -730,7 +749,7 @@ class bcn_admin extends mtekk_admin
 	 */
 	function find_posttypes(&$opts)
 	{
-		global $wp_post_types;
+		global $wp_post_types, $wp_taxonomies;
 		//Loop through all of the post types in the array
 		foreach($wp_post_types as $post_type)
 		{
@@ -739,7 +758,7 @@ class bcn_admin extends mtekk_admin
 			if(!$post_type->_builtin)
 			{
 				//If the post type does not have settings in the options array yet, we need to load some defaults
-				if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt))
+				if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt) || !$post_type->hierarchical && !array_key_exists('post_' . $post_type->name . '_taxonomy_type', $this->opt))
 				{
 					//Add the necessary option array members
 					$opts['post_' . $post_type->name . '_prefix'] = '';
