@@ -1,6 +1,6 @@
 <?php
 /*  
-	Copyright 2009-2010  John Havlik  (email : mtekkmonkey@gmail.com)
+	Copyright 2009-2011  John Havlik  (email : mtekkmonkey@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -553,7 +553,7 @@ abstract class mtekk_admin
 	 * @param bool $disable [optional]
 	 * @param string $description [optional]
 	 */
-	function textbox($label, $option, $rows = '3', $disable = false, $description = '')
+	function textbox($label, $option, $height = '3', $disable = false, $description = '')
 	{
 		$optid = $this->get_valid_id($option);?>
 		<p>
@@ -561,6 +561,33 @@ abstract class mtekk_admin
 		</p>
 		<textarea rows="<?php echo $height;?>" <?php if($disable){echo 'disabled="disabled" class="large-text code disabled"';}else{echo 'class="large-text code"';}?> id="<?php echo $optid;?>" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]"><?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?></textarea><br />
 		<?php if($description !== ''){?><span class="setting-description"><?php echo $description;?></span><?php }
+	}
+	/**
+	 * This will output a well formed tiny mce ready textbox
+	 * 
+	 * @param string $label
+	 * @param string $option
+	 * @param string $rows [optional]
+	 * @param bool $disable [optional]
+	 * @param string $description [optional]
+	 */
+	function tinymce($label, $option, $height = '3', $disable = false, $description = '')
+	{
+		$optid = $this->get_valid_id($option);
+		if($disable)
+		{?>
+			<input type="hidden" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" value="<?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?>" />
+		<?php } ?>
+		<tr valign="top">
+			<th scope="row">
+				<label for="<?php echo $optid;?>"><?php echo $label;?></label>
+			</th>
+			<td>
+				<textarea rows="<?php echo $height;?>" <?php if($disable){echo 'disabled="disabled" class="mtekk_mce disabled"';}else{echo 'class="mtekk_mce"';}?> id="<?php echo $optid;?>" name="<?php echo $this->unique_prefix . '_options[' . $option;?>]"><?php echo htmlentities($this->opt[$option], ENT_COMPAT, 'UTF-8');?></textarea><br />
+				<?php if($description !== ''){?><span class="setting-description"><?php echo $description;?></span><?php }?>
+			</td>
+		</tr>
+	<?php
 	}
 	/**
 	 * This will output a well formed table row for a checkbox input
