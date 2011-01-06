@@ -731,8 +731,8 @@ class bcn_breadcrumb_trail
 				$posts_id = $this->opt['post_' . $type->post_type . '_root'];
 			}
 		}
-		//We need to do special things for custom post type archives, but not author archives
-		else if(is_archive() && !is_author())
+		//We need to do special things for custom post type archives, but not author or date archives
+		else if(is_archive() && !is_author() && !is_date())
 		{
 			//This will assign a ID for root page of a custom post's taxonomy archive
 			if(is_numeric($this->opt['post_' . $wp_taxonomies[$type->taxonomy]->object_type[0] . '_root']))
@@ -874,8 +874,13 @@ class bcn_breadcrumb_trail
 		//For archives
 		else if(is_archive())
 		{
-			//For taxonomy based archives, had to add the two specifics in to overcome WordPress bug
-			if(is_tax() || is_category() || is_tag())
+			//For date based archives
+			if(is_date())
+			{
+				$this->do_archive_by_date();
+			}
+			//For taxonomy based archives, aka everything else
+			else
 			{
 				//For hierarchical taxonomy based archives
 				if(is_taxonomy_hierarchical($queried_object->taxonomy))
@@ -887,11 +892,6 @@ class bcn_breadcrumb_trail
 				{
 					$this->do_archive_by_term_flat();
 				}
-			}
-			//For date based archives
-			else
-			{
-				$this->do_archive_by_date();
 			}
 		}
 		//For 404 pages
