@@ -35,6 +35,8 @@ abstract class mtekk_admin
 	protected $_has_contextual_help = false;
 	function __construct()
 	{
+		//We set the plugin basename here, could manually set it
+		$this->plugin_basename = plugin_basename(__FILE__);
 		//Admin Init Hook
 		add_action('admin_init', array($this, 'init'));
 		//WordPress Admin interface hook
@@ -643,8 +645,13 @@ abstract class mtekk_admin
 	 * @param string $description [optional]
 	 * @return 
 	 */
-	function input_select($label, $option, $values, $disable = false, $description = '')
+	function input_select($label, $option, $values, $disable = false, $description = '', $titles = false)
 	{
+		//If we don't have titles passed in, we'll use option names as values
+		if(!$titles)
+		{
+			$titles = $values;
+		}
 		$optid = $this->get_valid_id($option);?>
 		<tr valign="top">
 			<th scope="row">
@@ -652,7 +659,7 @@ abstract class mtekk_admin
 			</th>
 			<td>
 				<select name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" id="<?php echo $optid;?>" <?php if($disable){echo 'disabled="disabled" class="disabled"';}?>>
-					<?php $this->select_options($option, $values); ?>
+					<?php $this->select_options($option, $titles, $values); ?>
 				</select><br />
 				<?php if($description !== ''){?><span class="setting-description"><?php echo $description;?></span><?php }?>
 			</td>
@@ -660,27 +667,21 @@ abstract class mtekk_admin
 	<?php
 	}
 	/**
-	 * Displays wordpress options as <seclect> options defaults to true/false
+	 * Displays wordpress options as <seclect>
 	 *
 	 * @param string $optionname name of wordpress options store
 	 * @param array $options array of names of options that can be selected
 	 * @param array $exclude[optional] array of names in $options array to be excluded
 	 */
-	function select_options($optionname, $options, $exclude = array())
+	function select_options($optionname, $options, $values, $exclude = array())
 	{
 		$value = $this->opt[$optionname];
-		//First output the current value
-		if($value)
-		{
-			printf('<option>%s</option>', $value);
-		}
 		//Now do the rest
-		foreach($options as $option)
+		foreach($options as $key => $option)
 		{
-			//Don't want multiple occurance of the current value
-			if($option != $value && !in_array($option, $exclude))
+			if(!in_array($option, $exclude))
 			{
-				printf('<option>%s</option>', $option);
+				printf('<option value="%s" %s>%s</option>', $values[$key], selected(true, ($value == $values[$key]), false), $option);
 			}
 		}
 	}
