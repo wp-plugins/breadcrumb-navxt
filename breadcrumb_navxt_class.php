@@ -1066,7 +1066,7 @@ class bcn_breadcrumb_trail
 			echo $credits . $trail_str;
 		}
 	}
-	function nested_loop($linked, $tag)
+	function nested_loop($linked, $tag, $mode)
 	{
 		//Grab the current breadcrumb from the trail, move the iterator forward one
 		if(list($key, $breadcrumb) = each($this->trail))
@@ -1082,7 +1082,7 @@ class bcn_breadcrumb_trail
 				//Trim the breadcrumb's title
 				$breadcrumb->title_trim($this->opt['max_title_length']);
 			}
-			if($mode = 'rdfa')	
+			if($mode === 'rdfa')	
 			{
 				return sprintf('%1$s<%2$s rel="v:child"><%2$s typeof="v:Breadcrumb">%3$s%4$s</%2$s></%2$s>', $this->opt['separator'], $tag, $breadcrumb->assemble($linked), $this->nested_loop($linked, $tag, $mode));
 			}
@@ -1120,7 +1120,7 @@ class bcn_breadcrumb_trail
 			//Trim the breadcrumb's title
 			$breadcrumb->title_trim($this->opt['max_title_length']);
 		}
-		if($mode = 'rdfa')	
+		if($mode === 'rdfa')	
 		{
 			//Start up the recursive engine
 			$trail_str = sprintf('<%1$s typeof="v:Breadcrumb">%2$s %3$s</%1$s>', $tag, $breadcrumb->assemble($linked), $this->nested_loop($linked, $tag, $mode));

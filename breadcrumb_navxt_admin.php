@@ -963,7 +963,7 @@ function bcn_display_list($return = false, $linked = true, $reverse = false)
  * @param string $tag[optional] The tag to use for the nesting
  * @param string $mode[optional] Whether to follow the rdfa or Microdata format
  */
-function display_nested($return = false, $linked = true, $tag = 'span', $mode = 'rdfa')
+function bcn_display_nested($return = false, $linked = true, $tag = 'span', $mode = 'rdfa')
 {
 	global $bcn_admin;
 	return $bcn_admin->display_nested($return, $linked, $tag, $mode);

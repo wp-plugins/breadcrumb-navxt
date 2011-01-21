@@ -80,7 +80,7 @@ class bcn_widget extends WP_Widget
 	}
 	function form($instance)
 	{
-		$instance = wp_parse_args((array) $instance, array('title' => '', 'list' => false, 'linked' => true, 'reverse' => false));?>
+		$instance = wp_parse_args((array) $instance, array('title' => '', 'type' => 'plain', 'linked' => true, 'reverse' => false));?>
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>"> <?php _e('Title:'); ?></label>
 			<input class="widefat" type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" value="<?php echo esc_attr($instance['title']);?>" />
@@ -91,7 +91,7 @@ class bcn_widget extends WP_Widget
 				<option value="list" <?php selected('list', $instance['type']);?>><?php _e('List'); ?></option>
 				<option value="rdfa" <?php selected('rdfa', $instance['type']);?>><?php _e('RDFa'); ?></option>
 				<option value="microformat" <?php selected('microformat', $instance['type']);?>><?php _e('Microformat'); ?></option>
-				<option value="plain" <?php selected('Plane', $instance['type']);?>><?php _e('Plain'); ?></option>
+				<option value="plain" <?php selected('plain', $instance['type']);?>><?php _e('Plain'); ?></option>
 			</select>
 		</p>
 		<p>
