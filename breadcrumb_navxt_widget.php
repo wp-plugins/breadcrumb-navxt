@@ -22,7 +22,6 @@ class bcn_widget extends WP_Widget
 	function __construct()
 	{
 		$ops = array('classname' => 'widget_breadcrumb_navxt', 'description' => __('Adds a breadcrumb trail to your sidebar'));
-		//We're going to be a bit evil here and do things the PHP5 way
 		parent::__construct('bcn_widget', 'Breadcrumb NavXT', $ops);
 	}
 	function widget($args, $instance)
@@ -40,12 +39,26 @@ class bcn_widget extends WP_Widget
 			echo $before_title . $instance['title'] . $after_title;
 		}
 		//We'll want to switch between the two breadcrumb output types
-		if($instance['list'] == true)
+		if($instance['type'] == 'list')
 		{
 			//Display the list output breadcrumb
-			echo '<ul class="breadcrumb_trail">';
+			echo '<ol class="breadcrumb_trail breadcrumbs">';
 			bcn_display_list(false, $instance['linked'], $instance['reverse']);
-			echo '</ul>';
+			echo '</ol>';
+		}
+		else if($instance['type'] == 'rdfa')
+		{
+			//Display the list output breadcrumb
+			echo '<div xmlns:v="http://rdf.data-vocabulary.org/#">';
+			bcn_display_nested(false, $instance['linked'], 'span', 'rdfa');
+			echo '</div>';
+		}
+		else if($instance['type'] == 'microformat')
+		{
+			//Display the list output breadcrumb
+			echo '<div itemscope itemtype="http://data-vocabulary.org/Breadcrumb">';
+			bcn_display_nested(false, $instance['linked'], 'span', 'microformat');
+			echo '</div>';
 		}
 		else
 		{
@@ -59,7 +72,7 @@ class bcn_widget extends WP_Widget
 	{
 		//Filter out anything that could be invalid
 		$old_instance['title'] = strip_tags($new_instance['title']);
-		$old_instance['list'] = isset($new_instance['list']);
+		$old_instance['type'] = strip_tags($new_instance['type']);
 		$old_instance['linked'] = isset($new_instance['linked']);
 		$old_instance['reverse'] = isset($new_instance['reverse']);
 		$old_instance['front'] = isset($new_instance['front']);
@@ -73,8 +86,15 @@ class bcn_widget extends WP_Widget
 			<input class="widefat" type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" value="<?php echo esc_attr($instance['title']);?>" />
 		</p>
 		<p>
-			<input class="checkbox" type="checkbox" name="<?php echo $this->get_field_name('list'); ?>" id="<?php echo $this->get_field_id('list'); ?>" value="true" <?php checked(true, $instance['list']);?> />
-			<label for="<?php echo $this->get_field_id('list'); ?>"> <?php _e('Output trail as a list'); ?></label><br />
+			<label for="<?php echo $this->get_field_id('type'); ?>"> <?php _e('Output trail as:'); ?></label>
+			<select name="<?php echo $this->get_field_name('type'); ?>" id="<?php echo $this->get_field_id('type'); ?>">
+				<option value="list" <?php selected('list', $instance['type']);?>><?php _e('List'); ?></option>
+				<option value="rdfa" <?php selected('rdfa', $instance['type']);?>><?php _e('RDFa'); ?></option>
+				<option value="microformat" <?php selected('microformat', $instance['type']);?>><?php _e('Microformat'); ?></option>
+				<option value="plain" <?php selected('Plane', $instance['type']);?>><?php _e('Plain'); ?></option>
+			</select>
+		</p>
+		<p>
 			<input class="checkbox" type="checkbox" name="<?php echo $this->get_field_name('linked'); ?>" id="<?php echo $this->get_field_id('linked'); ?>" value="true" <?php checked(true, $instance['linked']);?> />
 			<label for="<?php echo $this->get_field_id('linked'); ?>"> <?php _e('Link the breadcrumbs'); ?></label><br />
 			<input class="checkbox" type="checkbox" name="<?php echo $this->get_field_name('reverse'); ?>" id="<?php echo $this->get_field_id('reverse'); ?>" value="true" <?php checked(true, $instance['reverse']);?> />
