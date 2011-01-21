@@ -587,6 +587,8 @@ class bcn_admin extends mtekk_admin
 						{
 							//Set post_root for flat types
 							$this->opt['post_' . $post_type->name . '_root'] = get_option('page_for_posts');
+							//Default to not displaying a taxonomy
+							$this->opt['post_' . $post_type->name . '_taxonomy_display'] = false;
 							//Loop through all of the possible taxonomies
 							foreach($wp_taxonomies as $taxonomy)
 							{
@@ -599,9 +601,8 @@ class bcn_admin extends mtekk_admin
 								}
 							}
 							//If there are no valid taxonomies for this type, we default to not displaying taxonomies for this post type
-							if(!isset($this->opt['post_' . $post_type->name . '_taxonomy_display']))
+							if(!isset($this->opt['post_' . $post_type->name . '_taxonomy_type']))
 							{
-								$this->opt['post_' . $post_type->name . '_taxonomy_display'] = false;
 								$this->opt['post_' . $post_type->name . '_taxonomy_type'] = 'date';
 							}
 						}
@@ -793,9 +794,8 @@ class bcn_admin extends mtekk_admin
 							}
 						}
 						//If there are no valid taxonomies for this type, we default to not displaying taxonomies for this post type
-						if(!isset($opts['post_' . $post_type->name . '_taxonomy_display']))
+						if(!isset($opts['post_' . $post_type->name . '_taxonomy_type']))
 						{
-							$opts['post_' . $post_type->name . '_taxonomy_display'] = false;
 							$opts['post_' . $post_type->name . '_taxonomy_type'] = 'date';
 						}
 					}
