@@ -494,13 +494,13 @@ class bcn_admin extends mtekk_admin
 									<label for="mainsite_title">
 										<?php _e('Main Site Home Title: ','breadcrumb_navxt');?>
 										<input type="text" name="bcn_options[mainsite_title]" id="mainsite_title" <?php if(!is_multisite()){echo 'disabled="disabled" class="disabled"';}?> value="<?php echo htmlentities($this->opt['mainsite_title'], ENT_COMPAT, 'UTF-8'); ?>" size="20" />
+										<?php if(!is_multisite()){?><input type="hidden" name="bcn_options[mainsite_title]" value="<?php echo htmlentities($this->opt['mainsite_title'], ENT_COMPAT, 'UTF-8');?>" /><?php } ?>
 									</label>
 								</li>
 							</ul>							
 						</td>
 					</tr>
 					<?php
-						if(!is_multisite()){?><input type="hidden" name="bcn_options[mainsite_title]" value="<?php echo htmlentities($this->opt['mainsite_title'], ENT_COMPAT, 'UTF-8');?>" /><?php }
 						$this->input_text(__('Main Site Home Prefix', 'breadcrumb_navxt'), 'mainsite_prefix', '32', !is_multisite(), __('Used for the main site home breadcrumb in an multisite setup', 'breadcrumb_navxt'));
 						$this->input_text(__('Main Site Home Suffix', 'breadcrumb_navxt'), 'mainsite_suffix', '32', !is_multisite(), __('Used for the main site home breadcrumb in an multisite setup', 'breadcrumb_navxt'));
 						$this->input_text(__('Main Site Home Anchor', 'breadcrumb_navxt'), 'mainsite_anchor', '64', !is_multisite(), __('The anchor template for the main site home breadcrumb, used only in multisite environments.', 'breadcrumb_navxt'));
@@ -567,7 +567,6 @@ class bcn_admin extends mtekk_admin
 			foreach($wp_post_types as $post_type)
 			{
 				//We only want custom post types
-				//if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
 				if(!$post_type->_builtin)
 				{
 					//If the post type does not have settings in the options array yet, we need to load some defaults
@@ -598,6 +597,12 @@ class bcn_admin extends mtekk_admin
 									$this->opt['post_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
 									break;
 								}
+							}
+							//If there are no valid taxonomies for this type, we default to not displaying taxonomies for this post type
+							if(!isset($this->opt['post_' . $post_type->name . '_taxonomy_display']))
+							{
+								$this->opt['post_' . $post_type->name . '_taxonomy_display'] = false;
+								$this->opt['post_' . $post_type->name . '_taxonomy_type'] = 'date';
 							}
 						}
 					}?>
@@ -630,6 +635,7 @@ class bcn_admin extends mtekk_admin
 						</th>
 						<td>
 							<?php
+								$this->input_radio('post_' . $post_type->name . '_taxonomy_type', 'date', __('Dates'));
 								$this->input_radio('post_' . $post_type->name . '_taxonomy_type', 'page', __('Pages'));
 								//Loop through all of the taxonomies in the array
 								foreach($wp_taxonomies as $taxonomy)
@@ -679,7 +685,6 @@ class bcn_admin extends mtekk_admin
 			foreach($wp_taxonomies as $taxonomy)
 			{
 				//We only want custom taxonomies
-				//if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
 				if(!$taxonomy->_builtin)
 				{
 					//If the taxonomy does not have settings in the options array yet, we need to load some defaults
@@ -754,7 +759,6 @@ class bcn_admin extends mtekk_admin
 		foreach($wp_post_types as $post_type)
 		{
 			//We only want custom post types
-			//if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
 			if(!$post_type->_builtin)
 			{
 				//If the post type does not have settings in the options array yet, we need to load some defaults
@@ -788,6 +792,12 @@ class bcn_admin extends mtekk_admin
 								break;
 							}
 						}
+						//If there are no valid taxonomies for this type, we default to not displaying taxonomies for this post type
+						if(!isset($opts['post_' . $post_type->name . '_taxonomy_display']))
+						{
+							$opts['post_' . $post_type->name . '_taxonomy_display'] = false;
+							$opts['post_' . $post_type->name . '_taxonomy_type'] = 'date';
+						}
 					}
 				}
 			}
@@ -805,7 +815,6 @@ class bcn_admin extends mtekk_admin
 		foreach($wp_taxonomies as $taxonomy)
 		{
 			//We only want custom taxonomies
-			//if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && ($taxonomy->name != 'post_tag' && $taxonomy->name != 'category'))
 			if(!$taxonomy->_builtin)
 			{
 				//If the taxonomy does not have settings in the options array yet, we need to load some defaults
