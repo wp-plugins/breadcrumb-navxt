@@ -31,6 +31,8 @@ class bcn_breadcrumb
 	protected $prefix;
 	//Global suffix, outside of link tags
 	protected $suffix;
+	//The type of this breadcrumb
+	public $type;
 	/**
 	 * The enhanced default constructor
 	 * 
@@ -41,7 +43,7 @@ class bcn_breadcrumb
 	 * @param string $anchor[optional]
 	 * @param bool $linked[optional]
 	 */
-	function bcn_breadcrumb($title = '', $prefix = '', $suffix = '', $anchor = NULL, $linked = false)
+	public function bcn_breadcrumb($title = '', $prefix = '', $suffix = '', $anchor = NULL, $linked = false)
 	{
 		//Set the title
 		$this->title = __($title, 'breadcrumb_navxt');
@@ -53,13 +55,15 @@ class bcn_breadcrumb
 		$this->linked = $linked;
 		//Always NULL if unlinked
 		$this->anchor = $anchor;
+		//null out the type, it's not fully used yet
+		$this->type = NULL;
 	}
 	/**
 	 * Function to set the protected title member
 	 * 
 	 * @param string $title
 	 */
-	function set_title($title)
+	public function set_title($title)
 	{
 		//Set the title
 		$this->title = apply_filters('bcn_breadcrumb_title', __($title, 'breadcrumb_navxt'));
@@ -69,7 +73,7 @@ class bcn_breadcrumb
 	 * 
 	 * @param string $prefix
 	 */
-	function set_prefix($prefix)
+	public function set_prefix($prefix)
 	{
 		//Set the prefix
 		$this->prefix = __($prefix, 'breadcrumb_navxt');
@@ -79,7 +83,7 @@ class bcn_breadcrumb
 	 * 
 	 * @param string $suffix
 	 */
-	function set_suffix($suffix)
+	public function set_suffix($suffix)
 	{
 		//Set the suffix
 		$this->suffix = __($suffix, 'breadcrumb_navxt');
@@ -88,7 +92,7 @@ class bcn_breadcrumb
 	 * Function to get the protected title member
 	 * @return $this->title
 	 */
-	function get_title()
+	public function get_title()
 	{
 		//Return the title
 		return $this->title;
@@ -97,7 +101,7 @@ class bcn_breadcrumb
 	 * Function to get the protected prefix member
 	 * @return $this->prefix
 	 */
-	function get_prefix()
+	public function get_prefix()
 	{
 		//Return the prefix
 		return $this->prefix;
@@ -106,7 +110,7 @@ class bcn_breadcrumb
 	 * Function to get the protected suffix member
 	 * @return $this->suffix
 	 */
-	function get_suffix()
+	public function get_suffix()
 	{
 		//Return the suffix
 		return $this->suffix;
@@ -118,7 +122,7 @@ class bcn_breadcrumb
 	 * @param string $url the url to replace the %link% tag in the anchor
 	 * 
 	 */
-	function set_anchor($template, $url)
+	public function set_anchor($template, $url)
 	{
 		//Set a safe tempalte if none was specified
 		if($template == '')
@@ -135,7 +139,7 @@ class bcn_breadcrumb
 	 * 
 	 * @param int $max_length of the title.
 	 */
-	function title_trim($max_length)
+	public function title_trim($max_length)
 	{
 		//Make sure that we are not making it longer with that ellipse
 		if((mb_strlen($this->title) + 3) > $max_length)
@@ -161,7 +165,7 @@ class bcn_breadcrumb
 	 * @return string The compiled breadcrumb string
 	 * @param bool $linked[optional] Allow the output to contain anchors?
 	 */
-	function assemble($linked = true)
+	public function assemble($linked = true)
 	{
 		//Place in the breadcrumb's elements
 		$breadcrumb_str = $this->prefix;
@@ -932,19 +936,24 @@ class bcn_breadcrumb_trail
 	 * with the current_item_prefix and current_item_suffix. Additionally, it will link the
 	 * current item if current_item_linked is set to true.
 	 * 
-	 * @return 
 	 * @param bcn_breadrumb $breadcrumb pointer to a bcn_breadcrumb object to opperate on
 	 */
 	function current_item($breadcrumb)
 	{
-		//Prepend the current item prefix
-		$breadcrumb->set_prefix($this->opt['current_item_prefix'] . $breadcrumb->get_prefix());
-		//Append the current item suffix
-		$breadcrumb->set_suffix($breadcrumb->get_suffix() . $this->opt['current_item_suffix']);
-		//Link the current item, if required
-		if($this->opt['current_item_linked'])
-		{
-			$breadcrumb->set_anchor($this->opt['current_item_anchor'], '');
+		//We are misusing the breadcrumb type property here, but in 4.0 this will be unnecessary
+		if($breadcrumb->type == null)
+		{	
+			//Prepend the current item prefix
+			$breadcrumb->set_prefix($this->opt['current_item_prefix'] . $breadcrumb->get_prefix());
+			//Append the current item suffix
+			$breadcrumb->set_suffix($breadcrumb->get_suffix() . $this->opt['current_item_suffix']);
+			//Set the breadcrumb's type to current_item
+			$breadcrumb->type = 'current_item';
+			//Link the current item, if required
+			if($this->opt['current_item_linked'])
+			{
+				$breadcrumb->set_anchor($this->opt['current_item_anchor'], '');
+			}
 		}
 	}
 	/**
