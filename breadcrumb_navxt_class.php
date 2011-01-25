@@ -810,9 +810,18 @@ class bcn_breadcrumb_trail
 	 */
 	function do_paged()
 	{
-		global $paged;
+		global $paged, $page;
+		//Need to switch between paged and page for archives and singular (posts)
+		if($paged > 0)
+		{
+			$page_number = $paged;
+		}
+		else
+		{
+			$page_number = $page;
+		}
 		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, prefix, and suffix
-		$this->trail[] = new bcn_breadcrumb($paged, $this->opt['paged_prefix'], $this->opt['paged_suffix']);
+		$this->trail[] = new bcn_breadcrumb($page_number, $this->opt['paged_prefix'], $this->opt['paged_suffix']);
 	}
 	/**
 	 * Breadcrumb Trail Filling Function
@@ -821,7 +830,7 @@ class bcn_breadcrumb_trail
 	 */
 	function fill()
 	{
-		global $wpdb, $post, $wp_query, $paged;
+		global $wpdb, $post, $wp_query, $paged, $page;
 		//Check to see if the trail is already populated
 		if(count($this->trail) > 0)
 		{
@@ -834,7 +843,7 @@ class bcn_breadcrumb_trail
 		$queried_object = $wp_query->get_queried_object();
 		//Do specific opperations for the various page types
 		//Check if this isn't the first of a multi paged item
-		if(is_paged() && $this->opt['paged_display'])
+		if($this->opt['paged_display'] && (is_paged() || is_singular() && $page > 0))
 		{
 			$this->do_paged();
 		}
