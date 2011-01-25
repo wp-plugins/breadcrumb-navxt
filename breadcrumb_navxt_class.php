@@ -536,9 +536,13 @@ class bcn_breadcrumb_trail
 	 */
 	function do_post_hierarchical()
 	{
-		global $post;
+		global $post, $page;
 		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, prefix, and suffix
-		$this->trail[] = new bcn_breadcrumb(get_the_title(), $this->opt['post_' . $post->post_type . '_prefix'], $this->opt['post_' . $post->post_type . '_suffix']);
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title(), $this->opt['post_' . $post->post_type . '_prefix'], $this->opt['post_' . $post->post_type . '_suffix']));
+		if($page > 0 && $this->opt['paged_display'])
+		{
+			$breadcrumb->set_anchor($this->opt['post_page_anchor'], get_permalink());
+		}
 		//Done with the current item, now on to the parents
 		$bcn_frontpage = get_option('page_on_front');
 		//If there is a parent page let's find it
@@ -554,9 +558,13 @@ class bcn_breadcrumb_trail
 	 */
 	function do_post_flat()
 	{
-		global $post;
+		global $post, $page;
 		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, prefix, and suffix
-		$this->trail[] = new bcn_breadcrumb(get_the_title(), $this->opt['post_' . $post->post_type . '_prefix'], $this->opt['post_' . $post->post_type . '_suffix']);
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title(), $this->opt['post_' . $post->post_type . '_prefix'], $this->opt['post_' . $post->post_type . '_suffix']));
+		if($page > 0 && $this->opt['paged_display'])
+		{
+			$breadcrumb->set_anchor($this->opt['post_post_anchor'], get_permalink());
+		}
 		//Handle the post's taxonomy
 		$this->post_taxonomy($post->ID, $post->post_type);
 	}
