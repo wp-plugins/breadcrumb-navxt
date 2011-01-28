@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.7.51
+Version: 3.7.82
 Author: John Havlik
 Author URI: http://mtekk.us/
 */
@@ -54,7 +54,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.7.51';
+	protected $version = '3.7.82';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -335,10 +335,11 @@ class bcn_admin extends mtekk_admin
 	protected function _get_help_text()
 	{
 		return '<p>' . sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
-			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>') . '</p><h5>' .
+			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>') . ' ' .
+			sprintf(__('If you think you have found a bug, please include your WordPress version and details on how to reporduce the bug when you %sreport the issue%s.', $this->identifier),'<a title="' . __('Go to the Breadcrumb NavXT support post for your version.', 'breadcrumb_navxt') . '" href="http://mtekk.us/archives/wordpress/plugins-wordpress/breadcrumb-navxt-' . $this->version . '/#respond">', '</a>') . '</p><h5>' .
 		__('Quick Start Information', 'breadcrumb_navxt') . '</h5><p>' . __('For the settings on this page to take effect, you must either use the included Breadcrumb NavXT widget, or place either of the code sections below into your theme.', 'breadcrumb_navxt') .
 		'</p><h5>' . __('Breadcrumb trail with separators', 'breadcrumb_navxt').'</h5><code>&lt;div class="breadcrumbs"&gt;'."&lt;?php if(function_exists('bcn_display')){ bcn_display();}?&gt;&lt;/div&gt;</code>" .
-		'<h5>' . __('Breadcrumb trail in list form', 'breadcrumb_navxt').'</h5><code>&lt;ul class="breadcrumbs"&gt;'."&lt;?php if(function_exists('bcn_display_list')){ bcn_display_list();}?&gt;&lt;/ul&gt;</code>";
+		'<h5>' . __('Breadcrumb trail in list form', 'breadcrumb_navxt').'</h5><code>&lt;ol class="breadcrumbs"&gt;'."&lt;?php if(function_exists('bcn_display_list')){ bcn_display_list();}?&gt;&lt;/ol&gt;</code>";
 	}
 	/**
 	 * Adds in the JavaScript and CSS for the tabs in the adminsitrative 

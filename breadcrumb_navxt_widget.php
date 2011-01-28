@@ -49,14 +49,14 @@ class bcn_widget extends WP_Widget
 		else if($instance['type'] == 'rdfa')
 		{
 			//Display the list output breadcrumb
-			echo '<div xmlns:v="http://rdf.data-vocabulary.org/#">';
+			echo '<div class="breadcrumbs" xmlns:v="http://rdf.data-vocabulary.org/#">';
 			bcn_display_nested(false, $instance['linked'], 'span', 'rdfa');
 			echo '</div>';
 		}
 		else if($instance['type'] == 'microformat')
 		{
 			//Display the list output breadcrumb
-			echo '<div itemscope itemtype="http://data-vocabulary.org/Breadcrumb">';
+			echo '<div class="breadcrumbs" itemscope itemtype="http://data-vocabulary.org/Breadcrumb">';
 			bcn_display_nested(false, $instance['linked'], 'span', 'microformat');
 			echo '</div>';
 		}
