@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.7.82
+Version: 3.7.85
 Author: John Havlik
 Author URI: http://mtekk.us/
 */
@@ -54,7 +54,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.7.82';
+	protected $version = '3.7.85';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -891,8 +891,11 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display($return = false, $linked = true, $reverse = false)
 	{
+		//First make sure our defaults are safe
+		$this->find_posttypes($this->breadcrumb_trail->opt);
+		$this->find_taxonomies($this->breadcrumb_trail->opt);
 		//Grab the current settings from the db
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+		$this->breadcrumb_trail->opt = wp_parse_args($this->get_option('bcn_options'), $this->breadcrumb_trail->opt);
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display($return, $linked, $reverse);
@@ -907,8 +910,11 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display_list($return = false, $linked = true, $reverse = false)
 	{
+		//First make sure our defaults are safe
+		$this->find_posttypes($this->breadcrumb_trail->opt);
+		$this->find_taxonomies($this->breadcrumb_trail->opt);
 		//Grab the current settings from the db
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+		$this->breadcrumb_trail->opt = wp_parse_args($this->get_option('bcn_options'), $this->breadcrumb_trail->opt);
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
@@ -924,8 +930,11 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display_nested($return = false, $linked = true, $tag = 'span', $mode = 'rdfa')
 	{
+		//First make sure our defaults are safe
+		$this->find_posttypes($this->breadcrumb_trail->opt);
+		$this->find_taxonomies($this->breadcrumb_trail->opt);
 		//Grab the current settings from the db
-		$this->breadcrumb_trail->opt = $this->get_option('bcn_options');
+		$this->breadcrumb_trail->opt = wp_parse_args($this->get_option('bcn_options'), $this->breadcrumb_trail->opt);
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display_nested($return, $linked, $tag, $mode);
