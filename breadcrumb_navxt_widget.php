@@ -21,6 +21,8 @@ class bcn_widget extends WP_Widget
 	//Default constructor
 	function __construct()
 	{
+		//Load the translation domain as the next part needs it		
+		load_plugin_textdomain($domain = 'breadcrumb_navxt', false, 'breadcrumb-navxt/languages');
 		$ops = array('classname' => 'widget_breadcrumb_navxt', 'description' => __('Adds a breadcrumb trail to your sidebar'));
 		parent::__construct('bcn_widget', 'Breadcrumb NavXT', $ops);
 	}
