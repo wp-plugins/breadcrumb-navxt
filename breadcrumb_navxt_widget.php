@@ -21,8 +21,14 @@ class bcn_widget extends WP_Widget
 	//Default constructor
 	function __construct()
 	{
-		//Load the translation domain as the next part needs it		
-		load_plugin_textdomain($domain = 'breadcrumb_navxt', false, 'breadcrumb-navxt/languages');
+		global $l10n;
+		// the global and the check might become obsolete in
+		// further wordpress versions
+		// @see https://core.trac.wordpress.org/ticket/10527		
+		if(!isset($l10n['breadcrumb_navxt']))
+		{
+			load_plugin_textdomain('breadcrumb_navxt', false, 'breadcrumb_navxt/languages');
+		}
 		$ops = array('classname' => 'widget_breadcrumb_navxt', 'description' => __('Adds a breadcrumb trail to your sidebar'));
 		parent::__construct('bcn_widget', 'Breadcrumb NavXT', $ops);
 	}
@@ -84,25 +90,25 @@ class bcn_widget extends WP_Widget
 	{
 		$instance = wp_parse_args((array) $instance, array('title' => '', 'type' => 'plain', 'linked' => true, 'reverse' => false, 'front' => false));?>
 		<p>
-			<label for="<?php echo $this->get_field_id('title'); ?>"> <?php _e('Title:'); ?></label>
+			<label for="<?php echo $this->get_field_id('title'); ?>"> <?php _e('Title:', 'breadcrumb_navxt'); ?></label>
 			<input class="widefat" type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" value="<?php echo esc_attr($instance['title']);?>" />
 		</p>
 		<p>
-			<label for="<?php echo $this->get_field_id('type'); ?>"> <?php _e('Output trail as:'); ?></label>
+			<label for="<?php echo $this->get_field_id('type'); ?>"> <?php _e('Output trail as:', 'breadcrumb_navxt'); ?></label>
 			<select name="<?php echo $this->get_field_name('type'); ?>" id="<?php echo $this->get_field_id('type'); ?>">
-				<option value="list" <?php selected('list', $instance['type']);?>><?php _e('List'); ?></option>
-				<option value="rdfa" <?php selected('rdfa', $instance['type']);?>><?php _e('RDFa'); ?></option>
-				<option value="microformat" <?php selected('microformat', $instance['type']);?>><?php _e('Microformat'); ?></option>
-				<option value="plain" <?php selected('plain', $instance['type']);?>><?php _e('Plain'); ?></option>
+				<option value="list" <?php selected('list', $instance['type']);?>><?php _e('List', 'breadcrumb_navxt'); ?></option>
+				<option value="rdfa" <?php selected('rdfa', $instance['type']);?>><?php _e('RDFa', 'breadcrumb_navxt'); ?></option>
+				<option value="microformat" <?php selected('microformat', $instance['type']);?>><?php _e('Microformat', 'breadcrumb_navxt'); ?></option>
+				<option value="plain" <?php selected('plain', $instance['type']);?>><?php _e('Plain', 'breadcrumb_navxt'); ?></option>
 			</select>
 		</p>
 		<p>
 			<input class="checkbox" type="checkbox" name="<?php echo $this->get_field_name('linked'); ?>" id="<?php echo $this->get_field_id('linked'); ?>" value="true" <?php checked(true, $instance['linked']);?> />
-			<label for="<?php echo $this->get_field_id('linked'); ?>"> <?php _e('Link the breadcrumbs'); ?></label><br />
+			<label for="<?php echo $this->get_field_id('linked'); ?>"> <?php _e('Link the breadcrumbs', 'breadcrumb_navxt'); ?></label><br />
 			<input class="checkbox" type="checkbox" name="<?php echo $this->get_field_name('reverse'); ?>" id="<?php echo $this->get_field_id('reverse'); ?>" value="true" <?php checked(true, $instance['reverse']);?> />
-			<label for="<?php echo $this->get_field_id('reverse'); ?>"> <?php _e('Reverse the order of the trail'); ?></label><br />
+			<label for="<?php echo $this->get_field_id('reverse'); ?>"> <?php _e('Reverse the order of the trail', 'breadcrumb_navxt'); ?></label><br />
 			<input class="checkbox" type="checkbox" name="<?php echo $this->get_field_name('front'); ?>" id="<?php echo $this->get_field_id('front'); ?>" value="true" <?php checked(true, $instance['front']);?> />
-			<label for="<?php echo $this->get_field_id('front'); ?>"> <?php _e('Hide the trail on the front page'); ?></label><br />
+			<label for="<?php echo $this->get_field_id('front'); ?>"> <?php _e('Hide the trail on the front page', 'breadcrumb_navxt'); ?></label><br />
 		</p>
 		<?php
 	}
