@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.7.85
+Version: 3.7.88
 Author: John Havlik
 Author URI: http://mtekk.us/
 */
@@ -54,7 +54,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.7.85';
+	protected $version = '3.7.88';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -548,7 +548,7 @@ class bcn_admin extends mtekk_admin
 									//We only want custom taxonomies
 									if(($taxonomy->object_type == 'post' || is_array($taxonomy->object_type) && in_array('post', $taxonomy->object_type)) && !$taxonomy->_builtin)
 									{
-										$this->input_radio('post_post_taxonomy_type', $taxonomy->name, ucwords(__($taxonomy->label)));
+										$this->input_radio('post_post_taxonomy_type', $taxonomy->name, mb_convert_case(__($taxonomy->label), MB_CASE_TITLE, 'UTF-8'));
 									}
 								}
 							?>
@@ -702,7 +702,7 @@ class bcn_admin extends mtekk_admin
 					}
 				?>
 			<fieldset id="<?php echo $taxonomy->name; ?>" class="bcn_options">
-				<h3><?php echo ucwords(__($taxonomy->label)); ?></h3>
+				<h3><?php echo mb_convert_case(__($taxonomy->label), MB_CASE_TITLE, 'UTF-8'); ?></h3>
 				<table class="form-table">
 					<?php
 						$this->input_text(sprintf(__('%s Prefix', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), $taxonomy->name . '_prefix', '32', false, sprintf(__('Applied before the anchor on all %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
@@ -765,7 +765,7 @@ class bcn_admin extends mtekk_admin
 			if(!$post_type->_builtin)
 			{
 				//If the post type does not have settings in the options array yet, we need to load some defaults
-				if(!array_key_exists('post_' . $post_type->name . '_anchor', $this->opt) || !$post_type->hierarchical && !array_key_exists('post_' . $post_type->name . '_taxonomy_type', $this->opt))
+				if(!array_key_exists('post_' . $post_type->name . '_anchor', $opts) || !$post_type->hierarchical && !array_key_exists('post_' . $post_type->name . '_taxonomy_type', $opts))
 				{
 					//Add the necessary option array members
 					$opts['post_' . $post_type->name . '_prefix'] = '';
@@ -824,7 +824,7 @@ class bcn_admin extends mtekk_admin
 				{
 					$opts[$taxonomy->name . '_prefix'] = '';
 					$opts[$taxonomy->name . '_suffix'] = '';
-					$opts[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">',  ucwords(__($taxonomy->label))), 'breadcrumb_navxt');
+					$opts[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">',  mb_convert_case(__($taxonomy->label), MB_CASE_TITLE, 'UTF-8')), 'breadcrumb_navxt');
 					$opts['archive_' . $taxonomy->name . '_prefix'] = '';
 					$opts['archive_' . $taxonomy->name . '_suffix'] = '';
 				}
