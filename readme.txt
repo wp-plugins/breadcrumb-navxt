@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XE
 Tags: breadcrumb, breadcrumbs, trail, navigation, menu, widget
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 3.7.0
+Stable tag: 3.8.0
 Adds breadcrumb navigation showing the visitor's path to their current location.
 
 == Description ==
@@ -33,6 +33,19 @@ Don't see your language on the list? Feel free to translate Breadcrumb NavXT and
 Please visit [Breadcrumb NavXT's](http://mtekk.us/code/breadcrumb-navxt/#installation "Go to Breadcrumb NavXT's project page's installation section.") project page for installation and usage instructions.
 
 == Changelog ==
+= 3.8.0 =
+* New feature: Error reporting added for some errors that may occur during a settings save.
+* New feature: Custom post types may use dates as their taxonomy type.
+* New feature: New display_nested function to facilitate support for Google’s Breadcrumbs RDFa and Microformat.
+* New feature: Paged display works for all post types now (was previously restricted to archives).
+* Bug fix: Fixed a few cases where Breadcrumb NavXT may cause PHP warnings.
+* Bug fix: Automatically deactivates if PHP version is tool old rather than just displaying warning message.
+* Bug fix: Custom post types that are not associated with any taxonomies no longer cause PHP Notices.
+* Bug fix: Various PHP Notices introduced in 3.7.0 were fixed.
+* Bug fix: Fixed issue where multiple runs caused the current_item_prefix and current_item_suffix to be applied multiple times.
+* Bug fix: The included display functions will behave more appropriately when database settings don’t exist.
+* Bug fix: Fixed multibyte UTF-8 character support for custom taxonomies.
+* Bug fix: Fixed issue where the widget (Appearance > Widgets) would not load the appropriate translations.
 = 3.7.0 =
 * New feature: Support for “global”/network wide breadcrumb trails in networked setups of WordPress 3.0.
 * New feature: Can use any hierarchical post type as a hierarchy for flat post types.
