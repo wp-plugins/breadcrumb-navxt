@@ -723,7 +723,7 @@ class bcn_breadcrumb_trail
 	function is_builtin($post_type)
 	{
 		$type = get_post_type_object($post_type);
-		return isset($type->_builtin);
+		return $type->_builtin;
 	}
 	/**
 	 * A Breadcrumb Trail Filling Function
