@@ -245,6 +245,12 @@ class bcn_admin extends mtekk_admin
 					}
 				}
 			}
+			//Upgrading to 3.8.1
+			if(version_compare($version, '3.8.1', '<'))
+			{
+				$opts['post_page_root'] = get_option('page_on_front');
+				$opts['post_post_root'] = get_option('page_for_posts');
+			}
 			//Save the passed in opts to the object's option array
 			$this->opt = $opts;
 		}
