@@ -289,11 +289,11 @@ msgstr "Modèle de l'ancre pour l'élement origine du fil d'ariane."
 
 #: breadcrumb_navxt_admin.php:482
 msgid "Blog Breadcrumb"
-msgstr "Fil d'ariane du site"
+msgstr "Fil d'ariane du blog"
 
 #: breadcrumb_navxt_admin.php:482
 msgid "Place the blog breadcrumb in the trail."
-msgstr "Mettre le fil d'ariane du site en route. "
+msgstr "Mettre le fil d'ariane du blog en route. "
 
 #: breadcrumb_navxt_admin.php:483
 msgid "Blog Anchor"
@@ -301,7 +301,7 @@ msgstr "Ancre pour le blog"
 
 #: breadcrumb_navxt_admin.php:483
 msgid "The anchor template for the blog breadcrumb, used only in static front page environments."
-msgstr "Modèle de l'ancre pour le fil d'ariane, utilisé uniquement quand l'accueil est une page statique."
+msgstr "Modèle de l'ancre pour le fil d'ariane du blog, utilisé uniquement quand l'accueil est une page statique."
 
 #: breadcrumb_navxt_admin.php:487
 msgid "Main Site Breadcrumb"
@@ -699,7 +699,7 @@ msgstr "Sauvegarder les changements"
 
 #: breadcrumb_navxt_class.php:217
 msgid "Blog"
-msgstr "Accueil"
+msgstr "Blog"
 
 #: breadcrumb_navxt_class.php:236
 msgid "<a title=\"Reload the current page.\" href=\"%link%\">"
