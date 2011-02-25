@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XE
 Tags: breadcrumb, breadcrumbs, trail, navigation, menu, widget
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 3.8.0
+Stable tag: 3.8.1
 Adds breadcrumb navigation showing the visitor's path to their current location.
 
 == Description ==
@@ -33,6 +33,9 @@ Don't see your language on the list? Feel free to translate Breadcrumb NavXT and
 Please visit [Breadcrumb NavXT's](http://mtekk.us/code/breadcrumb-navxt/#installation "Go to Breadcrumb NavXT's project page's installation section.") project page for installation and usage instructions.
 
 == Changelog ==
+= 3.8.1 =
+* Bug fix: Root pages for custom post types should work again.
+* Bug fix: The post_post_root and post_page_root not being saved warning when saving settings should be fixed.
 = 3.8.0 =
 * New feature: Error reporting added for some errors that may occur during a settings save.
 * New feature: Custom post types may use dates as their taxonomy type.
