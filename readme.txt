@@ -1,7 +1,7 @@
 === Breadcrumb NavXT ===
 Contributors: mtekk, hakre
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XEU783BR8U&lc=US&item_name=Breadcrumb%20NavXT%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
-Tags: breadcrumb, breadcrumbs, trail, navigation, menu, widget
+Tags: breadcrumbs, trail, navigation, menu, widget, breadcrumb
 Requires at least: 3.0
 Tested up to: 3.1
 Stable tag: 3.8.1
@@ -39,21 +39,21 @@ Please visit [Breadcrumb NavXT's](http://mtekk.us/code/breadcrumb-navxt/#install
 = 3.8.0 =
 * New feature: Error reporting added for some errors that may occur during a settings save.
 * New feature: Custom post types may use dates as their taxonomy type.
-* New feature: New display_nested function to facilitate support for Google’s Breadcrumbs RDFa and Microformat.
+* New feature: New display_nested function to facilitate support for Google's Breadcrumbs RDFa and Microformat.
 * New feature: Paged display works for all post types now (was previously restricted to archives).
 * Bug fix: Fixed a few cases where Breadcrumb NavXT may cause PHP warnings.
 * Bug fix: Automatically deactivates if PHP version is tool old rather than just displaying warning message.
 * Bug fix: Custom post types that are not associated with any taxonomies no longer cause PHP Notices.
 * Bug fix: Various PHP Notices introduced in 3.7.0 were fixed.
 * Bug fix: Fixed issue where multiple runs caused the current_item_prefix and current_item_suffix to be applied multiple times.
-* Bug fix: The included display functions will behave more appropriately when database settings don’t exist.
+* Bug fix: The included display functions will behave more appropriately when database settings don't exist.
 * Bug fix: Fixed multibyte UTF-8 character support for custom taxonomies.
 * Bug fix: Fixed issue where the widget (Appearance > Widgets) would not load the appropriate translations.
 = 3.7.0 =
 * New feature: Support for “global”/network wide breadcrumb trails in networked setups of WordPress 3.0.
 * New feature: Can use any hierarchical post type as a hierarchy for flat post types.
 * New feature: Users are now warned if settings are out of date, allowed to do a one click settings migration.
-* New feature: Users can now control if a post type uses the “posts page” in it’s hierarchy or not.
+* New feature: Users can now control if a post type uses the “posts page” in it's hierarchy or not.
 * Bug fix: Breadcrumb trails for attachments work properly now for custom post types.
 * Bug fix: Users can now set custom post types to have a page hierarchy through the settings page.
 * Bug fix: Fixed issues where the PHP version check did not work correctly.
@@ -100,8 +100,7 @@ Please visit [Breadcrumb NavXT's](http://mtekk.us/code/breadcrumb-navxt/#install
 * Bug fix: Now selects the first category hierarchy of a post instead of the last.
 = 3.2.1 =
 * New feature: Translations for Belorussian now included thanks to "Fat Cow".
-* Bug fix: The `bcn_display()` and `bcn_display_list()` wrapper functions obey the
-`$return parameter`.
+* Bug fix: The `bcn_display()` and `bcn_display_list()` wrapper functions obey the `$return parameter`.
 * Bug fix: Anchors now will be valid HTML even when a page/category/post title has HTML tags in it.
 * Bug fix: Revised `bcn_breadcrumb_trail::category_parents` to work around a bug in `get_category` that causes a WP_Error to be thrown.
 * Bug fix: Importing settings XML files should no longer corrupt HTML entities.
