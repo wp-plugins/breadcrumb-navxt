@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.8.1
+Version: 3.9.20
 Author: John Havlik
 Author URI: http://mtekk.us/
 */
@@ -41,7 +41,7 @@ require_once(dirname(__FILE__) . '/breadcrumb_navxt_widget.php');
 //Include admin base class
 if(!class_exists('mtekk_admin'))
 {
-	require_once(dirname(__FILE__) . '/mtekk_admin_class.php');
+	require_once(dirname(__FILE__) . '/includes/mtekk_admin_class.php');
 }
 /**
  * The administrative interface class 
@@ -54,7 +54,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.8.1';
+	protected $version = '3.9.20';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -75,6 +75,9 @@ class bcn_admin extends mtekk_admin
 	{
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
+		//First make sure our defaults are safe
+		$this->find_posttypes($this->breadcrumb_trail->opt);
+		$this->find_taxonomies($this->breadcrumb_trail->opt);
 		//Grab defaults from the breadcrumb_trail object
 		$this->opt = $this->breadcrumb_trail->opt;
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
@@ -97,7 +100,7 @@ class bcn_admin extends mtekk_admin
 		//We're going to make sure we run the parent's version of this function as well
 		parent::init();	
 		//Grab the current settings from the DB
-		$this->opt = $this->get_option('bcn_options');
+		$this->opt = get_option('bcn_options');
 		//Add javascript enqeueing callback
 		add_action('wp_print_scripts', array($this, 'javascript'));
 	}
@@ -120,7 +123,7 @@ class bcn_admin extends mtekk_admin
 		//Call our little security function
 		$this->security();
 		//Try retrieving the options from the database
-		$opts = $this->get_option('bcn_options');
+		$opts = get_option('bcn_options');
 		//If there are no settings, copy over the default settings
 		if(!is_array($opts))
 		{
@@ -131,10 +134,10 @@ class bcn_admin extends mtekk_admin
 			//Add custom taxonomy types
 			$this->find_taxonomies($opts);
 			//Add the options
-			$this->add_option('bcn_options', $opts);
-			$this->add_option('bcn_options_bk', $opts, false);
+			add_option('bcn_options', $opts);
+			add_option('bcn_options_bk', $opts, '', 'no');
 			//Add the version, no need to autoload the db version
-			$this->add_option('bcn_version', $this->version, false);
+			add_option('bcn_version', $this->version, '', 'no');
 		}
 		else
 		{
@@ -147,11 +150,11 @@ class bcn_admin extends mtekk_admin
 				//Add custom taxonomy types
 				$this->find_taxonomies($opts);
 				//Run the settings update script
-				$this->opts_upgrade($opts, $db_version);
+				opts_upgrade($opts, $db_version);
 				//Always have to update the version
-				$this->update_option('bcn_version', $this->version);
+				update_option('bcn_version', $this->version);
 				//Store the options
-				$this->update_option('bcn_options', $this->opt);
+				update_option('bcn_options', $this->opt);
 			}
 		}
 	}
@@ -203,9 +206,9 @@ class bcn_admin extends mtekk_admin
 				$opts['post_post_taxonomy_type'] = $opts['post_taxonomy_type'];
 				unset($opts['post_taxonomy_type']);
 				//Update to non-autoload db version
-				$this->delete_option('bcn_version');
-				$this->add_option('bcn_version', $this->version, false);
-				$this->add_option('bcn_options_bk', $opts, false);
+				delete_option('bcn_version');
+				add_option('bcn_version', $this->version, '', 'no');
+				add_option('bcn_options_bk', $opts, '', 'no');
 			}
 			//Upgrading to 3.7
 			if(version_compare($version, '3.7.0', '<'))
@@ -251,6 +254,11 @@ class bcn_admin extends mtekk_admin
 				$opts['post_page_root'] = get_option('page_on_front');
 				$opts['post_post_root'] = get_option('page_for_posts');
 			}
+			//Upgrading to 4.0
+			if(version_compare($version, '4.0.0', '<'))
+			{
+				
+			}
 			//Save the passed in opts to the object's option array
 			$this->opt = $opts;
 		}
@@ -265,13 +273,13 @@ class bcn_admin extends mtekk_admin
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_options-options');
 		//Update local options from database
-		$this->opt = $this->get_option('bcn_options');
+		$this->opt = get_option('bcn_options');
 		//Add custom post types
 		$this->find_posttypes($this->opt);
 		//Add custom taxonomy types
 		$this->find_taxonomies($this->opt);
 		//Update our backup options
-		$this->update_option('bcn_options_bk', $this->opt);
+		update_option('bcn_options_bk', $this->opt);
 		//Grab our incomming array (the data is dirty)
 		$input = $_POST['bcn_options'];
 		//We have two "permi" variables
@@ -302,7 +310,7 @@ class bcn_admin extends mtekk_admin
 			}
 		}
 		//Commit the option changes
-		$this->update_option('bcn_options', $this->opt);
+		update_option('bcn_options', $this->opt);
 		//Check if known settings match attempted save
 		if(count(array_diff_key($input, $this->opt)) == 0)
 		{
@@ -348,105 +356,42 @@ class bcn_admin extends mtekk_admin
 		'<h5>' . __('Breadcrumb trail in list form', 'breadcrumb_navxt').'</h5><code>&lt;ol class="breadcrumbs"&gt;'."&lt;?php if(function_exists('bcn_display_list')){ bcn_display_list();}?&gt;&lt;/ol&gt;</code>";
 	}
 	/**
+	 * enqueue's the tab style sheet on the settings page
+	 */
+	function admin_styles()
+	{
+		wp_enqueue_style('mtekk_admin_tabs');
+	}
+	/**
+	 * enqueue's the tab js and translation js on the settings page
+	 */
+	function admin_scripts()
+	{
+		//Enqueue the admin tabs javascript
+		wp_enqueue_script('mtekk_admin_tabs');
+		//Load the translations for the tabs
+		wp_localize_script('mtekk_admin_tabs', 'objectL10n', array(
+			'mtad_import' => __('Import', $this->identifier),
+			'mtad_export' => __('Export', $this->identifier),
+			'mtad_reset' => __('Reset', $this->identifier),
+		));
+	}
+	/**
 	 * Adds in the JavaScript and CSS for the tabs in the adminsitrative 
 	 * interface
-	 * 
 	 */
 	function admin_head()
 	{	
-		// print style and script element (should go into head element) 
-		?>
-<style type="text/css">
-	/**
-	 * Tabbed Admin Page (CSS)
-	 * 
-	 * @see Breadcrumb NavXT (Wordpress Plugin)
-	 * @author Tom Klingenberg 
-	 * @colordef #c6d9e9 light-blue (older tabs border color, obsolete)
-	 * @colordef #dfdfdf light-grey (tabs border color)
-	 * @colordef #f9f9f9 very-light-grey (admin standard background color)
-	 * @colordef #fff    white (active tab background color)
-	 */
-#hasadmintabs ul.ui-tabs-nav {border-bottom:1px solid #dfdfdf; font-size:12px; height:29px; list-style-image:none; list-style-position:outside; list-style-type:none; margin:13px 0 0; overflow:visible; padding:0 0 0 8px;}
-#hasadmintabs ul.ui-tabs-nav li {display:block; float:left; line-height:200%; list-style-image:none; list-style-position:outside; list-style-type:none; margin:0; padding:0; position:relative; text-align:center; white-space:nowrap; width:auto;}
-#hasadmintabs ul.ui-tabs-nav li a {background:transparent none no-repeat scroll 0 50%; border-bottom:1px solid #dfdfdf; display:block; float:left; line-height:28px; padding:1px 13px 0; position:relative; text-decoration:none;}
-#hasadmintabs ul.ui-tabs-nav li.ui-tabs-selected a{-moz-border-radius-topleft:4px; -moz-border-radius-topright:4px;border:1px solid #dfdfdf; border-bottom-color:#f9f9f9; color:#333333; font-weight:normal; padding:0 12px;}
-#hasadmintabs ul.ui-tabs-nav a:focus, a:active {outline-color:-moz-use-text-color; outline-style:none; outline-width:medium;}
-#screen-options-wrap p.submit {margin:0; padding:0;}
-</style>
-<script type="text/javascript">
-/* <![CDATA[ */
-	/**
-	 * Breadcrumb NavXT Admin Page (javascript/jQuery)
-	 *
-	 * unobtrusive approach to add tabbed forms into
-	 * the wordpress admin panel and various other 
-	 * stuff that needs javascript with the Admin Panel.
-	 *
-	 * @see Breadcrumb NavXT (Wordpress Plugin)
-	 * @author Tom Klingenberg
-	 * @author John Havlik
-	 * @uses jQuery
-	 * @uses jQuery.ui.tabs
-	 */		
-	jQuery(function()
-	{
-		bcn_context_init();
-		bcn_tabulator_init();		
-	 });
-	/**
-	 * Tabulator Bootup
-	 */
-	function bcn_tabulator_init(){
-		if (!jQuery("#hasadmintabs").length) return;		
-		/* init markup for tabs */
-		jQuery('#hasadmintabs').prepend("<ul><\/ul>");
-		jQuery('#hasadmintabs > fieldset').each(function(i){
-		    id      = jQuery(this).attr('id');
-		    caption = jQuery(this).find('h3').text();
-		    jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
-		    jQuery(this).find('h3').hide();					    
-	    });	
-		/* init the tabs plugin */
-		jQuery("#hasadmintabs").tabs();
-		/* handler for opening the last tab after submit (compability version) */
-		jQuery('#hasadmintabs ul a').click(function(i){
-			var form   = jQuery('#bcn_admin-options');
-			var action = form.attr("action").split('#', 1) + jQuery(this).attr('href');					
-			form.get(0).setAttribute("action", action);
-		});
-	}
-	/**
-	 * context screen options for import/export
-	 */
-	 function bcn_context_init(){
-		if (!jQuery("#bcn_import_export_relocate").length) return;
-		jQuery('#screen-meta').prepend(
-				'<div id="screen-options-wrap" class="hidden"></div>'
-		);
-		jQuery('#screen-meta-links').append(
-				'<div id="screen-options-link-wrap" class="hide-if-no-js screen-meta-toggle">' +
-				'<a class="show-settings" id="show-settings-link" href="#screen-options"><?php printf('%s/%s/%s', __('Import', 'breadcrumb_navxt'), __('Export', 'breadcrumb_navxt'), __('Reset', 'breadcrumb_navxt')); ?></a>' + 
-				'</div>'
-		);
-		var code = jQuery('#bcn_import_export_relocate').html();
-		jQuery('#bcn_import_export_relocate').html('');
-		code = code.replace(/h3>/gi, 'h5>');		
-		jQuery('#screen-options-wrap').prepend(code);		
-	 }
-/* ]]> */
-</script>
-<?php
+	
 	}
 	/**
 	 * The administrative page for Breadcrumb NavXT
-	 * 
 	 */
 	function admin_page()
 	{
 		global $wp_taxonomies, $wp_post_types;
 		$this->security();
-		$this->version_check($this->get_option($this->unique_prefix . '_version'));
+		$this->version_check(get_option($this->unique_prefix . '_version'));
 		?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
 		<div<?php if($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
@@ -485,8 +430,8 @@ class bcn_admin extends mtekk_admin
 						$this->input_text(__('Home Prefix', 'breadcrumb_navxt'), 'home_prefix', '32');
 						$this->input_text(__('Home Suffix', 'breadcrumb_navxt'), 'home_suffix', '32');
 						$this->input_text(__('Home Anchor', 'breadcrumb_navxt'), 'home_anchor', '64', false, __('The anchor template for the home breadcrumb.', 'breadcrumb_navxt'));
-						$this->input_check(__('Blog Breadcrumb', 'breadcrumb_navxt'), 'blog_display', __('Place the blog breadcrumb in the trail.', 'breadcrumb_navxt'), ($this->get_option('show_on_front') !== "page"));
-						$this->input_text(__('Blog Anchor', 'breadcrumb_navxt'), 'blog_anchor', '64', ($this->get_option('show_on_front') !== "page"), __('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'));
+						$this->input_check(__('Blog Breadcrumb', 'breadcrumb_navxt'), 'blog_display', __('Place the blog breadcrumb in the trail.', 'breadcrumb_navxt'), (get_option('show_on_front') !== "page"));
+						$this->input_text(__('Blog Anchor', 'breadcrumb_navxt'), 'blog_anchor', '64', (get_option('show_on_front') !== "page"), __('The anchor template for the blog breadcrumb, used only in static front page environments.', 'breadcrumb_navxt'));
 					?>
 					<tr valign="top">
 						<th scope="row">
@@ -838,57 +783,6 @@ class bcn_admin extends mtekk_admin
 		}
 	}
 	/**
-	 * This inserts the value into the option name, works around WP's stupid string bool
-	 *
-	 * @param (string) key name where to save the value in $value
-	 * @param (mixed) value to insert into the options db
-	 * @param (bool) should WordPress autoload this option
-	 * @return (bool)
-	 */
-	function add_option($key, $value, $autoload = true)
-	{
-		if($autoload)
-		{
-			return add_option($key, $value);
-		}
-		else
-		{
-			return add_option($key, $value, '', 'no');
-		}
-	}
-	/**
-	 * This removes the option name, WPMU safe
-	 *
-	 * @param (string) key name of the option to remove
-	 * @return (bool)
-	 */
-	function delete_option($key)
-	{
-		return delete_option($key);
-	}
-	/**
-	 * This updates the value into the option name, WPMU safe
-	 *
-	 * @param (string) key name where to save the value in $value
-	 * @param (mixed) value to insert into the options db
-	 * @return (bool)
-	 */
-	function update_option($key, $value)
-	{
-		return update_option($key, $value);
-	}
-	/**
-	 * This grabs the the data from the db it is WPMU safe and can place the data 
-	 * in a HTML form safe manner.
-	 *
-	 * @param  (string) key name of the wordpress option to get
-	 * @return (mixed)  value of option
-	 */
-	function get_option($key)
-	{
-		return get_option($key);
-	}
-	/**
 	 * Outputs the breadcrumb trail
 	 * 
 	 * @param  (bool)   $return Whether to return or echo the trail.
@@ -897,9 +791,6 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display($return = false, $linked = true, $reverse = false)
 	{
-		//First make sure our defaults are safe
-		$this->find_posttypes($this->breadcrumb_trail->opt);
-		$this->find_taxonomies($this->breadcrumb_trail->opt);
 		//Grab the current settings from the db
 		$this->breadcrumb_trail->opt = wp_parse_args($this->get_option('bcn_options'), $this->breadcrumb_trail->opt);
 		//Generate the breadcrumb trail
@@ -916,9 +807,6 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display_list($return = false, $linked = true, $reverse = false)
 	{
-		//First make sure our defaults are safe
-		$this->find_posttypes($this->breadcrumb_trail->opt);
-		$this->find_taxonomies($this->breadcrumb_trail->opt);
 		//Grab the current settings from the db
 		$this->breadcrumb_trail->opt = wp_parse_args($this->get_option('bcn_options'), $this->breadcrumb_trail->opt);
 		//Generate the breadcrumb trail
@@ -936,9 +824,6 @@ class bcn_admin extends mtekk_admin
 	 */
 	function display_nested($return = false, $linked = true, $tag = 'span', $mode = 'rdfa')
 	{
-		//First make sure our defaults are safe
-		$this->find_posttypes($this->breadcrumb_trail->opt);
-		$this->find_taxonomies($this->breadcrumb_trail->opt);
 		//Grab the current settings from the db
 		$this->breadcrumb_trail->opt = wp_parse_args($this->get_option('bcn_options'), $this->breadcrumb_trail->opt);
 		//Generate the breadcrumb trail
