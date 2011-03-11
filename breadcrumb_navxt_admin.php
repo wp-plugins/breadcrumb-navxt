@@ -118,7 +118,7 @@ class bcn_admin extends mtekk_admin
 	/** 
 	 * This sets up and upgrades the database settings, runs on every activation
 	 */
-	function install()
+/*	function install()
 	{
 		//Call our little security function
 		$this->security();
@@ -142,7 +142,7 @@ class bcn_admin extends mtekk_admin
 		else
 		{
 			//Retrieve the database version
-			$db_version = $this->get_option('bcn_version');
+			$db_version = get_option('bcn_version');
 			if($this->version !== $db_version)
 			{
 				//Add custom post types
@@ -150,14 +150,14 @@ class bcn_admin extends mtekk_admin
 				//Add custom taxonomy types
 				$this->find_taxonomies($opts);
 				//Run the settings update script
-				opts_upgrade($opts, $db_version);
+				$this->opts_upgrade($opts, $db_version);
 				//Always have to update the version
 				update_option('bcn_version', $this->version);
 				//Store the options
 				update_option('bcn_options', $this->opt);
 			}
 		}
-	}
+	}*/
 	/**
 	 * Upgrades input options array, sets to $this->opt
 	 * 
@@ -792,7 +792,7 @@ class bcn_admin extends mtekk_admin
 	function display($return = false, $linked = true, $reverse = false)
 	{
 		//Grab the current settings from the db
-		$this->breadcrumb_trail->opt = wp_parse_args($this->get_option('bcn_options'), $this->breadcrumb_trail->opt);
+		$this->breadcrumb_trail->opt = wp_parse_args(get_option('bcn_options'), $this->breadcrumb_trail->opt);
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display($return, $linked, $reverse);
@@ -808,7 +808,7 @@ class bcn_admin extends mtekk_admin
 	function display_list($return = false, $linked = true, $reverse = false)
 	{
 		//Grab the current settings from the db
-		$this->breadcrumb_trail->opt = wp_parse_args($this->get_option('bcn_options'), $this->breadcrumb_trail->opt);
+		$this->breadcrumb_trail->opt = wp_parse_args(get_option('bcn_options'), $this->breadcrumb_trail->opt);
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
@@ -825,7 +825,7 @@ class bcn_admin extends mtekk_admin
 	function display_nested($return = false, $linked = true, $tag = 'span', $mode = 'rdfa')
 	{
 		//Grab the current settings from the db
-		$this->breadcrumb_trail->opt = wp_parse_args($this->get_option('bcn_options'), $this->breadcrumb_trail->opt);
+		$this->breadcrumb_trail->opt = wp_parse_args(get_option('bcn_options'), $this->breadcrumb_trail->opt);
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display_nested($return, $linked, $tag, $mode);
