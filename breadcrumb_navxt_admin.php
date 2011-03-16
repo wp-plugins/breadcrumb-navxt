@@ -24,15 +24,19 @@ Author URI: http://mtekk.us/
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 //Do a PHP version check, require 5.2 or newer
-if(version_compare(PHP_VERSION, '5.2.0', '<'))
+if(version_compare(phpversion(), '5.2.0', '<'))
 {
-	//Silently deactivate plugin, keeps admin usable
-	if(function_exists('deactivate_plugins'))
+	//Only purpose of this function is to echo out the PHP version error
+	function bcn_phpold()
 	{
-		deactivate_plugins(plugin_basename(__FILE__), true);
+		printf('<div class="error"><p>' . __('Your PHP version is too old, please upgrade to a newer version. Your version is %s, Breadcrumb NavXT requires %s', 'breadcrumb_navxt') . '</p></div>', phpversion(), '5.2.0');
 	}
-	//Spit out die messages
-	wp_die(sprintf(__('Your PHP version is too old, please upgrade to a newer version. Your version is %s, Breadcrumb NavXT requires %s', 'breadcrumb_navxt'), phpversion(), '5.2.0'));
+	//If we are in the admin, let's print a warning then return
+	if(is_admin())
+	{
+		add_action('admin_notices', 'bcn_phpold');
+	}
+	return;
 }
 //Include the breadcrumb class
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
