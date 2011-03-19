@@ -972,7 +972,10 @@ $bcn_admin = new bcn_admin;
 function bcn_display($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
-	return $bcn_admin->display($return, $linked, $reverse);
+	if($bcn_admin !== null)
+	{
+		return $bcn_admin->display($return, $linked, $reverse);
+	}
 }
 /**
  * A wrapper for the internal function in the class
@@ -984,7 +987,10 @@ function bcn_display($return = false, $linked = true, $reverse = false)
 function bcn_display_list($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
-	return $bcn_admin->display_list($return, $linked, $reverse);
+	if($bcn_admin !== null)
+	{
+		return $bcn_admin->display_list($return, $linked, $reverse);
+	}
 }
 /**
  * A wrapper for the internal function in the class
@@ -997,5 +1003,8 @@ function bcn_display_list($return = false, $linked = true, $reverse = false)
 function bcn_display_nested($return = false, $linked = true, $tag = 'span', $mode = 'rdfa')
 {
 	global $bcn_admin;
-	return $bcn_admin->display_nested($return, $linked, $tag, $mode);
+	if($bcn_admin !== null)
+	{
+		return $bcn_admin->display_nested($return, $linked, $tag, $mode);
+	}
 }
