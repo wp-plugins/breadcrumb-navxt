@@ -193,9 +193,9 @@ abstract class mtekk_admin
 			$opts = $this->opt;
 			//Add the options
 			add_option($this->unique_prefix . '_options', $opts);
-			add_option($this->unique_prefix . '_options_bk', $opts, false);
+			add_option($this->unique_prefix . '_options_bk', $opts, '', 'no');
 			//Add the version, no need to autoload the db version
-			add_option($this->unique_prefix . '_version', $this->version, false);
+			add_option($this->unique_prefix . '_version', $this->version, '', 'no');
 		}
 		else
 		{
@@ -231,12 +231,13 @@ abstract class mtekk_admin
 	function version_check($version)
 	{
 		//Do a quick version check
-		if(version_compare($version, $this->version, '<'))
+		if(version_compare($version, $this->version, '<') && is_array($this->opt))
 		{
 			//Throw an error since the DB version is out of date
 			$this->message['error'][] = __('Your settings are out of date.', $this->identifier) . $this->admin_anchor('upgrade', __('Migrate the settings now.', $this->identifier), __('Migrate now.', $this->identifier));
 			//Output any messages that there may be
 			$this->message();
+			return false;
 		}
 		else if(!is_array($this->opt))
 		{
@@ -244,6 +245,7 @@ abstract class mtekk_admin
 			$this->message['error'][] = __('Your plugin install is incomplete.', $this->identifier) . $this->admin_anchor('upgrade', __('Load default settings now.', $this->identifier), __('Complete now.', $this->identifier));
 			//Output any messages that there may be
 			$this->message();
+			return false;
 		}
 		else if(!$this->opts_validate($this->opt))
 		{
@@ -251,7 +253,9 @@ abstract class mtekk_admin
 			$this->message['error'][] = __('Your plugin settings are invalid.', $this->identifier) . $this->admin_anchor('fix', __('Attempt to fix settings now.', $this->identifier), __('Fix now.', $this->identifier));
 			//Output any messages that there may be
 			$this->message();
+			return false;
 		}
+		return true;
 	}
 	/**
 	 * A prototype function. End user should override if they need this feature.
@@ -275,6 +279,69 @@ abstract class mtekk_admin
 		update_option($this->unique_prefix . '_options_bk', get_option($this->unique_prefix . '_options'));
 	}
 	/**
+	 * Runs recursivly through the opts array, sanitizing and merging in updates from the $input array
+	 * 
+	 * @param array $opts good, clean array
+	 * @param array $input unsanitzed input array, not trusted at all
+	 */
+	function opts_update_loop(&$opts, $input)
+	{
+		//Loop through all of the existing options (avoids random setting injection)
+		foreach($opts as $option => $value)
+		{
+			//If we have an array, dive into another recursive loop
+			if(is_array($value))
+			{
+				$this->opts_update_loop($opts[$option], $input[$option]);
+			}
+			else
+			{
+				switch($option[0])
+				{
+					//Handle the boolean options
+					case 'b':
+						$opts[$option] = isset($input[$option]);
+						break;
+					//Handle the integer options
+					case 'i':
+						$opts[$option] = (int) $input[$option];
+						break;
+					//Handle the absolute integer options
+					case 'a':
+						$opts[$option] = absint($input[$option]);
+						break;
+					//Handle the floating point options
+					case 'f':
+						$opts[$option] = (float) $input[$option];
+						break;
+					//Handle the HTML options
+					case 'h':
+						//May be better to use wp_kses here
+						$opts[$option] = stripslashes($input[$option]);
+						break;
+					//Handle the HTML options that must not be null
+					case 'H':
+						if(isset($input[$option]))
+						{
+							$opts[$option] = stripslashes($input[$option]);
+						}
+						break;
+					//Handle the text options that must not be null
+					case 'S':
+						if(isset($input[$option]))
+						{
+							$opts[$option] = esc_html($input[$option]);
+						}
+						break;
+					//Treat everything else as a normal string
+					case 's':
+					default:
+						$opts[$option] = esc_html($input[$option]);
+				}
+			}
+		}
+	}
+	/**
 	 * Updates the database settings from the webform
 	 */
 	function opts_update()
@@ -284,63 +351,15 @@ abstract class mtekk_admin
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer($this->unique_prefix . '_options-options');
 		//Update local options from database
-		$this->opt = $this->get_option($this->unique_prefix . '_options');
-			//Add custom post types
-			$this->find_posttypes($this->opt);
-			//Add custom taxonomy types
-			$this->find_taxonomies($this->opt);
+		$this->opt = wp_parse_args(get_option($this->unique_prefix . '_options'), $this->opt);
 		//Update our backup options
-		$this->update_option($this->unique_prefix . '_options_bk', $this->opt);
+		update_option($this->unique_prefix . '_options_bk', $this->opt);
 		//Grab our incomming array (the data is dirty)
 		$input = $_POST[$this->unique_prefix . '_options'];
-		//Loop through all of the existing options (avoids random setting injection)
-		foreach($this->opt as $option => $value)
-		{
-			switch($option[0])
-			{
-				//Handle the boolean options
-				case 'b':
-					$this->opt[$option] = isset($input[$option]);
-					break;
-				//Handle the integer options
-				case 'i':
-					$this->opt[$option] = (int) $input[$option];
-					break;
-				//Handle the absolute integer options
-				case 'a':
-					$this->opt[$option] = absint($input[$option]);
-					break;
-				//Handle the floating point options
-				case 'f':
-					$this->opt[$option] = (float) $input[$option];
-					break;
-				//Handle the HTML options
-				case 'h':
-					//May be better to use wp_kses here
-					$this->opt[$option] = stripslashes($input[$option]);
-					break;
-				//Handle the HTML options that must not be null
-				case 'H':
-					if(isset($input[$option]))
-					{
-						$this->opt[$option] = stripslashes($input[$option]);
-					}
-					break;
-				//Handle the text options that must not be null
-				case 'S':
-					if(isset($input[$option]))
-					{
-						$this->opt[$option] = esc_attr($input[$option]);
-					}
-					break;
-				//Treat everything else as a normal string
-				case 's':
-				default:
-					$this->opt[$option] = esc_attr($input[$option]);
-			}
-		}
+		//Run the update loop
+		$this->opts_update_loop($this->opt, $input);
 		//Commit the option changes
-		$this->update_option($this->unique_prefix . '_options', $this->opt);
+		update_option($this->unique_prefix . '_options', $this->opt);
 		//Check if known settings match attempted save
 		if(count(array_diff_key($input, $this->opt)) == 0)
 		{
@@ -577,13 +596,16 @@ abstract class mtekk_admin
 	 */
 	function message()
 	{
-		//Loop through our message classes
-		foreach($this->message as $key => $class)
+		if(count($this->message))
 		{
-			//Loop through the messages in the current class
-			foreach($class as $message)
+			//Loop through our message classes
+			foreach($this->message as $key => $class)
 			{
-				printf('<div class="%s"><p>%s</p></div>', $key, $message);	
+				//Loop through the messages in the current class
+				foreach($class as $message)
+				{
+					printf('<div class="%s"><p>%s</p></div>', $key, $message);	
+				}
 			}
 		}
 		$this->message = array();
