@@ -278,6 +278,11 @@ class bcn_admin extends mtekk_admin
 		check_admin_referer('bcn_options-options');
 		//Update local options from database
 		$this->opt = get_option('bcn_options');
+		//If we did not get an array, might as well just quit here
+		if(!is_array($this->opt))
+		{
+			return;
+		}
 		//Add custom post types
 		$this->find_posttypes($this->opt);
 		//Add custom taxonomy types
@@ -394,13 +399,18 @@ class bcn_admin extends mtekk_admin
 	function admin_page()
 	{
 		global $wp_taxonomies, $wp_post_types;
-		$this->security();
-		$this->version_check(get_option($this->unique_prefix . '_version'));
-		?>
+		$this->security();?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
 		<div<?php if($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
 			print $this->_get_help_text();
 		?></div>
+		<?php
+		//We exit after the version check if there is an action the user needs to take before saving settings
+		if(!$this->version_check(get_option($this->unique_prefix . '_version')))
+		{
+			return;
+		}
+		?>
 		<form action="options-general.php?page=breadcrumb_navxt" method="post" id="bcn_admin-options">
 			<?php settings_fields('bcn_options');?>
 			<div id="hasadmintabs">
@@ -847,7 +857,10 @@ $bcn_admin = new bcn_admin;
 function bcn_display($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
-	return $bcn_admin->display($return, $linked, $reverse);
+	if($bcn_admin !== null)
+	{
+		return $bcn_admin->display($return, $linked, $reverse);
+	}
 }
 /**
  * A wrapper for the internal function in the class
@@ -859,7 +872,10 @@ function bcn_display($return = false, $linked = true, $reverse = false)
 function bcn_display_list($return = false, $linked = true, $reverse = false)
 {
 	global $bcn_admin;
-	return $bcn_admin->display_list($return, $linked, $reverse);
+	if($bcn_admin !== null)
+	{
+		return $bcn_admin->display_list($return, $linked, $reverse);
+	}
 }
 /**
  * A wrapper for the internal function in the class
@@ -872,5 +888,8 @@ function bcn_display_list($return = false, $linked = true, $reverse = false)
 function bcn_display_nested($return = false, $linked = true, $tag = 'span', $mode = 'rdfa')
 {
 	global $bcn_admin;
-	return $bcn_admin->display_nested($return, $linked, $tag, $mode);
+	if($bcn_admin !== null)
+	{
+		return $bcn_admin->display_nested($return, $linked, $tag, $mode);
+	}
 }
