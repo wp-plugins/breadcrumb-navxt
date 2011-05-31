@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.8.90
+Version: 3.9.0
 Author: John Havlik
 Author URI: http://mtekk.us/
 */
@@ -58,7 +58,7 @@ class bcn_admin extends mtekk_admin
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.8.90';
+	protected $version = '3.9.0';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -268,8 +268,8 @@ class bcn_admin extends mtekk_admin
 		$this->security();
 		//Do a nonce check, prevent malicious link/form problems
 		check_admin_referer('bcn_options-options');
-		//Update local options from database
-		$this->opt = $this->get_option('bcn_options');
+		//Update local options from database, going to always do a safe get
+		$this->opt = wp_parse_args($this->get_option('bcn_options'), $this->breadcrumb_trail->opt);
 		//If we did not get an array, might as well just quit here
 		if(!is_array($this->opt))
 		{

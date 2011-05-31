@@ -630,10 +630,10 @@ abstract class mtekk_admin
 	 * @param object $disable [optional]
 	 * @return 
 	 */
-	function input_radio($option, $value, $instruction, $disable = false)
+	function input_radio($option, $value, $instruction, $disable = false, $type = 'radio')
 	{?>
 		<label>
-			<input name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" type="radio" <?php if($disable){echo 'disabled="disabled" class="disabled togx"';}else{echo 'class="togx"';}?> value="<?php echo $value;?>" <?php checked($value, $this->opt[$option]);?> />
+			<input name="<?php echo $this->unique_prefix . '_options[' . $option;?>]" type="<?php echo $type;?>" <?php if($disable){echo 'disabled="disabled" class="disabled togx"';}else{echo 'class="togx"';}?> value="<?php echo $value;?>" <?php checked($value, $this->opt[$option]);?> />
 			<?php echo $instruction; ?>
 		</label><br/>
 	<?php
