@@ -45,13 +45,13 @@ require_once(dirname(__FILE__) . '/breadcrumb_navxt_widget.php');
 //Include admin base class
 if(!class_exists('mtekk_admin'))
 {
-	require_once(dirname(__FILE__) . '/includes/mtekk_admin_class.php');
+	require_once(dirname(__FILE__) . '/includes/mtekk_adminkit.php');
 }
 /**
  * The administrative interface class 
  * 
  */
-class bcn_admin extends mtekk_admin
+class bcn_admin extends mtekk_adminKit
 {
 	/**
 	 * local store for breadcrumb version
@@ -119,49 +119,6 @@ class bcn_admin extends mtekk_admin
 			wp_die(__('Insufficient privileges to proceed.', 'breadcrumb_navxt'));
 		}
 	}
-	/** 
-	 * This sets up and upgrades the database settings, runs on every activation
-	 */
-/*	function install()
-	{
-		//Call our little security function
-		$this->security();
-		//Try retrieving the options from the database
-		$opts = get_option('bcn_options');
-		//If there are no settings, copy over the default settings
-		if(!is_array($opts))
-		{
-			//Grab defaults from the breadcrumb_trail object
-			$opts = $this->breadcrumb_trail->opt;
-			//Add custom post types
-			$this->find_posttypes($opts);
-			//Add custom taxonomy types
-			$this->find_taxonomies($opts);
-			//Add the options
-			add_option('bcn_options', $opts);
-			add_option('bcn_options_bk', $opts, '', 'no');
-			//Add the version, no need to autoload the db version
-			add_option('bcn_version', $this->version, '', 'no');
-		}
-		else
-		{
-			//Retrieve the database version
-			$db_version = get_option('bcn_version');
-			if($this->version !== $db_version)
-			{
-				//Add custom post types
-				$this->find_posttypes($opts);
-				//Add custom taxonomy types
-				$this->find_taxonomies($opts);
-				//Run the settings update script
-				$this->opts_upgrade($opts, $db_version);
-				//Always have to update the version
-				update_option('bcn_version', $this->version);
-				//Store the options
-				update_option('bcn_options', $this->opt);
-			}
-		}
-	}*/
 	/**
 	 * Upgrades input options array, sets to $this->opt
 	 * 
@@ -174,84 +131,6 @@ class bcn_admin extends mtekk_admin
 		//If our version is not the same as in the db, time to update
 		if($version !== $this->version)
 		{
-			//Upgrading to 3.4
-			if(version_compare($version, '3.4.0', '<'))
-			{
-				//Inline upgrade of the tag setting
-				if($opts['post_taxonomy_type'] === 'tag')
-				{
-					$opts['post_taxonomy_type'] = 'post_tag';
-				}
-				//Fix our tag settings
-				$opts['archive_post_tag_prefix'] = $this->breadcrumb_trail->opt['archive_tag_prefix'];
-				$opts['archive_post_tag_suffix'] = $this->breadcrumb_trail->opt['archive_tag_suffix'];
-				$opts['post_tag_prefix'] = $this->breadcrumb_trail->opt['tag_prefix'];
-				$opts['post_tag_suffix'] = $this->breadcrumb_trail->opt['tag_suffix'];
-				$opts['post_tag_anchor'] = $this->breadcrumb_trail->opt['tag_anchor'];
-			}
-			//Upgrading to 3.6
-			if(version_compare($version, '3.6.0', '<'))
-			{
-				//Added post_ prefix to avoid conflicts with custom taxonomies
-				$opts['post_page_prefix'] = $opts['page_prefix'];
-				unset($opts['page_prefix']);
-				$opts['post_page_suffix'] = $opts['page_suffix'];
-				unset($opts['page_suffix']);
-				$opts['post_page_anchor'] = $opts['page_anchor'];
-				unset($opts['page_anchor']);
-				$opts['post_post_prefix'] = $opts['post_prefix'];
-				unset($opts['post_prefix']);
-				$opts['post_post_suffix'] = $opts['post_suffix'];
-				unset($opts['post_suffix']);
-				$opts['post_post_anchor'] = $opts['post_anchor'];
-				unset($opts['post_anchor']);
-				$opts['post_post_taxonomy_display'] = $opts['post_taxonomy_display'];
-				unset($opts['post_taxonomy_display']);
-				$opts['post_post_taxonomy_type'] = $opts['post_taxonomy_type'];
-				unset($opts['post_taxonomy_type']);
-				//Update to non-autoload db version
-				delete_option('bcn_version');
-				add_option('bcn_version', $this->version, '', 'no');
-				add_option('bcn_options_bk', $opts, '', 'no');
-			}
-			//Upgrading to 3.7
-			if(version_compare($version, '3.7.0', '<'))
-			{
-				//Add the new options for multisite
-				//Should the mainsite be shown
-				$opts['mainsite_display'] = true;
-				//Title displayed when for the main site
-				$opts['mainsite_title'] = __('Home', 'breadcrumb_navxt');
-				//The anchor template for the main site, this is global, two keywords are available %link% and %title%
-				$opts['mainsite_anchor'] = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
-				//The prefix for mainsite breadcrumbs, placed inside of current_item prefix
-				$opts['mainsite_prefix'] = '';
-				//The prefix for mainsite breadcrumbs, placed inside of current_item prefix
-				$opts['mainsite_suffix'] = '';
-				//Now add post_root for all of the custom types
-				foreach($wp_post_types as $post_type)
-				{
-					//We only want custom post types
-					if($post_type->name != 'post' && $post_type->name != 'page' && $post_type->name != 'attachment' && $post_type->name != 'revision' && $post_type->name != 'nav_menu_item')
-					{
-						//If the post type does not have blog_display setting, add it
-						if(!array_key_exists('post_' . $post_type->name . '_root', $opts))
-						{
-							//Default for blog_display type dependent
-							if($post_type->hierarchical)
-							{
-								//Set post_root for hierarchical types
-								$opts['post_' . $post_type->name . '_root'] = get_option('page_on_front');
-							}
-							else
-							{
-								//Set post_root for flat types
-								$opts['post_' . $post_type->name . '_root'] = get_option('page_for_posts');
-							}
-						}
-					}
-				}
-			}
 			//Upgrading to 3.8.1
 			if(version_compare($version, '3.8.1', '<'))
 			{

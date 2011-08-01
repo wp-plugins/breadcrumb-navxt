@@ -23,45 +23,44 @@ class bcn_breadcrumb
 	//Our member variables
 	//The main text that will be shown
 	protected $title;
+	//The breadcrumb's template, used durring assembly
+	protected $template;
+	//The breadcrumb's no anchor template, used durring assembly when there won't be an anchor
+	protected $template_no_anchor;
 	//Boolean, is this element linked
 	protected $linked;
-	//Linked anchor contents, null if $linked == false
-	protected $anchor;
-	//Global prefix, outside of link tags
-	protected $prefix;
-	//Global suffix, outside of link tags
-	protected $suffix;
+	//The link the breadcrumb leads to, null if $linked == false
+	protected $url;
+	protected $_tags = array(
+					'%title%',
+					'%url%',
+					'%htitle%',
+					'%type%');
 	//The type of this breadcrumb
 	public $type;
 	/**
-	 * The enhanced default constructor
-	 * 
-	 * @return 
-	 * @param string $title[optional]
-	 * @param string $prefix[optional]
-	 * @param string $suffix[optional]
-	 * @param string $anchor[optional]
-	 * @param bool $linked[optional]
+	 * The enhanced default constructor, ends up setting all parameters via the set_ functions
+	 *  
+	 * @param string $title (optional) The title of the breadcrumb
+	 * @param string $template (optional) The html template for the breadcrumb
+	 * @param string $type (optional) The breadcrumb type
+	 * @param string $url (optional) The url the breadcrumb links to
 	 */
-	public function bcn_breadcrumb($title = '', $prefix = '', $suffix = '', $anchor = NULL, $linked = false)
+	public function bcn_breadcrumb($title = '', $template = '', $type = '', $url = NULL)
 	{
 		//Set the title
-		$this->title = __($title, 'breadcrumb_navxt');
-		//Set the prefix
-		$this->prefix = __($prefix, 'breadcrumb_navxt');
-		//Set the suffix
-		$this->suffix = __($suffix, 'breadcrumb_navxt');
-		//Default state of unlinked
-		$this->linked = $linked;
+		$this->set_title($title);
+		//Assign the breadcrumb template
+		$this->template = $template;
+		//The breadcrumb type
+		$this->type = $type;
 		//Always NULL if unlinked
-		$this->anchor = $anchor;
-		//null out the type, it's not fully used yet
-		$this->type = NULL;
+		$this->set_url($url);
 	}
 	/**
 	 * Function to set the protected title member
 	 * 
-	 * @param string $title
+	 * @param string $title The title of the breadcrumb
 	 */
 	public function set_title($title)
 	{
@@ -69,27 +68,8 @@ class bcn_breadcrumb
 		$this->title = apply_filters('bcn_breadcrumb_title', __($title, 'breadcrumb_navxt'));
 	}
 	/**
-	 * Function to set the protected prefix member
-	 * 
-	 * @param string $prefix
-	 */
-	public function set_prefix($prefix)
-	{
-		//Set the prefix
-		$this->prefix = __($prefix, 'breadcrumb_navxt');
-	}
-	/**
-	 * Function to set the protected suffix member
-	 * 
-	 * @param string $suffix
-	 */
-	public function set_suffix($suffix)
-	{
-		//Set the suffix
-		$this->suffix = __($suffix, 'breadcrumb_navxt');
-	}
-	/**
 	 * Function to get the protected title member
+	 * 
 	 * @return $this->title
 	 */
 	public function get_title()
@@ -98,41 +78,18 @@ class bcn_breadcrumb
 		return $this->title;
 	}
 	/**
-	 * Function to get the protected prefix member
-	 * @return $this->prefix
-	 */
-	public function get_prefix()
-	{
-		//Return the prefix
-		return $this->prefix;
-	}
-	/**
-	 * Function to get the protected suffix member
-	 * @return $this->suffix
-	 */
-	public function get_suffix()
-	{
-		//Return the suffix
-		return $this->suffix;
-	}
-	/**
-	 * Sets the anchor attribute for the breadcrumb, will set $linked to true
+	 * Function to set the internal URL variable
 	 * 
-	 * @param string $template the anchor template to use
-	 * @param string $url the url to replace the %link% tag in the anchor
-	 * 
+	 * @param string $url the url to link to
 	 */
-	public function set_anchor($template, $url)
+	public function set_url($url)
 	{
-		//Set a safe tempalte if none was specified
-		if($template == '')
+		$this->url = $url;
+		//Set linked to true if we set a non-null $url
+		if($url)
 		{
-			$template = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
+			$this->linked = true;
 		}
-		//Set the anchor, we strip tangs from the title to prevent html validation problems
-		$this->anchor = str_replace('%title%', strip_tags($this->title), str_replace('%link%', $url, __($template, 'breadcrumb_navxt')));
-		//Set linked to true since we called this function
-		$this->linked = true;
 	}
 	/**
 	 * This function will intelligently trim the title to the value passed in through $max_length.
@@ -146,7 +103,7 @@ class bcn_breadcrumb
 		{
 			//Trim the title
 			$this->title = mb_substr($this->title, 0, $max_length - 1);
-			//Make sure we can split at a space, but we want to limmit to cutting at max an additional 25%
+			//Make sure we can split a, four keywords are available %link%, %title%, %htitle%, and %type%pace, but we want to limmit to cutting at max an additional 25%
 			if(mb_strpos($this->title, ' ', .75 * $max_length) > 0)
 			{
 				//Don't split mid word
@@ -162,25 +119,29 @@ class bcn_breadcrumb
 	/**
 	 * Assembles the parts of the breadcrumb into a html string
 	 * 
+	 * @param bool $linked (optional) Allow the output to contain anchors?
 	 * @return string The compiled breadcrumb string
-	 * @param bool $linked[optional] Allow the output to contain anchors?
 	 */
 	public function assemble($linked = true)
 	{
-		//Place in the breadcrumb's elements
-		$breadcrumb_str = $this->prefix;
-		//If we are linked we'll need to do up the link
+		//Build our replacements array
+		$replacements = array(
+							esc_attr(strip_tags($this->title)),
+							$this->url,
+							$this->title,
+							$this->type);
+		//If we are linked we'll need to use the normal template
 		if($this->linked && $linked && $this->anchor)
 		{
-			$breadcrumb_str .= $this->anchor . $this->title . '</a>';
+			//Return the assembled breadcrumb string
+			return str_replace($this->_tags, $replacements, $this->template);
 		}
-		//Otherwise we just slip in the title
+		//Otherwise we use the no anchor template
 		else
 		{
-			$breadcrumb_str .= $this->title;
+			//Return the assembled breadcrumb string
+			return str_replace($this->_tags, $replacements, $this->template_no_anchor);
 		}
-		//Return the assembled string
-		return $breadcrumb_str . $this->suffix;
 	}
 }
 
@@ -188,7 +149,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	public $version = '3.8.1';
+	private $version = '4.0.0';
 	//An array of breadcrumbs
 	public $trail = array();
 	//The options
@@ -199,32 +160,29 @@ class bcn_breadcrumb_trail
 		//Load the translation domain as the next part needs it		
 		load_plugin_textdomain($domain = 'breadcrumb_navxt', false, 'breadcrumb-navxt/languages');
 		//Initilize with default option values
-		$this->opt = array
-		(
+		$this->opt = array(
 			//Should the mainsite be shown
 			'mainsite_display' => true,
 			//Title displayed when for the main site
 			'mainsite_title' => __('Home', 'breadcrumb_navxt'),
-			//The anchor template for the main site, this is global, two keywords are available %link% and %title%
-			'mainsite_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
-			//The prefix for mainsite breadcrumbs, placed inside of current_item prefix
-			'mainsite_prefix' => '',
-			//The prefix for mainsite breadcrumbs, placed inside of current_item prefix
-			'mainsite_suffix' => '',
+			//The breadcrumb template for the main site, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
+			'mainsite_template' => __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The breadcrumb template for the main site, used when an anchor is not needed, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
+			'mainsite_template_no_anchor' => '%htitle%',
 			//Should the home page be shown
 			'home_display' => true,
 			//Title displayed when is_home() returns true
 			'home_title' => __('Blog', 'breadcrumb_navxt'),
-			//The anchor template for the home page, this is global, two keywords are available %link% and %title%
-			'home_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
+			//The breadcrumb template for the home page, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
+			'home_template' => __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The breadcrumb template for the home page, used when an anchor is not needed, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
+			'home_template_no_anchor' => '%htitle%',
 			//Should the blog page be shown globally
 			'blog_display' => true,
-			//The anchor template for the blog page only in static front page mode, this is global, two keywords are available %link% and %title%
-			'blog_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
-			//The prefix for home breadcrumbs, placed inside of current_item prefix
-			'home_prefix' => '',
-			//The suffix for home breadcrumbs, placed inside of current_item suffix
-			'home_suffix' => '',
+			//The breadcrumb template for the blog page only in static front page mode, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
+			'blog_template' => __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The breadcrumb template for the blog page only in static front page mode, used when an anchor is not needed, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
+			'blog_template_no_anchor' => '%htitle%',
 			//Separator that is placed between each item in the breadcrumb trial, but not placed before
 			//the first and not after the last breadcrumb
 			'separator' => ' &gt; ',
@@ -232,22 +190,19 @@ class bcn_breadcrumb_trail
 			'max_title_length' => 0,
 			//Current item options, really only applies to static pages and posts unless other current items are linked
 			'current_item_linked' => false,
-			//The anchor template for current items, this is global, two keywords are available %link% and %title%
-			'current_item_anchor' => __('<a title="Reload the current page." href="%link%">', 'breadcrumb_navxt'),
-			//The prefix for current items allows separate styling of the current location breadcrumb
-			'current_item_prefix' => '',
-			//The suffix for current items allows separate styling of the current location breadcrumb
-			'current_item_suffix' => '',
+			//The breadcrumb template for current items, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
+			'current_item_template' => __('<a title="Reload the current page." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The breadcrumb template for current items, used when an anchor is not needed, four keywords are available %link%, %title%, %htitle%, and %type%
+			'current_item_template_no_anchor' => '%htitle%',
 			//Static page options
-			//The prefix for page breadcrumbs, place on all page elements and inside of current_item prefix
-			'post_page_prefix' => '',
-			//The suffix for page breadcrumbs, place on all page elements and inside of current_item suffix
-			'post_page_suffix' => '',
-			//The anchor template for page breadcrumbs, two keywords are available %link% and %title%
-			'post_page_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
+			//The anchor template for page breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
+			'post_page_template' => __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The anchor template for page breadcrumbs, used when an anchor is not needed, four keywords are available %link%, %title%, %htitle%, and %type%
+			'post_page_template_no_anchor' => '%htitle%',
 			//Just a link to the page on front property
 			'post_page_root' => get_option('page_on_front'),
 			//Paged options
+			//TODO: Need to update with a template but more changes will be needed
 			//The prefix for paged breadcrumbs, place on all page elements and inside of current_item prefix
 			'paged_prefix' => '',
 			//The suffix for paged breadcrumbs, place on all page elements and inside of current_item suffix
@@ -255,12 +210,10 @@ class bcn_breadcrumb_trail
 			//Should we try filling out paged information
 			'paged_display' => false,
 			//The post options previously singleblogpost
-			//The prefix for post breadcrumbs, place on all page elements and inside of current_item prefix
-			'post_post_prefix' => '',
-			//The suffix for post breadcrumbs, place on all page elements and inside of current_item suffix
-			'post_post_suffix' => '',
-			//The anchor template for post breadcrumbs, two keywords are available %link% and %title%
-			'post_post_anchor' => __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt'),
+			//The breadcrumb template for post breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
+			'post_post_template' => __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The breadcrumb template for post breadcrumbs, used when an anchor is not needed, four keywords are available %link%, %title%, %htitle%, and %type%
+			'post_post_template_no_anchor' => '%htitle%',
 			//Just a link for the page for posts
 			'post_post_root' => get_option('page_for_posts'),
 			//Should the trail include the taxonomy of the post
@@ -268,48 +221,40 @@ class bcn_breadcrumb_trail
 			//What taxonomy should be shown leading to the post, tag or category
 			'post_post_taxonomy_type' => 'category',
 			//Attachment settings
+			//TODO: Need to move attachments to support via normal post handlers
 			//The prefix for attachment breadcrumbs, place on all page elements and inside of current_item prefix
 			'attachment_prefix' => '',
 			//The suffix for attachment breadcrumbs, place on all page elements and inside of current_item suffix
 			'attachment_suffix' => '',
 			//404 page settings
-			//The prefix for 404 breadcrumbs, place on all page elements and inside of current_item prefix
-			'404_prefix' => '',
-			//The suffix for 404 breadcrumbs, place on all page elements and inside of current_item suffix
-			'404_suffix' => '',
+			//The template for 404 breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
+			'404_template' => '%htitle%',
 			//The text to be shown in the breadcrumb for a 404 page
 			'404_title' => __('404', 'breadcrumb_navxt'),
 			//Search page options
-			//The prefix for search breadcrumbs, place on all page elements and inside of current_item prefix
-			'search_prefix' => __('Search results for &#39;', 'breadcrumb_navxt'),
-			//The suffix for search breadcrumbs, place on all page elements and inside of current_item suffix
-			'search_suffix' => '&#39;',
-			//The anchor template for search breadcrumbs, two keywords are available %link% and %title%
-			'search_anchor' => __('<a title="Go to the first page of search results for %title%." href="%link%">', 'breadcrumb_navxt'),
+			//The breadcrumb template for search breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
+			'search_template' => __('<a title="Go to the first page of search results for %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The breadcrumb template for search breadcrumbs, used when an anchor is not necessary, four keywords are available %link%, %title%, %htitle%, and %type%
+			'search_template_no_anchor' => __('Search results for &#39;%htitle%&#39;', 'breadcrumb_navxt'),
 			//Tag related stuff
-			//The prefix for tag breadcrumbs, place on all page elements and inside of current_item prefix
-			'post_tag_prefix' => '',
-			//The suffix for tag breadcrumbs, place on all page elements and inside of current_item suffix
-			'post_tag_suffix' => '',
-			//The anchor template for tag breadcrumbs, two keywords are available %link% and %title%
-			'post_tag_anchor' => __('<a title="Go to the %title% tag archives." href="%link%">', 'breadcrumb_navxt'),
+			//The breadcrumb template for tag breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
+			'post_tag_template' => __('<a title="Go to the %title% tag archives." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The breadcrumb template for tag breadcrumbs, used when an anchor is not needed, four keywords are available %link%, %title%, %htitle%, and %type%
+			'post_tag_template_no_anchor' => '%htitle%',
 			//Author page stuff
-			//The prefix for author breadcrumbs, place on all page elements and inside of current_item prefix
-			'author_prefix' => __('Articles by: ', 'breadcrumb_navxt'),
-			//The suffix for author breadcrumbs, place on all page elements and inside of current_item suffix
-			'author_suffix' => '',
-			//The anchor template for author breadcrumbs, two keywords are available %link% and %title%
-			'author_anchor' => __('<a title="Go to the first page of posts by %title%." href="%link%">', 'breadcrumb_navxt'),
+			//The anchor template for author breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
+			'author_template' => __('Articles by: <a title="Go to the first page of posts by %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The anchor template for author breadcrumbs, used when anchors are not needed, four keywords are available %link%, %title%, %htitle%, and %type%
+			'author_template_no_anchor' => __('Articles by: %htitle%', 'breadcrumb_navxt'),
 			//Which of the various WordPress display types should the author breadcrumb display
 			'author_name' => 'display_name',
 			//Category stuff
-			//The prefix for category breadcrumbs, place on all page elements and inside of current_item prefix
-			'category_prefix' => '',
-			//The suffix for category breadcrumbs, place on all page elements and inside of current_item suffix
-			'category_suffix' => '',
-			//The anchor template for category breadcrumbs, two keywords are available %link% and %title%
-			'category_anchor' => __('<a title="Go to the %title% category archives." href="%link%">', 'breadcrumb_navxt'),
+			//The breadcrumb template for category breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
+			'category_template' => __('<a title="Go to the %title% category archives." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The breadcrumb template for category breadcrumbs, used when anchors are not needed, four keywords are available %link%, %title%, %htitle%, and %type%
+			'category_template_no_anchor' => '%htitle%',
 			//Archives related settings
+			//TODO: need to revisit these prefixes and suffixes
 			//Prefix for category archives, place inside of both the current_item prefix and the category_prefix
 			'archive_category_prefix' => __('Archive by category &#39;', 'breadcrumb_navxt'),
 			//Suffix for category archives, place inside of both the current_item suffix and the category_suffix
@@ -318,12 +263,22 @@ class bcn_breadcrumb_trail
 			'archive_post_tag_prefix' => __('Archive by tag &#39;', 'breadcrumb_navxt'),
 			//Suffix for tag archives, place inside of the current_item suffix
 			'archive_post_tag_suffix' => '&#39;',
-			'date_anchor' => __('<a title="Go to the %title% archives." href="%link%">', 'breadcrumb_navxt'),
+			//The breadcrumb template for date breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
+			'date_template' => __('<a title="Go to the %title% archives." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
 			//Prefix for date archives, place inside of the current_item prefix
 			'archive_date_prefix' => '',
 			//Suffix for date archives, place inside of the current_item suffix
 			'archive_date_suffix' => ''
 		);
+	}
+	/**
+	 * This returns the internal version
+	 *
+	 * @return string internal version of the Breadcrumb trail
+	 */
+	public function get_version()
+	{
+		return $this->version;
 	}
 	/**
 	 * Adds a breadcrumb to the breadcrumb trail
@@ -1093,6 +1048,10 @@ class bcn_breadcrumb_trail
 			echo $credits . $trail_str;
 		}
 	}
+	/**
+	 * A supplimentary function for the display_nested function
+	 * TODO: Split this off into a supplementary plugin
+	 */
 	function nested_loop($linked, $tag, $mode)
 	{
 		//Grab the current breadcrumb from the trail, move the iterator forward one
@@ -1134,6 +1093,8 @@ class bcn_breadcrumb_trail
 	 * @param bool $linked[optional] Whether to allow hyperlinks in the trail or not.
 	 * @param string $tag[optional] The tag to use for the nesting
 	 * @param string $mode[optional] Whether to follow the rdfa or Microdata format
+	 * 
+	 * TODO: Split this off into a supplementary plugin
 	 */
 	function display_nested($return = false, $linked = true, $tag = 'span', $mode = 'rdfa')
 	{
