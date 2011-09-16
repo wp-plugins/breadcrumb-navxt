@@ -7,6 +7,9 @@ Version: 3.9.20
 Author: John Havlik
 Author URI: http://mtekk.us/
 License: GPL2
+TextDomain: breadcrumb_navxt
+DomainPath: /languages/
+
 */
 /*  Copyright 2007-2011  John Havlik  (email : mtekkmonkey@gmail.com)
 
