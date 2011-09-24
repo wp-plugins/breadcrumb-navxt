@@ -27,14 +27,14 @@ class bcn_breadcrumb
 	protected $template;
 	//TODO: evaluate if the following is needed
 	//The breadcrumb's no anchor template, used durring assembly when there won't be an anchor
-	protected $template_no_anchor;
+	protected $template_no_anchor = '%title%';
 	//Boolean, is this element linked
 	protected $linked;
 	//The link the breadcrumb leads to, null if $linked == false
 	protected $url;
 	protected $_tags = array(
 					'%title%',
-					'%url%',
+					'%link%',
 					'%htitle%',
 					'%type%');
 	//The type of this breadcrumb
@@ -52,6 +52,10 @@ class bcn_breadcrumb
 		//Set the title
 		$this->set_title($title);
 		//Assign the breadcrumb template
+		if($template == NULL)
+		{
+			$template = __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt');
+		}
 		$this->template = $template;
 		//The breadcrumb type
 		$this->type = $type;
@@ -135,14 +139,20 @@ class bcn_breadcrumb
 	 */
 	public function assemble($linked = true)
 	{
+		var_dump($this);
 		//Build our replacements array
 		$replacements = array(
 							esc_attr(strip_tags($this->title)),
 							$this->url,
 							$this->title,
 							$this->type);
+		//The type may be an array, implode it if that is the case
+		if(is_array($replacements[3]))
+		{
+			$replacements[3] = implode(' ', $replacements[3]);
+		}
 		//If we are linked we'll need to use the normal template
-		if($this->linked && $linked && $this->anchor)
+		if($this->linked && $linked)
 		{
 			//Return the assembled breadcrumb string
 			return str_replace($this->_tags, $replacements, $this->template);
@@ -183,7 +193,7 @@ class bcn_breadcrumb_trail
 			//Should the home page be shown
 			'bhome_display' => true,
 			//Title displayed when is_home() returns true
-			'Shome_title' => __('Blog', 'breadcrumb_navxt'),
+			'Shome_title' => __('Home', 'breadcrumb_navxt'),
 			//The breadcrumb template for the home page, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
 			'Hhome_template' => __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
 			//The breadcrumb template for the home page, used when an anchor is not needed, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
@@ -230,10 +240,10 @@ class bcn_breadcrumb_trail
 			'Spost_post_taxonomy_type' => 'category',
 			//Attachment settings
 			//TODO: Need to move attachments to support via normal post handlers
-			//The prefix for attachment breadcrumbs, place on all page elements and inside of current_item prefix
-			'attachment_prefix' => '',
-			//The suffix for attachment breadcrumbs, place on all page elements and inside of current_item suffix
-			'attachment_suffix' => '',
+			//The breadcrumb template for attachment breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
+			'Hpost_attachment_template' => __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The breadcrumb template for attachment breadcrumbs, used when an anchor is not needed, four keywords are available %link%, %title%, %htitle%, and %type%
+			'Hpost_attachment_template_no_anchor' => '%htitle%',
 			//404 page settings
 			//The template for 404 breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
 			'H404_template' => '%htitle%',
@@ -566,11 +576,11 @@ class bcn_breadcrumb_trail
 	{
 		global $post;
 		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title(), $this->opt['Hattachment_template_no_anchor'], array('attachment', 'current-item')));
-		if($this->opt['bcurrent_page_linked'])
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title(), $this->opt['Hpost_attachment_template_no_anchor'], array('attachment', 'current-item')));
+		if($this->opt['bcurrent_item_linked'])
 		{
 			//Change the template over to the normal, linked one
-			$breadcrumb->set_template($this->opt['Hattachement_template']);
+			$breadcrumb->set_template($this->opt['Hpost_attachment_template']);
 			//Add the link
 			$breadcrumb->set_url(get_permalink());
 		}
@@ -611,7 +621,7 @@ class bcn_breadcrumb_trail
 		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
 		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['H' . $term->taxonomy . '_template_no_anchor'], array($term->taxonomy, 'current-item')));
 		//If we're paged, let's link to the first page
-		if($this->opt['bcurrent_page_linked'] || (is_paged() && $this->opt['bpaged_display']))
+		if($this->opt['bcurrent_item_linked'] || (is_paged() && $this->opt['bpaged_display']))
 		{
 			$breadcrumb->set_template($this->opt['H' . $term->taxonomy . '_template']);
 			//Figure out the anchor for current category
@@ -640,7 +650,7 @@ class bcn_breadcrumb_trail
 		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
 		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['H' . $term->taxonomy . '_template_no_anchor'], array($term->taxonomy, 'current-item')));
 		//If we're paged, let's link to the first page
-		if($this->opt['bcurrent_page_linked'] || (is_paged() && $this->opt['bpaged_display']))
+		if($this->opt['bcurrent_item_linked'] || (is_paged() && $this->opt['bpaged_display']))
 		{
 			$breadcrumb->set_template($this->opt['H' . $term->taxonomy . '_template']);
 			//Figure out the anchor for current category
@@ -699,20 +709,46 @@ class bcn_breadcrumb_trail
 	{
 		global $post, $current_site;
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['home_prefix'], $this->opt['home_suffix']));
+		$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['Shome_title'], $this->opt['Hhome_template_no_anchor'], array('site-home', 'current-item')));
+		//If we're paged, let's link to the first page
+		if($this->opt['bcurrent_item_linked'] || (is_paged() && $this->opt['bpaged_display']))
+		{
+			$breadcrumb->set_template($this->opt['Hhome_template']);
+			//Figure out the anchor for home page
+			$breadcrumb->set_url(get_home_url());
+		}
 		//If we have a multi site and are not on the main site we may need to add a breadcrumb for the main site
-		if($this->opt['mainsite_display'] && !is_main_site())
+		if($this->opt['bmainsite_display'] && !is_main_site())
 		{
 			//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['mainsite_title'], $this->opt['mainsite_prefix'], $this->opt['mainsite_suffix']));
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['Smainsite_title'], $this->opt['Hmainsite_template_no_anchor'], array('mainsite-home')));
 			//Deal with the anchor
-			$breadcrumb->set_anchor($this->opt['mainsite_anchor'], get_home_url($current_site->blog_id));
+			$breadcrumb->set_url(get_home_url($current_site->blog_id));
 		}
-		//If we're paged, let's link to the first page
-		if(is_paged() && $this->opt['paged_display'])
+	}
+	/**
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for the home page.
+	 */
+	function do_home()
+	{
+		global $post, $current_site;
+		//On everything else we need to link, but no current item (pre/suf)fixes
+		if($this->opt['bhome_display'])
 		{
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['Shome_title'], $this->opt['Hhome_template'], array('site-home')));
 			//Figure out the anchor for home page
-			$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url());
+			$breadcrumb->set_url(get_home_url());
+			//If we have a multi site and are not on the main site we need to add a breadcrumb for the main site
+			if($this->opt['bmainsite_display'] && !is_main_site())
+			{
+				//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+				$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['Smainsite_title'], $this->opt['Hmainsite_template_no_anchor'], array('mainsite-home')));
+				//Deal with the anchor
+				$breadcrumb->set_url(get_home_url($current_site->blog_id));
+			}
 		}
 	}
 	/**
@@ -727,11 +763,11 @@ class bcn_breadcrumb_trail
 		return $type->_builtin;
 	}
 	/**
-	 * A Breadcrumb Trail Filling Function
-	 * 
-	 * This functions fills a breadcrumb for the home page.
+	 * A Breadcrumb Trail Filling Function 
+	 *
+	 * Handles only the root page stuff for post types, including the "page for posts"
 	 */
-	function do_home()
+	function do_root()
 	{
 		global $post, $wp_query, $wp_taxonomies, $current_site;
 		//Simmilar to using $post, but for things $post doesn't cover
@@ -783,22 +819,6 @@ class bcn_breadcrumb_trail
 				{
 					$this->post_parents($bcn_post->post_parent, $frontpage_id);
 				}
-			}
-		}
-		//On everything else we need to link, but no current item (pre/suf)fixes
-		if($this->opt['home_display'])
-		{
-			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['home_title'], $this->opt['home_prefix'], $this->opt['home_suffix']));
-			//Deal with the anchor
-			$breadcrumb->set_anchor($this->opt['home_anchor'], get_home_url());
-			//If we have a multi site and are not on the main site we need to add a breadcrumb for the main site
-			if($this->opt['mainsite_display'] && !is_main_site())
-			{
-				//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-				$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['mainsite_title'], $this->opt['mainsite_prefix'], $this->opt['mainsite_suffix']));
-				//Deal with the anchor
-				$breadcrumb->set_anchor($this->opt['mainsite_anchor'], get_home_url($current_site->blog_id));
 			}
 		}
 	}
@@ -873,6 +893,7 @@ class bcn_breadcrumb_trail
 			{
 				$this->do_post_hierarchical();
 			}
+			//TODO: Evaluate need for this
 			//For attachments
 			else if(is_attachment())
 			{
@@ -950,32 +971,6 @@ class bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * Performs actions specific to current item breadcrumbs. It will wrap the prefix/suffix
-	 * with the current_item_prefix and current_item_suffix. Additionally, it will link the
-	 * current item if current_item_linked is set to true.
-	 * 
-	 * @param bcn_breadrumb $breadcrumb pointer to a bcn_breadcrumb object to opperate on
-	 * @TODO: This should be deprecated, verify the need for this
-	 */
-	function current_item($breadcrumb)
-	{
-		//We are misusing the breadcrumb type property here, but in 4.0 this will be unnecessary
-		/*if($breadcrumb->type == null)
-		{	
-			//Prepend the current item prefix
-			$breadcrumb->set_prefix($this->opt['current_item_prefix'] . $breadcrumb->get_prefix());
-			//Append the current item suffix
-			$breadcrumb->set_suffix($breadcrumb->get_suffix() . $this->opt['current_item_suffix']);
-			//Set the breadcrumb's type to current_item
-			$breadcrumb->type = 'current_item';
-			//Link the current item, if required
-			if($this->opt['current_item_linked'])
-			{
-				$breadcrumb->set_anchor($this->opt['current_item_anchor'], '');
-			}
-		}*/
-	}
-	/**
 	 * This functions outputs or returns the breadcrumb trail in string form.
 	 *
 	 * @return void Void if Option to print out breadcrumb trail was chosen.
@@ -1011,10 +1006,10 @@ class bcn_breadcrumb_trail
 				}
 			}
 			//If we are on the current item there are some things that must be done
-			if($key === 0)
+			/*if($key === 0)
 			{
 				$this->current_item($breadcrumb);
-			}
+			}*/
 			//Trim titles, if needed
 			if($this->opt['amax_title_length'] > 0)
 			{
@@ -1044,6 +1039,8 @@ class bcn_breadcrumb_trail
 	 * @param bool $return Whether to return data or to echo it.
 	 * @param bool $linked[optional] Whether to allow hyperlinks in the trail or not.
 	 * @param bool $reverse[optional] Whether to reverse the output or not. 
+	 * 
+	 * TODO: Can probably write this one in a smarter way now
 	 */
 	function display_list($return = false, $linked = true, $reverse = false)
 	{
@@ -1068,7 +1065,7 @@ class bcn_breadcrumb_trail
 			//If we are on the current item there are some things that must be done
 			else if($key === 0)
 			{
-				$this->current_item($breadcrumb);
+				//$this->current_item($breadcrumb);
 				//Add in a class for current_item
 				$trail_str .= ' class="current_item"';
 			}
