@@ -525,7 +525,7 @@ class bcn_breadcrumb_trail
 	{
 		global $post, $page;
 		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, template, and type
-		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title(), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'], array($post->post_type, 'current-item')));
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title(), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'], array('post-' . $post->post_type, 'current-item')));
 		//If the current item is to be linked, or this is a paged post, add in links
 		if($this->opt['bcurrent_item_linked'] || ($page > 0 && $this->opt['bpaged_display']))
 		{
@@ -553,7 +553,7 @@ class bcn_breadcrumb_trail
 	{
 		global $post, $page;
 		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, template, and type
-		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title(), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'], array($post->post_type, 'current-item')));
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title(), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'], array('post-' . $post->post_type, 'current-item')));
 		//If the current item is to be linked, or this is a paged post, add in links
 		if($this->opt['bcurrent_item_linked'] || ($page > 0 && $this->opt['bpaged_display']))
 		{
@@ -775,20 +775,28 @@ class bcn_breadcrumb_trail
 		//We need to do special things for custom post types
 		if(is_singular() && !$this->is_builtin($type->post_type))
 		{
+			//We need the type for later, so save it
+			$type = $type->post_type;
 			//This will assign a ID for root page of a custom post
-			if(is_numeric($this->opt['post_' . $type->post_type . '_root']))
+			if(is_numeric($this->opt['apost_' . $type . '_root']))
 			{
-				$posts_id = $this->opt['post_' . $type->post_type . '_root'];
+				$posts_id = $this->opt['apost_' . $type . '_root'];
 			}
 		}
 		//We need to do special things for custom post type archives, but not author or date archives
 		else if(is_archive() && !is_author() && !is_date() && !$this->is_builtin($wp_taxonomies[$type->taxonomy]->object_type[0]))
 		{
+			//We need the type for later, so save it
+			$type = $wp_taxonomies[$type->taxonomy]->object_type[0];
 			//This will assign a ID for root page of a custom post's taxonomy archive
-			if(is_numeric($this->opt['post_' . $wp_taxonomies[$type->taxonomy]->object_type[0] . '_root']))
+			if(is_numeric($this->opt['apost_' . $type . '_root']))
 			{
-				$posts_id = $this->opt['post_' . $wp_taxonomies[$type->taxonomy]->object_type[0] . '_root'];
+				$posts_id = $this->opt['apost_' . $type . '_root'];
 			}
+		}
+		else
+		{
+			$type = "post";
 		}
 		//We only need the "blog" portion on members of the blog, and only if we're in a static frontpage environment
 		if(isset($posts_id) || $this->opt['blog_display'] && get_option('show_on_front') == 'page' && (is_home() || (is_single() && !is_page()) || (is_archive() && !is_author())))
@@ -804,14 +812,14 @@ class bcn_breadcrumb_trail
 			{
 				//Get the blog page
 				$bcn_post = get_post($posts_id);
-				//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-				$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($posts_id), $this->opt['post_page_prefix'],
-					$this->opt['post_page_suffix']));
+				//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, we get a pointer to it in return
+				$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($posts_id), 'Hpost_' . $post->post_type . '_template_no_anchor', array($type . '-root', 'post-' . $post->post_type)));
 				//If we're not on the current item we need to setup the anchor
-				if(!is_home() || (is_paged() && $this->opt['paged_display']))
+				if(!is_home() || (is_paged() && $this->opt['bpaged_display']))
 				{
-					//Deal with the anchor
-					$breadcrumb->set_anchor($this->opt['blog_anchor'], get_permalink($posts_id));
+					$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template']);
+					//Figure out the anchor for home page
+					$breadcrumb->set_url(get_permalink($posts_id));
 				}
 				//Done with the "root", now on to the parents
 				//If there is a parent post let's find it
@@ -946,6 +954,7 @@ class bcn_breadcrumb_trail
 		//We always do the home link last, unless on the frontpage
 		if(!is_front_page())
 		{
+			$this->do_root();
 			$this->do_home();
 		}
 		//Do any actions if necessary, we past through the current object instance to keep life simple
@@ -1005,11 +1014,6 @@ class bcn_breadcrumb_trail
 					$trail_str .= $this->opt['hseparator'];
 				}
 			}
-			//If we are on the current item there are some things that must be done
-			/*if($key === 0)
-			{
-				$this->current_item($breadcrumb);
-			}*/
 			//Trim titles, if needed
 			if($this->opt['amax_title_length'] > 0)
 			{
@@ -1065,7 +1069,6 @@ class bcn_breadcrumb_trail
 			//If we are on the current item there are some things that must be done
 			else if($key === 0)
 			{
-				//$this->current_item($breadcrumb);
 				//Add in a class for current_item
 				$trail_str .= ' class="current_item"';
 			}
