@@ -760,19 +760,3 @@ function bcn_display_list($return = false, $linked = true, $reverse = false)
 		return $bcn_admin->display_list($return, $linked, $reverse);
 	}
 }
-/**
- * A wrapper for the internal function in the class
- * 
- * @param bool $return Whether to return data or to echo it.
- * @param bool $linked[optional] Whether to allow hyperlinks in the trail or not.
- * @param string $tag[optional] The tag to use for the nesting
- * @param string $mode[optional] Whether to follow the rdfa or Microdata format
- */
-function bcn_display_nested($return = false, $linked = true, $tag = 'span', $mode = 'rdfa')
-{
-	global $bcn_admin;
-	if($bcn_admin !== null)
-	{
-		return $bcn_admin->display_nested($return, $linked, $tag, $mode);
-	}
-}
