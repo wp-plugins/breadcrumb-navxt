@@ -107,6 +107,15 @@ class bcn_breadcrumb
 		$this->template = $template;
 	}
 	/**
+	 * Append a type entry to the type array
+	 * 
+	 * @param string $type the type to append
+	 */
+	public function add_type($type)
+	{
+		$this->type[] = $type;
+	}
+	/**
 	 * This function will intelligently trim the title to the value passed in through $max_length.
 	 * 
 	 * @param int $max_length of the title.
@@ -283,6 +292,8 @@ class bcn_breadcrumb_trail
 			'archive_post_tag_suffix' => '&#39;',
 			//The breadcrumb template for date breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
 			'Hdate_template' => __('<a title="Go to the %title% archives." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//The breadcrumb template for date breadcrumbs, used when anchors are not needed, four keywords are available %link%, %title%, %htitle%, and %type%
+			'Hdate_template_no_anchor' => '%htitle%',
 			//Prefix for date archives, place inside of the current_item prefix
 			'archive_date_prefix' => '',
 			//Suffix for date archives, place inside of the current_item suffix
@@ -433,6 +444,7 @@ class bcn_breadcrumb_trail
 	 * @param string $taxonomy The name of the taxonomy that the term belongs to
 	 * 
 	 * @TODO Need to implement this cleaner, fix up the entire tag_ thing, as this is now generic
+	 * TODO: This still needs to be updated to the new method
 	 */
 	function post_terms($id, $taxonomy)
 	{
@@ -662,7 +674,7 @@ class bcn_breadcrumb_trail
 	 * 
 	 * This functions fills a breadcrumb for a date archive.
 	 * 
-	 * @TODO This one is going to get ugly as we call it in four different instances, and need away to add in the current-item type
+	 * @TODO This one is going to get ugly as we call it in two different instances, and need away to add in the current-item type
 	 */
 	function do_archive_by_date()
 	{
@@ -671,33 +683,54 @@ class bcn_breadcrumb_trail
 		if(is_day() || is_single())
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('d'), $this->opt['archive_date_prefix'], $this->opt['archive_date_suffix']));
-			//If we're paged, let's link to the first page
-			if(is_paged() && $this->opt['paged_display'] || is_single())
+			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('d'), $this->opt['Hdate_template_no_anchor'], array('date-day')));
+			//If this is a day archive, add current-item type
+			if(is_day())
 			{
+				$breadcrumb->add_type('current-item');
+			}
+			//If we're paged, let's link to the first page
+			if($this->opt['bcurrent_item_linked'] || is_paged() && $this->opt['bpaged_display'] || is_single())
+			{
+				//We're linking, so set the linked template
+				$breadcrumb->set_template($this->opt['Hdate_template']);
 				//Deal with the anchor
-				$breadcrumb->set_anchor($this->opt['date_anchor'], get_day_link(get_the_time('Y'), get_the_time('m'), get_the_time('d')));
+				$breadcrumb->set_url(get_day_link(get_the_time('Y'), get_the_time('m'), get_the_time('d')));
 			}
 		}
 		//Now deal with the month breadcrumb
 		if(is_month() || is_day() || is_single())
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('F'), $this->opt['archive_date_prefix'], $this->opt['archive_date_suffix']));
-			//If we're paged, or not in the archive by month let's link to the first archive by month page
-			if(is_day() || is_single() || (is_month() && is_paged() && $this->opt['paged_display']))
+			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('F'), $this->opt['Hdate_template_no_anchor'], array('date-month')));
+			//If this is a month archive, add current-item type
+			if(is_month())
 			{
+				$breadcrumb->add_type('current-item');
+			}
+			//If we're paged, or not in the archive by month let's link to the first archive by month page
+			if($this->opt['bcurrent_item_linked'] || is_day() || is_single() || (is_month() && is_paged() && $this->opt['bpaged_display']))
+			{
+				//We're linking, so set the linked template
+				$breadcrumb->set_template($this->opt['Hdate_template']);
 				//Deal with the anchor
-				$breadcrumb->set_anchor($this->opt['date_anchor'], get_month_link(get_the_time('Y'), get_the_time('m')));
+				$breadcrumb->set_url(get_month_link(get_the_time('Y'), get_the_time('m')));
 			}
 		}
 		//Place the year breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('Y'), $this->opt['archive_date_prefix'], $this->opt['archive_date_suffix']));
-		//If we're paged, or not in the archive by year let's link to the first archive by year page
-		if(is_day() || is_month() || is_single() || (is_paged() && $this->opt['paged_display']))
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_time('Y'), $this->opt['Hdate_template_no_anchor'], array('date-year')));
+		//If this is a year archive, add current-item type
+		if(is_year())
 		{
+			$breadcrumb->add_type('current-item');
+		}
+		//If we're paged, or not in the archive by year let's link to the first archive by year page
+		if($this->opt['bcurrent_item_linked'] || is_day() || is_month() || is_single() || (is_paged() && $this->opt['bpaged_display']))
+		{
+			//We're linking, so set the linked template
+			$breadcrumb->set_template($this->opt['Hdate_template']);
 			//Deal with the anchor
-			$breadcrumb->set_anchor($this->opt['date_anchor'], get_year_link(get_the_time('Y')));
+			$breadcrumb->set_url(get_year_link(get_the_time('Y')));
 		}
 	}
 	/**
