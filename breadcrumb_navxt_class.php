@@ -139,7 +139,7 @@ class bcn_breadcrumb
 	 */
 	public function assemble($linked = true)
 	{
-		var_dump($this);
+		//var_dump($this);
 		//Build our replacements array
 		$replacements = array(
 							esc_attr(strip_tags($this->title)),
@@ -703,6 +703,22 @@ class bcn_breadcrumb_trail
 	/**
 	 * A Breadcrumb Trail Filling Function
 	 * 
+	 * This functions fills a breadcrumb for a post type archive (WP 3.1 feature)
+	 */
+	function do_archive_by_post_type()
+	{
+		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb(post_type_archive_title('', false), 'Hpost_' . get_post_type() . '_template_no_anchor', array('post-' . get_post_type() . '-archive', 'current-item')));
+		if($this->opt['bcurrent_item_linked'] || is_paged() && $this->opt['bpaged_display'])
+		{
+			$breadcrumb->set_template($this->opt['Hpost_' . get_post_type() . '_template_no_anchor']);
+			//Deal with the anchor
+			$breadcrumb->set_url(get_post_type_archive_link(get_post_type()));
+		}
+	}
+	/**
+	 * A Breadcrumb Trail Filling Function
+	 * 
 	 * This functions fills a breadcrumb for the front page.
 	 */
 	function do_front_page()
@@ -766,6 +782,8 @@ class bcn_breadcrumb_trail
 	 * A Breadcrumb Trail Filling Function 
 	 *
 	 * Handles only the root page stuff for post types, including the "page for posts"
+	 * 
+	 * TODO: this still needs to be redone, just trying to get it working ATM
 	 */
 	function do_root()
 	{
@@ -784,7 +802,7 @@ class bcn_breadcrumb_trail
 			}
 		}
 		//We need to do special things for custom post type archives, but not author or date archives
-		else if(is_archive() && !is_author() && !is_date() && !$this->is_builtin($wp_taxonomies[$type->taxonomy]->object_type[0]))
+		else if(!is_post_type_archive() && is_archive() && !is_author() && !is_date() && !$this->is_builtin($wp_taxonomies[$type->taxonomy]->object_type[0]))
 		{
 			//We need the type for later, so save it
 			$type = $wp_taxonomies[$type->taxonomy]->object_type[0];
@@ -798,8 +816,24 @@ class bcn_breadcrumb_trail
 		{
 			$type = "post";
 		}
+		//These two are for taxonomy archives and for a single custom post type, they probably don't work
+		if(isset($type->post_type) && !$this->is_builtin($type->post_type))
+		{
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->post_type_archive_title(get_post_type_object($type->post_type)), 'Hpost_' . $type->post_type . '_template', array('post-' . $type->post_type . '-archive')));
+			//Deal with the anchor
+			$breadcrumb->set_url(get_post_type_archive_link($type->post_type));
+		}
+		else if(isset($type->taxonomy) && !$this->is_builtin($wp_taxonomies[$type->taxonomy]->object_type[0]))
+		{
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->post_type_archive_title(get_post_type_object($wp_taxonomies[$type->taxonomy]->object_type[0])), 'Hpost_' . $type->post_type . '_template', array('post-' . $type->post_type . '-archive')));
+			//Deal with the anchor
+			$breadcrumb->set_url(get_post_type_archive_link($wp_taxonomies[$type->taxonomy]->object_type[0]));
+		}
 		//We only need the "blog" portion on members of the blog, and only if we're in a static frontpage environment
-		if(isset($posts_id) || $this->opt['blog_display'] && get_option('show_on_front') == 'page' && (is_home() || (is_single() && !is_page()) || (is_archive() && !is_author())))
+		//if(isset($posts_id) || $this->opt['blog_display'] && get_option('show_on_front') == 'page' && (is_home() || (is_single() && !is_page()) || (is_archive() && !is_author())))
+		if(isset($posts_id) || $this->opt['bblog_display'] && get_option('show_on_front') == 'page' && (is_home() || is_single() || is_tax() || is_category() || is_tag()))
 		{
 			//If we entered here with a posts page, we need to set the id
 			if(!isset($posts_id))
@@ -931,8 +965,12 @@ class bcn_breadcrumb_trail
 			{
 				$this->do_archive_by_date();
 			}
-			//For taxonomy based archives, aka everything else
-			else
+			else if(is_post_type_archive())
+			{
+				$this->do_archive_by_post_type();
+			}
+			//For taxonomy based archives
+			else if(is_category() || is_tag() || is_tax())
 			{
 				//For hierarchical taxonomy based archives
 				if(is_taxonomy_hierarchical($queried_object->taxonomy))

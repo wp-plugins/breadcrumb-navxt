@@ -47,7 +47,7 @@ require_once(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
 //Include the WP 2.8+ widget class
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_widget.php');
 //Include admin base class
-if(!class_exists('mtekk_admin'))
+if(!class_exists('mtekk_adminKit'))
 {
 	require_once(dirname(__FILE__) . '/includes/mtekk_adminkit.php');
 }
