@@ -60,6 +60,10 @@ abstract class mtekk_adminKit
 	{
 		return admin_url('options-general.php?page=' . $this->identifier);
 	}
+	function admin_anchor($mode, $title = '', $text = '')
+	{
+		$this->nonced_anchor($this->admin_url(), 'admin_' . $mode, $title, $text);
+	}
 	/**
 	 * Returns a properly formed nonced anchor to the specified URI
 	 * 
