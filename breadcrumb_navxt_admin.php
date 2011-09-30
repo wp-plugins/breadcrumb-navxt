@@ -265,6 +265,7 @@ class bcn_admin extends mtekk_adminKit
 		wp_enqueue_script('mtekk_adminkit_tabs');
 		//Load the translations for the tabs
 		wp_localize_script('mtekk_adminkit_tabs', 'objectL10n', array(
+			'mtad_uid' => 'bcn_admin',
 			'mtad_import' => __('Import', $this->identifier),
 			'mtad_export' => __('Export', $this->identifier),
 			'mtad_reset' => __('Reset', $this->identifier),

@@ -20,7 +20,7 @@ function mtekk_admin_tabulator_init(){
 	jQuery("#hasadmintabs").tabs();
 	/* handler for opening the last tab after submit (compability version) */
 	jQuery('#hasadmintabs ul a').click(function(i){
-		var form   = jQuery('#llynx-options');
+		var form   = jQuery('#'+objectL10n.mtad_uid+'-options');
 		var action = form.attr("action").split('#', 1) + jQuery(this).attr('href');
 		form.get(0).setAttribute("action", action);
 	});
