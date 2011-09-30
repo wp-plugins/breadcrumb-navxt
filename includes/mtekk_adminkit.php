@@ -323,11 +323,12 @@ abstract class mtekk_adminKit
 		foreach($opts as $option => $value)
 		{
 			//If we have an array, dive into another recursive loop
-			if(is_array($value))
+			if(isset($input[$option]) && is_array($value))
 			{
 				$this->opts_update_loop($opts[$option], $input[$option]);
 			}
-			else
+			//We must check for unset settings, but booleans are ok to be unset
+			else if(isset($input[$option]) || $option[0] == 'b')
 			{
 				switch($option[0])
 				{
