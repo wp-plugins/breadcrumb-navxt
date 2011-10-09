@@ -300,11 +300,7 @@ class bcn_breadcrumb_trail
 			//The breadcrumb template for date breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
 			'Hdate_template' => __('<a title="Go to the %title% archives." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
 			//The breadcrumb template for date breadcrumbs, used when anchors are not needed, four keywords are available %link%, %title%, %htitle%, and %type%
-			'Hdate_template_no_anchor' => '%htitle%',
-			//Prefix for date archives, place inside of the current_item prefix
-			'archive_date_prefix' => '',
-			//Suffix for date archives, place inside of the current_item suffix
-			'archive_date_suffix' => ''
+			'Hdate_template_no_anchor' => '%htitle%'
 		);
 	}
 	/**

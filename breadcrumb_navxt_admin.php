@@ -250,9 +250,9 @@ class bcn_admin extends mtekk_adminKit
 			$screen->add_help_tab(
 				array(
 					'id' => 'general',
-					'tile' => __('General', $identifier),
-					'content' => sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', $identifier), 
-			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', $identifier) . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>')
+					'tile' => __('General', $this->identifier),
+					'content' => sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', $this->identifier), 
+			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', $this->identifier) . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>')
 				));
 		}
 	}
@@ -277,7 +277,7 @@ class bcn_admin extends mtekk_adminKit
 	 */
 	function admin_styles()
 	{
-		wp_enqueue_style('mtekk_admin_tabs');
+		wp_enqueue_style('mtekk_adminkit_tabs');
 	}
 	/**
 	 * enqueue's the tab js and translation js on the settings page
@@ -299,8 +299,8 @@ class bcn_admin extends mtekk_adminKit
 	 * interface
 	 */
 	function admin_head()
-	{	
-	
+	{
+		
 	}
 	/**
 	 * The administrative page for Breadcrumb NavXT
