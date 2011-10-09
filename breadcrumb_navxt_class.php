@@ -287,16 +287,6 @@ class bcn_breadcrumb_trail
 			'Hcategory_template' => __('<a title="Go to the %title% category archives." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
 			//The breadcrumb template for category breadcrumbs, used when anchors are not needed, four keywords are available %link%, %title%, %htitle%, and %type%
 			'Hcategory_template_no_anchor' => '%htitle%',
-			//Archives related settings
-			//TODO: need to revisit these prefixes and suffixes
-			//Prefix for category archives, place inside of both the current_item prefix and the category_prefix
-			'archive_category_prefix' => __('Archive by category &#39;', 'breadcrumb_navxt'),
-			//Suffix for category archives, place inside of both the current_item suffix and the category_suffix
-			'archive_category_suffix' => '&#39;',
-			//Prefix for tag archives, place inside of the current_item prefix
-			'archive_post_tag_prefix' => __('Archive by tag &#39;', 'breadcrumb_navxt'),
-			//Suffix for tag archives, place inside of the current_item suffix
-			'archive_post_tag_suffix' => '&#39;',
 			//The breadcrumb template for date breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
 			'Hdate_template' => __('<a title="Go to the %title% archives." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
 			//The breadcrumb template for date breadcrumbs, used when anchors are not needed, four keywords are available %link%, %title%, %htitle%, and %type%

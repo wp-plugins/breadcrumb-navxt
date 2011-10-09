@@ -442,7 +442,7 @@ class bcn_admin extends mtekk_adminKit
 					{
 						//Add the necessary option array members
 						$this->opt['Hpost_' . $post_type->name . '_template'] = __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt');
-						$this->opt['Hpost_' . $post_type->name . '_template_no_anchor'] = __('%title%', 'breadcrumb_navxt');
+						$this->opt['Hpost_' . $post_type->name . '_template_no_anchor'] = __('%htitle%', 'breadcrumb_navxt');
 						//Do type dependent tasks
 						if($post_type->hierarchical)
 						{
@@ -523,25 +523,14 @@ class bcn_admin extends mtekk_adminKit
 					<?php
 				}
 			}?>
-			<fieldset id="category" class="bcn_options alttab">
-				<h3><?php _e('Categories', 'breadcrumb_navxt'); ?></h3>
+			<fieldset id="tax" class="bcn_options alttab">
+				<h3><?php _e('Categories &amp; Tags', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
 					<?php
 						$this->input_text(__('Category Template', 'breadcrumb_navxt'), 'Hcategory_template', '64', false, __('The template for category breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Category Template (Unlinked)', 'breadcrumb_navxt'), 'Hcategory_template_no_anchor', '64', false, __('The template for category breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));
-						$this->input_text(__('Archive by Category Prefix', 'breadcrumb_navxt'), 'archive_category_prefix', '32', false, __('Applied before the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'));
-						$this->input_text(__('Archive by Category Suffix', 'breadcrumb_navxt'), 'archive_category_suffix', '32', false, __('Applied after the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'));
-					?>
-				</table>
-			</fieldset>
-			<fieldset id="post_tag" class="bcn_options alttab">
-				<h3><?php _e('Tags', 'breadcrumb_navxt'); ?></h3>
-				<table class="form-table">
-					<?php
 						$this->input_text(__('Tag Template', 'breadcrumb_navxt'), 'Hpost_tag_template', '64', false, __('The template for tag breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Tag Template (Unlinked)', 'breadcrumb_navxt'), 'Hpost_tag_template_no_anchor', '64', false, __('The template for tag breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));
-						$this->input_text(__('Archive by Tag Prefix', 'breadcrumb_navxt'), 'archive_post_tag_prefix', '32', false, __('Applied before the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'));
-						$this->input_text(__('Archive by Tag Suffix', 'breadcrumb_navxt'), 'archive_post_tag_suffix', '32', false, __('Applied after the title of the current item breadcrumb on an archive by tag page.', 'breadcrumb_navxt'));
 					?>
 				</table>
 			</fieldset>
@@ -558,8 +547,6 @@ class bcn_admin extends mtekk_adminKit
 						//Add the necessary option array members
 						$this->opt['H' . $taxonomy->name . '_template'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">%%htitle%%</a>', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
 						$this->opt['H' . $taxonomy->name . '_template_no_anchor'] = __(sprintf('%%htitle%%', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
-						$this->opt['archive_' . $taxonomy->name . '_prefix'] = '';
-						$this->opt['archive_' . $taxonomy->name . '_suffix'] = '';
 					}
 				?>
 			<fieldset id="<?php echo $taxonomy->name; ?>" class="bcn_options alttab">
@@ -568,8 +555,6 @@ class bcn_admin extends mtekk_adminKit
 					<?php
 						$this->input_text(sprintf(__('%s Template', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'H' . $taxonomy->name . '_template', '64', false, sprintf(__('The template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
 						$this->input_text(sprintf(__('%s Template (Unlinked)', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'H' . $taxonomy->name . '_template_no_anchor', '64', false, sprintf(__('The template for %s breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
-						$this->input_text(sprintf(__('Archive by %s Prefix', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'archive_' . $taxonomy->name . '_prefix', '32', false, sprintf(__('Applied before the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
-						$this->input_text(sprintf(__('Archive by %s Suffix', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'archive_' . $taxonomy->name . '_suffix', '32', false, sprintf(__('Applied after the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
 					?>
 				</table>
 			</fieldset>
@@ -577,14 +562,6 @@ class bcn_admin extends mtekk_adminKit
 				}
 			}
 			?>
-			<fieldset id="date" class="bcn_options">
-				<h3><?php _e('Date', 'breadcrumb_navxt'); ?></h3>
-				<table class="form-table">
-					<?php
-						$this->input_text(__('Date Template', 'breadcrumb_navxt'), 'Hdate_template', '64', false, __('The template for date breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_text(__('Date Template (Unlinked)', 'breadcrumb_navxt'), 'Hdate_template_no_anchor', '64', false, __('The template for date breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));					?>
-				</table>
-			</fieldset>
 			<fieldset id="miscellaneous" class="bcn_options">
 				<h3><?php _e('Miscellaneous', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
@@ -592,6 +569,8 @@ class bcn_admin extends mtekk_adminKit
 						$this->input_text(__('Author Template', 'breadcrumb_navxt'), 'Hauthor_template', '64', false, __('The template for author breadcrumbs.', 'breadcrumb_navxt'));
 						$this->input_text(__('Author Template (Unlinked)', 'breadcrumb_navxt'), 'Hauthor_template_no_anchor', '64', false, __('The template for author breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));
 						$this->input_select(__('Author Display Format', 'breadcrumb_navxt'), 'Sauthor_name', array("display_name", "nickname", "first_name", "last_name"), false, __('display_name uses the name specified in "Display name publicly as" under the user profile the others correspond to options in the user profile.', 'breadcrumb_navxt'));
+						$this->input_text(__('Date Template', 'breadcrumb_navxt'), 'Hdate_template', '64', false, __('The template for date breadcrumbs.', 'breadcrumb_navxt'));
+						$this->input_text(__('Date Template (Unlinked)', 'breadcrumb_navxt'), 'Hdate_template_no_anchor', '64', false, __('The template for date breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));
 						$this->input_text(__('Search Template', 'breadcrumb_navxt'), 'Hsearch_template', '64', false, __('The anchor template for search breadcrumbs, used only when the search results span several pages.', 'breadcrumb_navxt'));
 						$this->input_text(__('Search Template (Unlinked)', 'breadcrumb_navxt'), 'Hsearch_template_no_anchor', '64', false, __('The anchor template for search breadcrumbs, used only when the search results span several pages and the breadcrumb is not linked.', 'breadcrumb_navxt'));
 						$this->input_text(__('404 Title', 'breadcrumb_navxt'), 'S404_title', '32');
@@ -634,7 +613,7 @@ class bcn_admin extends mtekk_adminKit
 				{
 					//Add the necessary option array members
 					$opts['Hpost_' . $post_type->name . '_template'] = __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt');
-					$opts['Hpost_' . $post_type->name . '_template_no_anchor'] = __('%title%', 'breadcrumb_navxt');
+					$opts['Hpost_' . $post_type->name . '_template_no_anchor'] = __('%htitle%', 'breadcrumb_navxt');
 					//Do type dependent tasks
 					if($post_type->hierarchical)
 					{
@@ -689,8 +668,6 @@ class bcn_admin extends mtekk_adminKit
 					//Add the necessary option array members
 					$opts['H' . $taxonomy->name . '_template'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">%%htitle%%</a>', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
 					$opts['H' . $taxonomy->name . '_template_no_anchor'] = __(sprintf('%%htitle%%', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
-					$opts['archive_' . $taxonomy->name . '_prefix'] = '';
-					$opts['archive_' . $taxonomy->name . '_suffix'] = '';
 				}
 			}
 		}
