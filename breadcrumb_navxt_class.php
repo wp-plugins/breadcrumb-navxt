@@ -532,11 +532,10 @@ class bcn_breadcrumb_trail
 	/**
 	 * A Breadcrumb Trail Filling Function
 	 * 
-	 * This functions fills a breadcrumb for a hierarchical post/page.
+	 * This functions fills a breadcrumb for posts
 	 * 
-	 * @TODO Evaluate if this can be merged with the do_post_flat function
 	 */
-	function do_post_hierarchical()
+	function do_post()
 	{
 		global $post, $page;
 		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, template, and type
@@ -549,43 +548,30 @@ class bcn_breadcrumb_trail
 			//Add the link
 			$breadcrumb->set_url(get_permalink());
 		}
-		//Done with the current item, now on to the parents
-		$bcn_frontpage = get_option('page_on_front');
-		//If there is a parent page let's find it
-		if($post->post_parent && $post->ID != $post->post_parent && $bcn_frontpage != $post->post_parent)
+		//If we have a hiearchical post, go through the parent tree
+		if(is_post_type_hierarchical($post->post_type))
 		{
-			$this->post_parents($post->post_parent, $bcn_frontpage);
+			//Done with the current item, now on to the parents
+			$bcn_frontpage = get_option('page_on_front');
+			//If there is a parent page let's find it
+			if($post->post_parent && $post->ID != $post->post_parent && $bcn_frontpage != $post->post_parent)
+			{
+				$this->post_parents($post->post_parent, $bcn_frontpage);
+			}
 		}
-	}
-	/**
-	 * A Breadcrumb Trail Filling Function
-	 * 
-	 * This functions fills a breadcrumb for a post.
-	 * 
-	 * @TODO Evaluate if this can be merged with the do_post_hierarchical function
-	 */
-	function do_post_flat()
-	{
-		global $post, $page;
-		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, template, and type
-		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title(), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'], array('post-' . $post->post_type, 'current-item')));
-		//If the current item is to be linked, or this is a paged post, add in links
-		if($this->opt['bcurrent_item_linked'] || ($page > 0 && $this->opt['bpaged_display']))
+		//Otherwise we need the follow the taxonomy tree
+		else
 		{
-			//Change the template over to the normal, linked one
-			$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template']);
-			//Add the link
-			$breadcrumb->set_url(get_permalink());
+			//Handle the post's taxonomy
+			$this->post_taxonomy($post->ID, $post->post_type, $post->post_parent);
 		}
-		//Handle the post's taxonomy
-		$this->post_taxonomy($post->ID, $post->post_type, $post->post_parent);
 	}
 	/**
 	 * A Breadcrumb Trail Filling Function
 	 * 
 	 * This functions fills a breadcrumb for an attachment page.
 	 * 
-	 * @TODO Evaluate if this can be merged in with the do_post_* functions
+	 * @TODO Evaluate if this can be merged in with the do_post function
 	 */
 	function do_attachment()
 	{
@@ -933,21 +919,15 @@ class bcn_breadcrumb_trail
 		//For posts
 		else if(is_singular())
 		{
-			//For hierarchical posts
-			if(is_page() || (is_post_type_hierarchical($queried_object->post_type) && !is_home()))
-			{
-				$this->do_post_hierarchical();
-			}
-			//TODO: Evaluate need for this
 			//For attachments
-			else if(is_attachment())
+			if(is_attachment())
 			{
 				$this->do_attachment();
 			}
-			//For flat posts
+			//For all other post types
 			else
 			{
-				$this->do_post_flat();
+				$this->do_post();
 			}
 		}
 		//For searches
