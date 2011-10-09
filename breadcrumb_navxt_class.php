@@ -25,7 +25,6 @@ class bcn_breadcrumb
 	protected $title;
 	//The breadcrumb's template, used durring assembly
 	protected $template;
-	//TODO: evaluate if the following is needed
 	//The breadcrumb's no anchor template, used durring assembly when there won't be an anchor
 	protected $template_no_anchor = '%title%';
 	//Boolean, is this element linked
@@ -462,8 +461,10 @@ class bcn_breadcrumb_trail
 					$bcn_breadcrumb->set_title($bcn_breadcrumb->get_title() . ', ');
 				}
 				//This is a bit hackish, but it compiles the term anchor and appends it to the current breadcrumb title
-				$bcn_breadcrumb->set_title($bcn_breadcrumb->get_title() . $this->opt[$taxonomy . '_prefix'] . str_replace('%title%', $term->name, str_replace('%link%', get_term_link($term, $taxonomy), $this->opt[$taxonomy . '_anchor'])) .
-					$term->name . '</a>' . $this->opt[$taxonomy . '_suffix']);
+				$bcn_breadcrumb->set_title($bcn_breadcrumb->get_title() . str_replace(
+					array('%title%', '%link%', '%htitle%', '%type%'),
+					array($term->name, get_term_link($term, $taxonomy), $term->name, $term->taxonomy),
+					$this->opt['H' . $term->taxonomy . '_template']));
 				$is_first = false;
 			}
 		}
