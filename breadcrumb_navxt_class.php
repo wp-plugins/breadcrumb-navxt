@@ -742,7 +742,7 @@ class bcn_breadcrumb_trail
 	function do_archive_by_post_type()
 	{
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb(post_type_archive_title('', false), 'Hpost_' . get_post_type() . '_template_no_anchor', array('post-' . get_post_type() . '-archive', 'current-item')));
+		$breadcrumb = $this->add(new bcn_breadcrumb(post_type_archive_title('', false), $this->opt['Hpost_' . get_post_type() . '_template_no_anchor'], array('post-' . get_post_type() . '-archive', 'current-item')));
 		if($this->opt['bcurrent_item_linked'] || is_paged() && $this->opt['bpaged_display'])
 		{
 			$breadcrumb->set_template($this->opt['Hpost_' . get_post_type() . '_template']);
@@ -921,7 +921,7 @@ class bcn_breadcrumb_trail
 			$page_number = $page;
 		}
 		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, prefix, and suffix
-		$this->trail[] = new bcn_breadcrumb($page_number, $this->opt['Hpaged_template'], 'paged');
+		$this->trail[] = new bcn_breadcrumb($page_number, $this->opt['Hpaged_template'], array('paged'));
 	}
 	/**
 	 * Breadcrumb Trail Filling Function
