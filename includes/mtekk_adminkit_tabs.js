@@ -11,8 +11,9 @@ function mtekk_admin_tabulator_init(){
 	jQuery('#hasadmintabs').prepend("<ul><\/ul>");
 	jQuery('#hasadmintabs > fieldset').each(function(i){
 		id = jQuery(this).attr('id');
+		cssc = jQuery(this).attr('class');
 		caption = jQuery(this).find('h3').text();
-		jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'"><span>'+caption+"<\/span><\/a><\/li>");
+		jQuery('#hasadmintabs > ul').append('<li><a href="#'+id+'" class="'+cssc+'"><span>'+caption+"<\/span><\/a><\/li>");
 		jQuery(this).find('h3').hide();
 	});
 	/* init the tabs plugin */

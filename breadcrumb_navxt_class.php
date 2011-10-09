@@ -267,7 +267,7 @@ class bcn_breadcrumb_trail
 			'S404_title' => __('404', 'breadcrumb_navxt'),
 			//Search page options
 			//The breadcrumb template for search breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
-			'Hsearch_template' => __('<a title="Go to the first page of search results for %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			'Hsearch_template' => __('Search results for &#39;<a title="Go to the first page of search results for %title%." href="%link%">%htitle%</a>&#39;', 'breadcrumb_navxt'),
 			//The breadcrumb template for search breadcrumbs, used when an anchor is not necessary, four keywords are available %link%, %title%, %htitle%, and %type%
 			'Hsearch_template_no_anchor' => __('Search results for &#39;%htitle%&#39;', 'breadcrumb_navxt'),
 			//Tag related stuff
@@ -339,7 +339,7 @@ class bcn_breadcrumb_trail
 			//Since we are paged and are linking the root breadcrumb, time to change to the regular template
 			$breadcrumb->set_template($this->opt['Hsearch_template']);
 			//Figure out the hyperlink for the anchor
-			$url = get_settings('home') . '?s=' . str_replace(' ', '+', get_search_query());
+			$url = get_option('home') . '?s=' . str_replace(' ', '+', get_search_query());
 			//Figure out the anchor for the search
 			$breadcrumb->set_url($url);
 		}

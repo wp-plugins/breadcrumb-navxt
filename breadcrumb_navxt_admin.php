@@ -523,7 +523,7 @@ class bcn_admin extends mtekk_adminKit
 					<?php
 				}
 			}?>
-			<fieldset id="category" class="bcn_options">
+			<fieldset id="category" class="bcn_options alttab">
 				<h3><?php _e('Categories', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
 					<?php
@@ -534,7 +534,7 @@ class bcn_admin extends mtekk_adminKit
 					?>
 				</table>
 			</fieldset>
-			<fieldset id="post_tag" class="bcn_options">
+			<fieldset id="post_tag" class="bcn_options alttab">
 				<h3><?php _e('Tags', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
 					<?php
@@ -562,7 +562,7 @@ class bcn_admin extends mtekk_adminKit
 						$this->opt['archive_' . $taxonomy->name . '_suffix'] = '';
 					}
 				?>
-			<fieldset id="<?php echo $taxonomy->name; ?>" class="bcn_options">
+			<fieldset id="<?php echo $taxonomy->name; ?>" class="bcn_options alttab">
 				<h3><?php echo mb_convert_case(__($taxonomy->label), MB_CASE_TITLE, 'UTF-8'); ?></h3>
 				<table class="form-table">
 					<?php
@@ -578,14 +578,11 @@ class bcn_admin extends mtekk_adminKit
 			}
 			?>
 			<fieldset id="date" class="bcn_options">
-				<h3><?php _e('Date Archives', 'breadcrumb_navxt'); ?></h3>
+				<h3><?php _e('Date', 'breadcrumb_navxt'); ?></h3>
 				<table class="form-table">
 					<?php
 						$this->input_text(__('Date Template', 'breadcrumb_navxt'), 'Hdate_template', '64', false, __('The template for date breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_text(__('Date Template (Unlinked)', 'breadcrumb_navxt'), 'Hdate_template_no_anchor', '64', false, __('The template for date breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));
-						$this->input_text(__('Archive by Date Prefix', 'breadcrumb_navxt'), 'archive_date_prefix', '32', false, __('Applied before the anchor on all date breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_text(__('Archive by Date Suffix', 'breadcrumb_navxt'), 'archive_date_suffix', '32', false, __('Applied after the anchor on all date breadcrumbs.', 'breadcrumb_navxt'));
-					?>
+						$this->input_text(__('Date Template (Unlinked)', 'breadcrumb_navxt'), 'Hdate_template_no_anchor', '64', false, __('The template for date breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));					?>
 				</table>
 			</fieldset>
 			<fieldset id="miscellaneous" class="bcn_options">
