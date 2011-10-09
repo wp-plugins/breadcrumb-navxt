@@ -62,7 +62,7 @@ class bcn_admin extends mtekk_adminKit
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.9.20';
+	protected $version = '3.99.58';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -236,9 +236,32 @@ class bcn_admin extends mtekk_adminKit
 		wp_enqueue_script('jquery-ui-tabs');
 	}
 	/**
+	 * help action hook function
+	 * 
+	 * @param  string $screen
+	 * @return string
+	 * 
+	 */
+	function help($screen)
+	{
+		//Add contextual help on current screen
+		if($screen->id == 'settings_page_' . $this->identifier)
+		{
+			$screen->add_help_tab(
+				array(
+					'id' => 'general',
+					'tile' => __('General', $identifier),
+					'content' => sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', $identifier), 
+			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', $identifier) . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>')
+				));
+		}
+	}
+	/**
 	 * get help text
 	 * 
 	 * @return string
+	 * 
+	 * TODO: move this over to the new help function, need WP to be fixed on its side first
 	 */
 	protected function _get_help_text()
 	{
@@ -286,10 +309,7 @@ class bcn_admin extends mtekk_adminKit
 	{
 		global $wp_taxonomies, $wp_post_types;
 		$this->security();?>
-		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>		
-		<div<?php if($this->_has_contextual_help): ?> class="hide-if-js"<?php endif; ?>><?php 
-			print $this->_get_help_text();
-		?></div>
+		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>
 		<?php
 		//We exit after the version check if there is an action the user needs to take before saving settings
 		if(!$this->version_check(get_option($this->unique_prefix . '_version')))
@@ -585,7 +605,9 @@ class bcn_admin extends mtekk_adminKit
 			</div>
 			<p class="submit"><input type="submit" class="button-primary" name="bcn_admin_options" value="<?php esc_attr_e('Save Changes') ?>" /></p>
 		</form>
-		<?php $this->import_form(); ?>
+		<?php 
+		//Need to add a separate menu thing for this
+		$this->import_form(); ?>
 		</div>
 		<?php
 	}

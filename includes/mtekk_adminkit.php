@@ -28,12 +28,6 @@ abstract class mtekk_adminKit
 	protected $unique_prefix;
 	protected $opt = array();
 	protected $message;
-	/**
-	 * Whether or not this administration page has contextual help
-	 * 
-	 * @var bool
-	 */
-	protected $_has_contextual_help = false;
 	function __construct()
 	{
 		//Admin Init Hook
@@ -45,6 +39,8 @@ abstract class mtekk_adminKit
 		add_action('activate_' . $this->plugin_basename, array($this, 'install'));
 		//Initilizes l10n domain
 		$this->local();
+		//Register Help Output
+		add_action('add_screen_help_and_options', array($this, 'help'));
 	}
 	/**
 	 * Returns the internal mtekk_admin_class version
@@ -60,9 +56,17 @@ abstract class mtekk_adminKit
 	{
 		return admin_url('options-general.php?page=' . $this->identifier);
 	}
+	/**
+	 * A wrapper for nonced_anchor returns a nonced anchor for admin pages
+	 * 
+	 * @param string $mode The nonce "mode", a unique string at the end of the standardized nonce identifier
+	 * @param string $title (optional) The text to use in the title portion of the anchor
+	 * @param string $text (optional) The text that will be surrounded by the anchor tags
+	 * @return string the assembled anchor
+	 */
 	function admin_anchor($mode, $title = '', $text = '')
 	{
-		$this->nonced_anchor($this->admin_url(), 'admin_' . $mode, $title, $text);
+		return $this->nonced_anchor($this->admin_url(), 'admin_' . $mode, 'true', $title, $text);
 	}
 	/**
 	 * Returns a properly formed nonced anchor to the specified URI
@@ -161,8 +165,6 @@ abstract class mtekk_adminKit
 			add_action('admin_print_styles-' . $hookname, array($this, 'admin_styles'));
 			//Register admin_print_scripts-$hookname callback
 			add_action('admin_print_scripts-' . $hookname, array($this, 'admin_scripts'));
-			//Register Help Output
-			add_action('contextual_help', array($this, 'contextual_help'), 10, 2);
 		}
 	}
 	/**
@@ -656,36 +658,19 @@ abstract class mtekk_adminKit
 		add_action('admin_notices', array($this, 'message'));
 	}
 	/**
-	 * contextual_help action hook function
+	 * help action hook function, meant to be overridden
 	 * 
-	 * @param  string $contextual_help
-	 * @param  string $screen_id
+	 * @param  string $screen
 	 * @return string
+	 * 
 	 */
-	//TODO: Improve multi screen support
-	function contextual_help($contextual_help, $screen_id)
+	function help($screen)
 	{
 		//Add contextual help on current screen
-		if($screen_id == 'settings_page_' . $this->identifier)
+		if($screen->id == 'settings_page_' . $this->identifier)
 		{
-			$contextual_help = $this->_get_contextual_help();
-			$this->_has_contextual_help = true;
+			
 		}
-		return $contextual_help;
-	}
-	/**
-	 * get contextual help
-	 * 
-	 * @return string
-	 */
-	//TODO: Improve multi screen support
-	protected function _get_contextual_help()
-	{
-		$t = $this->_get_help_text();	
-		$t = sprintf('<div class="metabox-prefs">%s</div>', $t);	
-		$title = __($this->full_name, $this->identifier);	
-		$t = sprintf('<h5>%s</h5>%s', sprintf(__('Get help with "%s"'), $title), $t);
-		return $t;
 	}
 	/**
 	 * Prints to screen all of the messages stored in the message member variable
