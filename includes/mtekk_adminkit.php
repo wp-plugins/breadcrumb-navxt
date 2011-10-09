@@ -425,6 +425,16 @@ abstract class mtekk_adminKit
 		return $arg1;
 	}
 	/**
+	 * An action that fires just before the options backup, use to add in dynamically detected options
+	 * 
+	 * @param array $opts the options array, passed in by reference
+	 * @return null
+	 */
+	function opts_update_prebk(&$opts)
+	{
+		//Just a prototype function
+	}
+	/**
 	 * Updates the database settings from the webform
 	 */
 	function opts_update()
@@ -435,6 +445,7 @@ abstract class mtekk_adminKit
 		check_admin_referer($this->unique_prefix . '_options-options');
 		//Update local options from database
 		$this->opt = $this->parse_args(get_option($this->unique_prefix . '_options'), $this->opt);
+		$this->opts_update_prebk($this->opt);
 		//Update our backup options
 		update_option($this->unique_prefix . '_options_bk', $this->opt);
 		//Grab our incomming array (the data is dirty)

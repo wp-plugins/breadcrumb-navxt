@@ -56,7 +56,14 @@ class bcn_breadcrumb
 		{
 			$template = __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt');
 		}
-		$this->template = $template;
+		if($url == NULL)
+		{
+			$this->template_no_anchor = $template;
+		}
+		else
+		{
+			$this->template = $template;
+		}
 		//The breadcrumb type
 		$this->type = $type;
 		//Always NULL if unlinked
@@ -494,9 +501,7 @@ class bcn_breadcrumb_trail
 		//Get the current category object, filter applied within this call
 		$term = &get_term($id, $taxonomy);
 		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['H' . $taxonomy . '_template'], $taxonomy));
-		//Figure out the anchor for the term
-		$breadcrumb->set_url(get_term_link($term, $taxonomy));
+		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['H' . $taxonomy . '_template'], array($taxonomy), get_term_link($term, $taxonomy)));
 		//Make sure the id is valid, and that we won't end up spinning in a loop
 		if($term->parent && $term->parent != $id)
 		{
@@ -516,9 +521,7 @@ class bcn_breadcrumb_trail
 		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
 		$parent = get_post($id);
 		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($id), $this->opt['Hpost_' . $parent->post_type . '_template'], $parent->post_type));
-		//Assign the anchor properties
-		$breadcrumb->set_url(get_permalink($id));
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($id), $this->opt['Hpost_' . $parent->post_type . '_template'], array($parent->post_type), get_permalink($id)));
 		//Make sure the id is valid, and that we won't end up spinning in a loop
 		if($parent->post_parent >= 0 && $parent->post_parent != false && $id != $parent->post_parent && $frontpage != $parent->post_parent)
 		{
@@ -609,9 +612,7 @@ class bcn_breadcrumb_trail
 		else
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($post->post_parent), $this->opt['Hpost_' . $post->post_type . '_template'], $post->post_type));
-			//Assign the anchor properties
-			$breadcrumb->set_url(get_permalink($post->post_parent));
+			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($post->post_parent), $this->opt['Hpost_' . $post->post_type . '_template'], array($post->post_type), get_permalink($post->post_parent)));
 			//Handle the post's taxonomy
 			$this->post_taxonomy($post->post_parent, $parent->post_type);
 		}
@@ -744,7 +745,7 @@ class bcn_breadcrumb_trail
 		$breadcrumb = $this->add(new bcn_breadcrumb(post_type_archive_title('', false), 'Hpost_' . get_post_type() . '_template_no_anchor', array('post-' . get_post_type() . '-archive', 'current-item')));
 		if($this->opt['bcurrent_item_linked'] || is_paged() && $this->opt['bpaged_display'])
 		{
-			$breadcrumb->set_template($this->opt['Hpost_' . get_post_type() . '_template_no_anchor']);
+			$breadcrumb->set_template($this->opt['Hpost_' . get_post_type() . '_template']);
 			//Deal with the anchor
 			$breadcrumb->set_url(get_post_type_archive_link(get_post_type()));
 		}
@@ -770,9 +771,7 @@ class bcn_breadcrumb_trail
 		if($this->opt['bmainsite_display'] && !is_main_site())
 		{
 			//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['Smainsite_title'], $this->opt['Hmainsite_template_no_anchor'], array('mainsite-home')));
-			//Deal with the anchor
-			$breadcrumb->set_url(get_home_url($current_site->blog_id));
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['Smainsite_title'], $this->opt['Hmainsite_template_no_anchor'], array('mainsite-home'), get_home_url($current_site->blog_id)));
 		}
 	}
 	/**
@@ -787,16 +786,12 @@ class bcn_breadcrumb_trail
 		if($this->opt['bhome_display'])
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['Shome_title'], $this->opt['Hhome_template'], array('site-home')));
-			//Figure out the anchor for home page
-			$breadcrumb->set_url(get_home_url());
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['Shome_title'], $this->opt['Hhome_template'], array('site-home'), get_home_url()));
 			//If we have a multi site and are not on the main site we need to add a breadcrumb for the main site
 			if($this->opt['bmainsite_display'] && !is_main_site())
 			{
 				//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-				$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['Smainsite_title'], $this->opt['Hmainsite_template_no_anchor'], array('mainsite-home')));
-				//Deal with the anchor
-				$breadcrumb->set_url(get_home_url($current_site->blog_id));
+				$breadcrumb = $this->add(new bcn_breadcrumb($this->opt['Smainsite_title'], $this->opt['Hmainsite_template_no_anchor'], array('mainsite-home'), get_home_url($current_site->blog_id)));
 			}
 		}
 	}
@@ -853,16 +848,12 @@ class bcn_breadcrumb_trail
 		if(isset($type->post_type) && !$this->is_builtin($type->post_type))
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb($this->post_type_archive_title(get_post_type_object($type->post_type)), 'Hpost_' . $type->post_type . '_template', array('post-' . $type->post_type . '-archive')));
-			//Deal with the anchor
-			$breadcrumb->set_url(get_post_type_archive_link($type->post_type));
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->post_type_archive_title(get_post_type_object($type->post_type)), $this->opt['Hpost_' . $type->post_type . '_template'], array('post-' . $type->post_type . '-archive'), get_post_type_archive_link($type->post_type)));
 		}
 		else if(isset($type->taxonomy) && !$this->is_builtin($wp_taxonomies[$type->taxonomy]->object_type[0]))
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb($this->post_type_archive_title(get_post_type_object($wp_taxonomies[$type->taxonomy]->object_type[0])), 'Hpost_' . $type->post_type . '_template', array('post-' . $type->post_type . '-archive')));
-			//Deal with the anchor
-			$breadcrumb->set_url(get_post_type_archive_link($wp_taxonomies[$type->taxonomy]->object_type[0]));
+			$breadcrumb = $this->add(new bcn_breadcrumb($this->post_type_archive_title(get_post_type_object($wp_taxonomies[$type->taxonomy]->object_type[0])), $this->opt['Hpost_' . $type->post_type . '_template'], array('post-' . $type->post_type . '-archive'), get_post_type_archive_link($wp_taxonomies[$type->taxonomy]->object_type[0])));
 		}
 		//We only need the "blog" portion on members of the blog, and only if we're in a static frontpage environment
 		//if(isset($posts_id) || $this->opt['blog_display'] && get_option('show_on_front') == 'page' && (is_home() || (is_single() && !is_page()) || (is_archive() && !is_author())))
@@ -880,9 +871,14 @@ class bcn_breadcrumb_trail
 				//Get the blog page
 				$bcn_post = get_post($posts_id);
 				//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, we get a pointer to it in return
-				$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($posts_id), 'Hpost_' . $post->post_type . '_template_no_anchor', array($type . '-root', 'post-' . $post->post_type)));
+				$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($posts_id), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'], array($type . '-root', 'post-' . $post->post_type)));
+				//If we are at home, then we need to add the current item type
+				if(is_home())
+				{
+					$breadcrumb->add_type('current-item');
+				}
 				//If we're not on the current item we need to setup the anchor
-				if(!is_home() || (is_paged() && $this->opt['bpaged_display']))
+				if(!is_home() || (is_paged() && $this->opt['bpaged_display']) || (is_home() && $this->opt['bcurrent_item_linked']))
 				{
 					$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template']);
 					//Figure out the anchor for home page

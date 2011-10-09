@@ -508,7 +508,7 @@ class bcn_admin extends mtekk_adminKit
 				<table class="form-table">
 					<?php
 						$this->input_text(__('Category Template', 'breadcrumb_navxt'), 'Hcategory_template', '64', false, __('The template for category breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_text(__('Category Template (Unlinked)', 'breadcrumb_navxt'), 'Hcategory_template_unlinked', '64', false, __('The template for category breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));
+						$this->input_text(__('Category Template (Unlinked)', 'breadcrumb_navxt'), 'Hcategory_template_no_anchor', '64', false, __('The template for category breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));
 						$this->input_text(__('Archive by Category Prefix', 'breadcrumb_navxt'), 'archive_category_prefix', '32', false, __('Applied before the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'));
 						$this->input_text(__('Archive by Category Suffix', 'breadcrumb_navxt'), 'archive_category_suffix', '32', false, __('Applied after the title of the current item breadcrumb on an archive by cateogry page.', 'breadcrumb_navxt'));
 					?>
@@ -533,11 +533,11 @@ class bcn_admin extends mtekk_adminKit
 				if(!$taxonomy->_builtin)
 				{
 					//If the taxonomy does not have settings in the options array yet, we need to load some defaults
-					if(!array_key_exists('S' . $taxonomy->name . '_template', $this->opt))
+					if(!array_key_exists('H' . $taxonomy->name . '_template', $this->opt))
 					{
 						//Add the necessary option array members
-						$this->opt['S' . $taxonomy->name . '_template'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">%%htitle%%</a>', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
-						$this->opt['S' . $taxonomy->name . '_template_no_anchor'] = __(sprintf('%%htitle%%', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
+						$this->opt['H' . $taxonomy->name . '_template'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">%%htitle%%</a>', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
+						$this->opt['H' . $taxonomy->name . '_template_no_anchor'] = __(sprintf('%%htitle%%', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
 						$this->opt['archive_' . $taxonomy->name . '_prefix'] = '';
 						$this->opt['archive_' . $taxonomy->name . '_suffix'] = '';
 					}
@@ -546,8 +546,8 @@ class bcn_admin extends mtekk_adminKit
 				<h3><?php echo mb_convert_case(__($taxonomy->label), MB_CASE_TITLE, 'UTF-8'); ?></h3>
 				<table class="form-table">
 					<?php
-						$this->input_text(sprintf(__('%s Template', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'S' . $taxonomy->name . '_template', '64', false, sprintf(__('The template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
-						$this->input_text(sprintf(__('%s Template (Unlinked)', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'S' . $taxonomy->name . '_template', '64', false, sprintf(__('The template for %s breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
+						$this->input_text(sprintf(__('%s Template', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'H' . $taxonomy->name . '_template', '64', false, sprintf(__('The template for %s breadcrumbs.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
+						$this->input_text(sprintf(__('%s Template (Unlinked)', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'H' . $taxonomy->name . '_template_no_anchor', '64', false, sprintf(__('The template for %s breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
 						$this->input_text(sprintf(__('Archive by %s Prefix', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'archive_' . $taxonomy->name . '_prefix', '32', false, sprintf(__('Applied before the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
 						$this->input_text(sprintf(__('Archive by %s Suffix', 'breadcrumb_navxt'), $taxonomy->labels->singular_name), 'archive_' . $taxonomy->name . '_suffix', '32', false, sprintf(__('Applied after the title of the current item breadcrumb on an archive by %s page.', 'breadcrumb_navxt'), strtolower(__($taxonomy->label))));
 					?>
@@ -589,10 +589,17 @@ class bcn_admin extends mtekk_adminKit
 		</div>
 		<?php
 	}
+	function opts_update_prebk(&$opts)
+	{
+		//Add custom post types
+		$this->find_posttypes($this->opt);
+		//Add custom taxonomy types
+		$this->find_taxonomies($this->opt);
+	}
 	/**
 	 * Places settings into $opts array, if missing, for the registered post types
 	 * 
-	 * @param $opts
+	 * @param array $opts
 	 */
 	function find_posttypes(&$opts)
 	{
@@ -604,40 +611,39 @@ class bcn_admin extends mtekk_adminKit
 			if(!$post_type->_builtin)
 			{
 				//If the post type does not have settings in the options array yet, we need to load some defaults
-				if(!array_key_exists('post_' . $post_type->name . '_anchor', $opts) || !$post_type->hierarchical && !array_key_exists('post_' . $post_type->name . '_taxonomy_type', $opts))
+				if(!array_key_exists('Hpost_' . $post_type->name . '_template', $opts) || !$post_type->hierarchical && !array_key_exists('Spost_' . $post_type->name . '_taxonomy_type', $opts))
 				{
 					//Add the necessary option array members
-					$opts['post_' . $post_type->name . '_prefix'] = '';
-					$opts['post_' . $post_type->name . '_suffix'] = '';
-					$opts['post_' . $post_type->name . '_anchor'] = __('<a title="Go to %title%." href="%link%">', 'breadcrumb_navxt');
+					$opts['Hpost_' . $post_type->name . '_template'] = __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt');
+					$opts['Hpost_' . $post_type->name . '_template_no_anchor'] = __('%title%', 'breadcrumb_navxt');
 					//Do type dependent tasks
 					if($post_type->hierarchical)
 					{
 						//Set post_root for hierarchical types
-						$opts['post_' . $post_type->name . '_root'] = get_option('page_on_front');
+						$opts['apost_' . $post_type->name . '_root'] = get_option('page_on_front');
 					}
 					//If it is flat, we need a taxonomy selection
 					else
 					{
 						//Set post_root for flat types
-						$opts['post_' . $post_type->name . '_root'] = get_option('page_for_posts');
-						//Be safe and disable taxonomy display by default
-						$opts['post_' . $post_type->name . '_taxonomy_display'] = false;
+						$opts['apost_' . $post_type->name . '_root'] = get_option('page_for_posts');
+						//Default to not displaying a taxonomy
+						$opts['bpost_' . $post_type->name . '_taxonomy_display'] = false;
 						//Loop through all of the possible taxonomies
 						foreach($wp_taxonomies as $taxonomy)
 						{
 							//Activate the first taxonomy valid for this post type and exit the loop
 							if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
 							{
-								$opts['post_' . $post_type->name . '_taxonomy_display'] = true;
-								$opts['post_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
+								$opts['bpost_' . $post_type->name . '_taxonomy_display'] = true;
+								$opts['Spost_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
 								break;
 							}
 						}
 						//If there are no valid taxonomies for this type, we default to not displaying taxonomies for this post type
-						if(!isset($opts['post_' . $post_type->name . '_taxonomy_type']))
+						if(!isset($opts['Spost_' . $post_type->name . '_taxonomy_type']))
 						{
-							$opts['post_' . $post_type->name . '_taxonomy_type'] = 'date';
+							$opts['Spost_' . $post_type->name . '_taxonomy_type'] = 'date';
 						}
 					}
 				}
@@ -659,11 +665,11 @@ class bcn_admin extends mtekk_adminKit
 			if(!$taxonomy->_builtin)
 			{
 				//If the taxonomy does not have settings in the options array yet, we need to load some defaults
-				if(!array_key_exists($taxonomy->name . '_anchor', $opts))
+				if(!array_key_exists('H' . $taxonomy->name . '_template', $opts))
 				{
-					$opts[$taxonomy->name . '_prefix'] = '';
-					$opts[$taxonomy->name . '_suffix'] = '';
-					$opts[$taxonomy->name . '_anchor'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">',  mb_convert_case(__($taxonomy->label), MB_CASE_TITLE, 'UTF-8')), 'breadcrumb_navxt');
+					//Add the necessary option array members
+					$opts['H' . $taxonomy->name . '_template'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">%%htitle%%</a>', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
+					$opts['H' . $taxonomy->name . '_template_no_anchor'] = __(sprintf('%%htitle%%', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
 					$opts['archive_' . $taxonomy->name . '_prefix'] = '';
 					$opts['archive_' . $taxonomy->name . '_suffix'] = '';
 				}
