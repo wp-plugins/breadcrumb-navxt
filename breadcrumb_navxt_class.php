@@ -185,7 +185,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	private $version = '3.99.58';
+	private $version = '3.99.62';
 	//An array of breadcrumbs
 	public $trail = array();
 	//The options
@@ -744,6 +744,7 @@ class bcn_breadcrumb_trail
 	}
 	/**
 	 * A modified version of WordPress' function of the same name
+	 * 
 	 * @param object $object the post or taxonomy object used to attempt to find the title
 	 * @return string the title
 	 */
@@ -765,6 +766,12 @@ class bcn_breadcrumb_trail
 		$type = get_post_type_object($post_type);
 		return $type->_builtin;
 	}
+	/**
+	 * Determines if a post type has archives enabled or not
+	 * 
+	 * @param string $post_type the name of the post type
+	 * @return bool
+	 */
 	function has_archive($post_type)
 	{
 		$type = get_post_type_object($post_type);
@@ -809,13 +816,12 @@ class bcn_breadcrumb_trail
 			$type_str = "post";
 		}
 		//These two are for taxonomy archives and for a single custom post type
-		//TODO: need to check if the post type supports archive pages AND if user enabled in settings
-		if(isset($type->post_type) && !$this->is_builtin($type->post_type) && $this->has_archive($type->post_type))
+		if(isset($type->post_type) && !$this->is_builtin($type->post_type) && $this->opt['bpost_' . $type->post_type . '_archive_display'] && $this->has_archive($type->post_type))
 		{
 			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 			$breadcrumb = $this->add(new bcn_breadcrumb($this->post_type_archive_title(get_post_type_object($type->post_type)), $this->opt['Hpost_' . $type->post_type . '_template'], array('post-' . $type->post_type . '-archive'), get_post_type_archive_link($type->post_type)));
 		}
-		else if(isset($type->taxonomy) && !$this->is_builtin($wp_taxonomies[$type->taxonomy]->object_type[0]) && $this->has_archive($wp_taxonomies[$type->taxonomy]->object_type[0]))
+		else if(isset($type->taxonomy) && !$this->is_builtin($wp_taxonomies[$type->taxonomy]->object_type[0]) && $this->opt['bpost_' . $wp_taxonomies[$type->taxonomy]->object_type[0] . '_archive_display'] && $this->has_archive($wp_taxonomies[$type->taxonomy]->object_type[0]))
 		{
 			//We end up using the post type in several places, give it a variable
 			$post_type = $wp_taxonomies[$type->taxonomy]->object_type[0];

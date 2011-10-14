@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.9.20
+Version: 3.9.62
 Author: John Havlik
 Author URI: http://mtekk.us/
 License: GPL2
@@ -62,7 +62,7 @@ class bcn_admin extends mtekk_adminKit
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.99.58';
+	protected $version = '3.99.62';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -443,6 +443,7 @@ class bcn_admin extends mtekk_adminKit
 						//Add the necessary option array members
 						$this->opt['Hpost_' . $post_type->name . '_template'] = __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt');
 						$this->opt['Hpost_' . $post_type->name . '_template_no_anchor'] = __('%htitle%', 'breadcrumb_navxt');
+						$this->opt['bpost_' . $post_type->name . '_archive_display'] = $post_type->has_archive;
 						//Do type dependent tasks
 						if($post_type->hierarchical)
 						{
@@ -491,6 +492,11 @@ class bcn_admin extends mtekk_adminKit
 						</td>
 					</tr>
 					<?php
+						$this->input_check(sprintf(__('%s Archive Display', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'bpost_' . $post_type->name . '_archive_display', sprintf(__('Show the breadcrumb for the %s post type archives in the breadcrumb trail.', 'breadcrumb_navxt'), strtolower(__($post_type->labels->singular_name))), !$post_type->has_archive);
+						if(!$post_type->has_archive)
+						{
+							$this->input_hidden('bpost_' . $post_type->name . '_archive_display');
+						}
 						//If it is flat, we need a taxonomy selection
 						if(!$post_type->hierarchical)
 						{
@@ -614,6 +620,7 @@ class bcn_admin extends mtekk_adminKit
 					//Add the necessary option array members
 					$opts['Hpost_' . $post_type->name . '_template'] = __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt');
 					$opts['Hpost_' . $post_type->name . '_template_no_anchor'] = __('%htitle%', 'breadcrumb_navxt');
+					$opts['bpost_' . $post_type->name . '_archive_display'] = $post_type->has_archive;
 					//Do type dependent tasks
 					if($post_type->hierarchical)
 					{
