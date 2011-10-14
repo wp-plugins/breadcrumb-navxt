@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 3.9.62
+Version: 3.9.65
 Author: John Havlik
 Author URI: http://mtekk.us/
 License: GPL2
@@ -62,7 +62,7 @@ class bcn_admin extends mtekk_adminKit
 	 * 
 	 * @var   string
 	 */
-	protected $version = '3.99.62';
+	protected $version = '3.99.65';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -146,7 +146,43 @@ class bcn_admin extends mtekk_adminKit
 			//Upgrading to 4.0
 			if(version_compare($version, '4.0.0', '<'))
 			{
-				
+				//Loop through the old options, migrate some of them
+				foreach($opts as $option => $value)
+				{
+					//Handle all of our boolean options first, they're real easy, just add a 'b'
+					if(strpos($option, 'display') > 0 || $option == 'current_item_linked')
+					{
+						$this->breadcrumb_trail->opt['b'.$option] = $this->opt[$option];
+					}
+					//Handle migration of anchor templates to the templates
+					else if(strpos($option, 'anchor') > 0)
+					{
+						$parts = explode('_', $option);
+						//Do excess slash removal sanitation
+						$this->breadcrumb_trail->opt['H' . $parts[0] . '_template'] = $this->opt[$option] . '%htitle%</a>';
+					}
+					//Handle our abs integers
+					else if($option == 'max_title_length' || $option == 'post_post_root' || $option == 'post_page_root')
+					{
+						$this->breadcrumb_trail->opt['a' . $option] = $this->opt[$option];
+					}
+					//Now everything else, minus prefix and suffix
+					else if(strpos($option, 'prefix') === false && strpos($option, 'suffix') === false)
+					{
+						$this->breadcrumb_trail->opt['S' . $option] = $this->opt[$option];
+					}
+				}
+				//Add in the new settings for CPTs introduced in 4.0
+				foreach($wp_post_types as $post_type)
+				{
+					//We only want custom post types
+					if(!$post_type->_builtin)
+					{
+						//Add in the archive_display option
+						$this->breadcrumb_trail->opt['bpost_' . $post_type->name . '_archive_display'] = $post_type->has_archive;
+					}
+				}
+				$opts = $this->breadcrumb_trail->opt;
 			}
 			//Save the passed in opts to the object's option array
 			$this->opt = $opts;
@@ -493,10 +529,6 @@ class bcn_admin extends mtekk_adminKit
 					</tr>
 					<?php
 						$this->input_check(sprintf(__('%s Archive Display', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'bpost_' . $post_type->name . '_archive_display', sprintf(__('Show the breadcrumb for the %s post type archives in the breadcrumb trail.', 'breadcrumb_navxt'), strtolower(__($post_type->labels->singular_name))), !$post_type->has_archive);
-						if(!$post_type->has_archive)
-						{
-							$this->input_hidden('bpost_' . $post_type->name . '_archive_display');
-						}
 						//If it is flat, we need a taxonomy selection
 						if(!$post_type->hierarchical)
 						{
