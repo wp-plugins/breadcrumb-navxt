@@ -69,6 +69,7 @@ class bcn_admin extends mtekk_adminKit
 	protected $identifier = 'breadcrumb_navxt';
 	protected $unique_prefix = 'bcn';
 	protected $plugin_basename = 'breadcrumb-navxt/breadcrumb_navxt_admin.php';
+	protected $support_url = 'http://mtekk.us/archives/wordpress/plugins-wordpress/breadcrumb-navxt-';
 	/**
 	 * local store for the breadcrumb object
 	 * 
@@ -741,23 +742,6 @@ class bcn_admin extends mtekk_adminKit
 		//Generate the breadcrumb trail
 		$this->breadcrumb_trail->fill();
 		return $this->breadcrumb_trail->display_list($return, $linked, $reverse);
-	}
-	/**
-	 * Outputs the breadcrumb trail
-	 * 
-	 * @since  3.8.0
-	 * @param bool $return Whether to return data or to echo it.
-	 * @param bool $linked[optional] Whether to allow hyperlinks in the trail or not.
-	 * @param string $tag[optional] The tag to use for the nesting
-	 * @param string $mode[optional] Whether to follow the rdfa or Microdata format
-	 */
-	function display_nested($return = false, $linked = true, $tag = 'span', $mode = 'rdfa')
-	{
-		//Grab the current settings from the db
-		$this->breadcrumb_trail->opt = wp_parse_args(get_option('bcn_options'), $this->breadcrumb_trail->opt);
-		//Generate the breadcrumb trail
-		$this->breadcrumb_trail->fill();
-		return $this->breadcrumb_trail->display_nested($return, $linked, $tag, $mode);
 	}
 }
 //Let's make an instance of our object takes care of everything
