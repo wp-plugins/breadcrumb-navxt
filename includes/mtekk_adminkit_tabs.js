@@ -6,7 +6,7 @@ jQuery(function()
  * Tabulator Bootup
  */
 function mtekk_admin_tabulator_init(){
-	if (!jQuery("#hasadmintabs").length) return;
+	if(!jQuery("#hasadmintabs").length) return;
 	/* init markup for tabs */
 	jQuery('#hasadmintabs').prepend("<ul><\/ul>");
 	jQuery('#hasadmintabs > fieldset').each(function(i){
@@ -17,7 +17,10 @@ function mtekk_admin_tabulator_init(){
 		jQuery(this).find('h3').hide();
 	});
 	/* init the tabs plugin */
-	jQuery("#hasadmintabs").tabs();
+	var tabs = jQuery("#hasadmintabs").tabs();
+	var form   = jQuery('#'+objectL10n.mtad_uid+'-options');
+	var action = form.attr("action").split('#', 1) + '#' + jQuery('#hasadmintabs > fieldset').eq(tabs.tabs('option', 'selected')).attr('id');
+	form.get(0).setAttribute("action", action);
 	/* handler for opening the last tab after submit (compability version) */
 	jQuery('#hasadmintabs ul a').click(function(i){
 		var form   = jQuery('#'+objectL10n.mtad_uid+'-options');
