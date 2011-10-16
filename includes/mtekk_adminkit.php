@@ -882,8 +882,8 @@ abstract class mtekk_adminKit
 	/**
 	 * This will output a singular radio type form input field
 	 * 
-	 * @param string $label
 	 * @param string $option
+	 * @param string $value
 	 * @param string $instruction
 	 * @param object $disable [optional]
 	 * @return 
