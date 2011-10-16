@@ -148,6 +148,8 @@ abstract class mtekk_adminKit
 		wp_register_style('mtekk_adminkit_tabs', plugins_url('/mtekk_adminkit_tabs.css', dirname(__FILE__) . '/mtekk_adminkit_tabs.css'));
 		//Register options
 		register_setting($this->unique_prefix . '_options', $this->unique_prefix . '_options', '');
+		//Synchronize up our settings with the database as we're done modifying them now
+		$this->opt = $this->parse_args(get_option($this->unique_prefix . '_options'), $this->opt);
 	}
 	/**
 	 * Adds the adminpage the menue and the nice little settings link
@@ -380,6 +382,7 @@ abstract class mtekk_adminKit
 	}
 	/**
 	 * A better version of parse_args, will recrusivly follow arrays
+	 * 
 	 * @param mixed $args The arguments to be parsed
 	 * @param mixed $defaults (optional) The default values to validate against
 	 * @return mixed

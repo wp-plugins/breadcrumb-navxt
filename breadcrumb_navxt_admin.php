@@ -57,11 +57,6 @@ if(!class_exists('mtekk_adminKit'))
  */
 class bcn_admin extends mtekk_adminKit
 {
-	/**
-	 * local store for breadcrumb version
-	 * 
-	 * @var   string
-	 */
 	protected $version = '3.99.65';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
@@ -70,12 +65,6 @@ class bcn_admin extends mtekk_adminKit
 	protected $unique_prefix = 'bcn';
 	protected $plugin_basename = 'breadcrumb-navxt/breadcrumb_navxt_admin.php';
 	protected $support_url = 'http://mtekk.us/archives/wordpress/plugins-wordpress/breadcrumb-navxt-';
-	/**
-	 * local store for the breadcrumb object
-	 * 
-	 * @see   bcn_admin()
-	 * @var   bcn_breadcrumb
-	 */
 	public $breadcrumb_trail;
 	/**
 	 * Administrative interface class default constructor
@@ -107,13 +96,7 @@ class bcn_admin extends mtekk_adminKit
 	function init()
 	{
 		//We're going to make sure we run the parent's version of this function as well
-		parent::init();	
-		//Grab the current settings from the DB
-		//$this->opt = get_option('bcn_options');
-		//We can not synchronize our database options untill after the parent init runs (the reset routine must run first if it needs to)
-		$this->opt = $this->parse_args(get_option($this->unique_prefix . '_options'), $this->opt);
-		//Add javascript enqeueing callback
-		add_action('wp_print_scripts', array($this, 'javascript'));
+		parent::init();
 	}
 	/**
 	 * Makes sure the current user can manage options to proceed
@@ -190,89 +173,6 @@ class bcn_admin extends mtekk_adminKit
 		}
 	}
 	/**
-	 * Updates the database settings from the webform
-	 */
-	/*function opts_update()
-	{
-		//Do some security related thigns as we are not using the normal WP settings API
-		$this->security();
-		//Do a nonce check, prevent malicious link/form problems
-		check_admin_referer('bcn_options-options');
-		//Update local options from database
-		$this->opt = get_option('bcn_options');
-		//If we did not get an array, might as well just quit here
-		if(!is_array($this->opt))
-		{
-			return;
-		}
-		//Add custom post types
-		$this->find_posttypes($this->opt);
-		//Add custom taxonomy types
-		$this->find_taxonomies($this->opt);
-		//Update our backup options
-		update_option('bcn_options_bk', $this->opt);
-		//Grab our incomming array (the data is dirty)
-		$input = $_POST['bcn_options'];
-		//We have two "permi" variables
-		$input['post_page_root'] = get_option('page_on_front');
-		$input['post_post_root'] = get_option('page_for_posts');
-		//Loop through all of the existing options (avoids random setting injection)
-		foreach($this->opt as $option => $value)
-		{
-			//Handle all of our boolean options first
-			if(strpos($option, 'display') > 0 || $option == 'current_item_linked')
-			{
-				$this->opt[$option] = isset($input[$option]);
-			}
-			//Now handle anything that can't be blank
-			else if(strpos($option, 'anchor') > 0)
-			{
-				//Only save a new anchor if not blank
-				if(isset($input[$option]))
-				{
-					//Do excess slash removal sanitation
-					$this->opt[$option] = stripslashes($input[$option]);
-				}
-			}
-			//Now everything else
-			else
-			{
-				$this->opt[$option] = stripslashes($input[$option]);
-			}
-		}
-		//Commit the option changes
-		update_option('bcn_options', $this->opt);
-		//Check if known settings match attempted save
-		if(count(array_diff_key($input, $this->opt)) == 0)
-		{
-			//Let the user know everything went ok
-			$this->message['updated fade'][] = __('Settings successfully saved.', $this->identifier) . $this->undo_anchor(__('Undo the options save.', $this->identifier));
-		}
-		else
-		{
-			//Let the user know the following were not saved
-			$this->message['updated fade'][] = __('Some settings were not saved.', $this->identifier) . $this->undo_anchor(__('Undo the options save.', $this->identifier));
-			$temp = __('The following settings were not saved:', $this->identifier);
-			foreach(array_diff_key($input, $this->opt) as $setting => $value)
-			{
-				$temp .= '<br />' . $setting;
-			}
-			$this->message['updated fade'][] = $temp . '<br />' . sprintf(__('Please include this message in your %sbug report%s.', $this->identifier),'<a title="' . __('Go to the Breadcrumb NavXT support post for your version.', $this->identifier) . '" href="http://mtekk.us/archives/wordpress/plugins-wordpress/breadcrumb-navxt-' . $this->version . '/#respond">', '</a>');
-		}
-		add_action('admin_notices', array($this, 'message'));
-	}*/
-	/**
-	 * Enqueues JS dependencies (jquery) for the tabs
-	 * 
-	 * @see admin_init()
-	 * @return void
-	 */
-	function javascript()
-	{
-		//Enqueue ui-tabs
-		wp_enqueue_script('jquery-ui-tabs');
-	}
-	/**
 	 * help action hook function
 	 * 
 	 * @param  string $screen
@@ -321,6 +221,8 @@ class bcn_admin extends mtekk_adminKit
 	 */
 	function admin_scripts()
 	{
+		//Enqueue ui-tabs
+		wp_enqueue_script('jquery-ui-tabs');
 		//Enqueue the admin tabs javascript
 		wp_enqueue_script('mtekk_adminkit_tabs');
 		//Load the translations for the tabs
@@ -330,14 +232,6 @@ class bcn_admin extends mtekk_adminKit
 			'mtad_export' => __('Export', $this->identifier),
 			'mtad_reset' => __('Reset', $this->identifier),
 		));
-	}
-	/**
-	 * Adds in the JavaScript and CSS for the tabs in the adminsitrative 
-	 * interface
-	 */
-	function admin_head()
-	{
-		
 	}
 	/**
 	 * The administrative page for Breadcrumb NavXT
