@@ -130,30 +130,34 @@ class bcn_admin extends mtekk_adminKit
 			//Upgrading to 4.0
 			if(version_compare($version, '4.0.0', '<'))
 			{
-				//Loop through the old options, migrate some of them
-				foreach($opts as $option => $value)
+				//Only migrate if we haven't migrated yet
+				if(isset($opts['current_item_linked']))
 				{
-					//Handle all of our boolean options first, they're real easy, just add a 'b'
-					if(strpos($option, 'display') > 0 || $option == 'current_item_linked')
+					//Loop through the old options, migrate some of them
+					foreach($opts as $option => $value)
 					{
-						$this->breadcrumb_trail->opt['b'.$option] = $this->opt[$option];
-					}
-					//Handle migration of anchor templates to the templates
-					else if(strpos($option, 'anchor') > 0)
-					{
-						$parts = explode('_', $option);
-						//Do excess slash removal sanitation
-						$this->breadcrumb_trail->opt['H' . $parts[0] . '_template'] = $this->opt[$option] . '%htitle%</a>';
-					}
-					//Handle our abs integers
-					else if($option == 'max_title_length' || $option == 'post_post_root' || $option == 'post_page_root')
-					{
-						$this->breadcrumb_trail->opt['a' . $option] = $this->opt[$option];
-					}
-					//Now everything else, minus prefix and suffix
-					else if(strpos($option, 'prefix') === false && strpos($option, 'suffix') === false)
-					{
-						$this->breadcrumb_trail->opt['S' . $option] = $this->opt[$option];
+						//Handle all of our boolean options first, they're real easy, just add a 'b'
+						if(strpos($option, 'display') > 0 || $option == 'current_item_linked')
+						{
+							$this->breadcrumb_trail->opt['b'.$option] = $this->opt[$option];
+						}
+						//Handle migration of anchor templates to the templates
+						else if(strpos($option, 'anchor') > 0)
+						{
+							$parts = explode('_', $option);
+							//Do excess slash removal sanitation
+							$this->breadcrumb_trail->opt['H' . $parts[0] . '_template'] = $this->opt[$option] . '%htitle%</a>';
+						}
+						//Handle our abs integers
+						else if($option == 'max_title_length' || $option == 'post_post_root' || $option == 'post_page_root')
+						{
+							$this->breadcrumb_trail->opt['a' . $option] = $this->opt[$option];
+						}
+						//Now everything else, minus prefix and suffix
+						else if(strpos($option, 'prefix') === false && strpos($option, 'suffix') === false)
+						{
+							$this->breadcrumb_trail->opt['S' . $option] = $this->opt[$option];
+						}
 					}
 				}
 				//Add in the new settings for CPTs introduced in 4.0
@@ -239,7 +243,10 @@ class bcn_admin extends mtekk_adminKit
 	function admin_page()
 	{
 		global $wp_taxonomies, $wp_post_types;
-		$this->security();?>
+		$this->security();
+		//Let's call the parent version of the page, will handle our setting stuff
+		parent::admin_page();
+		?>
 		<div class="wrap"><h2><?php _e('Breadcrumb NavXT Settings', 'breadcrumb_navxt'); ?></h2>
 		<?php
 		//We exit after the version check if there is an action the user needs to take before saving settings
