@@ -179,21 +179,29 @@ class bcn_admin extends mtekk_adminKit
 	/**
 	 * help action hook function
 	 * 
-	 * @param  string $screen
 	 * @return string
 	 * 
 	 */
-	function help($screen)
+	function help()
 	{
+		$screen = get_current_screen();
 		//Add contextual help on current screen
 		if($screen->id == 'settings_page_' . $this->identifier)
 		{
+			$general_tab = '<p>' . sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
+			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>') . ' ' .
+			sprintf(__('If you think you have found a bug, please include your WordPress version and details on how to reproduce the bug when you %sreport the issue%s.', $this->identifier),'<a title="' . __('Go to the Breadcrumb NavXT support post for your version.', 'breadcrumb_navxt') . '" href="http://mtekk.us/archives/wordpress/plugins-wordpress/breadcrumb-navxt-' . $this->version . '/#respond">', '</a>') . '</p>';
 			$screen->add_help_tab(
 				array(
-					'id' => 'general',
-					'tile' => __('General', $this->identifier),
-					'content' => sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', $this->identifier), 
-			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', $this->identifier) . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>')
+				'id' => $this->identifier . '-base',
+				'title' => __('General', $this->identifier),
+				'content' => $general_tab
+				));
+			$screen->add_help_tab(
+				array(
+				'id' => $this->identifier . '-import-export-reset',
+				'title' => __('Import/Export/Reset', $this->identifier),
+				'content' => $this->import_form()
 				));
 		}
 	}
