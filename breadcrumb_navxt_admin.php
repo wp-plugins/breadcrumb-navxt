@@ -188,14 +188,50 @@ class bcn_admin extends mtekk_adminKit
 		//Add contextual help on current screen
 		if($screen->id == 'settings_page_' . $this->identifier)
 		{
-			$general_tab = '<p>' . sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
-			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>') . ' ' .
-			sprintf(__('If you think you have found a bug, please include your WordPress version and details on how to reproduce the bug when you %sreport the issue%s.', $this->identifier),'<a title="' . __('Go to the Breadcrumb NavXT support post for your version.', 'breadcrumb_navxt') . '" href="http://mtekk.us/archives/wordpress/plugins-wordpress/breadcrumb-navxt-' . $this->version . '/#respond">', '</a>') . '</p>';
+			$general_tab = '<p>' . __('Tips for the settings are located below select options.', $this->identifier) .
+				'</p><h5>' . __('Resources', $this->identifier) . '</h5><ul><li>' .
+				sprintf(__("%sTutorials and How Tos%s: There are several guides, tutorials, and how tos available on the author's website.", $this->identifier),'<a title="' . __('Go to the Breadcrumb NavXT tag archive.', 'breadcrumb_navxt') . '" href="http://mtekk.us/archives/tag/breadcrumb-navxt">', '</a>') . '</li><li>' .
+				sprintf(__('%sOnline Documentation%s: Check out the documentation for more indepth technical information.', 'breadcrumb_navxt'), '<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>') . '</li><li>' .
+				sprintf(__('%sReport a Bug%s: If you think you have found a bug, please include your WordPress version and details on how to reproduce the bug.', $this->identifier),'<a title="' . __('Go to the Breadcrumb NavXT support post for your version.', 'breadcrumb_navxt') . '" href="http://mtekk.us/archives/wordpress/plugins-wordpress/breadcrumb-navxt-' . $this->version . '/#respond">', '</a>') . '</li></ul>';
 			$screen->add_help_tab(
 				array(
 				'id' => $this->identifier . '-base',
 				'title' => __('General', $this->identifier),
 				'content' => $general_tab
+				));
+			$quickstart_tab = '<p>' . __('For the settings on this page to take effect, you must either use the included Breadcrumb NavXT widget, or place either of the code sections below into your theme.', 'breadcrumb_navxt') .
+				'</p><h5>' . __('Breadcrumb trail with separators', 'breadcrumb_navxt') . '</h5><pre><code>&lt;div class="breadcrumbs"&gt;' . "
+	&lt;?php if(function_exists('bcn_display'))
+	{
+		bcn_display();
+	}?&gt;
+&lt;/div&gt;</code></pre>" .
+				'<h5>' . __('Breadcrumb trail in list form', 'breadcrumb_navxt').'</h5><pre><code>&lt;ol class="breadcrumbs"&gt;'."
+	&lt;?php if(function_exists('bcn_display_list'))
+	{
+		bcn_display_list();
+	}?&gt;
+&lt;/ol&gt;</code></pre>";
+			$screen->add_help_tab(
+				array(
+				'id' => $this->identifier . '-quick-start',
+				'title' => __('Quick Start', $this->identifier),
+				'content' => $quickstart_tab
+				));
+			$styling_tab = '<p>' . __('Using the code from the Quick Start section above, the following CSS can be used as base for styling your breadcrumb trail.', $this->identifier) . '</p>' .
+				'<pre><code>.breadcrumbs
+{
+	font-size: 1.1em;
+	color: #fff;
+	margin: 30px 0 0 10px;
+	position: relative;
+	float: left;
+}</code></pre>';
+			$screen->add_help_tab(
+				array(
+				'id' => $this->identifier . '-styling',
+				'title' => __('Styling', $this->identifier),
+				'content' => $styling_tab
 				));
 			$screen->add_help_tab(
 				array(
@@ -204,22 +240,6 @@ class bcn_admin extends mtekk_adminKit
 				'content' => $this->import_form()
 				));
 		}
-	}
-	/**
-	 * get help text
-	 * 
-	 * @return string
-	 * 
-	 * TODO: move this over to the new help function, need WP to be fixed on its side first
-	 */
-	protected function _get_help_text()
-	{
-		return '<p>' . sprintf(__('Tips for the settings are located below select options. Please refer to the %sdocumentation%s for more information.', 'breadcrumb_navxt'), 
-			'<a title="' . __('Go to the Breadcrumb NavXT online documentation', 'breadcrumb_navxt') . '" href="http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/">', '</a>') . ' ' .
-			sprintf(__('If you think you have found a bug, please include your WordPress version and details on how to reproduce the bug when you %sreport the issue%s.', $this->identifier),'<a title="' . __('Go to the Breadcrumb NavXT support post for your version.', 'breadcrumb_navxt') . '" href="http://mtekk.us/archives/wordpress/plugins-wordpress/breadcrumb-navxt-' . $this->version . '/#respond">', '</a>') . '</p><h5>' .
-		__('Quick Start Information', 'breadcrumb_navxt') . '</h5><p>' . __('For the settings on this page to take effect, you must either use the included Breadcrumb NavXT widget, or place either of the code sections below into your theme.', 'breadcrumb_navxt') .
-		'</p><h5>' . __('Breadcrumb trail with separators', 'breadcrumb_navxt').'</h5><code>&lt;div class="breadcrumbs"&gt;'."&lt;?php if(function_exists('bcn_display')){ bcn_display();}?&gt;&lt;/div&gt;</code>" .
-		'<h5>' . __('Breadcrumb trail in list form', 'breadcrumb_navxt').'</h5><code>&lt;ol class="breadcrumbs"&gt;'."&lt;?php if(function_exists('bcn_display_list')){ bcn_display_list();}?&gt;&lt;/ol&gt;</code>";
 	}
 	/**
 	 * enqueue's the tab style sheet on the settings page

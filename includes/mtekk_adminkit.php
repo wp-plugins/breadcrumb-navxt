@@ -754,7 +754,6 @@ abstract class mtekk_adminKit
 		$form .= sprintf('<form action="options-general.php?page=%s" method="post" enctype="multipart/form-data" id="%s_admin_upload">', $this->identifier, $this->unique_prefix);
 		$form .= wp_nonce_field($this->unique_prefix . '_admin_import_export', '_wpnonce', true, false);
 		$form .= sprintf('<fieldset id="import_export" class="%s_options">', $this->unique_prefix);
-		$form .= '<h3>' . __('Import/Export/Reset Settings', $this->identifier) . '</h3>';
 		$form .= '<p>' . __('Import settings from a XML file, export the current settings to a XML file, or reset to the default settings.', $this->identifier) . '</p>';
 		$form .= '<table class="form-table"><tr valign="top"><th scope="row">';
 		$form .= sprintf('<label for="%s_admin_import_file">', $this->unique_prefix);
