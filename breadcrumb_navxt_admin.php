@@ -42,6 +42,10 @@ if(version_compare(phpversion(), '5.2.0', '<'))
 	}
 	return;
 }
+if(!function_exists('mb_strlen'))
+{
+	require_once(dirname(__FILE__) . '/includes/multibyte_supplicant.php');
+}
 //Include the breadcrumb class
 require_once(dirname(__FILE__) . '/breadcrumb_navxt_class.php');
 //Include the WP 2.8+ widget class
