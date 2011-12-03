@@ -172,6 +172,10 @@ class bcn_admin extends mtekk_adminKit
 				}
 				$opts = $this->breadcrumb_trail->opt;
 			}
+			//Add custom post types
+			$this->find_posttypes($opts);
+			//Add custom taxonomy types
+			$this->find_taxonomies($opts);
 			//Save the passed in opts to the object's option array
 			$this->opt = $opts;
 		}
@@ -185,6 +189,11 @@ class bcn_admin extends mtekk_adminKit
 	function help()
 	{
 		$screen = get_current_screen();
+		//Exit early if the add_help_tab function doesn't exist
+		if(!method_exists($screen, 'add_help_tab'))
+		{
+			return;
+		}
 		//Add contextual help on current screen
 		if($screen->id == 'settings_page_' . $this->identifier)
 		{
