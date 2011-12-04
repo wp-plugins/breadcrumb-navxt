@@ -61,7 +61,7 @@ if(!class_exists('mtekk_adminKit'))
  */
 class bcn_admin extends mtekk_adminKit
 {
-	protected $version = '3.99.80';
+	protected $version = '3.99.81';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -143,24 +143,24 @@ class bcn_admin extends mtekk_adminKit
 						//Handle all of our boolean options first, they're real easy, just add a 'b'
 						if(strpos($option, 'display') > 0 || $option == 'current_item_linked')
 						{
-							$this->breadcrumb_trail->opt['b'.$option] = $this->opt[$option];
+							$this->breadcrumb_trail->opt['b'.$option] = $value;
 						}
 						//Handle migration of anchor templates to the templates
 						else if(strpos($option, 'anchor') > 0)
 						{
 							$parts = explode('_', $option);
 							//Do excess slash removal sanitation
-							$this->breadcrumb_trail->opt['H' . $parts[0] . '_template'] = $this->opt[$option] . '%htitle%</a>';
+							$this->breadcrumb_trail->opt['H' . $parts[0] . '_template'] = $value . '%htitle%</a>';
 						}
 						//Handle our abs integers
 						else if($option == 'max_title_length' || $option == 'post_post_root' || $option == 'post_page_root')
 						{
-							$this->breadcrumb_trail->opt['a' . $option] = $this->opt[$option];
+							$this->breadcrumb_trail->opt['a' . $option] = $value;
 						}
 						//Now everything else, minus prefix and suffix
 						else if(strpos($option, 'prefix') === false && strpos($option, 'suffix') === false)
 						{
-							$this->breadcrumb_trail->opt['S' . $option] = $this->opt[$option];
+							$this->breadcrumb_trail->opt['S' . $option] = $value;
 						}
 					}
 				}
