@@ -311,6 +311,7 @@ class bcn_breadcrumb_trail
 	{
 		$this->trail[] = $object;
 		//Return the just added object
+		//TODO: investigate using the key function here
 		return $this->trail[count($this->trail) - 1];
 	}
 	/**
