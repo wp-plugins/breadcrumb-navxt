@@ -77,11 +77,9 @@ class bcn_admin extends mtekk_adminKit
 	{
 		//We'll let it fail fataly if the class isn't there as we depend on it
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
-		//First make sure our defaults are safe
-		$this->find_posttypes($this->breadcrumb_trail->opt);
-		$this->find_taxonomies($this->breadcrumb_trail->opt);
 		//Grab defaults from the breadcrumb_trail object
 		$this->opt = $this->breadcrumb_trail->opt;
+		add_action('wp_loaded', array($this, 'wp_loaded'));
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
 		//$this->plugin_basename = plugin_basename(__FILE__);
 		//Register the WordPress 2.8 Widget
@@ -101,6 +99,12 @@ class bcn_admin extends mtekk_adminKit
 	{
 		//We're going to make sure we run the parent's version of this function as well
 		parent::init();
+	}
+	function wp_loaded()
+	{
+		//First make sure our defaults are safe
+		$this->find_posttypes($this->opt);
+		$this->find_taxonomies($this->opt);
 	}
 	/**
 	 * Makes sure the current user can manage options to proceed
