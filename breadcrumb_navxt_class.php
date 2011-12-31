@@ -208,7 +208,7 @@ class bcn_breadcrumb_trail
 			//Should the home page be shown
 			'bhome_display' => true,
 			//Title displayed when is_home() returns true
-			'Shome_title' => __('Home', 'breadcrumb_navxt'),
+			'Hhome_title' => __('Home', 'breadcrumb_navxt'),
 			//The breadcrumb template for the home page, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
 			'Hhome_template' => __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
 			//The breadcrumb template for the home page, used when an anchor is not needed, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
@@ -227,9 +227,9 @@ class bcn_breadcrumb_trail
 			//Current item options, really only applies to static pages and posts unless other current items are linked
 			'bcurrent_item_linked' => false,
 			//The breadcrumb template for current items, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
-			'Hcurrent_item_template' => __('<a title="Reload the current page." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
+			//'Hcurrent_item_template' => __('<a title="Reload the current page." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
 			//The breadcrumb template for current items, used when an anchor is not needed, four keywords are available %link%, %title%, %htitle%, and %type%
-			'Hcurrent_item_template_no_anchor' => '%htitle%',
+			//'Hcurrent_item_template_no_anchor' => '%htitle%',
 			//Static page options
 			//The anchor template for page breadcrumbs, four keywords are available %link%, %title%, %htitle%, and %type%
 			'Hpost_page_template' => __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
@@ -788,8 +788,16 @@ class bcn_breadcrumb_trail
 	function do_root()
 	{
 		global $post, $wp_query, $wp_taxonomies, $current_site;
-		//Simmilar to using $post, but for things $post doesn't cover
-		$type = $wp_query->get_queried_object();
+		//If this is an attachment then we need to change the queried object to the parent post
+		if(is_attachment())
+		{
+			$type = get_post($post->post_parent);
+		}
+		else
+		{
+			//Simmilar to using $post, but for things $post doesn't cover
+			$type = $wp_query->get_queried_object();
+		}
 		//We need to do special things for custom post types
 		if(is_singular() && !$this->is_builtin($type->post_type))
 		{
