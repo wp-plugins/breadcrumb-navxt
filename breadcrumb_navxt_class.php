@@ -208,7 +208,7 @@ class bcn_breadcrumb_trail
 			//Should the home page be shown
 			'bhome_display' => true,
 			//Title displayed when is_home() returns true
-			'Hhome_title' => __('Home', 'breadcrumb_navxt'),
+			'Shome_title' => __('Home', 'breadcrumb_navxt'),
 			//The breadcrumb template for the home page, this is global, four keywords are available %link%, %title%, %htitle%, and %type%
 			'Hhome_template' => __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt'),
 			//The breadcrumb template for the home page, used when an anchor is not needed, this is global, four keywords are available %link%, %title%, %htitle%, and %type%

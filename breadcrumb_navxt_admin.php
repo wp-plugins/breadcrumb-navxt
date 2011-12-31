@@ -79,6 +79,7 @@ class bcn_admin extends mtekk_adminKit
 		$this->breadcrumb_trail = new bcn_breadcrumb_trail;
 		//Grab defaults from the breadcrumb_trail object
 		$this->opt = $this->breadcrumb_trail->opt;
+		//We need to add in the defaults for CPTs and custom taxonomies after all other plugins are loaded
 		add_action('wp_loaded', array($this, 'wp_loaded'));
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
 		//$this->plugin_basename = plugin_basename(__FILE__);
@@ -179,6 +180,17 @@ class bcn_admin extends mtekk_adminKit
 					}
 				}
 				$opts = $this->breadcrumb_trail->opt;
+			}
+			if(version_compare($version, '4.0.1', '<'))
+			{
+				if(isset($opts['Hcurrent_item_template_no_anchor']))
+				{
+					unset($opts['Hcurrent_item_template_no_anchor']);
+				}
+				if(isset($opts['Hcurrent_item_template']))
+				{
+					unset($opts['Hcurrent_item_template']);
+				}
 			}
 			//Add custom post types
 			$this->find_posttypes($opts);
@@ -371,8 +383,8 @@ class bcn_admin extends mtekk_adminKit
 				<table class="form-table">
 					<?php
 						$this->input_check(__('Link Current Item', 'breadcrumb_navxt'), 'bcurrent_item_linked', __('Yes'));
-						$this->input_text(__('Current Item Template', 'breadcrumb_navxt'), 'Hcurrent_item_template', '64', false, __('The template for current item breadcrumbs.', 'breadcrumb_navxt'));
-						$this->input_text(__('Current Item Template (Unlinked)', 'breadcrumb_navxt'), 'Hcurrent_item_template_no_anchor', '64', false, __('The template for current item breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));
+						//$this->input_text(__('Current Item Template', 'breadcrumb_navxt'), 'Hcurrent_item_template', '64', false, __('The template for current item breadcrumbs.', 'breadcrumb_navxt'));
+						//$this->input_text(__('Current Item Template (Unlinked)', 'breadcrumb_navxt'), 'Hcurrent_item_template_no_anchor', '64', false, __('The template for current item breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb_navxt'));
 						$this->input_check(__('Paged Breadcrumb', 'breadcrumb_navxt'), 'bpaged_display', __('Include the paged breadcrumb in the breadcrumb trail.', 'breadcrumb_navxt'), false, __('Indicates that the user is on a page other than the first on paginated posts/pages.', 'breadcrumb_navxt'));
 						$this->input_text(__('Paged Template', 'breadcrumb_navxt'), 'Hpaged_template', '64', false, __('The template for paged breadcrumbs.', 'breadcrumb_navxt'));
 					?>
