@@ -1,6 +1,6 @@
 <?php
 /*  
-	Copyright 2007-2011  John Havlik  (email : mtekkmonkey@gmail.com)
+	Copyright 2007-2012  John Havlik  (email : mtekkmonkey@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ class bcn_breadcrumb
 class bcn_breadcrumb_trail
 {
 	//Our member variables
-	private $version = '4.0.0';
+	private $version = '4.0.1';
 	//An array of breadcrumbs
 	public $trail = array();
 	//The options
