@@ -24,6 +24,7 @@ Breadcrumb NavXT distributes with translations for the following languages:
 * Swedish by Patrik Spathon
 * Italian by Luca Camellini
 * Japanese by Kazuhiro Terada
+* Norwegian by Jan Rosvoldsve
 
 
 Don't see your language on the list? Feel free to translate Breadcrumb NavXT and send John Havlik the translations.
