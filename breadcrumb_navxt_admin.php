@@ -436,44 +436,7 @@ class bcn_admin extends mtekk_adminKit
 				//We only want custom post types
 				if(!$post_type->_builtin)
 				{
-					//If the post type does not have settings in the options array yet, we need to load some defaults
-					if(!array_key_exists('Hpost_' . $post_type->name . '_template', $this->opt) || !$post_type->hierarchical && !array_key_exists('Spost_' . $post_type->name . '_taxonomy_type', $this->opt))
-					{
-						//Add the necessary option array members
-						$this->opt['Hpost_' . $post_type->name . '_template'] = __('<a title="Go to %title%." href="%link%">%htitle%</a>', 'breadcrumb_navxt');
-						$this->opt['Hpost_' . $post_type->name . '_template_no_anchor'] = __('%htitle%', 'breadcrumb_navxt');
-						$this->opt['bpost_' . $post_type->name . '_archive_display'] = $post_type->has_archive;
-						//Do type dependent tasks
-						if($post_type->hierarchical)
-						{
-							//Set post_root for hierarchical types
-							$this->opt['apost_' . $post_type->name . '_root'] = get_option('page_on_front');
-						}
-						//If it is flat, we need a taxonomy selection
-						else
-						{
-							//Set post_root for flat types
-							$this->opt['apost_' . $post_type->name . '_root'] = get_option('page_for_posts');
-							//Default to not displaying a taxonomy
-							$this->opt['bpost_' . $post_type->name . '_taxonomy_display'] = false;
-							//Loop through all of the possible taxonomies
-							foreach($wp_taxonomies as $taxonomy)
-							{
-								//Activate the first taxonomy valid for this post type and exit the loop
-								if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
-								{
-									$this->opt['bpost_' . $post_type->name . '_taxonomy_display'] = true;
-									$this->opt['Spost_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
-									break;
-								}
-							}
-							//If there are no valid taxonomies for this type, we default to not displaying taxonomies for this post type
-							if(!isset($this->opt['Spost_' . $post_type->name . '_taxonomy_type']))
-							{
-								$this->opt['Spost_' . $post_type->name . '_taxonomy_type'] = 'date';
-							}
-						}
-					}?>
+				?>
 			<fieldset id="post_<?php echo $post_type->name ?>" class="bcn_options">
 				<h3><?php echo $post_type->labels->singular_name; ?></h3>
 				<table class="form-table">
@@ -492,9 +455,9 @@ class bcn_admin extends mtekk_adminKit
 					</tr>
 					<?php
 						$this->input_check(sprintf(__('%s Archive Display', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'bpost_' . $post_type->name . '_archive_display', sprintf(__('Show the breadcrumb for the %s post type archives in the breadcrumb trail.', 'breadcrumb_navxt'), strtolower(__($post_type->labels->singular_name))), !$post_type->has_archive);
-						//If it is flat, we need a taxonomy selection
-						if(!$post_type->hierarchical)
-						{
+//						//If it is flat, we need a taxonomy selection
+//						if(!$post_type->hierarchical)
+//						{
 							$this->input_check(sprintf(__('%s Taxonomy Display', 'breadcrumb_navxt'), $post_type->labels->singular_name), 'bpost_' . $post_type->name . '_taxonomy_display', sprintf(__('Show the taxonomy leading to a %s in the breadcrumb trail.', 'breadcrumb_navxt'), strtolower(__($post_type->labels->singular_name))));
 					?>
 					<tr valign="top">
@@ -518,7 +481,7 @@ class bcn_admin extends mtekk_adminKit
 							<span class="setting-description"><?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb_navxt'); ?></span>
 						</td>
 					</tr>
-					<?php } ?>
+					<?php //} ?>
 				</table>
 			</fieldset>
 					<?php
@@ -542,13 +505,6 @@ class bcn_admin extends mtekk_adminKit
 				//We only want custom taxonomies
 				if(!$taxonomy->_builtin)
 				{
-					//If the taxonomy does not have settings in the options array yet, we need to load some defaults
-					if(!array_key_exists('H' . $taxonomy->name . '_template', $this->opt))
-					{
-						//Add the necessary option array members
-						$this->opt['H' . $taxonomy->name . '_template'] = __(sprintf('<a title="Go to the %%title%% %s archives." href="%%link%%">%%htitle%%</a>', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
-						$this->opt['H' . $taxonomy->name . '_template_no_anchor'] = __(sprintf('%%htitle%%', $taxonomy->labels->singular_name), 'breadcrumb_navxt');
-					}
 				?>
 			<fieldset id="<?php echo $taxonomy->name; ?>" class="bcn_options alttab">
 				<h3><?php echo mb_convert_case(__($taxonomy->label), MB_CASE_TITLE, 'UTF-8'); ?></h3>
@@ -627,24 +583,24 @@ class bcn_admin extends mtekk_adminKit
 					{
 						//Set post_root for flat types
 						$opts['apost_' . $post_type->name . '_root'] = get_option('page_for_posts');
-						//Default to not displaying a taxonomy
-						$opts['bpost_' . $post_type->name . '_taxonomy_display'] = false;
-						//Loop through all of the possible taxonomies
-						foreach($wp_taxonomies as $taxonomy)
+					}
+					//Default to not displaying a taxonomy
+					$opts['bpost_' . $post_type->name . '_taxonomy_display'] = false;
+					//Loop through all of the possible taxonomies
+					foreach($wp_taxonomies as $taxonomy)
+					{
+						//Activate the first taxonomy valid for this post type and exit the loop
+						if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
 						{
-							//Activate the first taxonomy valid for this post type and exit the loop
-							if($taxonomy->object_type == $post_type->name || in_array($post_type->name, $taxonomy->object_type))
-							{
-								$opts['bpost_' . $post_type->name . '_taxonomy_display'] = true;
-								$opts['Spost_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
-								break;
-							}
+							$opts['bpost_' . $post_type->name . '_taxonomy_display'] = true;
+							$opts['Spost_' . $post_type->name . '_taxonomy_type'] = $taxonomy->name;
+							break;
 						}
-						//If there are no valid taxonomies for this type, we default to not displaying taxonomies for this post type
-						if(!isset($opts['Spost_' . $post_type->name . '_taxonomy_type']))
-						{
-							$opts['Spost_' . $post_type->name . '_taxonomy_type'] = 'date';
-						}
+					}
+					//If there are no valid taxonomies for this type, we default to not displaying taxonomies for this post type
+					if(!isset($opts['Spost_' . $post_type->name . '_taxonomy_type']))
+					{
+						$opts['Spost_' . $post_type->name . '_taxonomy_type'] = 'date';
 					}
 				}
 			}

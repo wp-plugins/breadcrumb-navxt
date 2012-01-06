@@ -546,6 +546,11 @@ class bcn_breadcrumb_trail
 			{
 				$this->post_parents($post->post_parent, $bcn_frontpage);
 			}
+			else
+			{
+				//Handle the post's taxonomy
+				$this->post_taxonomy($post->ID, $post->post_type, $post->post_parent);	
+			}
 		}
 		//Otherwise we need the follow the taxonomy tree
 		else
