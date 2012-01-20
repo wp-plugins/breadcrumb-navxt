@@ -311,7 +311,6 @@ class bcn_breadcrumb_trail
 	{
 		$this->trail[] = $object;
 		//Return the just added object
-		//TODO: investigate using the key function here
 		return $this->trail[count($this->trail) - 1];
 	}
 	/**
@@ -540,13 +539,13 @@ class bcn_breadcrumb_trail
 		if(is_post_type_hierarchical($post->post_type))
 		{
 			//Done with the current item, now on to the parents
-			$bcn_frontpage = get_option('page_on_front');
+			$frontpage = get_option('page_on_front');
 			//If there is a parent page let's find it
-			if($post->post_parent && $post->ID != $post->post_parent && $bcn_frontpage != $post->post_parent)
+			if($post->post_parent && $post->ID != $post->post_parent && $frontpage != $post->post_parent)
 			{
-				$this->post_parents($post->post_parent, $bcn_frontpage);
+				$this->post_parents($post->post_parent, $frontpage);
 			}
-			else
+			else if(!$this->is_builtin($post->post_type))
 			{
 				//Handle the post's taxonomy
 				$this->post_taxonomy($post->ID, $post->post_type, $post->post_parent);	
@@ -580,18 +579,26 @@ class bcn_breadcrumb_trail
 		}
 		//Get the parent's information
 		$parent = get_post($post->post_parent);
+		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($post->post_parent), $this->opt['Hpost_' . $parent->post_type . '_template'], array($parent->post_type), get_permalink($post->post_parent)));
 		//We need to treat flat and hiearchical post attachment hierachies differently
 		if(is_post_type_hierarchical($parent->post_type))
 		{
-			//Grab the page on front ID for post_parents
+			//Done with the current item, now on to the parents
 			$frontpage = get_option('page_on_front');
-			//Place the rest of the page hierachy
-			$this->post_parents($post->post_parent, $frontpage);
+			//If there is a parent page let's find it
+			if($parent->post_parent && $parent->ID != $parent->post_parent && $frontpage != $parent->post_parent)
+			{
+				$this->post_parents($parent->post_parent, $frontpage);
+			}
+			else if(!$this->is_builtin($parent->post_type))
+			{
+				//Handle the post's taxonomy
+				$this->post_taxonomy($post->post_parent, $parent->post_type);	
+			}
 		}
 		else
 		{
-			//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($post->post_parent), $this->opt['Hpost_' . $post->post_type . '_template'], array($post->post_type), get_permalink($post->post_parent)));
 			//Handle the post's taxonomy
 			$this->post_taxonomy($post->post_parent, $parent->post_type);
 		}
