@@ -22,6 +22,7 @@ Breadcrumb NavXT distributes with translations for the following languages:
 * Azerbaijani by Zaur Bayramov
 
 The following translations are in need of a maintainer:
+
 * German originally maintained by Tom Klingenberg
 * French originally maintained by Laurent Grabielle
 * Dutch originally maintained by Stan Lenssen
