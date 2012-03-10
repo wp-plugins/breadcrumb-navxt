@@ -137,7 +137,7 @@ abstract class mtekk_adminKit
 		//Add in the nice "settings" link to the plugins page
 		add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
 		//Register JS for tabs
-		wp_register_script('mtekk_adminkit_tabs', plugins_url('/mtekk_adminkit_tabs.js', dirname(__FILE__) . '/mtekk_adminkit_tabs.js'));
+		wp_register_script('mtekk_adminkit_tabs', plugins_url('/mtekk_adminkit_tabs.js', dirname(__FILE__) . '/mtekk_adminkit_tabs.js'), array('jquery-ui-tabs'));
 		//Register CSS for tabs
 		wp_register_style('mtekk_adminkit_tabs', plugins_url('/mtekk_adminkit_tabs.css', dirname(__FILE__) . '/mtekk_adminkit_tabs.css'));
 		//Register options
