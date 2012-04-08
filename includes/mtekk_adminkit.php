@@ -399,7 +399,7 @@ abstract class mtekk_adminKit
 		}
 		if(is_array($defaults))
 		{
-			return $this->array_merge_recursive($defaults, $r);
+			return mtekk_adminKit::array_merge_recursive($defaults, $r);
 		}
 		return $r;
 	}
@@ -417,7 +417,7 @@ abstract class mtekk_adminKit
 		{
 			if(array_key_exists($key, $arg1) && is_array($value))
 			{
-				$arg1[$key] = $this->array_merge_recursive($arg1[$key], $value);
+				$arg1[$key] = mtekk_adminKit::array_merge_recursive($arg1[$key], $value);
 			}
 			else
 			{
