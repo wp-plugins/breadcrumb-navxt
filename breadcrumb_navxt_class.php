@@ -528,7 +528,7 @@ class bcn_breadcrumb_trail
 		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, template, and type
 		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title(), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'], array('post-' . $post->post_type, 'current-item')));
 		//If the current item is to be linked, or this is a paged post, add in links
-		if($this->opt['bcurrent_item_linked'] || ($page > 0 && $this->opt['bpaged_display']))
+		if($this->opt['bcurrent_item_linked'] || ($page > 1 && $this->opt['bpaged_display']))
 		{
 			//Change the template over to the normal, linked one
 			$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template']);
@@ -946,7 +946,7 @@ class bcn_breadcrumb_trail
 		do_action('bcn_before_fill', $this);
 		//Do specific opperations for the various page types
 		//Check if this isn't the first of a multi paged item
-		if($this->opt['bpaged_display'] && (is_paged() || is_singular() && $page > 0))
+		if($this->opt['bpaged_display'] && (is_paged() || is_singular() && $page > 1))
 		{
 			$this->do_paged();
 		}
