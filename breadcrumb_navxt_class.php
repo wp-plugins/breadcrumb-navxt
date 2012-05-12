@@ -792,11 +792,59 @@ class bcn_breadcrumb_trail
 		return $type->has_archive;
 	}
 	/**
+	 * This function populates our type_str and posts_id variables
+	 * 
+	 * @param post $type A post object we are using to figureout the type
+	 * @param string $type_str The type string variable, passed by reference
+	 * @param int $root_id The ID for the post type root
+	 */
+	function find_type($type, &$type_str, &$root_id)
+	{
+		global $wp_taxonomies;
+		//We need to do special things for custom post types
+		if(is_singular() && !$this->is_builtin($type->post_type))
+		{
+			//We need the type for later, so save it
+			$type_str = $type->post_type;
+			//This will assign a ID for root page of a custom post
+			if(is_numeric($this->opt['apost_' . $type_str . '_root']))
+			{
+				$root_id = $this->opt['apost_' . $type_str . '_root'];
+			}
+		}
+		//For CPT archives
+		else if(is_post_type_archive() && !isset($type->taxonomy))
+		{
+			//We need the type for later, so save it
+			$type_str = $type->name;
+			//This will assign a ID for root page of a custom post's taxonomy archive
+			if(is_numeric($this->opt['apost_' . $type_str . '_root']))
+			{
+				$root_id = $this->opt['apost_' . $type_str . '_root'];
+			}
+		}
+		//We need to do special things for custom post type archives, but not author or date archives
+		else if(is_archive() && !is_author() && !is_date() && !$this->is_builtin($wp_taxonomies[$type->taxonomy]->object_type[0]))
+		{
+			//We need the type for later, so save it
+			$type_str = $wp_taxonomies[$type->taxonomy]->object_type[0];
+			//This will assign a ID for root page of a custom post's taxonomy archive
+			if(is_numeric($this->opt['apost_' . $type_str . '_root']))
+			{
+				$root_id = $this->opt['apost_' . $type_str . '_root'];
+			}
+		}
+		else
+		{
+			$type_str = "post";
+		}
+	}
+	/**
 	 * A Breadcrumb Trail Filling Function 
 	 *
 	 * Handles only the root page stuff for post types, including the "page for posts"
 	 * 
-	 * TODO: this still needs to be redone, just trying to get it working ATM
+	 * TODO: this still needs to be cleaned up
 	 */
 	function do_root()
 	{
@@ -811,43 +859,9 @@ class bcn_breadcrumb_trail
 			//Simmilar to using $post, but for things $post doesn't cover
 			$type = $wp_query->get_queried_object();
 		}
-		//We need to do special things for custom post types
-		if(is_singular() && !$this->is_builtin($type->post_type))
-		{
-			//We need the type for later, so save it
-			$type_str = $type->post_type;
-			//This will assign a ID for root page of a custom post
-			if(is_numeric($this->opt['apost_' . $type_str . '_root']))
-			{
-				$posts_id = $this->opt['apost_' . $type_str . '_root'];
-			}
-		}
-		//For CPT archives
-		else if(is_post_type_archive())
-		{
-			//We need the type for later, so save it
-			$type_str = $type->name;
-			//This will assign a ID for root page of a custom post's taxonomy archive
-			if(is_numeric($this->opt['apost_' . $type_str . '_root']))
-			{
-				$posts_id = $this->opt['apost_' . $type_str . '_root'];
-			}
-		}
-		//We need to do special things for custom post type archives, but not author or date archives
-		else if(is_archive() && !is_author() && !is_date() && !$this->is_builtin($wp_taxonomies[$type->taxonomy]->object_type[0]))
-		{
-			//We need the type for later, so save it
-			$type_str = $wp_taxonomies[$type->taxonomy]->object_type[0];
-			//This will assign a ID for root page of a custom post's taxonomy archive
-			if(is_numeric($this->opt['apost_' . $type_str . '_root']))
-			{
-				$posts_id = $this->opt['apost_' . $type_str . '_root'];
-			}
-		}
-		else
-		{
-			$type_str = "post";
-		}
+		$root_id = -1;
+		//Find our type string and root_id
+		$this->find_type($type, $type_str, $root_id);
 		//These two are for taxonomy archives and for a single custom post type
 		if(isset($type->post_type) && !$this->is_builtin($type->post_type) && $this->opt['bpost_' . $type->post_type . '_archive_display'] && $this->has_archive($type->post_type))
 		{
@@ -862,22 +876,19 @@ class bcn_breadcrumb_trail
 			$breadcrumb = $this->add(new bcn_breadcrumb($this->post_type_archive_title(get_post_type_object($post_type)), $this->opt['Hpost_' . $post_type . '_template'], array('post-' . $post_type . '-archive'), get_post_type_archive_link($post_type)));
 		}
 		//We only need the "blog" portion on members of the blog, and only if we're in a static frontpage environment
-		//if(isset($posts_id) || $this->opt['blog_display'] && get_option('show_on_front') == 'page' && (is_home() || (is_single() && !is_page()) || (is_archive() && !is_author())))
-		if(isset($posts_id) || $this->opt['bblog_display'] && get_option('show_on_front') == 'page' && (is_home() || is_single() || is_tax() || is_category() || is_tag()))
+		if($root_id > 1 || $this->opt['bblog_display'] && get_option('show_on_front') == 'page' && (is_home() || is_single() || is_tax() || is_category() || is_tag()))
 		{
 			//If we entered here with a posts page, we need to set the id
-			if(!isset($posts_id))
+			if($root_id < 0)
 			{
-				$posts_id = get_option('page_for_posts');
+				$root_id = get_option('page_for_posts');
 			}
 			$frontpage_id = get_option('page_on_front');
 			//We'll have to check if this ID is valid, e.g. user has specified a posts page
-			if($posts_id && $posts_id != $frontpage_id)
+			if($root_id && $root_id != $frontpage_id)
 			{
-				//Get the blog page
-				$bcn_post = get_post($posts_id);
 				//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, we get a pointer to it in return
-				$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($posts_id), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'], array($type_str . '-root', 'post-' . $post->post_type)));
+				$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($root_id), $this->opt['Hpost_' . $type_str . '_template_no_anchor'], array($type_str . '-root', 'post-' . $type_str)));
 				//If we are at home, then we need to add the current item type
 				if(is_home())
 				{
@@ -886,11 +897,13 @@ class bcn_breadcrumb_trail
 				//If we're not on the current item we need to setup the anchor
 				if(!is_home() || (is_paged() && $this->opt['bpaged_display']) || (is_home() && $this->opt['bcurrent_item_linked']))
 				{
-					$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template']);
+					$breadcrumb->set_template($this->opt['Hpost_' . $type_str . '_template']);
 					//Figure out the anchor for home page
-					$breadcrumb->set_url(get_permalink($posts_id));
+					$breadcrumb->set_url(get_permalink($root_id));
 				}
 				//Done with the "root", now on to the parents
+				//Get the blog page
+				$bcn_post = get_post($root_id);
 				//If there is a parent post let's find it
 				if($bcn_post->post_parent && $bcn_post->ID != $bcn_post->post_parent && $frontpage_id != $bcn_post->post_parent)
 				{
@@ -987,12 +1000,13 @@ class bcn_breadcrumb_trail
 		//For archives
 		else if(is_archive())
 		{
+			$type = $wp_query->get_queried_object();
 			//For date based archives
 			if(is_date())
 			{
 				$this->do_archive_by_date();
 			}
-			else if(is_post_type_archive())
+			else if(is_post_type_archive() && !isset($type->taxonomy))
 			{
 				$this->do_archive_by_post_type();
 			}

@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT
 Plugin URI: http://mtekk.us/code/breadcrumb-navxt/
 Description: Adds a breadcrumb navigation showing the visitor&#39;s path to their current location. For details on how to use this plugin visit <a href="http://mtekk.us/code/breadcrumb-navxt/">Breadcrumb NavXT</a>. 
-Version: 4.0.1
+Version: 4.0.50
 Author: John Havlik
 Author URI: http://mtekk.us/
 License: GPL2
@@ -383,8 +383,6 @@ class bcn_admin extends mtekk_adminKit
 				<table class="form-table">
 					<?php
 						$this->input_check(__('Link Current Item', 'breadcrumb-navxt'), 'bcurrent_item_linked', __('Yes'));
-						//$this->input_text(__('Current Item Template', 'breadcrumb-navxt'), 'Hcurrent_item_template', '64', false, __('The template for current item breadcrumbs.', 'breadcrumb-navxt'));
-						//$this->input_text(__('Current Item Template (Unlinked)', 'breadcrumb-navxt'), 'Hcurrent_item_template_no_anchor', '64', false, __('The template for current item breadcrumbs, used only when the breadcrumb is not linked.', 'breadcrumb-navxt'));
 						$this->input_check(__('Paged Breadcrumb', 'breadcrumb-navxt'), 'bpaged_display', __('Include the paged breadcrumb in the breadcrumb trail.', 'breadcrumb-navxt'), false, __('Indicates that the user is on a page other than the first on paginated posts/pages.', 'breadcrumb-navxt'));
 						$this->input_text(__('Paged Template', 'breadcrumb-navxt'), 'Hpaged_template', '64', false, __('The template for paged breadcrumbs.', 'breadcrumb-navxt'));
 					?>
@@ -455,10 +453,7 @@ class bcn_admin extends mtekk_adminKit
 					</tr>
 					<?php
 						$this->input_check(sprintf(__('%s Archive Display', 'breadcrumb-navxt'), $post_type->labels->singular_name), 'bpost_' . $post_type->name . '_archive_display', sprintf(__('Show the breadcrumb for the %s post type archives in the breadcrumb trail.', 'breadcrumb-navxt'), strtolower(__($post_type->labels->singular_name))), !$post_type->has_archive);
-//						//If it is flat, we need a taxonomy selection
-//						if(!$post_type->hierarchical)
-//						{
-							$this->input_check(sprintf(__('%s Taxonomy Display', 'breadcrumb-navxt'), $post_type->labels->singular_name), 'bpost_' . $post_type->name . '_taxonomy_display', sprintf(__('Show the taxonomy leading to a %s in the breadcrumb trail.', 'breadcrumb-navxt'), strtolower(__($post_type->labels->singular_name))));
+						$this->input_check(sprintf(__('%s Taxonomy Display', 'breadcrumb-navxt'), $post_type->labels->singular_name), 'bpost_' . $post_type->name . '_taxonomy_display', sprintf(__('Show the taxonomy leading to a %s in the breadcrumb trail.', 'breadcrumb-navxt'), strtolower(__($post_type->labels->singular_name))));
 					?>
 					<tr valign="top">
 						<th scope="row">
@@ -481,7 +476,6 @@ class bcn_admin extends mtekk_adminKit
 							<span class="setting-description"><?php _e('The taxonomy which the breadcrumb trail will show.', 'breadcrumb-navxt'); ?></span>
 						</td>
 					</tr>
-					<?php //} ?>
 				</table>
 			</fieldset>
 					<?php
