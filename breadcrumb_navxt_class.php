@@ -435,20 +435,20 @@ class bcn_breadcrumb_trail
 	 * @param int $id The id of the post to find the terms for.
 	 * @param string $taxonomy The name of the taxonomy that the term belongs to
 	 * 
-	 * @TODO Need to implement this cleaner, fix up the entire tag_ thing, as this is now generic
-	 * TODO: This still needs to be updated to the new method
+	 * TODO Need to implement this cleaner, fix up the entire tag_ thing, as this is now generic
+	 * TODO This still needs to be updated to the new method of adding breadcrumbs to the trail
 	 */
 	function post_terms($id, $taxonomy)
 	{
-		//Add new breadcrumb to the trail
-		$this->trail[] = new bcn_breadcrumb();
-		//Figure out where we placed the crumb, make a nice pointer to it
-		$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 		//Fills a temporary object with the terms for the post
 		$bcn_object = get_the_terms($id, $taxonomy);
-		//Only process if we have tags
+		//Only process if we have terms
 		if(is_array($bcn_object))
 		{
+			//Add new breadcrumb to the trail
+			$this->trail[] = new bcn_breadcrumb();
+			//Figure out where we placed the crumb, make a nice pointer to it
+			$bcn_breadcrumb = &$this->trail[count($this->trail) - 1];
 			$is_first = true;
 			//Loop through all of the term results
 			foreach($bcn_object as $term)
@@ -467,12 +467,6 @@ class bcn_breadcrumb_trail
 					$this->opt['H' . $term->taxonomy . '_template']));
 				$is_first = false;
 			}
-		}
-		else
-		{
-			//TODO: I think this one needed to be changed
-			//If there are no tags, then we set the title to "Untagged"
-			$bcn_breadcrumb->set_title(__('Un' . $taxonomy, 'breadcrumb-navxt'));
 		}
 	}
 	/**
