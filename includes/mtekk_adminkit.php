@@ -1,6 +1,6 @@
 <?php
 /*  
-	Copyright 2009-2012  John Havlik  (email : mtekkmonkey@gmail.com)
+	Copyright 2009-2013  John Havlik  (email : mtekkmonkey@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -149,7 +149,7 @@ abstract class mtekk_adminKit
 		$this->opts_fix($this->opt);
 	}
 	/**
-	 * Adds the adminpage the menue and the nice little settings link
+	 * Adds the adminpage the menu and the nice little settings link
 	 * TODO: make this more generic for easier extension
 	 */
 	function add_page()
