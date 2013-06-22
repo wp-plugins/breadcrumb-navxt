@@ -2,7 +2,7 @@
 Contributors: mtekk, hakre
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XEU783BR8U&lc=US&item_name=Breadcrumb%20NavXT%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: breadcrumb, breadcrumbs, trail, navigation, menu, widget
-Requires at least: 3.4
+Requires at least: 3.5
 Tested up to: 3.6
 Adds breadcrumb navigation showing the visitor's path to their current location.
 
