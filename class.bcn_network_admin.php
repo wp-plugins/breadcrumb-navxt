@@ -42,7 +42,7 @@ if(!class_exists('mtekk_adminKit'))
  */
 class bcn_network_admin extends mtekk_adminKit
 {
-	protected $version = '4.9.90';
+	protected $version = '5.0.0';
 	protected $full_name = 'Breadcrumb NavXT Network Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_network_options';
@@ -469,10 +469,10 @@ class bcn_network_admin extends mtekk_adminKit
 						<td>
 							<?php
 								$this->input_radio('Spost_post_taxonomy_type', 'category', __('Categories'));
-								$this->input_radio('Spost_post_taxonomy_type', 'date', __('Dates'));
+								$this->input_radio('Spost_post_taxonomy_type', 'date', __('Dates', 'breadcrumb-navxt'));
 								$this->input_radio('Spost_post_taxonomy_type', 'post_tag', __('Tags'));
 								//We use the value 'page' but really, this will follow the parent post hierarchy
-								$this->input_radio('Spost_post_taxonomy_type', 'page', __('Post Parent'));
+								$this->input_radio('Spost_post_taxonomy_type', 'page', __('Post Parent', 'breadcrumb-navxt'));
 								//Loop through all of the taxonomies in the array
 								foreach($wp_taxonomies as $taxonomy)
 								{
@@ -541,7 +541,7 @@ class bcn_network_admin extends mtekk_adminKit
 						<td>
 							<?php
 								//We use the value 'page' but really, this will follow the parent post hierarchy
-								$this->input_radio('Spost_' . $post_type->name . '_taxonomy_type', 'page', __('Post Parent'));
+								$this->input_radio('Spost_' . $post_type->name . '_taxonomy_type', 'page', __('Post Parent', 'breadcrumb-navxt'));
 								//Loop through all of the taxonomies in the array
 								foreach($wp_taxonomies as $taxonomy)
 								{
