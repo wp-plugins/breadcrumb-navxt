@@ -10,7 +10,7 @@ License: GPL2
 TextDomain: breadcrumb-navxt
 DomainPath: /languages/
 */
-/*  Copyright 2007-2013  John Havlik  (email : mtekkmonkey@gmail.com)
+/*  Copyright 2007-2014  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ function bcn_plugold()
 {
 	if(current_user_can('activate_plugins'))
 	{
-		printf('<div class="error"><p>' . __('Breadcrumb NavXT was just updated from a pre-5.0 version, please go to your plugins page and activate "Breadcrumb NavXT". Also, deactivate "Breadcrumb NavXT 5.0 Migration Compatibility Layer" to make this message disappear.', 'breadcrumb-navxt') . '</p></div>');
+		printf('<div class="error"><p>' . __('Breadcrumb NavXT was just updated from a pre-5.0 version, please go to your plugins page and activate "Breadcrumb NavXT". Also, deactivate the "Breadcrumb NavXT 5.0 Migration Compatibility Layer" plugin to make this message disappear.', 'breadcrumb-navxt') . '</p></div>');
 	}
 }
 //If we are in the admin, let's print a warning
