@@ -23,11 +23,8 @@ class bcn_widget extends WP_Widget
 	//Default constructor
 	function __construct()
 	{
-		global $l10n;
-		// the global and the check might become obsolete in
-		// further wordpress versions
-		// @see https://core.trac.wordpress.org/ticket/10527		
-		if(!isset($l10n['breadcrumb-navxt']))
+		//@see https://core.trac.wordpress.org/ticket/10527
+		if(!is_textdomain_loaded('breadcrumb-navxt'))
 		{
 			load_plugin_textdomain('breadcrumb-navxt', false, 'breadcrumb-navxt/languages');
 		}
@@ -38,6 +35,8 @@ class bcn_widget extends WP_Widget
 	{
 		//Make sure we grab defaults in the case of out of date instance settings being sent
 		$instance =  wp_parse_args((array) $instance, $this->defaults);
+		$instance['title'] = apply_filters('widget_title', $instance['title']);
+		$instance['pretext'] = apply_filters('widget_text', $instance['pretext']);
 		//A bit of a hack but we need the DB settings to know if we should exit early
 		$opt = get_option('bcn_options');
 		//If we are on the front page and don't display on the front, return early

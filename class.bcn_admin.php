@@ -42,7 +42,7 @@ if(!class_exists('mtekk_adminKit'))
  */
 class bcn_admin extends mtekk_adminKit
 {
-	protected $version = '5.0.52';
+	protected $version = '5.1.0';
 	protected $full_name = 'Breadcrumb NavXT Settings';
 	protected $short_name = 'Breadcrumb NavXT';
 	protected $access_level = 'manage_options';
@@ -216,12 +216,9 @@ class bcn_admin extends mtekk_adminKit
 	}
 	function opts_update_prebk(&$opts)
 	{
-		//Add custom post types
-		breadcrumb_navxt::find_posttypes($this->opt);
-		//Add custom taxonomy types
-		breadcrumb_navxt::find_taxonomies($this->opt);
-		//Let others hook into our settings
-		$this->opt = apply_filters($this->unique_prefix . '_settings_init', $this->opt);
+		//This may no longer be needed
+		breadcrumb_navxt::setup_options($opts);
+		$opts = apply_filters('bcn_opts_update_prebk', $opts);
 	}
 	/**
 	 * help action hook function
