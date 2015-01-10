@@ -4,13 +4,26 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XE
 Tags: breadcrumb, breadcrumbs, trail, navigation, menu, widget
 Requires at least: 3.9
 Tested up to: 4.1
-Stable tag: 5.1.1
+Stable tag: 5.2
 License: GPLv2 or later
 Adds breadcrumb navigation showing the visitor's path to their current location.
 
 == Description ==
 
 Breadcrumb NavXT, the successor to the popular WordPress plugin Breadcrumb Navigation XT, was written from the ground up to be better than its ancestor. This plugin generates locational breadcrumb trails for your WordPress powered blog or website. These breadcrumb trails are highly customizable to suit the needs of just about any website running WordPress. The Administrative interface makes setting options easy, while a direct class access is available for theme developers and more adventurous users.
+
+= PHP Requirements =
+Breadcrumb NavXT 5.2 and newer require PHP5.3
+Breadcrumb NavXT 5.1.1 and older require PHP5.2
+
+= Features (non-exhaustive) =
+* RDFa compatible breadcrumb generation.
+* Extensive breadcrumb customization control via a settings page with appropriate default values for most use cases.
+* Network admin settings page for managing breadcrumb settings for all subsites with [configurable global priority](http://mtekk.us/archives/guides/controlling-breadcrumb-navxt-settings-from-the-network-settings-page/ "Go to the article on configuring the network settings priority.").
+* Built in WordPress Widget.
+* Extensible via OOP and provided [actions](http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/2/#action_reference "Go to the Breadcrumb NavXT Documentation's action reference.") and [filters](http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/2/#filter_reference "Go to the Breadcrumb NavXT Documentation's filter reference.").
+* WPML compatible (enhanced compatibility with WPML extensions plugin).
+* bbPress compatible (enhanced compatibility with bbPress extension plugin).
 
 = Translations =
 
@@ -60,7 +73,8 @@ Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-
 == Changelog ==
 = 5.2.0 =
 * Deprecated: The Max Breadcrumb Length setting has been deprecated in favor of [using CSS styling to perform the length limiting](http://mtekk.us/archives/guides/trimming-breadcrumb-title-lengths-with-css/ "Go to the article presenting how to shorten the breadcrumb title length using CSS").
-* Behavior change: The archive page for a post type is now generated for the top ancestor post rather than for the current page when “post parent” is used as the post’s hierarchy.
+* Behavior change: The archive page for a post type is now generated for the top ancestor post rather than for the current page when "post parent" is used as the post's hierarchy.
+* Behavior change: Now requires PHP5.3 or newer.
 * New feature: Added `bcn_type_archive_post_type` filter.
 * New feature: Settings depending on another setting to be enabled are disabled when the dependency setting is disabled.
 * New feature: More descriptive messages on settings saving (notify user on success, failure, and no changes to save).
@@ -292,7 +306,7 @@ Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-
 == Upgrade Notice ==
 
 = 5.2.0 =
-This version has enhancements for bbPress support. Some improvements to the settings page were made. Additionally, note that the Max Breadcrumb Length setting has been deprecated in favor of [using CSS styling to perform the length limiting](http://mtekk.us/archives/guides/trimming-breadcrumb-title-lengths-with-css/ "Go to the article presenting how to shorten the breadcrumb title length using CSS").ion enhances compatibility with bbPress. 
+This version requires PHP5.3 or newer. Some improvements to the settings page were made. Additionally, note that the Max Breadcrumb Length setting has been deprecated in favor of [using CSS styling to perform the length limiting](http://mtekk.us/archives/guides/trimming-breadcrumb-title-lengths-with-css/ "Go to the article presenting how to shorten the breadcrumb title length using CSS").ion enhances compatibility with bbPress. 
 
 = 5.1.0 =
 This version fixes a ton of bugs, plus adds a new filter and features support for RDFa Breadcrumb by default.
